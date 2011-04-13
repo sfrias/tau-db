@@ -2,10 +2,13 @@ package temp;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
@@ -76,6 +79,32 @@ public class downloadExtract {
 	      CompressedTarIn.close();
 	      //finished tar decompression
 	      System.out.println("finished extracting file!");
+		
+		File file = new File("C:\\fict\\temp\\fictional_universe\\fictional_organization.tsv");
+		FileReader fi = new FileReader(file);
+		BufferedReader bis = new BufferedReader(fi);
+		bis.readLine();
+		String lineRead ;
+		String name,id,member,type, appears, founder, parent_org, sub_org;
+		String[] strarr;
+		int n;
+		StringTokenizer st;
+		while ((lineRead=bis.readLine()) != null){
+			//not good enough
+/*			st = new StringTokenizer(lineRead, "\t");
+			n=st.countTokens();*/
+			
+			strarr = lineRead.split("\t",8);
+			name = strarr[0];
+			id=strarr[1];
+			member = strarr[2];
+			type = strarr[3];
+			appears = strarr[4];
+			founder = strarr[5];
+			parent_org = strarr[6];
+			sub_org = strarr[7];
+			System.out.println(name+"\t"+id+"\t"+member+"\t"+type+"\t"+appears+"\t"+founder+"\t"+parent_org+"\t"+sub_org);				
+		}
 		
 	}
 
