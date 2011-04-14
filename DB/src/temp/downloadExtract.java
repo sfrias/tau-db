@@ -104,9 +104,6 @@ public class downloadExtract {
 			parent_org = strarr[6];
 			sub_org = strarr[7];
 			System.out.println(name+"\t"+id+"\t"+member+"\t"+type+"\t"+appears+"\t"+founder+"\t"+parent_org+"\t"+sub_org);				
-		}
-		
+		}	
 	}
-
-
 }
