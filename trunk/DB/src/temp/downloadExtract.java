@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
@@ -17,8 +16,7 @@ import org.apache.tools.tar.TarInputStream;
 public class downloadExtract {
 	
 	public static void main(String args[]) throws IOException {
-		String path = "c:\\fict";
-		File pathDir = new File(path);
+		File pathDir = new File(".");
 		if (!pathDir.exists()){
 			pathDir.mkdir();
 		}
@@ -80,15 +78,14 @@ public class downloadExtract {
 	      //finished tar decompression
 	      System.out.println("finished extracting file!");
 		
-		File file = new File("C:\\fict\\temp\\fictional_universe\\fictional_organization.tsv");
+		File file = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + "fictional_organization.tsv");
 		FileReader fi = new FileReader(file);
 		BufferedReader bis = new BufferedReader(fi);
 		bis.readLine();
 		String lineRead ;
 		String name,id,member,type, appears, founder, parent_org, sub_org;
 		String[] strarr;
-		int n;
-		StringTokenizer st;
+
 		while ((lineRead=bis.readLine()) != null){
 			//not good enough
 /*			st = new StringTokenizer(lineRead, "\t");
