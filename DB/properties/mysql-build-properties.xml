@@ -25,7 +25,7 @@
   <property name="DB.URL.NEWDATABASE" value="jdbc:mysql://${DB.HOST}:${DB.PORT}/?allowMultiQueries=true"/>
   <property name="DB.URL" value="jdbc:mysql://${DB.HOST}:${DB.PORT}/${DB.SID}?allowMultiQueries=true"/>
   <property name="DB.USER" value="root"/>
-  <property name="DB.PASSWORD" value="mapo00"/>
+  <property name="DB.PASSWORD" value="root"/>
   <property name="DB.DELIMITER" value=";"/>
 
 </project>
