@@ -3,17 +3,23 @@ package temp;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
+
 public class downloadExtract {
+	
+	private static final String CREATE_TABLES_SQL_FILE_PATH = "sql/mysql/populate-tables.sql";
+
 	
 	public static void main(String args[]) throws IOException {
 		File pathDir = new File(".");
@@ -77,30 +83,30 @@ public class downloadExtract {
 	      CompressedTarIn.close();
 	      //finished tar decompression
 	      System.out.println("finished extracting file!");
+				
+		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
+		FileWriter fileWriter = new FileWriter(sqlFile);
+		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 		
-		File file = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + "fictional_organization.tsv");
-		FileReader fi = new FileReader(file);
-		BufferedReader bis = new BufferedReader(fi);
-		bis.readLine();
-		String lineRead ;
-		String name,id,member,type, appears, founder, parent_org, sub_org;
+		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + "fictional_organization.tsv");
+		FileReader fileReader = new FileReader(dumpFile);
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		
+		bufferedReader.readLine();
+		String lineRead;
 		String[] strarr;
 
-		while ((lineRead=bis.readLine()) != null){
-			//not good enough
-/*			st = new StringTokenizer(lineRead, "\t");
-			n=st.countTokens();*/
-			
+		while ((lineRead=bufferedReader.readLine()) != null){
 			strarr = lineRead.split("\t",8);
-			name = strarr[0];
-			id=strarr[1];
-			member = strarr[2];
-			type = strarr[3];
-			appears = strarr[4];
-			founder = strarr[5];
-			parent_org = strarr[6];
-			sub_org = strarr[7];
-			System.out.println(name+"\t"+id+"\t"+member+"\t"+type+"\t"+appears+"\t"+founder+"\t"+parent_org+"\t"+sub_org);				
-		}	
+			bufferedWriter.append("insert into " + "FICTIONAL_ORGANIZATIONS" +" values(");
+			for (int i=0; i < 7; i++){
+				bufferedWriter.append("'" + strarr[i] + "', ");
+			}
+			bufferedWriter.append("'" + strarr[7] + "');\n");
+			bufferedWriter.flush();
+		}
+		
+		bufferedWriter.close();
+		bufferedReader.close();	
 	}
 }
