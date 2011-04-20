@@ -32,42 +32,21 @@ package Utils;
 
 
 
-import java.awt.datatransfer.StringSelection;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.sql.BatchUpdateException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.RowIdLifetime;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
-
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
-import org.w3c.dom.Document;
 
 public class JDBCTutorialUtilities {
 
@@ -181,9 +160,13 @@ public class JDBCTutorialUtilities {
 	}
 	
 	public static void main(String args[]) throws IOException{
+		
 		updateSQLFiles("INSERT INTO species (species_name, species_fb_id) values(", "character_species.tsv", 4, 2);
-		updateSQLFiles("INSERT INTO creator (creator_name, creator_fb_id) values(", "fictional_character_creator.tsv", 4, 2);	
-		updateSQLFiles("INSERT INTO organization (organization_name, organization_fb_id) values(", "character_species.tsv", 4, 2);	
-
+		updateSQLFiles("INSERT INTO creator (creator_name, creator_fb_id) values(", "fictional_character_creator.tsv", 3, 2);	
+		updateSQLFiles("INSERT INTO organization (organization_name, organization_fb_id) values(", "fictional_organization.tsv", 7, 2);	
+		updateSQLFiles("INSERT INTO gender (gender_name, gender_fb_id) values(", "character_gender.tsv", 3, 2);
+		updateSQLFiles("INSERT INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv", 13, 2);	
+		updateSQLFiles("INSERT INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv", 3, 2);
+		updateSQLFiles("INSERT INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv", 3, 2);
 	}
 }
