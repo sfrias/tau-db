@@ -182,7 +182,7 @@ public class JDBCTutorialUtilities {
 	
 	public static void main(String args[]) throws IOException{
 		updateSQLFiles("INSERT INTO species (species_name, species_fb_id) values(", "character_species.tsv", 4, 2);
-		updateSQLFiles("INSERT INTO creator (creator_name, cretor_fb_id) values(", "fictional_character_creator.tsv", 4, 2);	
+		updateSQLFiles("INSERT INTO creator (creator_name, creator_fb_id) values(", "fictional_character_creator.tsv", 4, 2);	
 		updateSQLFiles("INSERT INTO organization (organization_name, organization_fb_id) values(", "character_species.tsv", 4, 2);	
 
 	}
