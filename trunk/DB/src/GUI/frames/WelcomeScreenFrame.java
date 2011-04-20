@@ -60,9 +60,9 @@ public class WelcomeScreenFrame extends JFrame {
 		labelQuestion.setFont(new Font("Footlight MT Light", Font.BOLD, 16));
 		labelQuestion.setAlignmentX(CENTER_ALIGNMENT);
 		
-		JRadioButton buttonPlay = new JRadioButton("Play");
+		final JRadioButton buttonPlay = new JRadioButton("Play");
 		buttonPlay.setSelected(true);
-		JRadioButton buttonManage = new JRadioButton("Manage");
+		final JRadioButton buttonManage = new JRadioButton("Manage");
 		ButtonGroup group = new ButtonGroup();
 		group.add(buttonPlay);
 		group.add(buttonManage);
@@ -86,8 +86,12 @@ public class WelcomeScreenFrame extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						//TODO open new frame
-						
+						JFrame frame = null;
+						if (buttonPlay.isSelected()){
+							frame = new PlayFrame();
+						}							
+						frame.setVisible(true);
+						dispose();
 					}
 				});
 				
