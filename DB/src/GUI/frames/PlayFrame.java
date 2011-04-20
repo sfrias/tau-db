@@ -2,7 +2,6 @@ package GUI.frames;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -12,60 +11,46 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
-import GUI.frames.buttons.AutoCompleteComboBox;
-import GUI.test.TestFrame;
+import GUI.buttons.AutoCompleteComboBox;
 import GUI.utilities.GuiUtils;
 
 public class PlayFrame extends JFrame {
 	
-	public static void main(String[] args){
-		String[] str = {"amico","Hila","Tammy", "Tal"};
-		AutoCompleteComboBox auto = new AutoCompleteComboBox(str);
-		
-		
-		TestFrame frame = new TestFrame(auto);
-		frame.display();
-	}
-	
 	public PlayFrame(){
 		buildFrame();
-		pack();
+		//pack();
 		GuiUtils.centerOnScreen(this);
 		//TODO set the minimum size
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt)
                 {
-                        quit();
+                        backOperation();
                 }
         });
-	}
-
-	private void quit() {
-	        dispose();
-	        System.exit(0);
 	}
 	
 	private void buildFrame(){
 		setTitle("Play");
-		setVisible(true);
+		setSize(600,600);
 		setContentPane(mainPanelBuilder());
+		setVisible(true);
+		
 	}
 	
-	private static JPanel mainPanelBuilder(){
+	private JPanel mainPanelBuilder(){
 		
 		JPanel panelLeftHead = new JPanel();
 		panelLeftHead.setLayout(new BoxLayout(panelLeftHead, BoxLayout.Y_AXIS));
 		JLabel labelCharI = new JLabel("Character I");
 		labelCharI.setAlignmentX(CENTER_ALIGNMENT);
-		JComboBox comboCharI = new JComboBox();
+		AutoCompleteComboBox comboCharI = new AutoCompleteComboBox();
 		comboCharI.setPreferredSize(new Dimension(150, 20));
 		JPanel panelCombo1 = new JPanel();
 		panelCombo1.add(comboCharI);
@@ -76,7 +61,7 @@ public class PlayFrame extends JFrame {
 		panelRightHead.setLayout(new BoxLayout(panelRightHead,BoxLayout.Y_AXIS));
 		JLabel labelCharII = new JLabel("Character II");
 		labelCharII.setAlignmentX(CENTER_ALIGNMENT);
-		JComboBox comboCharII = new JComboBox();
+		AutoCompleteComboBox comboCharII = new AutoCompleteComboBox();
 		comboCharII.setPreferredSize(new Dimension(150, 20));
 		JPanel panelCombo2 = new JPanel();
 		panelCombo2.add(comboCharII);
@@ -132,8 +117,11 @@ public class PlayFrame extends JFrame {
 		JButton buttonBack = new JButton("Back");
 		buttonBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				// TODO Auto-generated method stub
-				
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						backOperation();
+					}
+				});
 			}
 		});
 		
@@ -151,5 +139,11 @@ public class PlayFrame extends JFrame {
 		return panelMain;
 	}
 	
+	private void backOperation(){
+		WelcomeScreenFrame frame = new WelcomeScreenFrame();
+		frame.setVisible(true);
+		dispose();
+	}
+
 
 }
