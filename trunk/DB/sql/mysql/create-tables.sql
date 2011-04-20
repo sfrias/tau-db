@@ -26,10 +26,55 @@ CREATE TABLE universe
 	(`universe_id` int(11) NOT NULL AUTO_INCREMENT,
 	`universe_fb_id` varchar(40) NOT NULL,
 	`universe_name` varchar(80) NOT NULL,
-	PRIMARY KEY (`universe_id`));
+	PRIMARY KEY (`universe_id`,`universe_fb_id`));
 	
 CREATE TABLE school 
 	(`school_id` int(11) NOT NULL AUTO_INCREMENT,
 	`school_fb_id` varchar(40) NOT NULL,
 	`school_name` varchar(80) NOT NULL,
 	PRIMARY KEY (`school_id`));
+
+CREATE TABLE rank
+	(`rank_id` int(11) NOT NULL AUTO_INCREMENT,
+	`rank_fb_id` varchar(40) NOT NULL,
+	`rank_name` varchar(80) NOT NULL,
+	PRIMARY KEY (`rank_id`));
+
+
+CREATE TABLE ethnicity
+	(`ethnicity_id` int(11) NOT NULL AUTO_INCREMENT,
+	`ethnicity_fb_id` varchar(40) NOT NULL,
+	`ethnicity_name` varchar(80) NOT NULL,
+	PRIMARY KEY (`ethnicity_id`));
+
+CREATE TABLE occupation
+	(`occupation_id` int(11) NOT NULL AUTO_INCREMENT,
+	`occupation_fb_id` varchar(40) NOT NULL,
+	`occupation_name` varchar(80) NOT NULL,
+	PRIMARY KEY (`occupation_id`));
+
+CREATE TABLE powers
+	(`power_id` int(11) NOT NULL AUTO_INCREMENT,
+	`power_fb_id` varchar(40) NOT NULL,
+	`power_name` varchar(140) NOT NULL,
+	PRIMARY KEY (`power_id`));
+
+CREATE TABLE jobs
+	(`job_id` int(11) NOT NULL AUTO_INCREMENT,
+	`job_fb_id` varchar(40) NOT NULL,
+	`job_name` varchar(80) NOT NULL,
+	PRIMARY KEY (`job_id`));
+
+CREATE TABLE diseases
+	(`disease_id` int(11) NOT NULL AUTO_INCREMENT,
+	`disease_fb_id` varchar(40) NOT NULL,
+	`disease_name` varchar(80) NOT NULL,
+	PRIMARY KEY (`disease_id`));
+
+
+CREATE TABLE locations 
+	(`location_id` int(11) NOT NULL AUTO_INCREMENT,
+	`location_name` varchar(80) NOT NULL, 
+	`universe_fb_id`varchar(80) NOT NULL,
+   	FOREIGN KEY (universe_fb_id) REFERENCES `testdb.universe`(universe_fb_id)
+	PRIMARY KEY (`location_id`,`location_name`));

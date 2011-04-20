@@ -127,7 +127,7 @@ public class JDBCTutorialUtilities {
 		System.out.println("finished extracting file!"); 
 	}
 
-	public static void updateSQLFiles(String insertStatement, String dumpFileName, int splitNum, int attrNum) throws IOException{
+	public static void updateSQLFiles(String insertStatement, String dumpFileName,int startSplit, int splitNum, int attrNum) throws IOException{
 		File pathDir = new File(".");
 		
 		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
@@ -146,7 +146,7 @@ public class JDBCTutorialUtilities {
 		while ((lineRead=bufferedReader.readLine()) != null){
 			strarr = lineRead.split("\t",splitNum);
 			bufferedWriter.append(insertStatement);
-			for (int i=0; i < attrNum-1; i++){
+			for (int i=startSplit; i < attrNum-1; i++){
 				tempString = strarr[i].replace("\'", "\\'");
 				strarr[i] = tempString;
 				bufferedWriter.append("'" + strarr[i] + "', ");
@@ -159,14 +159,63 @@ public class JDBCTutorialUtilities {
 		bufferedReader.close();		
 	}
 	
+	public static void updateSQLFiles2(String insertStatement, String dumpFileName, int splitNum) throws IOException{
+		File pathDir = new File(".");
+		
+		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
+		FileWriter fileWriter = new FileWriter(sqlFile, true);
+		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+		
+		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + dumpFileName);
+		FileReader fileReader = new FileReader(dumpFile);
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		
+		bufferedReader.readLine();
+		String lineRead ;
+		String[] strarr;
+		String[] locationarr;
+		String tempString;
+		
+		while ((lineRead=bufferedReader.readLine()) != null){
+			strarr = lineRead.split("\t",splitNum);
+			String id = strarr[1];
+			locationarr = strarr[2].split(",");
+			int len = locationarr.length;
+			
+			for (int i=0; i < len; i++){
+				tempString = locationarr[i].replace("\'", "\\'");
+				locationarr[i] = tempString;
+				if (!locationarr[i].equals("")){
+						bufferedWriter.append(insertStatement);
+						bufferedWriter.append("'" + locationarr[i] + "', '" +  id+ "');\n"); 
+						bufferedWriter.flush();
+				}
+				
+			}
+			}
+			
+
+
+		bufferedWriter.close();
+		bufferedReader.close();		
+	}
+	
+	
+	
 	public static void main(String args[]) throws IOException{
 		
-		updateSQLFiles("INSERT INTO species (species_name, species_fb_id) values(", "character_species.tsv", 4, 2);
-		updateSQLFiles("INSERT INTO creator (creator_name, creator_fb_id) values(", "fictional_character_creator.tsv", 3, 2);	
-		updateSQLFiles("INSERT INTO organization (organization_name, organization_fb_id) values(", "fictional_organization.tsv", 7, 2);	
-		updateSQLFiles("INSERT INTO gender (gender_name, gender_fb_id) values(", "character_gender.tsv", 3, 2);
-		updateSQLFiles("INSERT INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv", 13, 2);	
-		updateSQLFiles("INSERT INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv", 3, 2);
-		updateSQLFiles("INSERT INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv", 3, 2);
+		updateSQLFiles("INSERT INTO species (species_name, species_fb_id) values(", "character_species.tsv",0, 4, 2);
+		updateSQLFiles("INSERT INTO creator (creator_name, creator_fb_id) values(", "fictional_character_creator.tsv",0, 3, 2);	
+		updateSQLFiles("INSERT INTO organization (organization_name, organization_fb_id) values(", "fictional_organization.tsv",0, 7, 2);	
+		updateSQLFiles("INSERT INTO gender (gender_name, gender_fb_id) values(", "character_gender.tsv",0, 3, 2);
+		updateSQLFiles("INSERT INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv",0, 13, 2);	
+		updateSQLFiles("INSERT INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv",0, 3, 2);
+		updateSQLFiles("INSERT INTO rank (rank_name, rank_fb_id) values(", "character_rank.tsv",0, 3, 2);
+		updateSQLFiles("INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(", "ethnicity_in_fiction.tsv",0, 3, 2);
+		updateSQLFiles("INSERT INTO occupation (occupation_name, occupation_fb_id) values(", "character_occupation.tsv",0, 3, 2);
+		updateSQLFiles("INSERT INTO powers (power_name, power_fb_id) values(", "character_powers.tsv",0, 3, 2);
+		updateSQLFiles("INSERT INTO jobs (job_name, job_fb_id) values(", "fictional_job_title.tsv",0, 3, 2);
+		updateSQLFiles("INSERT INTO diseases (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv",0, 3, 2);
+		updateSQLFiles2("INSERT INTO locations (location_name,universe_fb_id) values(", "fictional_universe.tsv",13);
 	}
 }
