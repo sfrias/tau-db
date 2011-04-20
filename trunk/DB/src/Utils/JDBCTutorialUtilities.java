@@ -152,7 +152,7 @@ public class JDBCTutorialUtilities {
 		File pathDir = new File(".");
 		
 		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
-		FileWriter fileWriter = new FileWriter(sqlFile);
+		FileWriter fileWriter = new FileWriter(sqlFile, true);
 		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 		
 		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + dumpFileName);
@@ -162,12 +162,14 @@ public class JDBCTutorialUtilities {
 		bufferedReader.readLine();
 		String lineRead ;
 		String[] strarr;
-
+		String tempString;
+		
 		while ((lineRead=bufferedReader.readLine()) != null){
 			strarr = lineRead.split("\t",splitNum);
 			bufferedWriter.append(insertStatement);
 			for (int i=0; i < attrNum-1; i++){
-				strarr[i].replace("\'", "\\'");
+				tempString = strarr[i].replace("\'", "\\'");
+				strarr[i] = tempString;
 				bufferedWriter.append("'" + strarr[i] + "', ");
 			}
 			bufferedWriter.append("'" + strarr[attrNum-1] + "');\n");
@@ -180,6 +182,8 @@ public class JDBCTutorialUtilities {
 	
 	public static void main(String args[]) throws IOException{
 		updateSQLFiles("INSERT INTO species (species_name, species_fb_id) values(", "character_species.tsv", 4, 2);
-		
+		updateSQLFiles("INSERT INTO creator (creator_name, cretor_fb_id) values(", "fictional_character_creator.tsv", 4, 2);	
+		updateSQLFiles("INSERT INTO organization (organization_name, organization_fb_id) values(", "character_species.tsv", 4, 2);	
+
 	}
 }
