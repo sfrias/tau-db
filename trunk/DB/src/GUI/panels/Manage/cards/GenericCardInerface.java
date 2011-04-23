@@ -13,4 +13,6 @@ public interface GenericCardInerface {
 	//each card should have a diffrent action - depends on the fields. card implement
 	public ActionListener setActionButtonListener();
 
+	//each card should display a list of all its records. card implement.
+	public String[] createRecordList();
 }
