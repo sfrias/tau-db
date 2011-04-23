@@ -135,7 +135,7 @@ public class JDBCTutorialUtilities {
 	}
 
 	
-	public static void updateSQLFiles(String insertStatement,
+	public static void updateSQLFiles(String table, String insertStatement,
 			String dumpFileName, int splitNum, int attrNum)
 			throws IOException {
 		File pathDir = new File(".");
@@ -154,170 +154,99 @@ public class JDBCTutorialUtilities {
 		String lineRead;
 		String[] strarr;
 		String tempString;
-
-		while ((lineRead = bufferedReader.readLine()) != null) {
-			strarr = lineRead.split("\t", splitNum);
-			bufferedWriter.append(insertStatement);
-			for (int i = 0; i < attrNum - 1; i++) {
-				tempString = strarr[i].replace("\'", "\\'");
-				strarr[i] = tempString;
-				bufferedWriter.append("'" + strarr[i] + "', ");
-			}
-			bufferedWriter.append("'" + strarr[attrNum - 1] + "');\n");
-			bufferedWriter.flush();
-		}
-		bufferedWriter.append(insertStatement);
-		bufferedWriter.append("'Unspecified', 'Unspecified');\n");
-		bufferedWriter.flush();
+		String locationarr[];
 		
-		bufferedWriter.close();
-		bufferedReader.close();
-	}
-
-	public static void createLocationTable(String insertStatement,
-			String dumpFileName, int splitNum) throws IOException {
-		File pathDir = new File(".");
-
-		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
-
-		FileWriter fileWriter = new FileWriter(sqlFile, true);
-		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-		
-		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar
-				+ "temp" + File.separatorChar + "fictional_universe"
-				+ File.separatorChar + dumpFileName);
+		if (table.equals("locations")){
+			while ((lineRead = bufferedReader.readLine()) != null) {
+				strarr = lineRead.split("\t", splitNum);
+				strarr[0] = strarr[0].replace("\'", "\\'");
+				locationarr = strarr[2].split(",");
+				int len = locationarr.length;
 	
-		FileReader fileReader = new FileReader(dumpFile);
-		BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-		bufferedReader.readLine();
-		String lineRead;
-		String[] strarr;
-		String[] locationarr;
-		String tempString;
-
-		while ((lineRead = bufferedReader.readLine()) != null) {
-			strarr = lineRead.split("\t", splitNum);
-			strarr[0] = strarr[0].replace("\'", "\\'");
-			locationarr = strarr[2].split(",");
-			int len = locationarr.length;
-
-			for (int i = 0; i < len; i++) {
-				tempString = locationarr[i].replace("\'", "\\'");
-				locationarr[i] = tempString;
-				if (!locationarr[i].equals("")) {
-					bufferedWriter.append(insertStatement);
-					bufferedWriter.append("'" + locationarr[i] + "', " + "(SELECT universe_id FROM universe Where universe_fb_id LIKE '" + strarr[1] + "' AND universe_name like'" + strarr[0]+ "'));\n");
-					bufferedWriter.flush();
-				}
-
-			}
-		}
-		bufferedWriter.append(insertStatement);
-		bufferedWriter.append("'Unspecified', " + "(SELECT universe_id FROM universe Where universe_fb_id LIKE 'Unspecified'));\n");
-		bufferedWriter.close();
-		bufferedReader.close();
-	}
-	
-
-	public static void CreatePlaceOfBirthTable(String insertStatement,
-			String dumpFileName, int splitNum) throws IOException {
-		File pathDir = new File(".");
-
-		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
-
-		FileWriter fileWriter = new FileWriter(sqlFile, true);
-		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-		
-		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar
-				+ "temp" + File.separatorChar + "fictional_universe"
-				+ File.separatorChar + dumpFileName);
-	
-		FileReader fileReader = new FileReader(dumpFile);
-		BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-		bufferedReader.readLine();
-		String lineRead;
-		String[] strarr;
-		String tempString;
-
-		while ((lineRead = bufferedReader.readLine()) != null) {
-			strarr = lineRead.split("\t", splitNum);
-			tempString = strarr[3].replace("\'", "\\'");
-			strarr[3] = tempString;
-			if (! strarr[3].equals("")) {
-				bufferedWriter.append(insertStatement);
-				bufferedWriter.append("'" +  strarr[3] + "');\n");
-				bufferedWriter.flush();
-			}
-
-		}
-		bufferedWriter.append(insertStatement);
-		bufferedWriter.append("'Unspecified');\n");
-		bufferedWriter.close();
-		bufferedReader.close();
-	}
-
-
-	public static void createCharacterTable() throws IOException {
-		
-		
-		
-		String insert = "INSERT INTO characters " + 
-				"(character_name,"
-				+ "character_fb_id," + 
-				"character_place_of_birth_id) values(";
-
-		File pathDir = new File(".");
-
-		File newSqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
-
-		FileWriter fileWriter = new FileWriter(newSqlFile, true);
-		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar
-				+ "temp" + File.separatorChar + "fictional_universe"
-				+ File.separatorChar + "fictional_character.tsv");
-		
-		FileReader fileReader = new FileReader(dumpFile);
-		BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-		bufferedReader.readLine();
-		String lineRead;
-		String[] strarr;
-		String tempString;
-
-
-		while ((lineRead = bufferedReader.readLine()) != null) {
-			strarr = lineRead.split("\t", 27);
-			bufferedWriter.append(insert);
-
-			for (int i = 0; i <4; i++) {
-				tempString = strarr[i].replace("\'", "\\'");
-				strarr[i] = tempString;
-				if (i == 2) {
-					continue;
-				}
-				else if (i==3) {
-					if (strarr[3].equals("")){
-						strarr[3]="Unspecified";
+				for (int i = 0; i < len; i++) {
+					tempString = locationarr[i].replace("\'", "\\'");
+					locationarr[i] = tempString;
+					if (!locationarr[i].equals("")) {
+						bufferedWriter.append(insertStatement);
+						bufferedWriter.append("'" + locationarr[i] + "', " + "(SELECT universe_id FROM universe Where universe_fb_id LIKE '" + strarr[1] + "' AND universe_name like'" + strarr[0]+ "'));\n");
+						bufferedWriter.flush();
 					}
-					//bufferedWriter.append("(SELECT location_id FROM locations Where location_name LIKE '" + strarr[3] + "'));\n");
-					bufferedWriter.append("(SELECT place_of_birth_id FROM place_of_birth Where place_of_birth_name LIKE '" + strarr[3] + "'));\n");
+	
+				}
+			}
+			bufferedWriter.append(insertStatement);
+			bufferedWriter.append("'Unspecified', " + "(SELECT universe_id FROM universe Where universe_fb_id LIKE 'Unspecified'));\n");
+		}
+		
+		
+		
+		else if (table.equals("place_of_birth")){	
+			while ((lineRead = bufferedReader.readLine()) != null) {
+				strarr = lineRead.split("\t", splitNum);
+				tempString = strarr[3].replace("\'", "\\'");
+				strarr[3] = tempString;
+				if (! strarr[3].equals("")) {
+					bufferedWriter.append(insertStatement);
+					bufferedWriter.append("'" +  strarr[3] + "');\n");
 					bufferedWriter.flush();
 				}
-				else{
+
+			}
+			bufferedWriter.append(insertStatement);
+			bufferedWriter.append("'Unspecified');\n");
+		}
+		
+		else if (table.equals("characters")){
+			while ((lineRead = bufferedReader.readLine()) != null) {
+				strarr = lineRead.split("\t", 27);
+				bufferedWriter.append(insertStatement);
+
+				for (int i = 0; i <4; i++) {
+					tempString = strarr[i].replace("\'", "\\'");
+					strarr[i] = tempString;
+					if (i == 2) {
+						continue;
+					}
+					else if (i==3) {
+						if (strarr[3].equals("")){
+							strarr[3]="Unspecified";
+						}
+
+						bufferedWriter.append("(SELECT place_of_birth_id FROM place_of_birth Where place_of_birth_name LIKE '" + strarr[3] + "'));\n");
+						bufferedWriter.flush();
+					}
+					else{
+						bufferedWriter.append("'" + strarr[i] + "', ");
+					}
+				}
+
+			}
+		}
+		
+		
+		else {
+			while ((lineRead = bufferedReader.readLine()) != null) {
+				strarr = lineRead.split("\t", splitNum);
+				bufferedWriter.append(insertStatement);
+				for (int i = 0; i < attrNum - 1; i++) {
+					tempString = strarr[i].replace("\'", "\\'");
+					strarr[i] = tempString;
 					bufferedWriter.append("'" + strarr[i] + "', ");
 				}
+				bufferedWriter.append("'" + strarr[attrNum - 1] + "');\n");
+				bufferedWriter.flush();
 			}
-
+			bufferedWriter.append(insertStatement);
+			bufferedWriter.append("'Unspecified', 'Unspecified');\n");
+			bufferedWriter.flush();
 		}
-
+		
 		bufferedWriter.close();
 		bufferedReader.close();
-
 	}
 
+	
+	
 	public static void main(String args[]) throws IOException {
 	
 		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
@@ -326,34 +255,34 @@ public class JDBCTutorialUtilities {
 			sqlFile.delete();
 
 
-		 updateSQLFiles("INSERT INTO species (species_name, species_fb_id) values(",
+		 updateSQLFiles("", "INSERT INTO species (species_name, species_fb_id) values(",
 		 "character_species.tsv",4, 2);
-		 updateSQLFiles("INSERT INTO creator (creator_name, creator_fb_id) values(",
+		 updateSQLFiles("", "INSERT INTO creator (creator_name, creator_fb_id) values(",
 		 "fictional_character_creator.tsv",3, 2);
-		 updateSQLFiles("INSERT INTO organization (organization_name, organization_fb_id) values(",
+		 updateSQLFiles("","INSERT INTO organization (organization_name, organization_fb_id) values(",
 		 "fictional_organization.tsv", 7, 2);
-		updateSQLFiles("INSERT INTO gender (gender_name, gender_fb_id) values(",
+		updateSQLFiles("","INSERT INTO gender (gender_name, gender_fb_id) values(",
 		"character_gender.tsv", 3, 2);
-		 updateSQLFiles("INSERT INTO universe (universe_name, universe_fb_id) values(",
+		 updateSQLFiles("","INSERT INTO universe (universe_name, universe_fb_id) values(",
 		 "fictional_universe.tsv", 13, 2);
-		 updateSQLFiles("INSERT INTO school (school_name, school_fb_id) values(",
+		 updateSQLFiles("","INSERT INTO school (school_name, school_fb_id) values(",
 		 "school_in_fiction.tsv", 3, 2);
-		 updateSQLFiles("INSERT INTO rank (rank_name, rank_fb_id) values(",
+		 updateSQLFiles("","INSERT INTO rank (rank_name, rank_fb_id) values(",
 		 "character_rank.tsv", 3, 2);
-		 updateSQLFiles("INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(",
+		 updateSQLFiles("","INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(",
 		 "ethnicity_in_fiction.tsv", 3, 2);
-		 updateSQLFiles("INSERT INTO occupation (occupation_name, occupation_fb_id) values(",
+		 updateSQLFiles("","INSERT INTO occupation (occupation_name, occupation_fb_id) values(",
 		 "character_occupation.tsv", 3, 2);
-		 updateSQLFiles("INSERT INTO powers (power_name, power_fb_id) values(",
+		 updateSQLFiles("","INSERT INTO powers (power_name, power_fb_id) values(",
 		 "character_powers.tsv", 3, 2);
-		 updateSQLFiles("INSERT INTO jobs (job_name, job_fb_id) values(",
+		 updateSQLFiles("","INSERT INTO jobs (job_name, job_fb_id) values(",
 		 "fictional_job_title.tsv", 3, 2);
-		 updateSQLFiles("INSERT INTO diseases (disease_name, disease_fb_id) values(",
+		 updateSQLFiles("","INSERT INTO diseases (disease_name, disease_fb_id) values(",
 		 "medical_condition_in_fiction.tsv", 3, 2);
 		 
 		 
-		createLocationTable("INSERT INTO locations (location_name,location_universe_id) values(",
-		"fictional_universe.tsv",13);
+		 updateSQLFiles("locations", "INSERT INTO locations (location_name,location_universe_id) values(",
+		"fictional_universe.tsv",13,-1);
 		 
 		 File sqlFile2 = new File(CREATE_TABLES_SQL_FILE_PATH);
 
@@ -361,8 +290,10 @@ public class JDBCTutorialUtilities {
 				sqlFile2.delete();
 		
 		 
-		 CreatePlaceOfBirthTable("INSERT IGNORE place_of_birth (place_of_birth_name) values(",
-				 "fictional_character.tsv",27);
-		createCharacterTable();
+		updateSQLFiles("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(",
+				 "fictional_character.tsv",27,-1);
+		
+		updateSQLFiles("characters", "INSERT INTO characters " + "(character_name," + "character_fb_id," + "character_place_of_birth_id) values(","fictional_character.tsv",27,-1);
+		
 	}
 }
