@@ -1,8 +1,8 @@
-package GUI.panels.Manage;
+package GUI.panels.Manage.Tabs;
 
 import javax.swing.JPanel;
 
-public interface generalTabPanel {
+public interface GenericTabInterface {
 	
 	public JPanel addCards(JPanel cards);
 	

@@ -3,6 +3,7 @@ package GUI;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import GUI.frames.ManageFrame;
 import GUI.frames.WelcomeScreenFrame;
 
 
@@ -28,7 +29,7 @@ public class GuiBuilder {
         
         public static void main(String[] args) {
                 installLookAndFeel();
-                WelcomeScreenFrame frame = new WelcomeScreenFrame();
+                ManageFrame frame = new ManageFrame();
                 frame.setVisible(true);
         }
       
