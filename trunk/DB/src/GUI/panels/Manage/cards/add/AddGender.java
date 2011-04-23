@@ -52,7 +52,7 @@ public class AddGender extends abstractAddCard {
 	}
 
 	@Override
-	public ActionListener setActionButtonListener() {
+	public ActionListener createActionButtonListener() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -61,6 +61,12 @@ public class AddGender extends abstractAddCard {
 	public String[] createRecordList() {
 		String[] result ={"record1", "record2"}; 
 		return result;
+	}
+
+	@Override
+	public ActionListener createRecordComboListener() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

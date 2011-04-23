@@ -18,7 +18,7 @@ public class DeleteGender extends abstractDeleteCard {
 	}
 
 	@Override
-	public ActionListener setActionButtonListener() {
+	public ActionListener createActionButtonListener() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -27,6 +27,12 @@ public class DeleteGender extends abstractDeleteCard {
 	public String[] createRecordList() {
 		String[] result = {"deleteGender1", "deleteGender2"};
 		return result;
+	}
+
+	@Override
+	public ActionListener createRecordComboListener() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

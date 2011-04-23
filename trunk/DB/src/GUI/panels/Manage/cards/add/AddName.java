@@ -17,7 +17,7 @@ public class AddName extends abstractAddCard {
 	}
 
 	@Override
-	public ActionListener setActionButtonListener() {
+	public ActionListener createActionButtonListener() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -26,6 +26,12 @@ public class AddName extends abstractAddCard {
 	public String[] createRecordList() {
 		String[] result = {"addName1", "addName2"};
 		return result;
+	}
+
+	@Override
+	public ActionListener createRecordComboListener() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
