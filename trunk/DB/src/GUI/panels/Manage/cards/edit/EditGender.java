@@ -4,11 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import GUI.buttons.AutoCompleteComboBox;
+import GUI.frames.PlayFrame;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -66,8 +69,15 @@ public class EditGender extends abstractEditCard {
 	
 	@Override
 	public ActionListener createActionButtonListener() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ActionListener() {
+			
+			public void actionPerformed(ActionEvent event) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						//TODO HILA CODE HERE
+					}
+				});
+			}
+		};
 	}
-
 }
