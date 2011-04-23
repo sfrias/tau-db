@@ -17,7 +17,7 @@ public class DeleteName extends abstractDeleteCard {
 	}
 
 	@Override
-	public ActionListener setActionButtonListener() {
+	public ActionListener createActionButtonListener() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -26,6 +26,12 @@ public class DeleteName extends abstractDeleteCard {
 	public String[] createRecordList() {
 		String[] result = {"deleteName1", "deleteName2"};
 		return result;
+	}
+
+	@Override
+	public ActionListener createRecordComboListener() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
