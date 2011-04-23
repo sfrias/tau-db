@@ -22,4 +22,10 @@ public class EditName extends abstractEditCard {
 		return null;
 	}
 
+	@Override
+	public String[] createRecordList() {
+		String[] result = {"editName1", "editName2"};
+		return result;
+	}
+
 }

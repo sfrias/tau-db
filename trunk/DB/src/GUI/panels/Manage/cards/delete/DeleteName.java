@@ -22,4 +22,10 @@ public class DeleteName extends abstractDeleteCard {
 		return null;
 	}
 
+	@Override
+	public String[] createRecordList() {
+		String[] result = {"deleteName1", "deleteName2"};
+		return result;
+	}
+
 }

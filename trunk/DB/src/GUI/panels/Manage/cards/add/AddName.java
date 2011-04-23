@@ -22,4 +22,10 @@ public class AddName extends abstractAddCard {
 		return null;
 	}
 
+	@Override
+	public String[] createRecordList() {
+		String[] result = {"addName1", "addName2"};
+		return result;
+	}
+
 }
