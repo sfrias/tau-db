@@ -23,4 +23,10 @@ public class DeleteGender extends abstractDeleteCard {
 		return null;
 	}
 
+	@Override
+	public String[] createRecordList() {
+		String[] result = {"deleteGender1", "deleteGender2"};
+		return result;
+	}
+
 }

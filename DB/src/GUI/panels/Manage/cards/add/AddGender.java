@@ -57,4 +57,10 @@ public class AddGender extends abstractAddCard {
 		return null;
 	}
 
+	@Override
+	public String[] createRecordList() {
+		String[] result ={"record1", "record2"}; 
+		return result;
+	}
+
 }
