@@ -41,7 +41,11 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Hashtable;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
@@ -70,8 +74,8 @@ public class JDBCTutorialUtilities {
 
 		BufferedInputStream in = new BufferedInputStream(
 				new java.net.URL(
-						"http://download.freebase.com/datadumps/latest/browse/fictional_universe.tar.bz2")
-						.openStream());
+				"http://download.freebase.com/datadumps/latest/browse/fictional_universe.tar.bz2")
+				.openStream());
 		File save = new File(pathDir.getAbsolutePath() + File.separatorChar
 				+ "fictional_universe.tar.bz2");
 
@@ -134,10 +138,10 @@ public class JDBCTutorialUtilities {
 		System.out.println("finished extracting file!");
 	}
 
-	
+
 	public static void updateSQLFiles(String table, String insertStatement,
 			String dumpFileName, int splitNum, int attrNum)
-			throws IOException {
+	throws IOException {
 		File pathDir = new File(".");
 
 		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
@@ -155,14 +159,14 @@ public class JDBCTutorialUtilities {
 		String[] strarr;
 		String tempString;
 		String locationarr[];
-		
+
 		if (table.equals("locations")){
 			while ((lineRead = bufferedReader.readLine()) != null) {
 				strarr = lineRead.split("\t", splitNum);
 				strarr[0] = strarr[0].replace("\'", "\\'");
 				locationarr = strarr[2].split(",");
 				int len = locationarr.length;
-	
+
 				for (int i = 0; i < len; i++) {
 					tempString = locationarr[i].replace("\'", "\\'");
 					locationarr[i] = tempString;
@@ -171,15 +175,15 @@ public class JDBCTutorialUtilities {
 						bufferedWriter.append("'" + locationarr[i] + "', " + "(SELECT universe_id FROM universe Where universe_fb_id LIKE '" + strarr[1] + "' AND universe_name like'" + strarr[0]+ "'));\n");
 						bufferedWriter.flush();
 					}
-	
+
 				}
 			}
 			bufferedWriter.append(insertStatement);
 			bufferedWriter.append("'Unspecified', " + "(SELECT universe_id FROM universe Where universe_fb_id LIKE 'Unspecified'));\n");
 		}
-		
-		
-		
+
+
+
 		else if (table.equals("place_of_birth")){	
 			while ((lineRead = bufferedReader.readLine()) != null) {
 				strarr = lineRead.split("\t", splitNum);
@@ -195,7 +199,7 @@ public class JDBCTutorialUtilities {
 			bufferedWriter.append(insertStatement);
 			bufferedWriter.append("'Unspecified');\n");
 		}
-		
+
 		else if (table.equals("characters")){
 			while ((lineRead = bufferedReader.readLine()) != null) {
 				strarr = lineRead.split("\t", 27);
@@ -222,8 +226,8 @@ public class JDBCTutorialUtilities {
 
 			}
 		}
-		
-		
+
+
 		else {
 			while ((lineRead = bufferedReader.readLine()) != null) {
 				strarr = lineRead.split("\t", splitNum);
@@ -240,60 +244,122 @@ public class JDBCTutorialUtilities {
 			bufferedWriter.append("'Unspecified', 'Unspecified');\n");
 			bufferedWriter.flush();
 		}
-		
+
 		bufferedWriter.close();
 		bufferedReader.close();
 	}
 
-	
-	
+
+	private static void updateCharactersAndUniverseTable(DatabaseManager dbManager, String insertStatement, int splitNum, int interestingFieldNum) throws IOException{
+		File pathDir = new File(".");
+
+		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
+		FileWriter fileWriter = new FileWriter(sqlFile, true);
+		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + "fictional_character.tsv");
+		FileReader fileReader = new FileReader(dumpFile);
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+		bufferedReader.readLine();
+		String lineRead;
+		
+		TreeMap<String, Integer> universeMap = generateHashMapFromQuery(dbManager, "SELECT * FROM universe", 1, 3);
+		TreeMap<String, Integer> charactersMap = generateHashMapFromQuery(dbManager, "SELECT * FROM characters", 1, 3);
+
+		int unspecifiedId = universeMap.get("Unspecified");
+		while ((lineRead = bufferedReader.readLine()) != null) {
+			String [] strarr = lineRead.split("\t", splitNum);
+			String [] valueArr = strarr[interestingFieldNum].split(",");
+			//int currentId = charactersMap.get(strarr[0]);
+			for (int i = 0; i < valueArr.length; i++) {
+				if (!valueArr[i].equals("")) {
+					bufferedWriter.append(insertStatement);
+					bufferedWriter.append("'" + charactersMap.get(strarr[0]) + "', '" + universeMap.get(valueArr[i]) + "'));\n");
+					bufferedWriter.flush();
+				}
+			}
+			if (valueArr.length == 0){
+				bufferedWriter.append(insertStatement);
+				bufferedWriter.append("'"+ charactersMap.get(strarr[0]) + "', '" + unspecifiedId + "');");
+			}
+		}
+		
+		bufferedWriter.close();
+		bufferedReader.close();
+
+	}
+
+
+	private static TreeMap<String, Integer> generateHashMapFromQuery(DatabaseManager dbManager, String query,  int intCol, int stringCol) {
+		
+		ResultSet rs = dbManager.executeQuery(query);
+		TreeMap<String, Integer> hashMap = new TreeMap<String, Integer>();
+		
+		try {
+			while (rs.next()) {
+			      int id = rs.getInt(intCol);
+			      System.out.println("id=" + id);
+			      String name = rs.getString(stringCol);
+			      hashMap.put(name, id);
+			    }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return hashMap;
+	}
+
 	public static void main(String args[]) throws IOException {
-	
+
+		//downloadAndExtractDumps();
+		DatabaseManager dbManager = new DatabaseManager();
+
 		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
 
 		if(sqlFile.exists())
 			sqlFile.delete();
 
 
-		 updateSQLFiles("", "INSERT INTO species (species_name, species_fb_id) values(",
-		 "character_species.tsv",4, 2);
-		 updateSQLFiles("", "INSERT INTO creator (creator_name, creator_fb_id) values(",
-		 "fictional_character_creator.tsv",3, 2);
-		 updateSQLFiles("","INSERT INTO organization (organization_name, organization_fb_id) values(",
-		 "fictional_organization.tsv", 7, 2);
+		updateSQLFiles("", "INSERT INTO species (species_name, species_fb_id) values(",
+				"character_species.tsv",4, 2);
+		updateSQLFiles("", "INSERT INTO creator (creator_name, creator_fb_id) values(",
+				"fictional_character_creator.tsv",3, 2);
+		updateSQLFiles("","INSERT INTO organization (organization_name, organization_fb_id) values(",
+				"fictional_organization.tsv", 7, 2);
 		updateSQLFiles("","INSERT INTO gender (gender_name, gender_fb_id) values(",
-		"character_gender.tsv", 3, 2);
-		 updateSQLFiles("","INSERT INTO universe (universe_name, universe_fb_id) values(",
-		 "fictional_universe.tsv", 13, 2);
-		 updateSQLFiles("","INSERT INTO school (school_name, school_fb_id) values(",
-		 "school_in_fiction.tsv", 3, 2);
-		 updateSQLFiles("","INSERT INTO rank (rank_name, rank_fb_id) values(",
-		 "character_rank.tsv", 3, 2);
-		 updateSQLFiles("","INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(",
-		 "ethnicity_in_fiction.tsv", 3, 2);
-		 updateSQLFiles("","INSERT INTO occupation (occupation_name, occupation_fb_id) values(",
-		 "character_occupation.tsv", 3, 2);
-		 updateSQLFiles("","INSERT INTO powers (power_name, power_fb_id) values(",
-		 "character_powers.tsv", 3, 2);
-		 updateSQLFiles("","INSERT INTO jobs (job_name, job_fb_id) values(",
-		 "fictional_job_title.tsv", 3, 2);
-		 updateSQLFiles("","INSERT INTO diseases (disease_name, disease_fb_id) values(",
-		 "medical_condition_in_fiction.tsv", 3, 2);
-		 
-		 
-		 updateSQLFiles("locations", "INSERT INTO locations (location_name,location_universe_id) values(",
-		"fictional_universe.tsv",13,-1);
-		 
-		 File sqlFile2 = new File(CREATE_TABLES_SQL_FILE_PATH);
+				"character_gender.tsv", 3, 2);
+		updateSQLFiles("","INSERT INTO universe (universe_name, universe_fb_id) values(",
+				"fictional_universe.tsv", 13, 2);
+		updateSQLFiles("","INSERT INTO school (school_name, school_fb_id) values(",
+				"school_in_fiction.tsv", 3, 2);
+		updateSQLFiles("","INSERT INTO rank (rank_name, rank_fb_id) values(",
+				"character_rank.tsv", 3, 2);
+		updateSQLFiles("","INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(",
+				"ethnicity_in_fiction.tsv", 3, 2);
+		updateSQLFiles("","INSERT INTO occupation (occupation_name, occupation_fb_id) values(",
+				"character_occupation.tsv", 3, 2);
+		updateSQLFiles("","INSERT INTO powers (power_name, power_fb_id) values(",
+				"character_powers.tsv", 3, 2);
+		updateSQLFiles("","INSERT INTO jobs (job_name, job_fb_id) values(",
+				"fictional_job_title.tsv", 3, 2);
+		updateSQLFiles("","INSERT INTO diseases (disease_name, disease_fb_id) values(",
+				"medical_condition_in_fiction.tsv", 3, 2);
 
-			if(sqlFile2.exists())
-				sqlFile2.delete();
-		
-		 
+
+		updateSQLFiles("locations", "INSERT INTO locations (location_name,location_universe_id) values(",
+				"fictional_universe.tsv",13,-1);
+
 		updateSQLFiles("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(",
-				 "fictional_character.tsv",27,-1);
-		
+				"fictional_character.tsv",27,-1);
+
 		updateSQLFiles("characters", "INSERT INTO characters " + "(character_name," + "character_fb_id," + "character_place_of_birth_id) values(","fictional_character.tsv",27,-1);
-		
+		updateCharactersAndUniverseTable(dbManager, "INSERT INTO characters_and_universes (character_id, universe_id) values(", 27, 12);
 	}
 }

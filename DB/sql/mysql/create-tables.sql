@@ -97,8 +97,12 @@ CREATE TABLE characters
 	character_fb_id varchar(40) NOT NULL,
 	character_name varchar(80) NOT NULL,
 	character_place_of_birth_id int(11) NOT NULL,
+	KEY ix_character_id (character_id),
 	PRIMARY KEY (character_id),
 	FOREIGN KEY (character_place_of_birth_id) REFERENCES place_of_birth(place_of_birth_id));
-
-
-
+	
+CREATE TABLE characters_and_universes(
+	characters_and_universes_character_id int(11) NOT NULL,
+	characters_and_universes_universe_id int(11) NOT NULL,
+	FOREIGN KEY (characters_and_universes_character_id) REFERENCES characters(character_id),
+	FOREIGN KEY (characters_and_universes_universe_id) REFERENCES universe(universe_id));
