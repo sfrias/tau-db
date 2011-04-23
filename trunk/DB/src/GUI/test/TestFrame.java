@@ -15,7 +15,7 @@ public class TestFrame extends JFrame {
         public void display() {
         		setSize(600,600);
                 setResizable(false);
-                pack();
+                //pack();
                 setVisible(true);
         }
         

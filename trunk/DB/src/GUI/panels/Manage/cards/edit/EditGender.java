@@ -1,18 +1,12 @@
-package GUI.panels.Manage.add;
+package GUI.panels.Manage.cards.edit;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
 
-public class AddGender extends JPanel {
-	public AddGender(){
-		super();
+public class EditGender extends abstractEditCard {
+	public EditGender(){
+		super();/*
 		setLayout(new BorderLayout());
 		add(new JLabel ("Gender Details"),BorderLayout.CENTER);
 		
@@ -33,7 +27,19 @@ public class AddGender extends JPanel {
 		panelBottom.add(new JSeparator(JSeparator.HORIZONTAL));
 		panelBottom.add(panelButton);
 		
-		add(panelBottom,BorderLayout.SOUTH);
+		add(panelBottom,BorderLayout.SOUTH);*/
+	}
+
+	@Override
+	public void addFields() {
+		add(new JLabel ("edit gender field"));
+		
+	}
+
+	@Override
+	public ActionListener setActionButtonListener() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
