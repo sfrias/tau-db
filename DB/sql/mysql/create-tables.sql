@@ -20,15 +20,34 @@ CREATE TABLE gender
 	(gender_id int(11) NOT NULL AUTO_INCREMENT,
 	gender_fb_id varchar(40) NOT NULL,
 	gender_name varchar(80) NOT NULL,
-	PRIMARY KEY (gender_id));	
-	
+	PRIMARY KEY (gender_id));
+
+
 CREATE TABLE universe 
 	(universe_id int(11) NOT NULL AUTO_INCREMENT,
 	universe_fb_id varchar(40) NOT NULL,
 	universe_name varchar(80) NOT NULL,
-	KEY ix_universe_fb_id (universe_fb_id),
+	KEY ix_universe_id (universe_id),
 	PRIMARY KEY (universe_id, universe_fb_id));
 	
+
+CREATE TABLE locations 
+	(location_id int(11) NOT NULL AUTO_INCREMENT,
+	location_name varchar(80) NOT NULL, 
+	location_universe_id int(11) NOT NULL,
+	Key ix_location_id (location_id),
+	PRIMARY KEY (location_id,location_name),
+	FOREIGN KEY (location_universe_id) REFERENCES universe (universe_id));
+
+
+CREATE TABLE place_of_birth
+	(place_of_birth_id int(11) NOT NULL AUTO_INCREMENT,
+	place_of_birth_name varchar(80) NOT NULL, 
+	Key ix_place_of_birth_id (place_of_birth_id),
+	PRIMARY KEY (place_of_birth_id),
+	UNIQUE (place_of_birth_name));
+
+
 CREATE TABLE school 
 	(school_id int(11) NOT NULL AUTO_INCREMENT,
 	school_fb_id varchar(40) NOT NULL,
@@ -73,9 +92,13 @@ CREATE TABLE diseases
 	PRIMARY KEY (disease_id));
 
 
-CREATE TABLE locations 
-	(location_id int(11) NOT NULL AUTO_INCREMENT,
-	location_name varchar(80) NOT NULL, 
-	location_universe_fb_id varchar(40) NOT NULL,
-	PRIMARY KEY (location_id,location_name),
-	FOREIGN KEY (location_universe_fb_id) REFERENCES universe (universe_fb_id));
+CREATE TABLE characters
+	(character_id int(11) NOT NULL AUTO_INCREMENT,
+	character_fb_id varchar(40) NOT NULL,
+	character_name varchar(80) NOT NULL,
+	character_place_of_birth_id int(11) NOT NULL,
+	PRIMARY KEY (character_id),
+	FOREIGN KEY (character_place_of_birth_id) REFERENCES place_of_birth(place_of_birth_id));
+
+
+
