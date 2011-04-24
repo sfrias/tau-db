@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS characters_and_universes;
 DROP TABLE IF EXISTS characters;
 DROP TABLE IF EXISTS locations;
 DROP TABLE IF EXISTS place_of_birth;

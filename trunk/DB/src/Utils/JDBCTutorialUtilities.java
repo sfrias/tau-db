@@ -41,9 +41,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Hashtable;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.Properties;
 import java.util.TreeMap;
 
@@ -139,7 +138,7 @@ public class JDBCTutorialUtilities {
 	}
 
 
-	public static void updateSQLFiles(String table, String insertStatement,
+	public static void createSqlTableFromDumps(String table, String insertStatement,
 			String dumpFileName, int splitNum, int attrNum)
 	throws IOException {
 		File pathDir = new File(".");
@@ -250,7 +249,8 @@ public class JDBCTutorialUtilities {
 	}
 
 
-	private static void updateCharactersAndUniverseTable(DatabaseManager dbManager, String insertStatement, int splitNum, int interestingFieldNum) throws IOException{
+	private static void createJoinedCharactersTable(DatabaseManager dbManager, String insertStatement, String interestingTable, int splitNum, int interestingFieldNum) throws IOException{
+
 		File pathDir = new File(".");
 
 		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
@@ -263,20 +263,27 @@ public class JDBCTutorialUtilities {
 
 		bufferedReader.readLine();
 		String lineRead;
-		
-		TreeMap<String, Integer> universeMap = generateHashMapFromQuery(dbManager, "SELECT * FROM universe", 1, 3);
-		TreeMap<String, Integer> charactersMap = generateHashMapFromQuery(dbManager, "SELECT * FROM characters", 1, 3);
+
+		TreeMap<String, Integer> universeMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + interestingTable, 1, 3);
+		TreeMap<String, Integer> charactersMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters", 1, 3);
 
 		int unspecifiedId = universeMap.get("Unspecified");
 		while ((lineRead = bufferedReader.readLine()) != null) {
 			String [] strarr = lineRead.split("\t", splitNum);
-			String [] valueArr = strarr[interestingFieldNum].split(",");
-			//int currentId = charactersMap.get(strarr[0]);
+			String [] valueArr = strarr[interestingFieldNum-1].split(",");
 			for (int i = 0; i < valueArr.length; i++) {
 				if (!valueArr[i].equals("")) {
-					bufferedWriter.append(insertStatement);
-					bufferedWriter.append("'" + charactersMap.get(strarr[0]) + "', '" + universeMap.get(valueArr[i]) + "'));\n");
-					bufferedWriter.flush();
+					if (universeMap.get(valueArr[i])== null){
+						System.out.println(interestingTable + " " + valueArr[i] + " id equals null");
+					}
+					else if (charactersMap.get(strarr[0])== null){
+						System.out.println("character " + strarr[i] + " id equals null");
+					}
+					else{
+						bufferedWriter.append(insertStatement);
+						bufferedWriter.append("'" + charactersMap.get(strarr[0]) + "', '" + universeMap.get(valueArr[i]) + "');\n");
+						bufferedWriter.flush();
+					}
 				}
 			}
 			if (valueArr.length == 0){
@@ -284,38 +291,12 @@ public class JDBCTutorialUtilities {
 				bufferedWriter.append("'"+ charactersMap.get(strarr[0]) + "', '" + unspecifiedId + "');");
 			}
 		}
-		
+
 		bufferedWriter.close();
 		bufferedReader.close();
 
 	}
-
-
-	private static TreeMap<String, Integer> generateHashMapFromQuery(DatabaseManager dbManager, String query,  int intCol, int stringCol) {
-		
-		ResultSet rs = dbManager.executeQuery(query);
-		TreeMap<String, Integer> hashMap = new TreeMap<String, Integer>();
-		
-		try {
-			while (rs.next()) {
-			      int id = rs.getInt(intCol);
-			      System.out.println("id=" + id);
-			      String name = rs.getString(stringCol);
-			      hashMap.put(name, id);
-			    }
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		try {
-			rs.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return hashMap;
-	}
-
+	
 	public static void main(String args[]) throws IOException {
 
 		//downloadAndExtractDumps();
@@ -326,40 +307,52 @@ public class JDBCTutorialUtilities {
 		if(sqlFile.exists())
 			sqlFile.delete();
 
+		createSqlTableFromDumps("", "INSERT INTO species (species_name, species_fb_id) values(", "character_species.tsv",4, 2);
+		System.out.println("Finished species");
+		
+		createSqlTableFromDumps("", "INSERT INTO creator (creator_name, creator_fb_id) values(", "fictional_character_creator.tsv",3, 2);
+		System.out.println("Finished creator");
 
-		updateSQLFiles("", "INSERT INTO species (species_name, species_fb_id) values(",
-				"character_species.tsv",4, 2);
-		updateSQLFiles("", "INSERT INTO creator (creator_name, creator_fb_id) values(",
-				"fictional_character_creator.tsv",3, 2);
-		updateSQLFiles("","INSERT INTO organization (organization_name, organization_fb_id) values(",
-				"fictional_organization.tsv", 7, 2);
-		updateSQLFiles("","INSERT INTO gender (gender_name, gender_fb_id) values(",
-				"character_gender.tsv", 3, 2);
-		updateSQLFiles("","INSERT INTO universe (universe_name, universe_fb_id) values(",
-				"fictional_universe.tsv", 13, 2);
-		updateSQLFiles("","INSERT INTO school (school_name, school_fb_id) values(",
-				"school_in_fiction.tsv", 3, 2);
-		updateSQLFiles("","INSERT INTO rank (rank_name, rank_fb_id) values(",
-				"character_rank.tsv", 3, 2);
-		updateSQLFiles("","INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(",
-				"ethnicity_in_fiction.tsv", 3, 2);
-		updateSQLFiles("","INSERT INTO occupation (occupation_name, occupation_fb_id) values(",
-				"character_occupation.tsv", 3, 2);
-		updateSQLFiles("","INSERT INTO powers (power_name, power_fb_id) values(",
-				"character_powers.tsv", 3, 2);
-		updateSQLFiles("","INSERT INTO jobs (job_name, job_fb_id) values(",
-				"fictional_job_title.tsv", 3, 2);
-		updateSQLFiles("","INSERT INTO diseases (disease_name, disease_fb_id) values(",
-				"medical_condition_in_fiction.tsv", 3, 2);
+		createSqlTableFromDumps("", "INSERT INTO organization (organization_name, organization_fb_id) values(", "fictional_organization.tsv", 7, 2);
+		System.out.println("Finished organization");
 
+		createSqlTableFromDumps("", "INSERT INTO gender (gender_name, gender_fb_id) values(", "character_gender.tsv", 3, 2);
+		System.out.println("Finished gender");
 
-		updateSQLFiles("locations", "INSERT INTO locations (location_name,location_universe_id) values(",
-				"fictional_universe.tsv",13,-1);
+		createSqlTableFromDumps("", "INSERT INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv", 13, 2);
+		System.out.println("Finished universe");
 
-		updateSQLFiles("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(",
-				"fictional_character.tsv",27,-1);
+		createSqlTableFromDumps("", "INSERT INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv", 3, 2);
+		System.out.println("Finished school");
 
-		updateSQLFiles("characters", "INSERT INTO characters " + "(character_name," + "character_fb_id," + "character_place_of_birth_id) values(","fictional_character.tsv",27,-1);
-		updateCharactersAndUniverseTable(dbManager, "INSERT INTO characters_and_universes (character_id, universe_id) values(", 27, 12);
+		createSqlTableFromDumps("", "INSERT INTO rank (rank_name, rank_fb_id) values(", "character_rank.tsv", 3, 2);
+		System.out.println("Finished rank");
+
+		createSqlTableFromDumps("", "INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(", "ethnicity_in_fiction.tsv", 3, 2);
+		System.out.println("Finished ethnicity");
+
+		createSqlTableFromDumps("", "INSERT INTO occupation (occupation_name, occupation_fb_id) values(", "character_occupation.tsv", 3, 2);
+		System.out.println("Finished occupation");
+
+		createSqlTableFromDumps("", "INSERT INTO powers (power_name, power_fb_id) values(", "character_powers.tsv", 3, 2);
+		System.out.println("Finished powers");
+
+		createSqlTableFromDumps("", "INSERT INTO jobs (job_name, job_fb_id) values(", "fictional_job_title.tsv", 3, 2);
+		System.out.println("Finished jobs");
+
+		createSqlTableFromDumps("", "INSERT INTO diseases (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2);
+		System.out.println("Finished diseases");
+
+		createSqlTableFromDumps("locations", "INSERT INTO locations (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
+		System.out.println("Finished locations");
+
+		createSqlTableFromDumps("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(", "fictional_character.tsv",27,-1);
+		System.out.println("Finished place_of_birth");
+
+		createSqlTableFromDumps("characters", "INSERT INTO characters " + "(character_name," + "character_fb_id," + "character_place_of_birth_id) values(","fictional_character.tsv",27,-1);
+		System.out.println("Finished characters");
+		
+		createJoinedCharactersTable(dbManager, "INSERT INTO characters_and_universes (characters_and_universes_character_id, characters_and_universes_universe_id) values(", "universe", 27, 12);
+		
 	}
 }
