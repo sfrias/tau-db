@@ -243,15 +243,17 @@ public class JDBCTutorialUtilities {
 			bufferedWriter.append("'Unspecified', 'Unspecified');\n");
 			bufferedWriter.flush();
 		}
-
 		bufferedWriter.close();
 		bufferedReader.close();
+		fileReader.close();
+		fileWriter.close();
 	}
 
 
 	private static void createJoinedCharactersTable(DatabaseManager dbManager, String insertStatement, String interestingTable, int splitNum, int interestingFieldNum) throws IOException{
 
 		File pathDir = new File(".");
+
 
 		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
 		FileWriter fileWriter = new FileWriter(sqlFile, true);
@@ -265,18 +267,30 @@ public class JDBCTutorialUtilities {
 		String lineRead;
 
 		TreeMap<String, Integer> universeMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + interestingTable, 1, 3);
-		TreeMap<String, Integer> charactersMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters", 1, 3);
+		TreeMap<String, Integer> charactersMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters", 1, 2);
 
 		int unspecifiedId = universeMap.get("Unspecified");
 		while ((lineRead = bufferedReader.readLine()) != null) {
 			String [] strarr = lineRead.split("\t", splitNum);
+			String tempString = strarr[interestingFieldNum-1].replace(", ", "~");
+			strarr[interestingFieldNum-1] = tempString;
 			String [] valueArr = strarr[interestingFieldNum-1].split(",");
 			for (int i = 0; i < valueArr.length; i++) {
+				tempString = valueArr[i].replace("~", ", ");
+				valueArr[i] = tempString;
 				if (!valueArr[i].equals("")) {
 					if (universeMap.get(valueArr[i])== null){
-						System.out.println(interestingTable + " " + valueArr[i] + " id equals null");
+						if (i+1 < valueArr.length && universeMap.get(valueArr[i]+","+valueArr[i+1])!=null){
+							valueArr[i]=valueArr[i]+valueArr[i+1];
+							System.out.println("found a value between two cells- " + interestingTable + " " + valueArr[i]);
+						}
+						else {
+							System.out.println(interestingTable + " " + valueArr[i] + " id equals null");
+						}
 					}
-					else if (charactersMap.get(strarr[0])== null){
+				}
+					
+				else if (charactersMap.get(strarr[1])== null){
 						System.out.println("character " + strarr[i] + " id equals null");
 					}
 					else{
@@ -285,7 +299,7 @@ public class JDBCTutorialUtilities {
 						bufferedWriter.flush();
 					}
 				}
-			}
+			
 			if (valueArr.length == 0){
 				bufferedWriter.append(insertStatement);
 				bufferedWriter.append("'"+ charactersMap.get(strarr[0]) + "', '" + unspecifiedId + "');");
@@ -300,12 +314,15 @@ public class JDBCTutorialUtilities {
 	public static void main(String args[]) throws IOException {
 
 		//downloadAndExtractDumps();
-		DatabaseManager dbManager = new DatabaseManager();
-
+		
+		
 		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
 
-		if(sqlFile.exists())
-			sqlFile.delete();
+		if(sqlFile.exists()) {
+			if(!sqlFile.delete()){
+				System.out.println("Cannot delete populate-tabels");
+			}
+		}
 
 		createSqlTableFromDumps("", "INSERT INTO species (species_name, species_fb_id) values(", "character_species.tsv",4, 2);
 		System.out.println("Finished species");
@@ -343,16 +360,20 @@ public class JDBCTutorialUtilities {
 		createSqlTableFromDumps("", "INSERT INTO diseases (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2);
 		System.out.println("Finished diseases");
 
-		createSqlTableFromDumps("locations", "INSERT INTO locations (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
-		System.out.println("Finished locations");
+		//createSqlTableFromDumps("locations", "INSERT INTO locations (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
+		//System.out.println("Finished locations");
 
 		createSqlTableFromDumps("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(", "fictional_character.tsv",27,-1);
 		System.out.println("Finished place_of_birth");
 
-		createSqlTableFromDumps("characters", "INSERT INTO characters " + "(character_name," + "character_fb_id," + "character_place_of_birth_id) values(","fictional_character.tsv",27,-1);
+		createSqlTableFromDumps("characters", "INSERT INTO characters (character_name,character_fb_id,character_place_of_birth_id) values(","fictional_character.tsv",27,-1);
 		System.out.println("Finished characters");
+
+	DatabaseManager dbManager = new DatabaseManager();
+	
+		createJoinedCharactersTable(dbManager, "INSERT IGNORE INTO characters_and_universes (characters_and_universes_character_id, characters_and_universes_universe_id) values(", "universe", 27, 12);
 		
-		createJoinedCharactersTable(dbManager, "INSERT INTO characters_and_universes (characters_and_universes_character_id, characters_and_universes_universe_id) values(", "universe", 27, 12);
-		
+		System.out.println("HILA FIND THE BUG OF UNCLOSED CONNEXTION");
+	
 	}
 }

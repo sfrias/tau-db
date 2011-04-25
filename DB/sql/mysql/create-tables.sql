@@ -104,5 +104,6 @@ CREATE TABLE characters
 CREATE TABLE characters_and_universes(
 	characters_and_universes_character_id int(11) NOT NULL,
 	characters_and_universes_universe_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_universes_character_id,characters_and_universes_universe_id),
 	FOREIGN KEY (characters_and_universes_character_id) REFERENCES characters(character_id),
 	FOREIGN KEY (characters_and_universes_universe_id) REFERENCES universe(universe_id));
