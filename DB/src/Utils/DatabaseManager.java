@@ -1,5 +1,11 @@
 package Utils;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,7 +25,7 @@ public class DatabaseManager {
 	
 	public DatabaseManager(){
 		try {
-			if (connectionDriver== null){
+			if (connectionDriver == null){
 				connectionDriver = new JDCConnectionDriver("com.mysql.jdbc.Driver", URL, USERNAME, PASSWORD);
 			}
 		} catch (ClassNotFoundException e) {
@@ -65,6 +71,46 @@ public class DatabaseManager {
 		}
 	}
 	
+	public void executeBatchFile(String batchFileLocation) {
+		
+		try {
+			System.out.println("Starting executing batch file " + batchFileLocation);
+
+			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			Statement stmt = conn.createStatement();
+			
+			FileInputStream fileInputStream = new FileInputStream(batchFileLocation);
+			InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+			
+			String str;
+			while ((str = bufferedReader.readLine()) != null) {
+				if (!str.equals("")){
+					stmt.addBatch(str);
+				}
+			}
+
+			bufferedReader.close();
+			inputStreamReader.close();
+			fileInputStream.close();
+
+			stmt.executeBatch();
+			stmt.close();
+			conn.close();
+			
+			System.out.println("Finished executing batch file " + batchFileLocation);
+				
+		} catch (SQLException e) {
+			System.err.println("An SQLException was thrown at executeBatchFile("+batchFileLocation+")");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public ResultSet executeQuery(String query) {
 		
 		try {
@@ -82,7 +128,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	public TreeMap<String, Integer> generateHashMapFromQuery(String query,  int intCol, int stringCol) {
+	public TreeMap<String, Integer> generateHashMapFromQuery(String query,  int intCol, int stringCol) throws UnsupportedEncodingException {
 
 		
 		try {
@@ -95,7 +141,6 @@ public class DatabaseManager {
 			try {
 				while (resultSet.next()) {
 					int id = resultSet.getInt(intCol);
-					System.out.println("id=" + id);
 					String name = resultSet.getString(stringCol);
 					hashMap.put(name, id);
 				}
@@ -112,7 +157,7 @@ public class DatabaseManager {
 			return null;
 		}
 	}
-	
+
 //	
 //	public static void main (String agrs[]){
 //		DatabaseManager dbManager = new DatabaseManager();

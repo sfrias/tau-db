@@ -14,11 +14,3 @@ DROP TABLE IF EXISTS occupation;
 DROP TABLE IF EXISTS powers;
 DROP TABLE IF EXISTS jobs;
 DROP TABLE IF EXISTS diseases;
-
-
-
-
-
-
-
-

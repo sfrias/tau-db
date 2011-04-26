@@ -42,7 +42,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Properties;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.TreeMap;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
@@ -51,31 +52,19 @@ import org.apache.tools.tar.TarInputStream;
 
 public class JDBCTutorialUtilities {
 
-	private static final String CREATE_TABLES_SQL_FILE_PATH = "sql/mysql/populate-tables.sql";
-	public String dbms;
-	public String jarFile;
-	public String dbName;
-	public String userName;
-	public String password;
-	public String urlString;
-	public String Unspecified = "Unspecified";
-	private String driver;
-	private String serverName;
-	private int portNumber;
-	private Properties prop;
+	private static final String CREATE_TABLES_SQL_FILE_PATH = "sql/mysql/create-tables.sql";
+	private static final String DROP_TABLES_SQL_FILE_PATH = "sql/mysql/drop-tables.sql";
+	private static final String POPULATE_TABLES_SQL_FILE_PATH = "sql/mysql/populate-tables.sql";
 
-	public static void downloadAndExtractDumps() throws IOException {
+
+	private static void downloadAndExtractDumps() throws IOException {
 		File pathDir = new File(".");
 		if (!pathDir.exists()) {
 			pathDir.mkdir();
 		}
 
-		BufferedInputStream in = new BufferedInputStream(
-				new java.net.URL(
-				"http://download.freebase.com/datadumps/latest/browse/fictional_universe.tar.bz2")
-				.openStream());
-		File save = new File(pathDir.getAbsolutePath() + File.separatorChar
-				+ "fictional_universe.tar.bz2");
+		BufferedInputStream in = new BufferedInputStream(new java.net.URL("http://download.freebase.com/datadumps/latest/browse/fictional_universe.tar.bz2").openStream());
+		File save = new File(pathDir.getAbsolutePath() + File.separatorChar + "fictional_universe.tar.bz2");
 
 		FileOutputStream fos = new FileOutputStream(save);
 		BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
@@ -110,17 +99,13 @@ public class JDBCTutorialUtilities {
 		// starting tar decompression
 		FileInputStream CompressedTarIn = new FileInputStream(CompressedTar);
 		TarInputStream tarIn = new TarInputStream(CompressedTarIn);
-		File extractDir = new File(pathDir.getAbsolutePath()
-				+ File.separatorChar + "temp");
+		File extractDir = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp");
 		if (!extractDir.exists()) {
 			extractDir.mkdir();
 		}
 		TarEntry tarEntry = tarIn.getNextEntry();
-		while (tarEntry != null) {
-			File destPath = new File(extractDir.getAbsolutePath()
-					+ File.separatorChar + tarEntry.getName());
-			System.out.println("Processing " + File.separatorChar
-					+ destPath.getAbsoluteFile());
+		while (tarEntry != null) {File destPath = new File(extractDir.getAbsolutePath() + File.separatorChar + tarEntry.getName());
+			System.out.println("Processing " + File.separatorChar + destPath.getAbsoluteFile());
 			if (!tarEntry.isDirectory()) {
 				FileOutputStream fout = new FileOutputStream(destPath);
 				tarIn.copyEntryContents(fout);
@@ -136,19 +121,134 @@ public class JDBCTutorialUtilities {
 		System.out.println("finished extracting file!");
 	}
 
+	private static void populateSimpleTables(DatabaseManager dbManager, String table, String insertStatement, String dumpFileName, int splitNum, int attrNum) throws IOException, SQLException {
 
-	public static void createSqlTableFromDumps(String table, String insertStatement,
-			String dumpFileName, int splitNum, int attrNum)
-	throws IOException {
 		File pathDir = new File(".");
 
-		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
+		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + dumpFileName);
+		FileReader fileReader = new FileReader(dumpFile);
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		
+		JDCConnection conn = (JDCConnection) dbManager.getConnection();
+		Statement stmt = conn.createStatement();
+		
+		
+		bufferedReader.readLine();
+		String lineRead;
+		String[] strarr;
+		String tempString;
+		
+		StringBuilder sqlCommand = new StringBuilder();
+		if (table.equals("locations")){
+			while ((lineRead = bufferedReader.readLine()) != null) {
+				strarr = lineRead.split("\t", splitNum);
+				strarr[0] = strarr[0].replace("\'", "\\'");
+				String [] locationarr = strarr[2].split(",");
+				int len = locationarr.length;
+
+				for (int i = 0; i < len; i++) {
+					tempString = locationarr[i].replace("\'", "\\'");
+					locationarr[i] = tempString;
+					if (!locationarr[i].equals("")) {
+						sqlCommand.append(insertStatement);
+						sqlCommand.append("'" + locationarr[i] + "', " + "(SELECT universe_id FROM universe Where universe_fb_id LIKE '" + strarr[1] + "' AND universe_name like'" + strarr[0]+ "'));\n");
+						stmt.addBatch(sqlCommand.toString());
+						sqlCommand.setLength(0);
+					}
+
+				}
+			}
+			sqlCommand.append(insertStatement);
+			sqlCommand.append("'Unspecified', (SELECT universe_id FROM universe Where universe_fb_id LIKE 'Unspecified'));\n");
+			stmt.addBatch(sqlCommand.toString());
+			sqlCommand.setLength(0);
+		}
+
+		else if (table.equals("place_of_birth")){	
+			while ((lineRead = bufferedReader.readLine()) != null) {
+				strarr = lineRead.split("\t", splitNum);
+				tempString = strarr[3].replace("\'", "\\'");
+				strarr[3] = tempString;
+				if (! strarr[3].equals("")) {
+					sqlCommand.append(insertStatement);
+					sqlCommand.append("'" +  strarr[3] + "');\n");
+					stmt.addBatch(sqlCommand.toString());
+					sqlCommand.setLength(0);
+				}
+
+			}
+			sqlCommand.append(insertStatement);
+			sqlCommand.append("'Unspecified');\n");
+			stmt.addBatch(sqlCommand.toString());
+			sqlCommand.setLength(0);
+		}
+
+		else if (table.equals("characters")){
+			while ((lineRead = bufferedReader.readLine()) != null) {
+				strarr = lineRead.split("\t", 27);
+				sqlCommand.append(insertStatement);
+
+				for (int i = 0; i <4; i++) {
+					tempString = strarr[i].replace("\'", "\\'");
+					strarr[i] = tempString;
+					if (i == 2) {
+						continue;
+					}
+					else if (i==3) {
+						if (strarr[3].equals("")){
+							strarr[3]="Unspecified";
+						}
+
+						sqlCommand.append("(SELECT place_of_birth_id FROM place_of_birth Where place_of_birth_name LIKE '" + strarr[3] + "'));\n");
+						stmt.addBatch(sqlCommand.toString());
+						sqlCommand.setLength(0);
+					}
+					else{
+						sqlCommand.append("'" + strarr[i] + "', ");
+					}
+				}
+			}
+		}
+
+		else {
+			while ((lineRead = bufferedReader.readLine()) != null) {
+				strarr = lineRead.split("\t", splitNum);
+				sqlCommand.append(insertStatement);
+				for (int i = 0; i < attrNum - 1; i++) {
+					tempString = strarr[i].replace("\'", "\\'");
+					strarr[i] = tempString;
+					sqlCommand.append("'" + strarr[i] + "', ");
+				}
+				sqlCommand.append("'" + strarr[attrNum - 1] + "');\n");
+				stmt.addBatch(sqlCommand.toString());
+				sqlCommand.setLength(0);
+			}
+			
+			sqlCommand.append(insertStatement);
+			sqlCommand.append("'Unspecified', 'Unspecified');\n");
+			stmt.addBatch(sqlCommand.toString());
+			sqlCommand.setLength(0);
+			
+		}
+		
+		stmt.executeBatch();
+		stmt.close();
+		conn.close();
+		
+		bufferedReader.close();
+		fileReader.close();
+		
+	}
+
+	private static void populateSQLBatchFile2(String table, String insertStatement, String dumpFileName, int splitNum, int attrNum) throws IOException {
+
+		File pathDir = new File(".");
+
+		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
 		FileWriter fileWriter = new FileWriter(sqlFile, true);
 		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar
-				+ "temp" + File.separatorChar + "fictional_universe"
-				+ File.separatorChar + dumpFileName);
+		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + dumpFileName);
 		FileReader fileReader = new FileReader(dumpFile);
 		BufferedReader bufferedReader = new BufferedReader(fileReader);
 
@@ -156,19 +256,19 @@ public class JDBCTutorialUtilities {
 		String lineRead;
 		String[] strarr;
 		String tempString;
-		String locationarr[];
-
+		
 		if (table.equals("locations")){
 			while ((lineRead = bufferedReader.readLine()) != null) {
 				strarr = lineRead.split("\t", splitNum);
 				strarr[0] = strarr[0].replace("\'", "\\'");
-				locationarr = strarr[2].split(",");
+				String [] locationarr = strarr[2].split(",");
 				int len = locationarr.length;
 
 				for (int i = 0; i < len; i++) {
 					tempString = locationarr[i].replace("\'", "\\'");
 					locationarr[i] = tempString;
 					if (!locationarr[i].equals("")) {
+						
 						bufferedWriter.append(insertStatement);
 						bufferedWriter.append("'" + locationarr[i] + "', " + "(SELECT universe_id FROM universe Where universe_fb_id LIKE '" + strarr[1] + "' AND universe_name like'" + strarr[0]+ "'));\n");
 						bufferedWriter.flush();
@@ -177,10 +277,8 @@ public class JDBCTutorialUtilities {
 				}
 			}
 			bufferedWriter.append(insertStatement);
-			bufferedWriter.append("'Unspecified', " + "(SELECT universe_id FROM universe Where universe_fb_id LIKE 'Unspecified'));\n");
+			bufferedWriter.append("'Unspecified', (SELECT universe_id FROM universe Where universe_fb_id LIKE 'Unspecified'));\n");
 		}
-
-
 
 		else if (table.equals("place_of_birth")){	
 			while ((lineRead = bufferedReader.readLine()) != null) {
@@ -221,10 +319,8 @@ public class JDBCTutorialUtilities {
 						bufferedWriter.append("'" + strarr[i] + "', ");
 					}
 				}
-
 			}
 		}
-
 
 		else {
 			while ((lineRead = bufferedReader.readLine()) != null) {
@@ -242,6 +338,7 @@ public class JDBCTutorialUtilities {
 			bufferedWriter.append("'Unspecified', 'Unspecified');\n");
 			bufferedWriter.flush();
 		}
+		
 		bufferedWriter.close();
 		bufferedReader.close();
 		fileReader.close();
@@ -253,35 +350,38 @@ public class JDBCTutorialUtilities {
 
 		File pathDir = new File(".");
 
-
-		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
+		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
 		FileWriter fileWriter = new FileWriter(sqlFile, true);
 		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
 		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + "fictional_character.tsv");
-		//FileReader fileReader = new FileReader(dumpFile);
 		FileInputStream fis = new FileInputStream(dumpFile);
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
 
 		bufferedReader.readLine();
 		String lineRead;
 
-		TreeMap<String, Integer> universeMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + interestingTable, 1, 3);
-		TreeMap<String, Integer> charactersMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters", 1, 2);
+		TreeMap<String, Integer> interestingValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + interestingTable, 1, 3);
+		TreeMap<String, Integer> charactersMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters", 1, 3);
 
-		int unspecifiedId = universeMap.get("Unspecified");
+		int unspecifiedId = interestingValuesMap.get("Unspecified");
+
 		while ((lineRead = bufferedReader.readLine()) != null) {
+
 			String [] strarr = lineRead.split("\t", splitNum);
 			String tempString = strarr[interestingFieldNum-1].replace(", ", "~");
 			strarr[interestingFieldNum-1] = tempString;
 			String [] valueArr = strarr[interestingFieldNum-1].split(",");
+
 			for (int i = 0; i < valueArr.length; i++) {
+
 				tempString = valueArr[i].replace("~", ", ");
 				valueArr[i] = tempString;
+
 				if (!valueArr[i].equals("")) {
-					if (universeMap.get(valueArr[i])== null){
-						if (i+1 < valueArr.length && universeMap.get(valueArr[i]+","+valueArr[i+1])!=null){
-							valueArr[i]=valueArr[i]+valueArr[i+1];
+					if (interestingValuesMap.get(valueArr[i]) == null){
+						if (i+1 < valueArr.length && interestingValuesMap.get(valueArr[i] + "," + valueArr[i+1]) != null){
+							valueArr[i] = valueArr[i] + valueArr[i+1];
 							System.out.println("found a value between two cells- " + interestingTable + " " + valueArr[i]);
 						}
 						else {
@@ -289,17 +389,17 @@ public class JDBCTutorialUtilities {
 						}
 					}
 				}
-					
-				else if (charactersMap.get(strarr[1])== null){
-						System.out.println("character " + strarr[i] + " id equals null");
-					}
-					else{
-						bufferedWriter.append(insertStatement);
-						bufferedWriter.append("'" + charactersMap.get(strarr[0]) + "', '" + universeMap.get(valueArr[i]) + "');\n");
-						bufferedWriter.flush();
-					}
+
+				else if (charactersMap.get(strarr[0])== null){
+					System.out.println("character " + strarr[0] + " id equals null");
 				}
-			
+				else{
+					bufferedWriter.append(insertStatement);
+					bufferedWriter.append("'" + charactersMap.get(strarr[0]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
+					bufferedWriter.flush();
+				}
+			}
+
 			if (valueArr.length == 0){
 				bufferedWriter.append(insertStatement);
 				bufferedWriter.append("'"+ charactersMap.get(strarr[0]) + "', '" + unspecifiedId + "');");
@@ -311,69 +411,157 @@ public class JDBCTutorialUtilities {
 
 	}
 	
-	public static void main(String args[]) throws IOException {
+	private static void populateJoinedTable(DatabaseManager dbManager, String insertStatement, String interestingTable, int splitNum, int interestingFieldNum) throws IOException, SQLException{
 
-		//downloadAndExtractDumps();
-		
-		
-		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
+		File pathDir = new File(".");
 
-		if(sqlFile.exists()) {
-			if(!sqlFile.delete()){
-				System.out.println("Cannot delete populate-tabels");
+		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + "fictional_character.tsv");
+		FileInputStream fis = new FileInputStream(dumpFile);
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+
+		TreeMap<String, Integer> interestingValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + interestingTable, 1, 3);
+		TreeMap<String, Integer> charactersMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters", 1, 3);
+
+		int unspecifiedId = interestingValuesMap.get("Unspecified");
+
+		JDCConnection conn = (JDCConnection) dbManager.getConnection();
+		Statement stmt = conn.createStatement();
+	
+		bufferedReader.readLine();
+		String lineRead;
+		StringBuilder sqlCommand = new StringBuilder();
+		
+		while ((lineRead = bufferedReader.readLine()) != null) {
+
+			String [] strarr = lineRead.split("\t", splitNum);
+			String tempString = strarr[interestingFieldNum-1].replace(", ", "~");
+			strarr[interestingFieldNum-1] = tempString;
+			String [] valueArr = strarr[interestingFieldNum-1].split(",");
+
+			for (int i = 0; i < valueArr.length; i++) {
+
+				tempString = valueArr[i].replace("~", ", ");
+				valueArr[i] = tempString;
+
+				if (!valueArr[i].equals("")) {
+					if (interestingValuesMap.get(valueArr[i]) == null){
+						if (i+1 < valueArr.length && interestingValuesMap.get(valueArr[i] + "," + valueArr[i+1]) != null){
+							valueArr[i] = valueArr[i] + valueArr[i+1];
+							System.out.println("found a value between two cells- " + interestingTable + " " + valueArr[i]);
+						}
+						else {
+							System.out.println(interestingTable + " " + valueArr[i] + " id equals null");
+						}
+					}
+				}
+
+				else if (charactersMap.get(strarr[0])== null){
+					System.out.println("character " + strarr[0] + " id equals null");
+				}
+				else{
+					sqlCommand.append(insertStatement);
+					sqlCommand.append("'" + charactersMap.get(strarr[0]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
+					stmt.addBatch(sqlCommand.toString());
+					sqlCommand.setLength(0);
+					
+				}
+			}
+
+			if (valueArr.length == 0){
+				sqlCommand.append(insertStatement);
+				sqlCommand.append("'"+ charactersMap.get(strarr[0]) + "', '" + unspecifiedId + "');");
+				stmt.addBatch(sqlCommand.toString());
+				sqlCommand.setLength(0);
 			}
 		}
 
-		createSqlTableFromDumps("", "INSERT INTO species (species_name, species_fb_id) values(", "character_species.tsv",4, 2);
-		System.out.println("Finished species");
+		stmt.executeBatch();
+		stmt.close();
+		conn.close();
+		bufferedReader.close();
+
+	}
+
+	public static void main(String args[]) throws IOException, SQLException {
+
+		long startTime = System.currentTimeMillis();
+		DatabaseManager dbManager = new DatabaseManager();
+
+		dbManager.executeBatchFile(DROP_TABLES_SQL_FILE_PATH);
+		dbManager.executeBatchFile(CREATE_TABLES_SQL_FILE_PATH);
+
+		//downloadAndExtractDumps();
+
+		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
+
+		if(sqlFile.exists()) {
+			if(!sqlFile.delete()){
+				System.out.println("Cannot delete populate-tables");
+			}
+		}
 		
-		createSqlTableFromDumps("", "INSERT INTO creator (creator_name, creator_fb_id) values(", "fictional_character_creator.tsv",3, 2);
+		populateSQLBatchFile2("", "INSERT INTO species (species_name, species_fb_id) values(", "character_species.tsv",4, 2);
+		System.out.println("Finished species");
+
+		populateSQLBatchFile2("", "INSERT INTO creator (creator_name, creator_fb_id) values(", "fictional_character_creator.tsv",3, 2);
 		System.out.println("Finished creator");
 
-		createSqlTableFromDumps("", "INSERT INTO organization (organization_name, organization_fb_id) values(", "fictional_organization.tsv", 7, 2);
+		populateSQLBatchFile2("", "INSERT INTO organization (organization_name, organization_fb_id) values(", "fictional_organization.tsv", 7, 2);
 		System.out.println("Finished organization");
 
-		createSqlTableFromDumps("", "INSERT INTO gender (gender_name, gender_fb_id) values(", "character_gender.tsv", 3, 2);
+		populateSQLBatchFile2("", "INSERT INTO gender (gender_name, gender_fb_id) values(", "character_gender.tsv", 3, 2);
 		System.out.println("Finished gender");
 
-		createSqlTableFromDumps("", "INSERT INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv", 13, 2);
+		populateSQLBatchFile2("", "INSERT INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv", 13, 2);
 		System.out.println("Finished universe");
 
-		createSqlTableFromDumps("", "INSERT INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv", 3, 2);
+		populateSQLBatchFile2("", "INSERT INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv", 3, 2);
 		System.out.println("Finished school");
 
-		createSqlTableFromDumps("", "INSERT INTO rank (rank_name, rank_fb_id) values(", "character_rank.tsv", 3, 2);
+		populateSQLBatchFile2("", "INSERT INTO rank (rank_name, rank_fb_id) values(", "character_rank.tsv", 3, 2);
 		System.out.println("Finished rank");
 
-		createSqlTableFromDumps("", "INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(", "ethnicity_in_fiction.tsv", 3, 2);
+		populateSQLBatchFile2("", "INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(", "ethnicity_in_fiction.tsv", 3, 2);
 		System.out.println("Finished ethnicity");
 
-		createSqlTableFromDumps("", "INSERT INTO occupation (occupation_name, occupation_fb_id) values(", "character_occupation.tsv", 3, 2);
+		populateSQLBatchFile2("", "INSERT INTO occupation (occupation_name, occupation_fb_id) values(", "character_occupation.tsv", 3, 2);
 		System.out.println("Finished occupation");
 
-		createSqlTableFromDumps("", "INSERT INTO powers (power_name, power_fb_id) values(", "character_powers.tsv", 3, 2);
+		populateSQLBatchFile2("", "INSERT INTO powers (power_name, power_fb_id) values(", "character_powers.tsv", 3, 2);
 		System.out.println("Finished powers");
 
-		createSqlTableFromDumps("", "INSERT INTO jobs (job_name, job_fb_id) values(", "fictional_job_title.tsv", 3, 2);
+		populateSQLBatchFile2("", "INSERT INTO jobs (job_name, job_fb_id) values(", "fictional_job_title.tsv", 3, 2);
 		System.out.println("Finished jobs");
 
-		createSqlTableFromDumps("", "INSERT INTO diseases (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2);
+		populateSQLBatchFile2("", "INSERT INTO diseases (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2);
 		System.out.println("Finished diseases");
 
-		createSqlTableFromDumps("locations", "INSERT INTO locations (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
+		populateSQLBatchFile2("locations", "INSERT INTO locations (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
 		System.out.println("Finished locations");
 
-		createSqlTableFromDumps("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(", "fictional_character.tsv",27,-1);
+		populateSQLBatchFile2("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(", "fictional_character.tsv",27,-1);
 		System.out.println("Finished place_of_birth");
 
-		createSqlTableFromDumps("characters", "INSERT INTO characters (character_name,character_fb_id,character_place_of_birth_id) values(","fictional_character.tsv",27,-1);
+		populateSQLBatchFile2("characters", "INSERT INTO characters (character_name,character_fb_id,character_place_of_birth_id) values(","fictional_character.tsv",27,-1);
 		System.out.println("Finished characters");
-
-		DatabaseManager dbManager = new DatabaseManager();
-	
-		createJoinedCharactersTable(dbManager, "INSERT IGNORE INTO characters_and_universes (characters_and_universes_character_id, characters_and_universes_universe_id) values(", "universe", 27, 12);
 		
-		System.out.println("HILA FIND THE BUG OF UNCLOSED CONNEXTION");
-	
+		System.out.println("Populating simple tables...");
+		dbManager.executeBatchFile(POPULATE_TABLES_SQL_FILE_PATH);
+
+		if(sqlFile.exists()) {
+			if(!sqlFile.delete()){
+				System.out.println("Cannot delete populate-tables");
+			}
+		}
+
+		createJoinedCharactersTable(dbManager, "INSERT IGNORE INTO characters_and_universes (characters_and_universes_character_id, characters_and_universes_universe_id) values(", "universe", 27, 12);	
+		
+		System.out.println("Populating joined tables...");
+		dbManager.executeBatchFile(POPULATE_TABLES_SQL_FILE_PATH);
+		System.out.println("Finished joined");
+		
+		long finishTime = System.currentTimeMillis();
+
+		System.out.println("operation took " + (startTime-finishTime) + "Millis");
 	}
 }
