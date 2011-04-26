@@ -562,6 +562,6 @@ public class JDBCTutorialUtilities {
 		
 		long finishTime = System.currentTimeMillis();
 
-		System.out.println("operation took " + (startTime-finishTime) + "Millis");
+		System.out.println("operation took " + (finishTime - startTime) + "Millis");
 	}
 }
