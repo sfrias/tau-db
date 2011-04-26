@@ -41,8 +41,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.Statement;
+import java.io.InputStreamReader;
 import java.util.Properties;
 import java.util.TreeMap;
 
@@ -260,8 +259,9 @@ public class JDBCTutorialUtilities {
 		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
 		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + "fictional_character.tsv");
-		FileReader fileReader = new FileReader(dumpFile);
-		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		//FileReader fileReader = new FileReader(dumpFile);
+		FileInputStream fis = new FileInputStream(dumpFile);
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
 
 		bufferedReader.readLine();
 		String lineRead;
@@ -360,8 +360,8 @@ public class JDBCTutorialUtilities {
 		createSqlTableFromDumps("", "INSERT INTO diseases (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2);
 		System.out.println("Finished diseases");
 
-		//createSqlTableFromDumps("locations", "INSERT INTO locations (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
-		//System.out.println("Finished locations");
+		createSqlTableFromDumps("locations", "INSERT INTO locations (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
+		System.out.println("Finished locations");
 
 		createSqlTableFromDumps("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(", "fictional_character.tsv",27,-1);
 		System.out.println("Finished place_of_birth");
@@ -369,7 +369,7 @@ public class JDBCTutorialUtilities {
 		createSqlTableFromDumps("characters", "INSERT INTO characters (character_name,character_fb_id,character_place_of_birth_id) values(","fictional_character.tsv",27,-1);
 		System.out.println("Finished characters");
 
-	DatabaseManager dbManager = new DatabaseManager();
+		DatabaseManager dbManager = new DatabaseManager();
 	
 		createJoinedCharactersTable(dbManager, "INSERT IGNORE INTO characters_and_universes (characters_and_universes_character_id, characters_and_universes_universe_id) values(", "universe", 27, 12);
 		
