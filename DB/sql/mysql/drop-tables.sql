@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS cities;
 DROP TABLE IF EXISTS conn2;
 DROP TABLE IF EXISTS colors;
 DROP TABLE IF EXISTS conn3;
+DROP TABLE IF EXISTS characters_and_species;
 DROP TABLE IF EXISTS characters_and_universes;
 DROP TABLE IF EXISTS characters_and_genders;
 DROP TABLE IF EXISTS characters;
