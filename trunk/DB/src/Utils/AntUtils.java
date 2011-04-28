@@ -10,6 +10,7 @@ public class AntUtils{
 
 	public enum Targets{
 		SETUP,
+		BUILD,
 		POPULATE;		
 	}
 	

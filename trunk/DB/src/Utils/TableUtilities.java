@@ -22,7 +22,7 @@ import org.apache.tools.tar.TarInputStream;
 
 import Utils.AntUtils.Targets;
 
-public class JDBCTutorialUtilities {
+public class TableUtilities {
 
 	private static final String CHARSET = "UTF-8";
 	private static final String POPULATE_TABLES_SQL_FILE_PATH = "sql/mysql/populate-tables.sql";
@@ -287,14 +287,6 @@ public class JDBCTutorialUtilities {
 
 	public static void main(String args[]) throws IOException, SQLException {
 
-		SortedMap<String, Charset> charsets = Charset.availableCharsets();
-
-		Object [] values = charsets.values().toArray();
-
-		for (int i=0; i < values.length; i++){
-			System.out.println(((Charset) values[i]).name());
-		}
-
 		long startTime = System.currentTimeMillis();
 
 		//downloadAndExtractDumps();
@@ -362,6 +354,8 @@ public class JDBCTutorialUtilities {
 
 		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_universes (characters_and_universes_character_id, characters_and_universes_universe_id) values(", "universe", 27, 12);	
 		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_genders (characters_and_genders_character_id, characters_and_genders_gender_id) values(", "gender", 27, 5);	
+		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_species (characters_and_species_character_id, characters_and_species_species_id) values(", "species", 27, 6);	
+		AntUtils.executeTarget(Targets.BUILD);
 
 		AntUtils.executeTarget(Targets.POPULATE);
 
