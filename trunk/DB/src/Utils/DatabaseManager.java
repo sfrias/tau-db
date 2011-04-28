@@ -6,28 +6,31 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
 
 public class DatabaseManager {
-	
+
 	private final static String USERNAME = "root";
 	private final static String PASSWORD = "mapo00";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
+	private static DatabaseManager instance = null;
+
 	private static JDCConnectionDriver connectionDriver;
 
 	private static Properties connProperties;
-	
-	
-	public DatabaseManager(){
+
+
+	private DatabaseManager(){
 		try {
-			if (connectionDriver == null){
-				connectionDriver = new JDCConnectionDriver("com.mysql.jdbc.Driver", URL, USERNAME, PASSWORD);
-			}
+			connectionDriver = new JDCConnectionDriver("com.mysql.jdbc.Driver", URL, USERNAME, PASSWORD);
 		} catch (ClassNotFoundException e) {
 			System.err.println("Error initializing JDCConnectionDriver - class " + e.getMessage() + " not found!");
 		} catch (InstantiationException e) {
@@ -37,15 +40,23 @@ public class DatabaseManager {
 		} catch (SQLException e) {
 			System.err.println("Error initializing JDCConnectionDriver - an SQLException was thrown");
 		}
-		
-		connProperties = new Properties();
-		
+
+		connProperties = new Properties(); 
 	}
-	
+
+	public static DatabaseManager getInstance(){
+
+		if (instance == null){
+			instance = new DatabaseManager();
+		}
+		
+		return instance;
+	}
+
 	public JDCConnectionDriver getConnectionDriver() {
 		return connectionDriver;
 	}
-	
+
 	public JDCConnection getConnection() {
 		try {
 			return (JDCConnection) connectionDriver.connect(URL, connProperties);
@@ -56,7 +67,7 @@ public class DatabaseManager {
 	}
 
 	public boolean executeStatement(String statement) {
-		
+
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			Statement stmt = conn.createStatement();
@@ -64,25 +75,25 @@ public class DatabaseManager {
 			stmt.close();
 			conn.close();
 			return ok;
-			
+
 		} catch (SQLException e) {
 			System.err.println("An SQLException was thrown at executeStatement("+statement+")");
 			return false;
 		}
 	}
-	
+
 	public void executeBatchFile(String batchFileLocation) {
-		
+
 		try {
 			System.out.println("Starting executing batch file " + batchFileLocation);
 
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			Statement stmt = conn.createStatement();
-			
+
 			FileInputStream fileInputStream = new FileInputStream(batchFileLocation);
 			InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
 			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-			
+
 			String str;
 			while ((str = bufferedReader.readLine()) != null) {
 				if (!str.equals("")){
@@ -97,9 +108,9 @@ public class DatabaseManager {
 			stmt.executeBatch();
 			stmt.close();
 			conn.close();
-			
+
 			System.out.println("Finished executing batch file " + batchFileLocation);
-				
+
 		} catch (SQLException e) {
 			System.err.println("An SQLException was thrown at executeBatchFile("+batchFileLocation+")");
 		} catch (FileNotFoundException e) {
@@ -110,9 +121,9 @@ public class DatabaseManager {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public ResultSet executeQuery(String query) {
-		
+
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			Statement stmt = conn.createStatement();
@@ -121,21 +132,44 @@ public class DatabaseManager {
 			stmt.close();
 			conn.close(); 
 			return resultSet;
-			
+
 		} catch (SQLException e) {
 			System.err.println("An SQLException was thrown at executeQuery("+query+")");
 			return null;
 		}
 	}
-	
+
+	public String[] executeQueryAndGetValues(Tables table, int interestingCol) {
+
+		try {
+			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			Statement stmt = conn.createStatement();
+			ResultSet resultSet = stmt.executeQuery("SELECT * FROM " + table.toString());
+
+			List<String> valuesList = new ArrayList<String>();
+
+			while (resultSet.next()) {
+				valuesList.add(resultSet.getString(interestingCol));
+			}
+
+			resultSet.close();
+			stmt.close();
+			conn.close(); 
+			return valuesList.toArray(new String[]{});
+
+		} catch (SQLException e) {
+			System.err.println("An SQLException was thrown at executeQueryAndGetValues("+ table.toString() + ")");
+			return null;
+		}
+	}
+
 	public TreeMap<String, Integer> generateHashMapFromQuery(String query,  int intCol, int stringCol) throws UnsupportedEncodingException {
 
-		
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			Statement stmt = conn.createStatement();
 			ResultSet resultSet = stmt.executeQuery(query);
-			
+
 			TreeMap<String, Integer> hashMap = new TreeMap<String, Integer>();
 
 			try {
@@ -151,18 +185,42 @@ public class DatabaseManager {
 			stmt.close();
 			conn.close(); 
 			return hashMap;
-			
+
 		} catch (SQLException e) {
 			System.err.println("An SQLException was thrown at generateHashMapFromQuery("+query+")");
 			return null;
 		}
 	}
 
-//	
-//	public static void main (String agrs[]){
-//		DatabaseManager dbManager = new DatabaseManager();
-//		dbManager.executeStatement("INSERT INTO locations (location_name, location_universe_id) values('Coconino County', '648');");
-//		ResultSet rs = dbManager.executeQuery("Select * FROM locations");
-//		//System.out.println(rs.get);
-//	}
+	public String[] getCurrentValues(Tables table, String recordName) {
+		
+		try {
+			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			Statement stmt = conn.createStatement();
+			ResultSet resultSet = stmt.executeQuery("SELECT * FROM " + table.toString() + " WHERE " + "gender_name LIKE \'" + recordName + "\'");
+			
+			String[] valuesArr = new String[1];
+			
+			resultSet.next();
+			valuesArr[0] = resultSet.getString(3);
+			
+			resultSet.close();
+			stmt.close();
+			conn.close(); 
+			return valuesArr;
+
+		} catch (SQLException e) {
+			System.err.println("An SQLException was thrown at getCurrentValues("+ table.toString() + ")");
+			return null;
+		}
+		
+	}
+
+	//	
+	//	public static void main (String agrs[]){
+	//		DatabaseManager dbManager = new DatabaseManager();
+	//		dbManager.executeStatement("INSERT INTO locations (location_name, location_universe_id) values('Coconino County', '648');");
+	//		ResultSet rs = dbManager.executeQuery("Select * FROM locations");
+	//		//System.out.println(rs.get);
+	//	}
 }
