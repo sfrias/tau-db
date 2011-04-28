@@ -404,7 +404,7 @@ public class JDBCTutorialUtilities {
 				else if (!valueArr[i].equals("") && interestingValuesMap.get(valueArr[i]) == null){
 					
 					if (i+1 < valueArr.length && interestingValuesMap.get(valueArr[i] + "," + valueArr[i+1]) != null){
-						valueArr[i] = valueArr[i] + valueArr[i+1];
+						valueArr[i] = valueArr[i] + "," + valueArr[i+1];
 						i++;
 						System.out.println("found a value between two cells- " + interestingTable + " " + valueArr[i]);
 						bufferedWriter.append(insertStatement);
