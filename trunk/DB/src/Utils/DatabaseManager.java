@@ -17,6 +17,7 @@ import java.util.TreeMap;
 
 public class DatabaseManager {
 
+	private static final String CHARSET = "UTF-8";
 	private final static String USERNAME = "root";
 	private final static String PASSWORD = "mapo00";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
@@ -91,7 +92,7 @@ public class DatabaseManager {
 			Statement stmt = conn.createStatement();
 
 			FileInputStream fileInputStream = new FileInputStream(batchFileLocation);
-			InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+			InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
 			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
 			String str;
@@ -176,6 +177,7 @@ public class DatabaseManager {
 				while (resultSet.next()) {
 					int id = resultSet.getInt(intCol);
 					String name = resultSet.getString(stringCol);
+					System.out.println("NAME is " + name);
 					hashMap.put(name, id);
 				}
 			} catch (SQLException e) {
