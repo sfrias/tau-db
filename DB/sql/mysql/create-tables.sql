@@ -1,3 +1,38 @@
+CREATE TABLE students 
+	(student_id int(11) NOT NULL,
+	student_name varchar(80) NOT NULL,
+	PRIMARY KEY (student_id));
+
+CREATE TABLE courses 
+	(course_id int(11) NOT NULL,
+	course_name varchar(80) NOT NULL,
+	PRIMARY KEY (course_id));
+
+CREATE TABLE colors 
+	(color_id int(11) NOT NULL,
+	color_name varchar(80) NOT NULL,
+	PRIMARY KEY (color_id));
+
+
+CREATE TABLE cities 
+	(city_id int(11) NOT NULL,
+	city_name varchar(80) NOT NULL,
+	PRIMARY KEY (city_id));
+
+CREATE TABLE conn 
+	(student_id int(11) NOT NULL,
+	course_id int(11) NOT NULL,			
+	PRIMARY KEY (student_id,course_id));
+
+CREATE TABLE conn2 
+	(student_id int(11) NOT NULL,
+	city_id int(11) NOT NULL,			
+	PRIMARY KEY (student_id,city_id));
+
+CREATE TABLE conn3 
+	(student_id int(11) NOT NULL,
+	color_id int(11) NOT NULL,			
+	PRIMARY KEY (student_id,color_id));
 CREATE TABLE species (species_id int(11) NOT NULL AUTO_INCREMENT, species_fb_id varchar(40) NOT NULL, species_name varchar(80) NOT NULL, PRIMARY KEY (species_id));
 CREATE TABLE creator (creator_id int(11) NOT NULL AUTO_INCREMENT, creator_fb_id varchar(40) NOT NULL, creator_name varchar(80) NOT NULL, PRIMARY KEY (creator_id));
 CREATE TABLE organization (organization_id int(11) NOT NULL AUTO_INCREMENT, organization_fb_id varchar(40) NOT NULL, organization_name varchar(80) NOT NULL, PRIMARY KEY (organization_id));

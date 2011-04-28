@@ -48,10 +48,6 @@ import java.sql.Statement;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.tools.ant.BuildLogger;
-import org.apache.tools.ant.DefaultLogger;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
@@ -568,5 +564,13 @@ public class JDBCTutorialUtilities {
 		long finishTime = System.currentTimeMillis();
 
 		System.out.println("operation took " + (finishTime - startTime) + "Millis");
+		
+		tal a = new tal();
+		//tal.fillTables();
+		String[] arr = new String[5];
+		a.openConnection();
+		a.lookForConnection("Tammy", "Hila",1,0,"Tammy", arr);
+		a.closeconnection();
+		
 	}
 }
