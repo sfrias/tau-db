@@ -9,9 +9,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
+import Utils.DatabaseManager;
+
 import GUI.buttons.AutoCompleteComboBox;
 
 public abstract class GenericCardPanel extends JPanel implements GenericCardInerface{
+	
+	protected DatabaseManager databaseManager = DatabaseManager.getInstance();
 	
 	public GenericCardPanel(){
 		super();

@@ -3,6 +3,7 @@ package GUI.panels.Manage.cards.edit;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -12,6 +13,8 @@ import javax.swing.SwingUtilities;
 
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.frames.PlayFrame;
+import Utils.DatabaseManager;
+import Utils.Tables;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -19,13 +22,12 @@ import com.jgoodies.forms.layout.FormLayout;
 
 
 public class EditGender extends abstractEditCard {
-	private JTextField field1;
-	private JTextField field2;
-	private JTextField field3;
 	
+	private JTextField field1;
 	
 	public EditGender(){
 		super();
+		fieldsNum = 1;
 	}
 
 	@Override
@@ -41,28 +43,28 @@ public class EditGender extends abstractEditCard {
 		CellConstraints cc = new CellConstraints();
 		builder.addLabel("Field 1:", cc.xy(1,1));
 		builder.add(field1=new JTextField(17), cc.xy(3,1));
-		builder.addLabel("Field 2:", cc.xy(1,3));
-		builder.add(field2=new JTextField(17), cc.xy(3,3));
-		builder.addLabel("Field 3:", cc.xy(1,5));
-		builder.add(field2=new JTextField(17), cc.xy(3,5));
 		
 		add(builder.getPanel(),BorderLayout.CENTER);
 	}
 
 	@Override
 	public String[] createRecordList() {
-		String[] result = {"editGender1", "editGender2"};
-		return result;
+		
+		String [] valuesArr = databaseManager.executeQueryAndGetValues(Tables.gender, 3);
+		return valuesArr;
 	}
 
 	@Override
-	public ActionListener createRecordComboListener() { 
-		return new ActionListener() {
+	public ActionListener createRecordComboListener() { return new ActionListener() {
 			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				AutoCompleteComboBox cb = (AutoCompleteComboBox)e.getSource();
 				String recordName = (String) cb.getSelectedItem();
+				String [] valuesArr = databaseManager.getCurrentValues(Tables.gender, recordName);
+				assert (valuesArr.length == fieldsNum);
+				field1.setText(valuesArr[0]);	
 			}
 		};
 	}
