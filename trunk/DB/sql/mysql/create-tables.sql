@@ -38,6 +38,7 @@ CREATE TABLE species
 	(species_id int(11) NOT NULL AUTO_INCREMENT,
 	species_fb_id varchar(40) NOT NULL,
 	species_name varchar(80) NOT NULL,
+	KEY ix_species_id (species_id),
 	PRIMARY KEY (species_id));
 	
 CREATE TABLE creator
@@ -143,3 +144,10 @@ CREATE TABLE characters_and_genders
 	PRIMARY KEY (characters_and_genders_character_id,characters_and_genders_gender_id),
 	FOREIGN KEY (characters_and_genders_character_id) REFERENCES characters(character_id),
 	FOREIGN KEY (characters_and_genders_gender_id) REFERENCES gender(gender_id));
+	
+CREATE TABLE characters_and_species 
+	(characters_and_species_character_id int(11) NOT NULL,
+	characters_and_species_species_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_species_character_id,characters_and_species_species_id),
+	FOREIGN KEY (characters_and_species_character_id) REFERENCES characters(character_id),
+	FOREIGN KEY (characters_and_species_species_id) REFERENCES species(species_id));
