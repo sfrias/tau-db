@@ -141,6 +141,10 @@
       <antcall target="populate-tables"/>
   </target>
 
+  <target name="populate">
+	  <antcall target="populate-tables"/>
+  </target>
+	
   <target name="run">
     <java classname="com.oracle.tutorial.jdbc.JDBCTutorialUtilities"
           classpathref="CLASSPATH" fork="true" dir=".">
