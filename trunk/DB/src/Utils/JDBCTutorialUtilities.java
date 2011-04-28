@@ -42,8 +42,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
@@ -484,8 +486,15 @@ public class JDBCTutorialUtilities {
 
 	public static void main(String args[]) throws IOException, SQLException {
 
+		SortedMap<String, Charset> charsets = Charset.availableCharsets();
+		
+		Object [] values = charsets.values().toArray();
+		
+		for (int i=0; i < values.length; i++){
+			System.out.println(((Charset) values[i]).name());
+		}
 		long startTime = System.currentTimeMillis();
-		DatabaseManager dbManager = new DatabaseManager();
+		DatabaseManager dbManager = DatabaseManager.getInstance();
 
 		dbManager.executeBatchFile(DROP_TABLES_SQL_FILE_PATH);
 		dbManager.executeBatchFile(CREATE_TABLES_SQL_FILE_PATH);
