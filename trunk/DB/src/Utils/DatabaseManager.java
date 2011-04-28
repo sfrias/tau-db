@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -177,7 +176,6 @@ public class DatabaseManager {
 				while (resultSet.next()) {
 					int id = resultSet.getInt(intCol);
 					String name = resultSet.getString(stringCol);
-					System.out.println("NAME is " + name);
 					hashMap.put(name, id);
 				}
 			} catch (SQLException e) {

@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS conn2;
 DROP TABLE IF EXISTS colors;
 DROP TABLE IF EXISTS conn3;
 DROP TABLE IF EXISTS characters_and_universes;
+DROP TABLE IF EXISTS characters_and_genders;
 DROP TABLE IF EXISTS characters;
 DROP TABLE IF EXISTS locations;
 DROP TABLE IF EXISTS place_of_birth;
