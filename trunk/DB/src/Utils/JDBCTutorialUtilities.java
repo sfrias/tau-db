@@ -407,12 +407,12 @@ public class JDBCTutorialUtilities {
 					
 					if (i+1 < valueArr.length && interestingValuesMap.get(valueArr[i] + "," + valueArr[i+1]) != null){
 						valueArr[i] = valueArr[i] + "," + valueArr[i+1];
-						i++;
 						System.out.println("found a value between two cells- " + interestingTable + " " + valueArr[i]);
 						bufferedWriter.append(insertStatement);
 						bufferedWriter.append("'" + charactersMap.get(strarr[0]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
 						bufferedWriter.flush();
 						alreadySet = true;
+						i++;
 					}
 					else {
 						System.out.println(interestingTable + " " + valueArr[i] + " id equals null");
