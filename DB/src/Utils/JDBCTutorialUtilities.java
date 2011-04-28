@@ -43,19 +43,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.tools.ant.BuildLogger;
-import org.apache.tools.ant.DefaultLogger;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
+
+import Utils.AntUtils.Targets;
 
 public class JDBCTutorialUtilities {
 
@@ -515,7 +511,10 @@ public class JDBCTutorialUtilities {
 
 	public static void main(String args[]) throws IOException, SQLException {
 
-		SortedMap<String, Charset> charsets = Charset.availableCharsets();
+		AntUtils.executeTarget(Targets.SETUP);
+	
+		
+		/*SortedMap<String, Charset> charsets = Charset.availableCharsets();
 
 		Object [] values = charsets.values().toArray();
 
@@ -591,6 +590,7 @@ public class JDBCTutorialUtilities {
 		long finishTime = System.currentTimeMillis();
 
 		System.out.println("operation took " + (finishTime - startTime) + "Millis");
+	}
 		
 		tal a = new tal();
 		//tal.fillTables();
@@ -598,5 +598,5 @@ public class JDBCTutorialUtilities {
 		a.openConnection();
 		a.lookForConnection("Tammy", "Hila",1,0,"Tammy", arr);
 		a.closeconnection();
-	}
+	*/}
 }
