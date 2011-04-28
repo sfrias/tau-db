@@ -386,22 +386,24 @@ public class JDBCTutorialUtilities {
 			String [] valueArr = strarr[interestingFieldNum-1].split(",");
 
 			strarr[0] = new String(strarr[0].getBytes(), CHARSET);
-			boolean alreadySet = false;
 			
+			if (charactersMap.get(strarr[0]) == null){
+				System.out.println("character " + strarr[0] + " id equals null");
+				failuresCounter++;
+				continue;
+			}
+			
+			boolean alreadySet = false;
 			for (int i = 0; i < valueArr.length; i++) {
 
 				tempString = valueArr[i].replace("~", ", ");
 				valueArr[i] = tempString;
 				valueArr[i] = new String(valueArr[i].getBytes(), CHARSET);
 
-				if (charactersMap.get(strarr[0]) == null){
-					System.out.println("character " + strarr[0] + " id equals null");
-					failuresCounter++;
-				}
 				if (valueArr[i].equals("")){
 					continue;
 				}
-				else if (!valueArr[i].equals("") && interestingValuesMap.get(valueArr[i]) == null){
+				else if (interestingValuesMap.get(valueArr[i]) == null){
 					
 					if (i+1 < valueArr.length && interestingValuesMap.get(valueArr[i] + "," + valueArr[i+1]) != null){
 						valueArr[i] = valueArr[i] + "," + valueArr[i+1];
