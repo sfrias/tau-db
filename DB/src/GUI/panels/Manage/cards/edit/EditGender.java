@@ -62,9 +62,11 @@ public class EditGender extends abstractEditCard {
 			public void actionPerformed(ActionEvent e) {
 				AutoCompleteComboBox cb = (AutoCompleteComboBox)e.getSource();
 				String recordName = (String) cb.getSelectedItem();
-				String [] valuesArr = databaseManager.getCurrentValues(Tables.gender, recordName);
-				assert (valuesArr.length == fieldsNum);
-				field1.setText(valuesArr[0]);	
+				if (recordName!=null){
+					String [] valuesArr = databaseManager.getCurrentValues(Tables.gender, recordName);
+					assert (valuesArr.length == fieldsNum);
+					field1.setText(valuesArr[0]);	
+				}
 			}
 		};
 	}
