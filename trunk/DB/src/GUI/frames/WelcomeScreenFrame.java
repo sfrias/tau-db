@@ -81,7 +81,8 @@ public class WelcomeScreenFrame extends JFrame {
 		panel.add(radioButtons);
 		panel.add(Box.createRigidArea(new Dimension(0,10)));
 		
-		JButton buttonNext = new JButton("Next");
+		//JButton buttonNext = new JButton("Next");
+		JButton buttonNext = GuiUtils.createIconButton("buttonNext.png");
 		buttonNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				SwingUtilities.invokeLater(new Runnable() {
