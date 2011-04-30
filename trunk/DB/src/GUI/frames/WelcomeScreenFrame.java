@@ -4,23 +4,24 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import GUI.utilities.GuiUtils;
+import GUI.buttons.IconButton;
+import GUI.commons.GuiUtils;
 
 public class WelcomeScreenFrame extends JFrame {
+	private static final long serialVersionUID = 1L;
+	
+	private JButton buttonQuit ;
+	private JFrame frame = this;
 	
 	public WelcomeScreenFrame(){
 		buildFrame();
@@ -28,18 +29,9 @@ public class WelcomeScreenFrame extends JFrame {
 		setResizable(false);
 		GuiUtils.centerOnScreen(this);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent evt)
-                {
-                        quit();
-                }
-        });
+        addWindowListener(GuiUtils.defaultCloseWindowAdapter(frame));
 	}
 
-	private void quit() {
-	        dispose();
-	        System.exit(0);
-	}
 	
 	private void buildFrame(){
 		setTitle("DB Project");
@@ -47,6 +39,7 @@ public class WelcomeScreenFrame extends JFrame {
 		//setSize(1000,1000);
 	}
 	
+
 	private JPanel mainPanelBuilder(){
 		JLabel labelProj = new JLabel("DB Project");
 		labelProj.setFont(new Font("Footlight MT Light", Font.BOLD, 72));
@@ -60,16 +53,35 @@ public class WelcomeScreenFrame extends JFrame {
 		labelQuestion.setFont(new Font("Footlight MT Light", Font.BOLD, 16));
 		labelQuestion.setAlignmentX(CENTER_ALIGNMENT);
 		
-		final JRadioButton buttonPlay = new JRadioButton("Play");
-		buttonPlay.setSelected(true);
-		final JRadioButton buttonManage = new JRadioButton("Manage");
-		ButtonGroup group = new ButtonGroup();
-		group.add(buttonPlay);
-		group.add(buttonManage);
+		IconButton buttonPlay = GuiUtils.createActionButton("play", "play.png", new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							JFrame frame = new PlayFrame();
+							frame.setVisible(true);
+							dispose();
+						}
+					});
+					
+				}
+		});
+		IconButton buttonManage = GuiUtils.createActionButton("manage", "manage.png",new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							JFrame frame = new ManageFrame();
+							frame.setVisible(true);
+							dispose();
+						}
+					});
+					
+				}
+		});
 		
-		Box radioButtons = Box.createHorizontalBox();
-		radioButtons.add(buttonPlay);
-		radioButtons.add(buttonManage);
+		Box actionButtons = Box.createHorizontalBox();
+		actionButtons.add(buttonPlay);
+		actionButtons.add(Box.createRigidArea(new Dimension(10, 0)));
+		actionButtons.add(buttonManage);
 			
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -78,32 +90,18 @@ public class WelcomeScreenFrame extends JFrame {
 		panel.add(labelWelcome);
 		panel.add(Box.createRigidArea(new Dimension(0,10)));
 		panel.add(labelQuestion);
-		panel.add(radioButtons);
+		panel.add(Box.createRigidArea(new Dimension(0,15)));
+		panel.add(actionButtons);
 		panel.add(Box.createRigidArea(new Dimension(0,10)));
 		
-		//JButton buttonNext = new JButton("Next");
-		JButton buttonNext = GuiUtils.createIconButton("buttonNext.png");
-		buttonNext.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						JFrame frame = null;
-						if (buttonPlay.isSelected()){
-							frame = new PlayFrame();
-						}							
-						frame.setVisible(true);
-						dispose();
-					}
-				});
-				
-			}
-		});
-		buttonNext.setAlignmentX(CENTER_ALIGNMENT);
-		panel.add(buttonNext);
+		buttonQuit = GuiUtils.createQuitButton(frame);
+		buttonQuit.setAlignmentX(CENTER_ALIGNMENT);
+		panel.add(buttonQuit);
 		
 		panel.setBorder(new EmptyBorder(20,20,20,20));
 		return panel;
 		
 	}
 
+	
 }
