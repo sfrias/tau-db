@@ -2,11 +2,13 @@ package GUI.panels.Manage.cards.add;
 
 import java.awt.event.ActionListener;
 import javax.swing.JLabel;
+
+import Utils.Tables;
 import GUI.commons.Pair;
 
 public class AddName extends abstractAddCard {
 	public AddName(){
-		super();
+		super(Tables.occupation);
 	}
 
 	@Override

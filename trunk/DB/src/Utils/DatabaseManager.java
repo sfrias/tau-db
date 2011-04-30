@@ -51,7 +51,7 @@ public class DatabaseManager {
 		if (instance == null){
 			instance = new DatabaseManager();
 		}
-		
+
 		return instance;
 	}
 
@@ -195,19 +195,19 @@ public class DatabaseManager {
 	}
 
 	public String[] getCurrentValues(Tables table, String idFieldName, int recordId) {
-		
+
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + table.toString() + " WHERE " + idFieldName + " = ?");
 			stmt.setInt(1, recordId);
 			ResultSet resultSet = stmt.executeQuery();
-			
+
 			//TODO: this is ugly, fix that.
 			String[] valuesArr = new String[1];
-			
+
 			resultSet.next();
 			valuesArr[0] = resultSet.getString(3);
-			
+
 			resultSet.close();
 			stmt.close();
 			conn.close(); 
@@ -217,14 +217,43 @@ public class DatabaseManager {
 			System.err.println("An SQLException was thrown at getCurrentValues("+ table.toString() + ")");
 			return null;
 		}
-		
+
 	}
 
-	//	
-	//	public static void main (String agrs[]){
-	//		DatabaseManager dbManager = new DatabaseManager();
-	//		dbManager.executeStatement("INSERT INTO locations (location_name, location_universe_id) values('Coconino County', '648');");
-	//		ResultSet rs = dbManager.executeQuery("Select * FROM locations");
-	//		//System.out.println(rs.get);
-	//	}
+	public void executeUpdate(Tables table, String[] fieldNames, String[] values, int id) {
+		
+		try {
+			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("UPDATE " + table.toString() + " SET ");
+			int length = fieldNames.length;
+			for (int i=0; i < length - 1; i++){
+				stringBuilder.append(fieldNames[i] + " = \'" + values[i] + "\', ");
+			}
+			stringBuilder.append(fieldNames[length-1] + " = \'" + values[length -1] + "\'");
+			stringBuilder.append(" WHERE " + table.toString() + "_id = " + id);
+
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(stringBuilder.toString());
+			
+			stmt.close();
+			conn.close(); 
+
+		} catch (SQLException e) {
+			System.err.println("An SQLException was thrown at executeUpdate("+ table.toString() + ")");
+		}
+	}
+
+	public void executeDelete(Tables table, int id) {
+		try {
+			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate("DELETE FROM " + table.toString() + " WHERE " + table.toString() + "_id = " + id);		
+			stmt.close();
+			conn.close(); 
+
+		} catch (SQLException e) {
+			System.err.println("An SQLException was thrown at executeDelete("+ table.toString() + ")");
+		}		
+	}
 }

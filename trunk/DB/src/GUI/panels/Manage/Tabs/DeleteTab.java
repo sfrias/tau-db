@@ -3,7 +3,7 @@ package GUI.panels.Manage.Tabs;
 import javax.swing.JPanel;
 
 import GUI.panels.Manage.cards.delete.DeleteGender;
-import GUI.panels.Manage.cards.delete.DeleteName;
+import GUI.panels.Manage.cards.delete.DeleteOccupation;
 
 public class DeleteTab extends GenericTab{
 
@@ -13,7 +13,7 @@ public class DeleteTab extends GenericTab{
 	@Override
 	public JPanel addCards(JPanel cards) {
 		cards.add(new DeleteGender(), "GENDER");
-		cards.add(new DeleteName(), "NAMES");
+		cards.add(new DeleteOccupation(), "OCCUPATION");
 		return cards;
 	}
 

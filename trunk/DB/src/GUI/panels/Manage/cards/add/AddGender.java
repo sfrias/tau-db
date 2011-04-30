@@ -7,17 +7,22 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import GUI.commons.Pair;
+import Utils.Tables;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class AddGender extends abstractAddCard {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -255349874072694557L;
 	private JTextField field1;
 	private JTextField field2;
 	
 	public AddGender(){
-		super();
+		super(Tables.gender);
 	}
 
 	@Override
@@ -25,8 +30,7 @@ public class AddGender extends abstractAddCard {
 		JPanel panelFields = new JPanel();
 		
 		FormLayout layout = 
-			new FormLayout("right:pref, 4dlu, pref",
-				"p, 4dlu, p, 4dlu");
+			new FormLayout("right:pref, 4dlu, pref", "p, 4dlu, p, 4dlu");
 		
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setDefaultDialogBorder();
