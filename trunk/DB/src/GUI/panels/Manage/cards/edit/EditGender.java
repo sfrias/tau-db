@@ -3,17 +3,13 @@ package GUI.panels.Manage.cards.edit;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import GUI.buttons.AutoCompleteComboBox;
-import GUI.frames.PlayFrame;
-import Utils.DatabaseManager;
+import GUI.commons.Pair;
 import Utils.Tables;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -32,38 +28,35 @@ public class EditGender extends abstractEditCard {
 
 	@Override
 	public void addFields() {
+		
 		JPanel panelFields = new JPanel();
 		
-		FormLayout layout = 
-			new FormLayout("right:pref, 4dlu, pref",
-				"p, 4dlu, p, 4dlu, p, 4dlu");
+		FormLayout layout = new FormLayout("right:pref, 4dlu, pref", "p, 4dlu, p, 4dlu, p, 4dlu");
 		
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setDefaultDialogBorder();
 		CellConstraints cc = new CellConstraints();
-		builder.addLabel("Field 1:", cc.xy(1,1));
+		builder.addLabel("Gender name:", cc.xy(1,1));
 		builder.add(field1=new JTextField(17), cc.xy(3,1));
 		
 		add(builder.getPanel(),BorderLayout.CENTER);
 	}
 
-	@Override
-	public String[] createRecordList() {
+	public Pair[] createRecordList() {
 		
-		String [] valuesArr = databaseManager.executeQueryAndGetValues(Tables.gender, 3);
+		Pair [] valuesArr = databaseManager.executeQueryAndGetValues(Tables.gender, 3);
 		return valuesArr;
 	}
 
 	@Override
 	public ActionListener createRecordComboListener() { return new ActionListener() {
 			
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				AutoCompleteComboBox cb = (AutoCompleteComboBox)e.getSource();
-				String recordName = (String) cb.getSelectedItem();
-				if (recordName!=null){
-					String [] valuesArr = databaseManager.getCurrentValues(Tables.gender, recordName);
+				Pair record = (Pair) cb.getSelectedItem();
+				if (record != null){
+					String [] valuesArr = databaseManager.getCurrentValues(Tables.gender, "gender_id", record.getId());
 					assert (valuesArr.length == fieldsNum);
 					field1.setText(valuesArr[0]);	
 				}

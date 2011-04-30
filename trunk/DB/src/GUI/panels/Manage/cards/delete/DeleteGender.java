@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 
+import GUI.commons.Pair;
 import GUI.panels.Manage.cards.edit.abstractEditCard;
 
 public class DeleteGender extends abstractDeleteCard {
@@ -24,8 +25,8 @@ public class DeleteGender extends abstractDeleteCard {
 	}
 
 	@Override
-	public String[] createRecordList() {
-		String[] result = {"deleteGender1", "deleteGender2"};
+	public Pair[] createRecordList() {
+		Pair[] result = {new Pair("deleteName1",1), new Pair("deleteName2",2)};
 		return result;
 	}
 

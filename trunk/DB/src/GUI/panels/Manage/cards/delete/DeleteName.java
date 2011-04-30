@@ -4,6 +4,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 
+import GUI.commons.Pair;
+
 public class DeleteName extends abstractDeleteCard {
 	public DeleteName(){
 		super();
@@ -23,8 +25,8 @@ public class DeleteName extends abstractDeleteCard {
 	}
 
 	@Override
-	public String[] createRecordList() {
-		String[] result = {"deleteName1", "deleteName2"};
+	public Pair[] createRecordList() {
+		Pair[] result = {new Pair("deleteName1",1), new Pair("deleteName2",2)};
 		return result;
 	}
 

@@ -1,9 +1,8 @@
 package GUI.panels.Manage.cards.add;
 
 import java.awt.event.ActionListener;
-
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import GUI.commons.Pair;
 
 public class AddName extends abstractAddCard {
 	public AddName(){
@@ -23,8 +22,8 @@ public class AddName extends abstractAddCard {
 	}
 
 	@Override
-	public String[] createRecordList() {
-		String[] result = {"addName1", "addName2"};
+	public Pair [] createRecordList() {
+		Pair[] result = {new Pair("addName1",1), new Pair("addName2",2)};
 		return result;
 	}
 

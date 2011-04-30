@@ -12,6 +12,7 @@ import javax.swing.JSeparator;
 import Utils.DatabaseManager;
 
 import GUI.buttons.AutoCompleteComboBox;
+import GUI.commons.Pair;
 
 public abstract class GenericCardPanel extends JPanel implements GenericCardInerface{
 	
@@ -21,7 +22,7 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		super();
 		setLayout(new BorderLayout());
 		
-		String[] records = createRecordList();
+		Pair[] records = createRecordList();
 		AutoCompleteComboBox comboRecord = new AutoCompleteComboBox(records);
 		comboRecord.addActionListener(createRecordComboListener());
 		comboRecord.setPreferredSize(new Dimension(200,20));
