@@ -1,16 +1,10 @@
 package GUI.frames;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 
-import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;
 import GUI.panels.Manage.Tabs.AddTab;
 import GUI.panels.Manage.Tabs.DeleteTab;
@@ -18,6 +12,8 @@ import GUI.panels.Manage.Tabs.EditTab;
 import GUI.panels.Manage.Tabs.UpdateTab;
 
 public class ManageFrame extends GenericFrame {
+	private static final long serialVersionUID = 1L;
+	
 	JFrame frame = this;
 
 	public ManageFrame(){

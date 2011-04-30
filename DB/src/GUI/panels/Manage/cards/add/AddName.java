@@ -7,6 +7,8 @@ import Utils.Tables;
 import GUI.commons.Pair;
 
 public class AddName extends abstractAddCard {
+	private static final long serialVersionUID = 1L;
+	
 	public AddName(){
 		super(Tables.occupation);
 	}

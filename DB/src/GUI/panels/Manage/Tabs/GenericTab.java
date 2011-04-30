@@ -15,6 +15,7 @@ import javax.swing.JSeparator;
 import GUI.buttons.AutoCompleteComboBox;
 
 public abstract class GenericTab extends JPanel implements ActionListener, GenericTabInterface{
+	private static final long serialVersionUID = 1L;
 	
 	private JPanel cards ;
 	

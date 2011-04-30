@@ -6,6 +6,7 @@ import GUI.panels.Manage.cards.add.AddGender;
 import GUI.panels.Manage.cards.add.AddName;
 
 public class AddTab extends GenericTab {
+	private static final long serialVersionUID = 1L;
 
 	public AddTab(){
 		super();

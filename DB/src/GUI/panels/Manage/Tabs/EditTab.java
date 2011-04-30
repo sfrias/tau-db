@@ -6,6 +6,7 @@ import GUI.panels.Manage.cards.edit.EditGender;
 import GUI.panels.Manage.cards.edit.EditOccupation;
 
 public class EditTab extends GenericTab{
+	private static final long serialVersionUID = 1L;
 
 	public EditTab(){
 		super();
