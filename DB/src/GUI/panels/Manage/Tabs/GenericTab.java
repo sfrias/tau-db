@@ -44,6 +44,7 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		cards = addCards(cards);
 		add(cards,BorderLayout.CENTER);
 		
+		
 	}
 	
 	public void actionPerformed(ActionEvent e) {

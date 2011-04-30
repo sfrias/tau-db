@@ -1,4 +1,4 @@
-package GUI.utilities;
+package GUI.commons;
 
 public class Pair {
 	private String name;

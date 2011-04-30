@@ -25,6 +25,7 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		AutoCompleteComboBox comboRecord = new AutoCompleteComboBox(records);
 		comboRecord.addActionListener(createRecordComboListener());
 		comboRecord.setPreferredSize(new Dimension(200,20));
+		//comboRecord.setSelectedIndex(0);
 		
 		JPanel panelHead = new JPanel();
 		panelHead.setLayout(new BoxLayout(panelHead,BoxLayout.PAGE_AXIS));

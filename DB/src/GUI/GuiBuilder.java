@@ -29,7 +29,7 @@ public class GuiBuilder {
         
         public static void main(String[] args) {
                 installLookAndFeel();
-                ManageFrame frame = new ManageFrame();
+                WelcomeScreenFrame frame = new WelcomeScreenFrame();
                 frame.setVisible(true);
         }
       

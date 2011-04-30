@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -18,28 +16,26 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import GUI.buttons.AutoCompleteComboBox;
-import GUI.utilities.GuiUtils;
+import GUI.commons.GuiUtils;
 
-public class PlayFrame extends JFrame {
+public class PlayFrame extends GenericFrame {
+	
+	JFrame frame = this;
 	
 	public PlayFrame(){
+		super();
 		buildFrame();
 		//pack();
 		GuiUtils.centerOnScreen(this);
 		//TODO set the minimum size
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent evt)
-                {
-                        backOperation();
-                }
-        });
+		addWindowListener(GuiUtils.defaultCloseWindowAdapter(frame));
 	}
 	
 	private void buildFrame(){
 		setTitle("Play");
 		setSize(600,600);
-		setContentPane(mainPanelBuilder());
+		add(BorderLayout.CENTER,mainPanelBuilder());
 		setVisible(true);
 		
 	}
