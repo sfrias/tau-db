@@ -2,6 +2,8 @@ package GUI.panels.Manage.cards;
 
 import java.awt.event.ActionListener;
 
+import GUI.commons.Pair;
+
 public interface GenericCardInerface {
 	
 	//each card should add diffrent fields. 
@@ -21,5 +23,5 @@ public interface GenericCardInerface {
 	public ActionListener createRecordComboListener();
 
 	//each card should display a list of all its records. card implement.
-	public String[] createRecordList();
+	public Pair[] createRecordList();
 }

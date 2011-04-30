@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,9 +15,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import GUI.commons.Pair;
+
 public class DatabaseManager {
 
-	private static final String CHARSET = "UTF-8";
 	private final static String USERNAME = "root";
 	private final static String PASSWORD = "mapo00";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
@@ -139,23 +141,23 @@ public class DatabaseManager {
 		}
 	}
 
-	public String[] executeQueryAndGetValues(Tables table, int interestingCol) {
+	public Pair[] executeQueryAndGetValues(Tables table, int interestingCol) {
 
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			Statement stmt = conn.createStatement();
 			ResultSet resultSet = stmt.executeQuery("SELECT * FROM " + table.toString());
 
-			List<String> valuesList = new ArrayList<String>();
+			List<Pair> valuesList = new ArrayList<Pair>();
 
 			while (resultSet.next()) {
-				valuesList.add(resultSet.getString(interestingCol));
+				valuesList.add(new Pair(resultSet.getString(interestingCol), resultSet.getInt(1)));
 			}
 
 			resultSet.close();
 			stmt.close();
 			conn.close(); 
-			return valuesList.toArray(new String[]{});
+			return valuesList.toArray(new Pair[]{});
 
 		} catch (SQLException e) {
 			System.err.println("An SQLException was thrown at executeQueryAndGetValues("+ table.toString() + ")");
@@ -192,13 +194,15 @@ public class DatabaseManager {
 		}
 	}
 
-	public String[] getCurrentValues(Tables table, String recordName) {
+	public String[] getCurrentValues(Tables table, String idFieldName, int recordId) {
 		
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
-			Statement stmt = conn.createStatement();
-			ResultSet resultSet = stmt.executeQuery("SELECT * FROM " + table.toString() + " WHERE " + "gender_name LIKE \'" + recordName + "\'");
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + table.toString() + " WHERE " + idFieldName + " = ?");
+			stmt.setInt(1, recordId);
+			ResultSet resultSet = stmt.executeQuery();
 			
+			//TODO: this is ugly, fix that.
 			String[] valuesArr = new String[1];
 			
 			resultSet.next();

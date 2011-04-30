@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import GUI.commons.Pair;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -58,8 +60,8 @@ public class AddGender extends abstractAddCard {
 	}
 
 	@Override
-	public String[] createRecordList() {
-		String[] result ={"record1", "record2"}; 
+	public Pair[] createRecordList() {
+		Pair [] result = {new Pair("record1",1), new Pair("record2",2)};
 		return result;
 	}
 

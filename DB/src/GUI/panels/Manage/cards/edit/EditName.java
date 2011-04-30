@@ -3,7 +3,8 @@ package GUI.panels.Manage.cards.edit;
 import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+
+import GUI.commons.Pair;
 
 public class EditName extends abstractEditCard {
 	public EditName(){
@@ -23,8 +24,8 @@ public class EditName extends abstractEditCard {
 	}
 
 	@Override
-	public String[] createRecordList() {
-		String[] result = {"editName1", "editName2"};
+	public Pair[] createRecordList() {
+		Pair [] result = {new Pair("editName1",1), new Pair("editName2",2)};
 		return result;
 	}
 
