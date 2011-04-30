@@ -9,6 +9,8 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 
 public class S04FirstAutoCompletion extends PlainDocument {
+	private static final long serialVersionUID = 1L;
+	
     JComboBox comboBox;
     ComboBoxModel model;
     // flag to indicate if setSelectedItem has been called

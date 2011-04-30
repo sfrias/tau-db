@@ -12,13 +12,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.GuiUtils;
 
 public class PlayFrame extends GenericFrame {
+	private static final long serialVersionUID = 1L;
 	
 	JFrame frame = this;
 	
@@ -110,36 +110,14 @@ public class PlayFrame extends GenericFrame {
 		panelTitle.add(labeltTitle);
 		panelTitle.setAlignmentX(LEFT_ALIGNMENT);
 		
-		JButton buttonBack = new JButton("Back");
-		buttonBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						backOperation();
-					}
-				});
-			}
-		});
-		
-		JPanel panelBottom = new JPanel();
-		panelBottom.add(buttonBack,BorderLayout.CENTER);
-		
 		JPanel panelMain = new JPanel();
 		panelMain.setLayout(new BorderLayout());
 		panelMain.add(labeltTitle,BorderLayout.NORTH);
 		panelMain.add(panelSelectAndDetails, BorderLayout.CENTER);
-		panelMain.add(panelBottom,BorderLayout.SOUTH);
 			
 		panelMain.setBorder(new EmptyBorder(20,20,20,20));
 		
 		return panelMain;
 	}
-	
-	private void backOperation(){
-		WelcomeScreenFrame frame = new WelcomeScreenFrame();
-		frame.setVisible(true);
-		dispose();
-	}
-
 
 }

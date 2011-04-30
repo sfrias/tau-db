@@ -6,6 +6,7 @@ import GUI.panels.Manage.cards.delete.DeleteGender;
 import GUI.panels.Manage.cards.delete.DeleteOccupation;
 
 public class DeleteTab extends GenericTab{
+	private static final long serialVersionUID = 1L;
 
 	public DeleteTab(){
 		super();

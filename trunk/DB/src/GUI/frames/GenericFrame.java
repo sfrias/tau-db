@@ -13,6 +13,8 @@ import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;
 
 public class GenericFrame extends JFrame {
+	private static final long serialVersionUID = 1L;
+	
 	public GenericFrame() {
 		super();
 		IconButton buttonBack = GuiUtils.createActionButton("back", "back.png",

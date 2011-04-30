@@ -14,10 +14,8 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class AddGender extends abstractAddCard {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -255349874072694557L;
+	private static final long serialVersionUID = 1L;
+
 	private JTextField field1;
 	private JTextField field2;
 	

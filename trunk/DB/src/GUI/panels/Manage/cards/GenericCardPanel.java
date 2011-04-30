@@ -23,9 +23,8 @@ import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.Pair;
 
 public abstract class GenericCardPanel extends JPanel implements GenericCardInerface{
+	private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = 4075894162742374973L;
-	
 	protected static DatabaseManager databaseManager = DatabaseManager.getInstance();
 	protected AutoCompleteComboBox cb;
 	protected Tables table;
