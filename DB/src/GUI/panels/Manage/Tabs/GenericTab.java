@@ -23,10 +23,10 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		
 		JPanel panelHead = new JPanel();
 		panelHead.setLayout(new BoxLayout(panelHead, BoxLayout.PAGE_AXIS));
-		panelHead.add(new JLabel("Please select a Category you wish to "+getTabAction()+" new record to:"));
+		panelHead.add(new JLabel("Please select a Category you wish to " + getTabAction() + " new record to:"));
 		
 		//TODO insert all tabels names!!!!
-		String[] categories = {"GENDER","NAMES"};
+		String[] categories = {"GENDER","OCCUPATION"};
 		AutoCompleteComboBox comboCategory = new AutoCompleteComboBox(categories);
 		comboCategory.setPreferredSize(new Dimension(200,20));
 		comboCategory.addActionListener(this);

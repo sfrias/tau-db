@@ -3,7 +3,7 @@ package GUI.panels.Manage.Tabs;
 import javax.swing.JPanel;
 
 import GUI.panels.Manage.cards.edit.EditGender;
-import GUI.panels.Manage.cards.edit.EditName;
+import GUI.panels.Manage.cards.edit.EditOccupation;
 
 public class EditTab extends GenericTab{
 
@@ -13,7 +13,7 @@ public class EditTab extends GenericTab{
 	@Override
 	public JPanel addCards(JPanel cards) {
 		cards.add(new EditGender(), "GENDER");
-		cards.add(new EditName(), "NAMES");
+		cards.add(new EditOccupation(), "OCCUPATION");
 		return cards;
 	}
 
