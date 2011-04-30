@@ -287,7 +287,7 @@ public class TableUtilities {
 
 	public static void main(String args[]) throws IOException, SQLException {
 
-		long startTime = System.currentTimeMillis();
+		/*long startTime = System.currentTimeMillis();
 
 		//downloadAndExtractDumps();
 
@@ -354,20 +354,32 @@ public class TableUtilities {
 
 		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_universes (characters_and_universes_character_id, characters_and_universes_universe_id) values(", "universe", 27, 12);	
 		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_genders (characters_and_genders_character_id, characters_and_genders_gender_id) values(", "gender", 27, 5);	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_species (characters_and_species_character_id, characters_and_species_species_id) values(", "species", 27, 6);	
-		AntUtils.executeTarget(Targets.BUILD);
+		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_species (characters_and_species_character_id, characters_and_species_species_id) values(", "species", 27, 6);
+		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_creators (characters_and_creators_character_id, characters_and_creators_creator_id) values(", "creator", 27, 16);	
+		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_organizations (characters_and_organizations_character_id, characters_and_organizations_organization_id) values(", "organization", 27, 10);	
+		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_schools (characters_and_schools_character_id, characters_and_schools_school_id) values(", "school", 27, 21);	
+		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_ranks (characters_and_ranks_character_id, characters_and_ranks_rank_id) values(", "rank", 27, 9);
+		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_ethnicities (characters_and_ethnicities_character_id, characters_and_ethnicities_ethnicity_id) values(", "ethnicity", 27, 20);	
+		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_occupations (characters_and_occupations_character_id, characters_and_occupations_occupation_id) values(", "occupation", 27, 8);	
+		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_powers (characters_and_powers_character_id, characters_and_powers_power_id) values(", "powers", 27, 11);
+		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_diseases (characters_and_diseases_character_id, characters_and_diseases_disease_id) values(", "diseases", 27, 23);	
+		//AntUtils.executeTarget(Targets.BUILD);
 
 		AntUtils.executeTarget(Targets.POPULATE);
 
 		long finishTime = System.currentTimeMillis();
 
-		System.out.println("operation took " + (finishTime - startTime) + " Millis");
+		System.out.println("operation took " + (finishTime - startTime) + " Millis");*/
 
-//		tal a = new tal();
-//		//tal.fillTables();
-//		String[] arr = new String[5];
-//		a.openConnection();
-//		a.lookForConnection("Tammy", "Hila",1,0,"Tammy", arr);
-//		a.closeconnection();
+		tal a = new tal();
+		//tal.fillTables();
+		String[] arr = new String[5];
+		if (a.lookForConnection("Webster", "Pamela",1,0,"Webster", arr))
+			System.out.println("finish!!!");
+		else
+			System.out.println("didnt find any match");
+				
+		a.getConnention().close();
+		System.out.println("closed");
 	}
 }
