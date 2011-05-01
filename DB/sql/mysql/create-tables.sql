@@ -45,12 +45,14 @@ CREATE TABLE creator
 	(creator_id int(11) NOT NULL AUTO_INCREMENT,
 	creator_fb_id varchar(40) NOT NULL,
 	creator_name varchar(80) NOT NULL,
+	KEY ix_creator_id (creator_id),
 	PRIMARY KEY (creator_id));
 	
 CREATE TABLE organization
 	(organization_id int(11) NOT NULL AUTO_INCREMENT,
 	organization_fb_id varchar(40) NOT NULL,
 	organization_name varchar(80) NOT NULL,
+	KEY ix_organization_id (organization_id),
 	PRIMARY KEY (organization_id));
 	
 CREATE TABLE gender
@@ -85,29 +87,35 @@ CREATE TABLE school
 	(school_id int(11) NOT NULL AUTO_INCREMENT,
 	school_fb_id varchar(40) NOT NULL,
 	school_name varchar(80) NOT NULL,
+	KEY ix_school_id (school_id),
 	PRIMARY KEY (school_id));
 	
 CREATE TABLE rank
 	(rank_id int(11) NOT NULL AUTO_INCREMENT,
 	rank_fb_id varchar(40) NOT NULL,
-	rank_name varchar(80) NOT NULL,PRIMARY KEY (rank_id));
+	rank_name varchar(80) NOT NULL,
+	KEY ix_rank_id (rank_id),
+	PRIMARY KEY (rank_id));
 	
 CREATE TABLE ethnicity
 	(ethnicity_id int(11) NOT NULL AUTO_INCREMENT,
 	ethnicity_fb_id varchar(40) NOT NULL,
 	ethnicity_name varchar(80) NOT NULL,
+	KEY ix_ethnicity_id (ethnicity_id),
 	PRIMARY KEY (ethnicity_id));
 	
 CREATE TABLE occupation 
 	(occupation_id int(11) NOT NULL AUTO_INCREMENT,
 	occupation_fb_id varchar(40) NOT NULL,
 	occupation_name varchar(80) NOT NULL,
+	KEY ix_occupation_id (occupation_id),
 	PRIMARY KEY (occupation_id));
 	
 CREATE TABLE powers 
 	(power_id int(11) NOT NULL AUTO_INCREMENT,
 	power_fb_id varchar(40) NOT NULL,
 	power_name varchar(140) NOT NULL,
+	KEY ix_power_id (power_id),
 	PRIMARY KEY (power_id));
 	
 CREATE TABLE jobs 
@@ -120,6 +128,7 @@ CREATE TABLE diseases
 	(disease_id int(11) NOT NULL AUTO_INCREMENT,
 	disease_fb_id varchar(40) NOT NULL,
 	disease_name varchar(80) NOT NULL,
+	KEY ix_disease_id (disease_id),
 	PRIMARY KEY (disease_id));
 	
 CREATE TABLE characters 
@@ -144,10 +153,66 @@ CREATE TABLE characters_and_genders
 	PRIMARY KEY (characters_and_genders_character_id,characters_and_genders_gender_id),
 	FOREIGN KEY (characters_and_genders_character_id) REFERENCES characters(character_id),
 	FOREIGN KEY (characters_and_genders_gender_id) REFERENCES gender(gender_id));
-	
+
 CREATE TABLE characters_and_species 
 	(characters_and_species_character_id int(11) NOT NULL,
 	characters_and_species_species_id int(11) NOT NULL,
 	PRIMARY KEY (characters_and_species_character_id,characters_and_species_species_id),
 	FOREIGN KEY (characters_and_species_character_id) REFERENCES characters(character_id),
 	FOREIGN KEY (characters_and_species_species_id) REFERENCES species(species_id));
+
+CREATE TABLE characters_and_creators 
+	(characters_and_creators_character_id int(11) NOT NULL,
+	characters_and_creators_creator_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_creators_character_id,characters_and_creators_creator_id),
+	FOREIGN KEY (characters_and_creators_character_id) REFERENCES characters(character_id),
+	FOREIGN KEY (characters_and_creators_creator_id) REFERENCES creator(creator_id));
+
+CREATE TABLE characters_and_organizations 
+	(characters_and_organizations_character_id int(11) NOT NULL,
+	characters_and_organizations_organization_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_organizations_character_id,characters_and_organizations_organization_id),
+	FOREIGN KEY (characters_and_organizations_character_id) REFERENCES characters(character_id),
+	FOREIGN KEY (characters_and_organizations_organization_id) REFERENCES organization(organization_id));
+
+CREATE TABLE characters_and_schools 
+	(characters_and_schools_character_id int(11) NOT NULL,
+	characters_and_schools_school_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_schools_character_id,characters_and_schools_school_id),
+	FOREIGN KEY (characters_and_schools_character_id) REFERENCES characters(character_id),
+	FOREIGN KEY (characters_and_schools_school_id) REFERENCES school(school_id));
+
+CREATE TABLE characters_and_ranks 
+	(characters_and_ranks_character_id int(11) NOT NULL,
+	characters_and_ranks_rank_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_ranks_character_id,characters_and_ranks_rank_id),
+	FOREIGN KEY (characters_and_ranks_character_id) REFERENCES characters(character_id),
+	FOREIGN KEY (characters_and_ranks_rank_id) REFERENCES rank(rank_id));
+
+CREATE TABLE characters_and_ethnicities 
+	(characters_and_ethnicities_character_id int(11) NOT NULL,
+	characters_and_ethnicities_ethnicity_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_ethnicities_character_id,characters_and_ethnicities_ethnicity_id),
+	FOREIGN KEY (characters_and_ethnicities_character_id) REFERENCES characters(character_id),
+	FOREIGN KEY (characters_and_ethnicities_ethnicity_id) REFERENCES ethnicity(ethnicity_id));
+
+CREATE TABLE characters_and_occupations 
+	(characters_and_occupations_character_id int(11) NOT NULL,
+	characters_and_occupations_occupation_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_occupations_character_id,characters_and_occupations_occupation_id),
+	FOREIGN KEY (characters_and_occupations_character_id) REFERENCES characters(character_id),
+	FOREIGN KEY (characters_and_occupations_occupation_id) REFERENCES occupation(occupation_id));
+
+CREATE TABLE characters_and_powers 
+	(characters_and_powers_character_id int(11) NOT NULL,
+	characters_and_powers_power_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_powers_character_id,characters_and_powers_power_id),
+	FOREIGN KEY (characters_and_powers_character_id) REFERENCES characters(character_id),
+	FOREIGN KEY (characters_and_powers_power_id) REFERENCES powers(power_id));
+
+CREATE TABLE characters_and_diseases 
+	(characters_and_diseases_character_id int(11) NOT NULL,
+	characters_and_diseases_disease_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_diseases_character_id,characters_and_diseases_disease_id),
+	FOREIGN KEY (characters_and_diseases_character_id) REFERENCES characters(character_id),
+	FOREIGN KEY (characters_and_diseases_disease_id) REFERENCES diseases(disease_id));

@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS characters_and_ethnicities;
 DROP TABLE IF EXISTS characters_and_occupations;
 DROP TABLE IF EXISTS characters_and_powers;
 DROP TABLE IF EXISTS characters_and_diseases;
+DROP TABLE IF EXISTS characters_and_siblings; 
 DROP TABLE IF EXISTS characters;
 DROP TABLE IF EXISTS locations;
 DROP TABLE IF EXISTS place_of_birth;
