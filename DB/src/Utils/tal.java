@@ -16,16 +16,17 @@ public class tal {
 	private static final String CREATE_TABLES_SQL_FILE_PATH = "sql/mysql/populate-tables.sql";
 	private DatabaseManager dbManager = DatabaseManager.getInstance();
 	private JDCConnection conn;
+	Tables[] tbs;
 
 	public tal(){
 		conn = dbManager.getConnection() ;
+		tbs = Tables.values();
 	}
 	
 	public JDCConnection getConnention(){
 		return conn;
 	}
 		
-	
 	public 
 	static void fillTables() throws IOException {
 
@@ -116,16 +117,14 @@ public class tal {
 	}
 
 
-	boolean helper(Tables[] tbs,String[] fill, String name1,String name2,String[] arr, int length,int id, int prevId,int i, boolean rec) {
+	boolean helper(String[] fill, String name1,String name2,String[] arr, int length,int id, int prevId,int i, boolean rec, String firstName) {
 
 		Statement stmt;
 		Statement stmt1 = null;
 		Statement stmt2 = null;
-		Statement stmt3 = null;
 		ResultSet rs;
 		ResultSet rs1 = null;
 		ResultSet rs2 = null;
-		ResultSet rs3 = null;
 		String s;
 		
 		if (tbs[i].toString().equals("diseases"))
@@ -137,13 +136,10 @@ public class tal {
 			
 		try {
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT DISTINCT " + tbs[i+1].toString() + "_" + s + "_id" + " FROM characters, " + tbs[i+1].toString()+ " WHERE character_name='" + name1 + "'" +" AND character_id= " +tbs[i+1].toString() + "_character_id");
+			rs = stmt.executeQuery("SELECT " + s + "_id, " + s + "_name" + " FROM " + tbs[i+1].toString()+ ", " + tbs[i].toString()+ " WHERE "+ tbs[i+1].toString() + "_character_id= " + id +" AND " + tbs[i+1].toString() + "_" + s + "_id" +" = " + s + "_id");
 
 			while (rs.next()==true){
-				stmt3 = conn.createStatement();
-				rs3 = stmt3.executeQuery("SELECT " + s +"_name AS name FROM " + tbs[i].toString()+ " where " +s +"_id= " + rs.getInt(1));
-				rs3.first();
-				if (rs3.getString("name").equals("Unspecified"))
+				if (rs.getString(2).equals("Unspecified"))
 					break;
 				stmt1 = conn.createStatement();
 				rs1 = stmt1.executeQuery("SELECT "+ tbs[i+1].toString() + "_character_id"+ " FROM " + tbs[i+1].toString()+ " WHERE "+ tbs[i+1].toString() + "_" + s + "_id"+ " = " + rs.getInt(1) + " AND " + tbs[i+1].toString() + "_character_id"+ "!= "+id +" AND " + tbs[i+1].toString() + "_character_id"+ "!= " +prevId);
@@ -155,32 +151,25 @@ public class tal {
 					arr[length-1]= name1 + " has the same " + s + " as " + fill[0];
 					if (rec==false) {
 						if (fill[0].equals(name2)) {
-							int index=0;
-							while (arr[index]!=null) {
+							for (int index= 0; index<length; index++)
 								System.out.println(arr[index]);
-								index++;
-							}
 							rs.close();
 							rs1.close();
 							stmt.close();
 							stmt1.close();
 							rs2.close();
 							stmt2.close();
-							rs3.close();
-							stmt3.close();
 							return true;
 						}
 					}
 					else {
-						rs.close();
-						rs1.close();
-						stmt.close();
-						stmt1.close();
-						rs2.close();
-						stmt2.close();
-						rs3.close();
-						stmt3.close();
-						return true;
+							rs.close();
+							rs1.close();
+							stmt.close();
+							stmt1.close();
+							rs2.close();
+							stmt2.close();
+							return true;	
 					}
 
 
@@ -197,9 +186,6 @@ public class tal {
 			stmt.close();
 			if (stmt1!=null)
 				stmt1.close();
-			rs3.close();
-			stmt3.close();
-
 
 		} catch (SQLException e) {
 			System.out.println("error execute query-" + e.toString());
@@ -217,21 +203,21 @@ public class tal {
 			return true;
 		}
 
-		Statement stmt3;
-		ResultSet rs3;
+		Statement stmt;
+		ResultSet rs;
 		String[] arr1 = new String[1];
-		Tables[] tbs = Tables.values();
+		//Tables[] tbs = Tables.values();
 		int id =0;
 
 		try {
-			stmt3 = conn.createStatement();
-			rs3 = stmt3.executeQuery("SELECT characters.character_id FROM characters WHERE characters.character_name='" + name1+"'");
-			rs3.first();
-			id = rs3.getInt("character_id");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT characters.character_id FROM characters WHERE characters.character_name='" + name1+"'");
+			rs.first();
+			id = rs.getInt("character_id");
 			if (prevId==0)
 				prevId=id;
-			rs3.close();
-			stmt3.close();
+			rs.close();
+			stmt.close();
 		} catch (SQLException e) {
 			System.out.println("error execute query-" + e.toString());
 		}
@@ -239,7 +225,7 @@ public class tal {
 		
 		for (int i=1; i<22; i=i+2){
 			System.out.println("trying "+ tbs[i].toString());
-			if (helper(tbs, arr1,name1, name2, arr, length,id, prevId,i,false)==true) {
+			if (helper(arr1,name1, name2, arr, length,id, prevId,i,false,firstName)==true) {
 				System.out.println("Match found between "+ firstName +" and "+ name2 + " in "+ length + " steps");
 				return true;
 			}
@@ -247,7 +233,7 @@ public class tal {
 		
 		for (int i=1; i<22; i=i+2){
 			System.out.println("trying recursive "+ tbs[i].toString());
-			if (helper(tbs, arr1,name1, name2,arr, length,id, prevId,i,true)==true) {
+			if (helper(arr1,name1, name2,arr, length,id, prevId,i,true,firstName)==true) {
 				if (lookForConnection(arr1[0], name2,length+1,id,firstName,arr)==true)
 					return true;
 			}
