@@ -11,9 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.sql.SQLException;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
@@ -215,7 +213,7 @@ public class TableUtilities {
 
 		DatabaseManager dbManager = DatabaseManager.getInstance();
 		TreeMap<String, Integer> interestingValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + interestingTable, 1, 3);
-		TreeMap<String, Integer> charactersMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters", 1, 3);
+		TreeMap<String, Integer> charactersMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters", 1, 2);
 
 		int unspecifiedId = interestingValuesMap.get("Unspecified");
 
@@ -229,10 +227,10 @@ public class TableUtilities {
 			strarr[interestingFieldNum-1] = tempString;
 			String [] valueArr = strarr[interestingFieldNum-1].split(",");
 
-			strarr[0] = new String(strarr[0].getBytes(), CHARSET);
+//			strarr[0] = new String(strarr[0].getBytes(), CHARSET);
 
-			if (charactersMap.get(strarr[0]) == null){
-				System.out.println("character " + strarr[0] + " id equals null");
+			if (charactersMap.get(strarr[1]) == null){
+				System.out.println("character " + strarr[1] + " id equals null");
 				failuresCounter++;
 				continue;
 			}
@@ -253,7 +251,7 @@ public class TableUtilities {
 						valueArr[i] = valueArr[i] + "," + valueArr[i+1];
 						System.out.println("found a value between two cells- " + interestingTable + " " + valueArr[i]);
 						bufferedWriter.append(insertStatement);
-						bufferedWriter.append("'" + charactersMap.get(strarr[0]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
+						bufferedWriter.append("'" + charactersMap.get(strarr[1]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
 						bufferedWriter.flush();
 						alreadySet = true;
 						i++;
@@ -266,7 +264,7 @@ public class TableUtilities {
 
 				else{
 					bufferedWriter.append(insertStatement);
-					bufferedWriter.append("'" + charactersMap.get(strarr[0]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
+					bufferedWriter.append("'" + charactersMap.get(strarr[1]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
 					bufferedWriter.flush();
 					alreadySet = true;
 				}
@@ -274,12 +272,12 @@ public class TableUtilities {
 
 			if (!alreadySet){
 				bufferedWriter.append(insertStatement);
-				bufferedWriter.append("'"+ charactersMap.get(strarr[0]) + "', '" + unspecifiedId + "');\n");
+				bufferedWriter.append("'"+ charactersMap.get(strarr[1]) + "', '" + unspecifiedId + "');\n");
 				bufferedWriter.flush();
 			}
 		}
 
-		System.out.println("OVERALL " + overallCounter + " FAILURES " + failuresCounter);
+		System.out.println("OVERALL " + overallCounter + " FAILURES " + failuresCounter + "\n");
 		bufferedWriter.close();
 		bufferedReader.close();
 
@@ -287,7 +285,7 @@ public class TableUtilities {
 
 	public static void main(String args[]) throws IOException, SQLException {
 
-		/*long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 
 		//downloadAndExtractDumps();
 
@@ -363,23 +361,23 @@ public class TableUtilities {
 		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_occupations (characters_and_occupations_character_id, characters_and_occupations_occupation_id) values(", "occupation", 27, 8);	
 		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_powers (characters_and_powers_character_id, characters_and_powers_power_id) values(", "powers", 27, 11);
 		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_diseases (characters_and_diseases_character_id, characters_and_diseases_disease_id) values(", "diseases", 27, 23);	
-		//AntUtils.executeTarget(Targets.BUILD);
 
 		AntUtils.executeTarget(Targets.POPULATE);
 
 		long finishTime = System.currentTimeMillis();
 
-		System.out.println("operation took " + (finishTime - startTime) + " Millis");*/
+		long totalTime = finishTime - startTime;
+		System.out.println("operation took " + totalTime + " Millis");
 
-		tal a = new tal();
-		//tal.fillTables();
-		String[] arr = new String[5];
-		if (a.lookForConnection("Webster", "Pamela",1,0,"Webster", arr))
-			System.out.println("finish!!!");
-		else
-			System.out.println("didnt find any match");
-				
-		a.getConnention().close();
-		System.out.println("closed");
+//		tal a = new tal();
+//		//tal.fillTables();
+//		String[] arr = new String[5];
+//		if (a.lookForConnection("Webster", "Pamela",1,0,"Webster", arr))
+//			System.out.println("finish!!!");
+//		else
+//			System.out.println("didnt find any match");
+//				
+//		a.getConnention().close();
+//		System.out.println("closed");
 	}
 }
