@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 
 import GUI.commons.Pair;
 import GUI.panels.Manage.cards.GenericCardPanel;
+import Utils.ExecutionResult;
 import Utils.Tables;
 
 public class EditCard extends GenericCardPanel{
@@ -31,7 +32,7 @@ public class EditCard extends GenericCardPanel{
 						String [] fieldNames = {table.toString() + "_name"};
 						String [] values = {field1.getText()};
 						Pair selectedPair = (Pair) cb.getSelectedItem();
-						databaseManager.executeUpdate(table, fieldNames, values, selectedPair.getId());
+						ExecutionResult result = databaseManager.executeUpdate(table, fieldNames, values, selectedPair.getId());
 					}
 				});
 			}

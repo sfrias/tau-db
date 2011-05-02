@@ -15,12 +15,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import GUI.commons.Pair;
 
 public class DatabaseManager {
 
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "6387";
+	private final static String PASSWORD = "mapo00";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
@@ -220,7 +222,7 @@ public class DatabaseManager {
 
 	}
 
-	public void executeUpdate(Tables table, String[] fieldNames, String[] values, int id) {
+	public ExecutionResult executeUpdate(Tables table, String[] fieldNames, String[] values, int id) {
 		
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
@@ -238,22 +240,30 @@ public class DatabaseManager {
 			
 			stmt.close();
 			conn.close(); 
+			
+			return ExecutionResult.Success;
 
 		} catch (SQLException e) {
 			System.err.println("An SQLException was thrown at executeUpdate("+ table.toString() + ")");
+			return ExecutionResult.Exception;
 		}
 	}
 
-	public void executeDelete(Tables table, int id) {
+	public ExecutionResult executeDelete(Tables table, int id) {
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate("DELETE FROM " + table.toString() + " WHERE " + table.toString() + "_id = " + id);		
 			stmt.close();
 			conn.close(); 
-
-		} catch (SQLException e) {
+			return ExecutionResult.Success;
+		} 
+		catch (MySQLIntegrityConstraintViolationException e){
+			return ExecutionResult.IntegrityConstraintViolationException;
+		}
+		catch (SQLException e) {
 			System.err.println("An SQLException was thrown at executeDelete("+ table.toString() + ")");
+			return ExecutionResult.Exception;
 		}		
 	}
 }
