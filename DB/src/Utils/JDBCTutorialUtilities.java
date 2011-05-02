@@ -11,9 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.sql.SQLException;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.tools.bzip2.CBZip2InputStream;

@@ -3,13 +3,15 @@ package GUI;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import GUI.frames.ManageFrame;
 import GUI.frames.WelcomeScreenFrame;
+import GUI.panels.General.BlinkingStatusPanel;
 
 
 public class GuiBuilder {
 
-        private static void installLookAndFeel() {
+	private static BlinkingStatusPanel panelStatus = new BlinkingStatusPanel();    
+	
+	private static void installLookAndFeel() {
                 try {
 					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				} catch (ClassNotFoundException e) {
@@ -31,6 +33,18 @@ public class GuiBuilder {
                 installLookAndFeel();
                 WelcomeScreenFrame frame = new WelcomeScreenFrame();
                 frame.setVisible(true);
+        }
+        
+        public static BlinkingStatusPanel getStatusPanel(){
+        	return panelStatus;
+        }
+        
+        public static void startStatusFlash(){
+        	panelStatus.flash();
+        }
+        
+        public static void stopStatusFlash(){
+        	panelStatus.clearFlashing();
         }
       
 }

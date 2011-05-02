@@ -4,35 +4,43 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
+import GUI.buttons.AutoCompleteComboBox;
+import GUI.buttons.IconButton;
+import GUI.commons.Pair;
 import Utils.DatabaseManager;
 import Utils.Tables;
 
-import GUI.buttons.AutoCompleteComboBox;
-import GUI.commons.Pair;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public abstract class GenericCardPanel extends JPanel implements GenericCardInerface{
 	private static final long serialVersionUID = 1L;
 
 	protected static DatabaseManager databaseManager = DatabaseManager.getInstance();
 	protected AutoCompleteComboBox cb;
+	protected final JTextField textName = new JTextField(20);
+	
+	protected boolean isSimpleCard;
 	protected Tables table;
-	protected JTextField field1;
-
+	
 	public GenericCardPanel(Tables table){
+		this(table, true);
+	}
+	
+	public GenericCardPanel(Tables table, boolean isSimpleCard){
 		super();
 		
+		this.isSimpleCard = isSimpleCard;
 		this.table = table;
 		setLayout(new BorderLayout());
 		
@@ -52,10 +60,12 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		panelHead.add(new JSeparator(JSeparator.HORIZONTAL));
 		add(panelHead,BorderLayout.NORTH);
 		
-		addFields();
+		if (isSimpleCard){
+			addFields(null, null);
+		}
 		
 		JPanel panelButton = new JPanel();
-		JButton buttonAction = new JButton(getCardAction());
+		IconButton buttonAction = new IconButton("OK","ok.png");
 		buttonAction.addActionListener(createActionButtonListener());
 		panelButton.add(buttonAction);
 		
@@ -68,19 +78,35 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		
 	}
 	
-	@Override
-	public void addFields() {
-
-		JPanel panelFields = new JPanel();
-
-		FormLayout layout = new FormLayout("right:pref, 4dlu, pref", "p, 4dlu, p, 4dlu, p, 4dlu");
+	private String buildRowsSpecs(int nOfRows){
+		int i;
+		StringBuilder specs = new StringBuilder("");
+		for (i=0 ; i<nOfRows ; i++ ){
+			specs.append("p, 4dlu, ");
+		}
+		specs.append("p, 4dlu"); //one more for name field
+		return specs.toString();
+	}
+	
+	//no need to send "name" - automatic adds
+	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents) {
+		assert ((fieldsNames==null && fieldsComponents==null) ||
+				fieldsComponents.size()==fieldsNames.size());
+		
+		int numOfRows = fieldsNames==null ? 0 : fieldsNames.size();
+		FormLayout layout = new FormLayout("right:pref, 4dlu, pref", buildRowsSpecs(numOfRows));
 
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setDefaultDialogBorder();
 		CellConstraints cc = new CellConstraints();
 		builder.addLabel(table.toString() + " name:", cc.xy(1,1));
-		builder.add(field1 = new JTextField(17), cc.xy(3,1));
+		builder.add(textName, cc.xy(3,1));
 
+		for (int i=0; i<numOfRows; i++){
+			builder.addLabel(fieldsNames.remove(0) + ":",cc.xy(1, 2*i+3));
+			builder.add(fieldsComponents.remove(0),cc.xy(3,2*i+3));
+		}
+		
 		add(builder.getPanel(),BorderLayout.CENTER);
 	}
 
@@ -100,7 +126,7 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 				Pair record = (Pair) cb.getSelectedItem();
 				if (record != null){
 					String [] valuesArr = databaseManager.getCurrentValues(table, table.toString()+"_id", record.getId());
-					field1.setText(valuesArr[0]);	
+					textName.setText(valuesArr[0]);	
 				}
 			}
 		};

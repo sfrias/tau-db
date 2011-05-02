@@ -14,6 +14,10 @@ public class EditCard extends GenericCardPanel{
 
 	private static final long serialVersionUID = -1543391049010263975L;
 
+	public EditCard(Tables table, Boolean isSimpleCard){
+		super(table ,isSimpleCard);
+	}
+	
 	public EditCard(Tables table) {
 		super(table);
 	}
@@ -30,7 +34,7 @@ public class EditCard extends GenericCardPanel{
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						String [] fieldNames = {table.toString() + "_name"};
-						String [] values = {field1.getText()};
+						String [] values = {textName.getText()};
 						Pair selectedPair = (Pair) cb.getSelectedItem();
 						ExecutionResult result = databaseManager.executeUpdate(table, fieldNames, values, selectedPair.getId());
 					}

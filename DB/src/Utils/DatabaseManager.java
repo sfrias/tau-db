@@ -22,7 +22,7 @@ import GUI.commons.Pair;
 public class DatabaseManager {
 
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "mapo00";
+	private final static String PASSWORD = "root";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
