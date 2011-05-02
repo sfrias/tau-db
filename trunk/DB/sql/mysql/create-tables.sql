@@ -151,8 +151,8 @@ CREATE TABLE characters_and_genders
 	(characters_and_genders_character_id int(11) NOT NULL,
 	characters_and_genders_gender_id int(11) NOT NULL,
 	PRIMARY KEY (characters_and_genders_character_id,characters_and_genders_gender_id),
-	FOREIGN KEY (characters_and_genders_character_id) REFERENCES characters(character_id),
-	FOREIGN KEY (characters_and_genders_gender_id) REFERENCES gender(gender_id));
+	FOREIGN KEY (characters_and_genders_character_id) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
+	FOREIGN KEY (characters_and_genders_gender_id) REFERENCES gender(gender_id) ON UPDATE RESTRICT ON DELETE RESTRICT);
 
 CREATE TABLE characters_and_species 
 	(characters_and_species_character_id int(11) NOT NULL,

@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 
 import GUI.commons.Pair;
 import GUI.panels.Manage.cards.GenericCardPanel;
+import Utils.ExecutionResult;
 import Utils.Tables;
 
 public class DeleteCard extends GenericCardPanel{
@@ -36,7 +37,7 @@ public class DeleteCard extends GenericCardPanel{
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						Pair selectedPair = (Pair) cb.getSelectedItem();
-						databaseManager.executeDelete(table, selectedPair.getId());
+						ExecutionResult result = databaseManager.executeDelete(table, selectedPair.getId());
 					}
 				});
 			}
