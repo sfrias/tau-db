@@ -1,6 +1,9 @@
 package GUI.panels.Manage.cards;
 
 import java.awt.event.ActionListener;
+import java.util.Vector;
+
+import javax.swing.JComponent;
 
 import GUI.commons.Pair;
 
@@ -8,7 +11,7 @@ public interface GenericCardInerface {
 	
 	//each card should add diffrent fields. 
 	//card implement
-	public void addFields();
+	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents);
 	
 	//each card should have diffrent action. 
 	//abstract implement

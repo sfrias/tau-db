@@ -2,7 +2,9 @@ package GUI.panels.Manage.cards.add;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -24,7 +26,7 @@ public class AddGender extends abstractAddCard {
 	}
 
 	@Override
-	public void addFields() {
+	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents) {
 		JPanel panelFields = new JPanel();
 		
 		FormLayout layout = 

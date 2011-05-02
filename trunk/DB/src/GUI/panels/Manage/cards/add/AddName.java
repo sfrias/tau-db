@@ -1,6 +1,9 @@
 package GUI.panels.Manage.cards.add;
 
 import java.awt.event.ActionListener;
+import java.util.Vector;
+
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import Utils.Tables;
@@ -14,7 +17,7 @@ public class AddName extends abstractAddCard {
 	}
 
 	@Override
-	public void addFields() {
+	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents) {
 		add(new JLabel("name field"));
 		
 	}

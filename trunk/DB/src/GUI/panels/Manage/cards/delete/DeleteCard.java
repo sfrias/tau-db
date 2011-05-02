@@ -14,20 +14,25 @@ public class DeleteCard extends GenericCardPanel{
 
 	private static final long serialVersionUID = 8694645404553404464L;
 
-
+	DeleteCard(Tables table, boolean isSimpleCard){
+		super(table, isSimpleCard);
+		textName.setEditable(false);
+	}
+	
 	public DeleteCard(Tables table) {
 		super(table);
+		textName.setEditable(false);
 	}
 
 	public String getCardAction(){
 		return "delete";
 	}
 
-	@Override
+/*	@Override
 	public void addFields() {
 		super.addFields();
 		field1.setEditable(false);
-	}
+	}*/
 
 
 	public ActionListener createActionButtonListener() {
