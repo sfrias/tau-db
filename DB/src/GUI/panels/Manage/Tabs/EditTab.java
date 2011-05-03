@@ -2,8 +2,20 @@ package GUI.panels.Manage.Tabs;
 
 import javax.swing.JPanel;
 
+import GUI.panels.Manage.cards.edit.EditCreator;
+import GUI.panels.Manage.cards.edit.EditDiseases;
+import GUI.panels.Manage.cards.edit.EditEthnicity;
 import GUI.panels.Manage.cards.edit.EditGender;
+import GUI.panels.Manage.cards.edit.EditJob;
+import GUI.panels.Manage.cards.edit.EditLocation;
 import GUI.panels.Manage.cards.edit.EditOccupation;
+import GUI.panels.Manage.cards.edit.EditOrganization;
+import GUI.panels.Manage.cards.edit.EditPower;
+import GUI.panels.Manage.cards.edit.EditRank;
+import GUI.panels.Manage.cards.edit.EditSchool;
+import GUI.panels.Manage.cards.edit.EditSpecies;
+import GUI.panels.Manage.cards.edit.EditUniverse;
+import Utils.Tables;
 
 public class EditTab extends GenericTab{
 	private static final long serialVersionUID = 1L;
@@ -13,8 +25,20 @@ public class EditTab extends GenericTab{
 	}
 	@Override
 	public JPanel addCards(JPanel cards) {
-		cards.add(new EditGender(), "GENDER");
-		cards.add(new EditOccupation(), "OCCUPATION");
+		cards.add(new EditCreator(), Tables.creator.toString().toUpperCase());
+		cards.add(new EditDiseases(), Tables.disease.toString().toUpperCase());
+		cards.add(new EditEthnicity(), Tables.ethnicity.toString().toUpperCase());
+		cards.add(new EditGender(), Tables.gender.toString().toUpperCase());
+		cards.add(new EditJob(), Tables.job.toString().toUpperCase());
+		cards.add(new EditLocation(), Tables.location.toString().toUpperCase());
+		cards.add(new EditOccupation(), Tables.occupation.toString().toUpperCase());
+		cards.add(new EditOrganization(), Tables.organization.toString().toUpperCase());
+		cards.add(new EditPower(), Tables.power.toString().toUpperCase());
+		cards.add(new EditRank(), Tables.rank.toString().toUpperCase());
+		cards.add(new EditSchool(), Tables.school.toString().toUpperCase());
+		cards.add(new EditSpecies(), Tables.species.toString().toUpperCase());
+		cards.add(new EditUniverse(), Tables.universe.toString().toUpperCase());
+		
 		return cards;
 	}
 

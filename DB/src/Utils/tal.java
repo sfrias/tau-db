@@ -4,13 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import javax.xml.datatype.DatatypeFactory;
 
 public class tal {
 	private static final String CREATE_TABLES_SQL_FILE_PATH = "sql/mysql/populate-tables.sql";
@@ -127,12 +123,8 @@ public class tal {
 		ResultSet rs2 = null;
 		String s;
 		
-		if (tbs[i].toString().equals("diseases"))
-			s = "disease";
-		else if (tbs[i].toString().equals("powers"))
-			s = "power";
-		else
-			s = tbs[i].toString();
+		
+		s = tbs[i].toString();
 			
 		try {
 			stmt = conn.createStatement();

@@ -69,7 +69,7 @@ CREATE TABLE universe
 	KEY ix_universe_id (universe_id),
 	PRIMARY KEY (universe_id,universe_fb_id));
 	
-CREATE TABLE locations
+CREATE TABLE location
 	(location_id int(11) NOT NULL AUTO_INCREMENT,
 	location_name varchar(80) NOT NULL,
 	location_universe_id int(11) NOT NULL,
@@ -111,27 +111,27 @@ CREATE TABLE occupation
 	KEY ix_occupation_id (occupation_id),
 	PRIMARY KEY (occupation_id));
 	
-CREATE TABLE powers 
+CREATE TABLE power 
 	(power_id int(11) NOT NULL AUTO_INCREMENT,
 	power_fb_id varchar(40) NOT NULL,
 	power_name varchar(140) NOT NULL,
 	KEY ix_power_id (power_id),
 	PRIMARY KEY (power_id));
 	
-CREATE TABLE jobs 
+CREATE TABLE job 
 	(job_id int(11) NOT NULL AUTO_INCREMENT,
 	job_fb_id varchar(40) NOT NULL,
 	job_name varchar(80) NOT NULL,
 	PRIMARY KEY (job_id));
 	
-CREATE TABLE diseases 
+CREATE TABLE disease
 	(disease_id int(11) NOT NULL AUTO_INCREMENT,
 	disease_fb_id varchar(40) NOT NULL,
 	disease_name varchar(80) NOT NULL,
 	KEY ix_disease_id (disease_id),
 	PRIMARY KEY (disease_id));
 	
-CREATE TABLE characters 
+CREATE TABLE characters
 	(character_id int(11) NOT NULL AUTO_INCREMENT,
 	character_fb_id varchar(40) NOT NULL,
 	character_name varchar(80) NOT NULL,
@@ -208,11 +208,11 @@ CREATE TABLE characters_and_powers
 	characters_and_powers_power_id int(11) NOT NULL,
 	PRIMARY KEY (characters_and_powers_character_id,characters_and_powers_power_id),
 	FOREIGN KEY (characters_and_powers_character_id) REFERENCES characters(character_id),
-	FOREIGN KEY (characters_and_powers_power_id) REFERENCES powers(power_id));
+	FOREIGN KEY (characters_and_powers_power_id) REFERENCES power(power_id));
 
 CREATE TABLE characters_and_diseases 
 	(characters_and_diseases_character_id int(11) NOT NULL,
 	characters_and_diseases_disease_id int(11) NOT NULL,
 	PRIMARY KEY (characters_and_diseases_character_id,characters_and_diseases_disease_id),
 	FOREIGN KEY (characters_and_diseases_character_id) REFERENCES characters(character_id),
-	FOREIGN KEY (characters_and_diseases_disease_id) REFERENCES diseases(disease_id));
+	FOREIGN KEY (characters_and_diseases_disease_id) REFERENCES disease(disease_id));
