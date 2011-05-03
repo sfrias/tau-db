@@ -6,11 +6,11 @@ import java.awt.event.ActionListener;
 import javax.swing.SwingUtilities;
 
 import GUI.commons.Pair;
-import GUI.panels.Manage.cards.GenericCardPanel;
+import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 import Utils.ExecutionResult;
 import Utils.Tables;
 
-public class DeleteCard extends GenericCardPanel{
+public class DeleteCard extends EditAndDeleteGenericCardPanel{
 
 	private static final long serialVersionUID = 8694645404553404464L;
 
@@ -19,21 +19,14 @@ public class DeleteCard extends GenericCardPanel{
 		textName.setEditable(false);
 	}
 	
-	public DeleteCard(Tables table) {
-		super(table);
+	DeleteCard(Tables table){
+		super(table, true);
 		textName.setEditable(false);
 	}
 
 	public String getCardAction(){
 		return "delete";
 	}
-
-/*	@Override
-	public void addFields() {
-		super.addFields();
-		field1.setEditable(false);
-	}*/
-
 
 	public ActionListener createActionButtonListener() {
 		return new ActionListener() {
@@ -43,6 +36,7 @@ public class DeleteCard extends GenericCardPanel{
 					public void run() {
 						Pair selectedPair = (Pair) cb.getSelectedItem();
 						ExecutionResult result = databaseManager.executeDelete(table, selectedPair.getId());
+						//TODO - update combo
 					}
 				});
 			}

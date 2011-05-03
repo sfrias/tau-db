@@ -36,16 +36,13 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		panelTitle.add(comboCategory);
 		panelHead.add(panelTitle);
 		panelHead.add(new JSeparator(JSeparator.HORIZONTAL));
-				
 		
 		setLayout(new BorderLayout());
 		add(panelHead,BorderLayout.NORTH);
 		
 		cards = new JPanel(new CardLayout());
 		cards = addCards(cards);
-		add(cards,BorderLayout.CENTER);
-		
-		
+		add(cards,BorderLayout.CENTER);	
 	}
 	
 	public void actionPerformed(ActionEvent e) {

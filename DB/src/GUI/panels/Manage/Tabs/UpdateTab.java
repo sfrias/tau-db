@@ -3,7 +3,7 @@ package GUI.panels.Manage.Tabs;
 import javax.swing.JPanel;
 
 import GUI.panels.Manage.cards.add.AddGender;
-import GUI.panels.Manage.cards.add.AddName;
+import GUI.panels.Manage.cards.add.AddOccupation;
 
 public class UpdateTab extends GenericTab{
 	private static final long serialVersionUID = 1L;
@@ -14,7 +14,7 @@ public class UpdateTab extends GenericTab{
 	@Override
 	public JPanel addCards(JPanel cards) {
 		cards.add(new AddGender(), "GENDER");
-		cards.add(new AddName(), "NAMES");
+		cards.add(new AddOccupation(), "NAMES");
 		return cards;
 	}
 

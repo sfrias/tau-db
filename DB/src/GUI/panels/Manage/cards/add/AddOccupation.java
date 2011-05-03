@@ -9,10 +9,10 @@ import javax.swing.JLabel;
 import Utils.Tables;
 import GUI.commons.Pair;
 
-public class AddName extends abstractAddCard {
+public class AddOccupation extends AddCard {
 	private static final long serialVersionUID = 1L;
 	
-	public AddName(){
+	public AddOccupation(){
 		super(Tables.occupation);
 	}
 
@@ -24,18 +24,6 @@ public class AddName extends abstractAddCard {
 
 	@Override
 	public ActionListener createActionButtonListener() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Pair [] createRecordList() {
-		Pair[] result = {new Pair("addName1",1), new Pair("addName2",2)};
-		return result;
-	}
-
-	@Override
-	public ActionListener createRecordComboListener() {
 		// TODO Auto-generated method stub
 		return null;
 	}
