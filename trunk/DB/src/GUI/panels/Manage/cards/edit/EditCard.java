@@ -6,20 +6,20 @@ import java.awt.event.ActionListener;
 import javax.swing.SwingUtilities;
 
 import GUI.commons.Pair;
-import GUI.panels.Manage.cards.GenericCardPanel;
+import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 import Utils.ExecutionResult;
 import Utils.Tables;
 
-public class EditCard extends GenericCardPanel{
+public class EditCard extends EditAndDeleteGenericCardPanel{
 
 	private static final long serialVersionUID = -1543391049010263975L;
 
-	public EditCard(Tables table, Boolean isSimpleCard){
+	public EditCard(Tables table, boolean isSimpleCard){
 		super(table ,isSimpleCard);
 	}
 	
-	public EditCard(Tables table) {
-		super(table);
+	public EditCard(Tables table){
+		super(table ,true);
 	}
 
 	public String getCardAction(){

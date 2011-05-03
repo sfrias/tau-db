@@ -222,8 +222,39 @@ public class DatabaseManager {
 
 	}
 
+	public ExecutionResult executeInset(Tables table, String[] fieldNames, String[] values) {
+		try {
+			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("INSERT IGNORE INTO " + table.toString() + " (");
+			int length = fieldNames.length;
+			for (int i=0; i < length - 1; i++){
+				stringBuilder.append(fieldNames[i] + ", ");
+			}
+			stringBuilder.append(fieldNames[length-1] + ") values(");
+			
+			for (int i=0; i < length - 1; i++){
+				stringBuilder.append("\'" + values[i] + "\', ");
+			}
+			stringBuilder.append("\'" + values[length-1] + "\')");
+
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(stringBuilder.toString());
+
+			stmt.close();
+			conn.close(); 
+
+			return ExecutionResult.Success;
+
+		} catch (SQLException e) {
+			System.err.println("An SQLException was thrown at executeUpdate("+ table.toString() + ")");
+			return ExecutionResult.Exception;
+		}
+	}
+
+
 	public ExecutionResult executeUpdate(Tables table, String[] fieldNames, String[] values, int id) {
-		
+
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			StringBuilder stringBuilder = new StringBuilder();
@@ -237,10 +268,10 @@ public class DatabaseManager {
 
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(stringBuilder.toString());
-			
+
 			stmt.close();
 			conn.close(); 
-			
+
 			return ExecutionResult.Success;
 
 		} catch (SQLException e) {

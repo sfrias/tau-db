@@ -24,6 +24,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public abstract class GenericCardPanel extends JPanel implements GenericCardInerface{
+
 	private static final long serialVersionUID = 1L;
 
 	protected static DatabaseManager databaseManager = DatabaseManager.getInstance();
@@ -33,32 +34,12 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 	protected boolean isSimpleCard;
 	protected Tables table;
 	
-	public GenericCardPanel(Tables table){
-		this(table, true);
-	}
-	
 	public GenericCardPanel(Tables table, boolean isSimpleCard){
 		super();
 		
 		this.isSimpleCard = isSimpleCard;
 		this.table = table;
 		setLayout(new BorderLayout());
-		
-		Pair[] records = createRecordList();
-		AutoCompleteComboBox comboRecord = new AutoCompleteComboBox(records);
-		comboRecord.addActionListener(createRecordComboListener());
-		comboRecord.setPreferredSize(new Dimension(200,20));
-		//comboRecord.setSelectedIndex(0);
-		
-		JPanel panelHead = new JPanel();
-		panelHead.setLayout(new BoxLayout(panelHead,BoxLayout.PAGE_AXIS));
-		
-		JPanel panelRecord = new JPanel();
-		panelRecord.add(comboRecord);
-		panelHead.add(new JLabel("please select a record:"));
-		panelHead.add(panelRecord);
-		panelHead.add(new JSeparator(JSeparator.HORIZONTAL));
-		add(panelHead,BorderLayout.NORTH);
 		
 		if (isSimpleCard){
 			addFields(null, null);
@@ -110,26 +91,5 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		add(builder.getPanel(),BorderLayout.CENTER);
 	}
 
-	public Pair[] createRecordList() {
-
-		Pair [] valuesArr = databaseManager.executeQueryAndGetValues(table, 3);
-		return valuesArr;
-	}
-	
-	public ActionListener createRecordComboListener() { 
-
-		return new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cb = (AutoCompleteComboBox)e.getSource();
-				Pair record = (Pair) cb.getSelectedItem();
-				if (record != null){
-					String [] valuesArr = databaseManager.getCurrentValues(table, table.toString()+"_id", record.getId());
-					textName.setText(valuesArr[0]);	
-				}
-			}
-		};
-	}
-
 }
+
