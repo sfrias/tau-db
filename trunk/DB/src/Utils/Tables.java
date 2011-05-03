@@ -4,7 +4,7 @@ public enum Tables {
 	characters,
 	occupation,
 	characters_and_occupations,
-	powers,
+	power,
 	characters_and_powers,
 	organization,
 	characters_and_organizations,
@@ -22,9 +22,9 @@ public enum Tables {
 	characters_and_ranks,
 	ethnicity,
 	characters_and_ethnicities,
-	diseases,
+	disease,
 	characters_and_diseases,
-	jobs,
-	locations,
+	job,
+	location,
 	place_of_birth;
 }

@@ -107,7 +107,7 @@ public class TableUtilities {
 		String[] strarr;
 		String tempString;
 
-		if (table.equals("locations")){
+		if (table.equals(Tables.location.toString())){
 			while ((lineRead = bufferedReader.readLine()) != null) {
 				strarr = lineRead.split("\t", splitNum);
 				strarr[0] = strarr[0].replace("\'", "\\'");
@@ -130,7 +130,7 @@ public class TableUtilities {
 			bufferedWriter.append("'Unspecified', (SELECT universe_id FROM universe Where universe_fb_id LIKE 'Unspecified'));\n");
 		}
 
-		else if (table.equals("place_of_birth")){	
+		else if (table.equals(Tables.place_of_birth.toString())){	
 			while ((lineRead = bufferedReader.readLine()) != null) {
 				strarr = lineRead.split("\t", splitNum);
 				tempString = strarr[3].replace("\'", "\\'");
@@ -146,7 +146,7 @@ public class TableUtilities {
 			bufferedWriter.append("'Unspecified');\n");
 		}
 
-		else if (table.equals("characters")){
+		else if (table.equals(Tables.characters.toString())){
 			while ((lineRead = bufferedReader.readLine()) != null) {
 				strarr = lineRead.split("\t", 27);
 				bufferedWriter.append(insertStatement);
@@ -324,17 +324,17 @@ public class TableUtilities {
 		populateSimpleTableUsingBatchFile("", "INSERT INTO occupation (occupation_name, occupation_fb_id) values(", "character_occupation.tsv", 3, 2);
 		System.out.println("Finished occupation");
 
-		populateSimpleTableUsingBatchFile("", "INSERT INTO powers (power_name, power_fb_id) values(", "character_powers.tsv", 3, 2);
-		System.out.println("Finished powers");
+		populateSimpleTableUsingBatchFile("", "INSERT INTO power (power_name, power_fb_id) values(", "character_powers.tsv", 3, 2);
+		System.out.println("Finished power");
 
-		populateSimpleTableUsingBatchFile("", "INSERT INTO jobs (job_name, job_fb_id) values(", "fictional_job_title.tsv", 3, 2);
-		System.out.println("Finished jobs");
+		populateSimpleTableUsingBatchFile("", "INSERT INTO job (job_name, job_fb_id) values(", "fictional_job_title.tsv", 3, 2);
+		System.out.println("Finished job");
 
-		populateSimpleTableUsingBatchFile("", "INSERT INTO diseases (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2);
-		System.out.println("Finished diseases");
+		populateSimpleTableUsingBatchFile("", "INSERT INTO disease (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2);
+		System.out.println("Finished disease");
 
-		populateSimpleTableUsingBatchFile("locations", "INSERT INTO locations (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
-		System.out.println("Finished locations");
+		populateSimpleTableUsingBatchFile("location", "INSERT INTO location (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
+		System.out.println("Finished location");
 
 		populateSimpleTableUsingBatchFile("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(", "fictional_character.tsv",27,-1);
 		System.out.println("Finished place_of_birth");
@@ -351,7 +351,7 @@ public class TableUtilities {
 		}
 
 		//populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_universes (characters_and_universes_character_id, characters_and_universes_universe_id) values(", "universe", 27, 12);	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_genders (characters_and_genders_character_id, characters_and_genders_gender_id) values(", "gender", 27, 5);	
+		//populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_genders (characters_and_genders_character_id, characters_and_genders_gender_id) values(", "gender", 27, 5);	
 //		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_species (characters_and_species_character_id, characters_and_species_species_id) values(", "species", 27, 6);
 //		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_creators (characters_and_creators_character_id, characters_and_creators_creator_id) values(", "creator", 27, 16);	
 //		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_organizations (characters_and_organizations_character_id, characters_and_organizations_organization_id) values(", "organization", 27, 10);	
