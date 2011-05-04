@@ -7,7 +7,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import Utils.Tables;
-import GUI.commons.Pair;
 
 public class AddOccupation extends AddCard {
 	private static final long serialVersionUID = 1L;

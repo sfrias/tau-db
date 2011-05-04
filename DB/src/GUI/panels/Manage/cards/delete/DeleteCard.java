@@ -3,11 +3,10 @@ package GUI.panels.Manage.cards.delete;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.SwingUtilities;
-
+import GUI.GuiHandler;
 import GUI.commons.Pair;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
-import Utils.ExecutionResult;
+import GUI.workers.DeleteWorker;
 import Utils.Tables;
 
 public class DeleteCard extends EditAndDeleteGenericCardPanel{
@@ -32,13 +31,12 @@ public class DeleteCard extends EditAndDeleteGenericCardPanel{
 		return new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						Pair selectedPair = (Pair) cb.getSelectedItem();
-						ExecutionResult result = databaseManager.executeDelete(table, selectedPair.getId());
-						//TODO - update combo
-					}
-				});
+				Pair selectedPair = (Pair) cb.getSelectedItem();
+				int recordId = selectedPair.getId();
+				DeleteWorker worker = new DeleteWorker(table, recordId, thisCard);
+				//TODO - update combo
+				GuiHandler.startStatusFlash();
+				worker.execute();
 			}
 		};
 	}

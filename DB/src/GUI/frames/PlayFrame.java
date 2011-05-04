@@ -9,34 +9,24 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import GUI.buttons.AutoCompleteComboBox;
-import GUI.commons.GuiUtils;
 
 public class PlayFrame extends GenericFrame {
 	private static final long serialVersionUID = 1L;
-	
-	JFrame frame = this;
-	
+		
 	public PlayFrame(){
 		super();
 		buildFrame();
-		//pack();
-		GuiUtils.centerOnScreen(this);
-		//TODO set the minimum size
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		addWindowListener(GuiUtils.defaultCloseWindowAdapter(frame));
-	}
+			}
 	
 	private void buildFrame(){
 		setTitle("Play");
 		setSize(600,600);
 		add(BorderLayout.CENTER,mainPanelBuilder());
-		setVisible(true);
 		
 	}
 	

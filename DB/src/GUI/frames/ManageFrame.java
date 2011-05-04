@@ -2,7 +2,6 @@ package GUI.frames;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
 import GUI.commons.GuiUtils;
@@ -14,22 +13,17 @@ import GUI.panels.Manage.Tabs.UpdateTab;
 public class ManageFrame extends GenericFrame {
 	private static final long serialVersionUID = 1L;
 	
-	JFrame frame = this;
-
 	public ManageFrame(){
 		super();
 		buildFrame();
-		GuiUtils.centerOnScreen(this);
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		addWindowListener(GuiUtils.defaultCloseWindowAdapter(frame));
 	}
 	
 	private void buildFrame(){
 		setTitle("Manage");
-		setSize(600,600);
+		setSize(600,500);
+		setResizable(false);
 		add(BorderLayout.CENTER, tabPanelBuilder());
 		//setContentPane(mainPanelBuilder());
-		setVisible(true);
 	}
 	
 /*	private JPanel mainPanelBuilder(){

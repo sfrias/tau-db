@@ -5,6 +5,9 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -12,21 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import Utils.Tables;
-
 import GUI.buttons.AutoCompleteComboBox;
-import GUI.panels.Manage.cards.edit.EditCreator;
-import GUI.panels.Manage.cards.edit.EditDiseases;
-import GUI.panels.Manage.cards.edit.EditEthnicity;
-import GUI.panels.Manage.cards.edit.EditGender;
-import GUI.panels.Manage.cards.edit.EditJob;
-import GUI.panels.Manage.cards.edit.EditLocation;
-import GUI.panels.Manage.cards.edit.EditOccupation;
-import GUI.panels.Manage.cards.edit.EditPower;
-import GUI.panels.Manage.cards.edit.EditRank;
-import GUI.panels.Manage.cards.edit.EditSchool;
-import GUI.panels.Manage.cards.edit.EditSpecies;
-import GUI.panels.Manage.cards.edit.EditUniverse;
+import Utils.Tables;
 
 public abstract class GenericTab extends JPanel implements ActionListener, GenericTabInterface{
 	private static final long serialVersionUID = 1L;
@@ -41,6 +31,7 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		panelHead.add(new JLabel("Please select a Category you wish to " + getTabAction() + " new record to:"));
 		
 		//TODO insert all tabels names!!!!
+		//String[] categories = createAllTablesArray();
 		String[] categories = {Tables.creator.toString().toUpperCase(), Tables.disease.toString().toUpperCase(), Tables.ethnicity.toString().toUpperCase(),
 		Tables.gender.toString().toUpperCase(), Tables.job.toString().toUpperCase(), Tables.location.toString().toUpperCase(),
 		Tables.occupation.toString().toUpperCase(), Tables.organization.toString().toUpperCase(), Tables.power.toString().toUpperCase(), Tables.rank.toString().toUpperCase(),
@@ -68,7 +59,21 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
         String cardName = (String)cb.getSelectedItem();
         CardLayout cl = (CardLayout)(cards.getLayout());
         cl.show(cards, cardName);
+	}
+	
+	private String[] createAllTablesArray(){
+		Tables[] tables = Tables.values(); 
+		List<String> resultList = new ArrayList<String>();
+		for (Tables t : tables){
+			resultList.add(t.toString().toUpperCase());			
+		}
+		Object[] objArr = resultList.toArray();
+		return Arrays.copyOf(objArr, objArr.length, String[].class);
 		
+		/*return {Tables.creator.toString().toUpperCase(), Tables.disease.toString().toUpperCase(), Tables.ethnicity.toString().toUpperCase(),
+				Tables.gender.toString().toUpperCase(), Tables.job.toString().toUpperCase(), Tables.location.toString().toUpperCase(),
+				Tables.occupation.toString().toUpperCase(), Tables.organization.toString().toUpperCase(), Tables.power.toString().toUpperCase(), Tables.rank.toString().toUpperCase(),
+				Tables.school.toString().toUpperCase(),  Tables.species.toString().toUpperCase(),Tables.universe.toString().toUpperCase() };*/
 	}
 	
 }

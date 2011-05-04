@@ -1,21 +1,16 @@
 package GUI.panels.Manage.cards;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.buttons.IconButton;
-import GUI.commons.Pair;
 import Utils.DatabaseManager;
 import Utils.Tables;
 
@@ -69,7 +64,9 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		return specs.toString();
 	}
 	
-	//no need to send "name" - automatic adds
+	/** 
+	 * no need to send "name" - adds automatic
+	 */
 	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents) {
 		assert ((fieldsNames==null && fieldsComponents==null) ||
 				fieldsComponents.size()==fieldsNames.size());
