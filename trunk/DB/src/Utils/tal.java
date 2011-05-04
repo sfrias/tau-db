@@ -113,7 +113,7 @@ public class tal {
 	}
 
 
-	boolean helper(String[] fill, String name1,String name2,String[] arr, int length,int id, int prevId,int i, boolean rec, String firstName) {
+	boolean helper(String[] fill, String name1,String name2,String[] arr, int length,int id, int prevId,int i, boolean rec) {
 
 		Statement stmt;
 		Statement stmt1 = null;
@@ -122,49 +122,51 @@ public class tal {
 		ResultSet rs1 = null;
 		ResultSet rs2 = null;
 		String s;
+		boolean resultFlag=false;
 		
 		
 		s = tbs[i].toString();
 			
 		try {
 			stmt = conn.createStatement();
+			//getting all the ids of the attributes that the character has
 			rs = stmt.executeQuery("SELECT " + s + "_id, " + s + "_name" + " FROM " + tbs[i+1].toString()+ ", " + tbs[i].toString()+ " WHERE "+ tbs[i+1].toString() + "_character_id= " + id +" AND " + tbs[i+1].toString() + "_" + s + "_id" +" = " + s + "_id");
 
-			while (rs.next()==true){
+			stmt1 = conn.createStatement();
+			stmt2 = conn.createStatement();
+			
+			while (rs.next()){
 				if (rs.getString(2).equals("Unspecified"))
-					break;
-				stmt1 = conn.createStatement();
+					continue;
+				//taking all characters with the same attribute as our character
 				rs1 = stmt1.executeQuery("SELECT "+ tbs[i+1].toString() + "_character_id"+ " FROM " + tbs[i+1].toString()+ " WHERE "+ tbs[i+1].toString() + "_" + s + "_id"+ " = " + rs.getInt(1) + " AND " + tbs[i+1].toString() + "_character_id"+ "!= "+id +" AND " + tbs[i+1].toString() + "_character_id"+ "!= " +prevId);
-				while (rs1.next()==true) {
-					stmt2 = conn.createStatement();
+				
+				while (rs1.next()) {
+					//getting the name of the character
 					rs2 = stmt2.executeQuery("SELECT character_name FROM characters WHERE character_id = " + rs1.getInt(1));
-					rs2.first();
+					rs2.first(); //getting the first name
 					fill[0] = rs2.getString("character_name");
 					arr[length-1]= name1 + " has the same " + s + " as " + fill[0];
-					if (rec==false) {
+					if (!rec) {
 						if (fill[0].equals(name2)) {
-							for (int index= 0; index<length; index++)
+							for (int index= 0; index<length; index++){
 								System.out.println(arr[index]);
-							rs.close();
-							rs1.close();
-							stmt.close();
-							stmt1.close();
-							rs2.close();
-							stmt2.close();
-							return true;
+							}
+							resultFlag=true;
+							break;	
+						
 						}
 					}
 					else {
-							rs.close();
-							rs1.close();
-							stmt.close();
-							stmt1.close();
-							rs2.close();
-							stmt2.close();
-							return true;	
+							resultFlag=true;
+							break;	
+							
+							//recursive call
 					}
-
-
+				}
+				
+				if (resultFlag){
+					break;
 				}
 			}
 
@@ -183,7 +185,7 @@ public class tal {
 			System.out.println("error execute query-" + e.toString());
 		}
 
-		return false;
+		return resultFlag;
 	}
 
 	boolean lookForConnection(String name1, String name2,int length, int prevId, String firstName,String[] arr) {
@@ -201,9 +203,9 @@ public class tal {
 		//Tables[] tbs = Tables.values();
 		int id =0;
 
-		try {
+		try { //getting the id of the first character
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT characters.character_id FROM characters WHERE characters.character_name='" + name1+"'");
+			rs = stmt.executeQuery("SELECT character_id FROM characters WHERE character_name='" + name1+"'");
 			rs.first();
 			id = rs.getInt("character_id");
 			if (prevId==0)
@@ -214,20 +216,21 @@ public class tal {
 			System.out.println("error execute query-" + e.toString());
 		}
 
-		
+		//trying to find first connection
 		for (int i=1; i<22; i=i+2){
 			System.out.println("trying "+ tbs[i].toString());
-			if (helper(arr1,name1, name2, arr, length,id, prevId,i,false,firstName)==true) {
+			if (helper(arr1,name1, name2, arr, length,id, prevId,i,false)) {
 				System.out.println("Match found between "+ firstName +" and "+ name2 + " in "+ length + " steps");
 				return true;
 			}
 		}
-		
+		//trying to find more connections
 		for (int i=1; i<22; i=i+2){
 			System.out.println("trying recursive "+ tbs[i].toString());
-			if (helper(arr1,name1, name2,arr, length,id, prevId,i,true,firstName)==true) {
-				if (lookForConnection(arr1[0], name2,length+1,id,firstName,arr)==true)
+			if (helper(arr1,name1, name2,arr, length,id, prevId,i,true)) {
+				if (lookForConnection(arr1[0], name2,length+1,id,firstName,arr)){
 					return true;
+				}
 			}
 		}
 			
