@@ -18,13 +18,10 @@ DROP TABLE IF EXISTS characters_and_occupations;
 DROP TABLE IF EXISTS characters_and_powers;
 DROP TABLE IF EXISTS characters_and_diseases;
 DROP TABLE IF EXISTS characters_and_jobs;
-
-
 DROP TABLE IF EXISTS marriage;
 DROP TABLE IF EXISTS romantic_involvemet;
 DROP TABLE IF EXISTS sibling;
 DROP TABLE IF EXISTS parent;
-
 DROP TABLE IF EXISTS characters;
 DROP TABLE IF EXISTS location;
 DROP TABLE IF EXISTS place_of_birth;
