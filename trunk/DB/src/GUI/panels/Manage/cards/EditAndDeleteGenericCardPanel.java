@@ -1,6 +1,7 @@
 package GUI.panels.Manage.cards;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,26 +17,29 @@ import Utils.Tables;
 
 public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel implements EditAndDeleteGenericCardInteface{
 	private static final long serialVersionUID = 1L;
+	private JPanel panelRecord = new JPanel();
+	private AutoCompleteComboBox comboRecord;
+	protected EditAndDeleteGenericCardPanel thisCard; 
 	
 	public EditAndDeleteGenericCardPanel(Tables table){
 		this(table, true);
 	}
 	
 	public EditAndDeleteGenericCardPanel(Tables table, boolean isSimpleCard){
-		
 		super(table, isSimpleCard);
 		
-		Pair[] records = createRecordList();
+		thisCard = this;
+		/*Pair[] records = createRecordList();
 		AutoCompleteComboBox comboRecord = new AutoCompleteComboBox(records);
 		comboRecord.addActionListener(createRecordComboListener());
-		comboRecord.setPreferredSize(new Dimension(200,20));
+		comboRecord.setPreferredSize(new Dimension(200,20));*/
+	
 		//comboRecord.setSelectedIndex(0);
 		
 		JPanel panelHead = new JPanel();
 		panelHead.setLayout(new BoxLayout(panelHead,BoxLayout.PAGE_AXIS));
 		
-		JPanel panelRecord = new JPanel();
-		panelRecord.add(comboRecord);
+		createRecordCombo(true); //inserts combo into panelRecord
 		panelHead.add(new JLabel("please select a record:"));
 		panelHead.add(panelRecord);
 		panelHead.add(new JSeparator(JSeparator.HORIZONTAL));
@@ -63,5 +67,25 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 			}
 		};
 	}
-
+	
+	private void createRecordCombo(boolean isFirstCreation){
+		if (!isFirstCreation){
+			panelRecord.remove(comboRecord);
+		}
+		Pair[] records = createRecordList();
+		
+		comboRecord = new AutoCompleteComboBox(records);
+		comboRecord.addActionListener(createRecordComboListener());
+		comboRecord.setPreferredSize(new Dimension(200,20));
+		panelRecord.add(comboRecord,0);
+		panelRecord.validate();
+	}
+	
+	public void refreshCards(){
+		JPanel parent = (JPanel) getParent();
+		CardLayout layout = (CardLayout)parent.getLayout();
+		layout.show(parent,"default");
+		createRecordCombo(false);
+	}
+	
 }

@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;
 
@@ -21,7 +22,6 @@ public class WelcomeScreenFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private JButton buttonQuit ;
-	private JFrame frame = this;
 	
 	public WelcomeScreenFrame(){
 		buildFrame();
@@ -29,7 +29,7 @@ public class WelcomeScreenFrame extends JFrame {
 		setResizable(false);
 		GuiUtils.centerOnScreen(this);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        addWindowListener(GuiUtils.defaultCloseWindowAdapter(frame));
+        addWindowListener(GuiUtils.defaultCloseWindowAdapter());
 	}
 
 	
@@ -57,9 +57,7 @@ public class WelcomeScreenFrame extends JFrame {
 				public void actionPerformed(ActionEvent event) {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							JFrame frame = new PlayFrame();
-							frame.setVisible(true);
-							dispose();
+							GuiHandler.switchFrames(new PlayFrame());
 						}
 					});
 					
@@ -69,9 +67,7 @@ public class WelcomeScreenFrame extends JFrame {
 				public void actionPerformed(ActionEvent event) {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							JFrame frame = new ManageFrame();
-							frame.setVisible(true);
-							dispose();
+							GuiHandler.switchFrames(new ManageFrame());
 						}
 					});
 					
@@ -94,7 +90,7 @@ public class WelcomeScreenFrame extends JFrame {
 		panel.add(actionButtons);
 		panel.add(Box.createRigidArea(new Dimension(0,10)));
 		
-		buttonQuit = GuiUtils.createQuitButton(frame);
+		buttonQuit = GuiUtils.createQuitButton();
 		buttonQuit.setAlignmentX(CENTER_ALIGNMENT);
 		panel.add(buttonQuit);
 		

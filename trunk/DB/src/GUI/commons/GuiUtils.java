@@ -12,9 +12,8 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
+import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.frames.WelcomeScreenFrame;
 
@@ -43,35 +42,20 @@ public class GuiUtils {
 
         return new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(url));
     }
-    
-    public static void showQuitApplicationDialog(JFrame frame){
-    	String message = "Are you sure you want to quit?";
-    	String title = "Quit";
-    	ImageIcon icon = readImageIcon("doorOpen.png");
-    	int optionSelected = JOptionPane.showConfirmDialog(
-    			frame, message, title, 
-    			JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
-    	if (optionSelected==JOptionPane.YES_OPTION){
-    		quit(frame);
-    	}
     	
-    }
-	
-	public static WindowAdapter defaultCloseWindowAdapter(JFrame fr){
-		final JFrame frame = fr;
+	public static WindowAdapter defaultCloseWindowAdapter(){
 		return new WindowAdapter() {
             public void windowClosing(WindowEvent evt)
             {
-            	GuiUtils.showQuitApplicationDialog(frame);  
+            	GuiHandler.showQuitApplicationDialog();  
             }
 		};
 	}
 	
-	public static ActionListener defaultQuitActionListener(JFrame fr){
-		final JFrame frame = fr;
+	public static ActionListener defaultQuitActionListener(){
 		return new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-						showQuitApplicationDialog(frame);
+						GuiHandler.showQuitApplicationDialog();
 				}
 		};
 	}
@@ -86,8 +70,8 @@ public class GuiUtils {
 		
 	}
 	
-	public static JButton createQuitButton(JFrame frame){
-		JButton button = GuiUtils.createActionButton("Quit","doorClosed.png",GuiUtils.defaultQuitActionListener(frame));
+	public static JButton createQuitButton(){
+		JButton button = GuiUtils.createActionButton("Quit","doorClosed.png",GuiUtils.defaultQuitActionListener());
 		button.addMouseListener(defaultQuitMouseListener(button));
 		return button;
 	}
@@ -128,9 +112,4 @@ public class GuiUtils {
 		};
 	}
 	
-	private static void quit(JFrame frame) {
-	        frame.dispose();
-	        System.exit(0);
-	}
-
 }

@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import GUI.GuiBuilder;
+import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;
 import GUI.panels.General.BlinkingStatusPanel;
@@ -22,24 +22,24 @@ public class GenericFrame extends JFrame {
 	
 	public GenericFrame() {
 		super();
+		GuiUtils.centerOnScreen(this);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(GuiUtils.defaultCloseWindowAdapter());
+		
 		IconButton buttonBack = GuiUtils.createActionButton("back", "back.png",
 				new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								WelcomeScreenFrame frame = new WelcomeScreenFrame();
-								frame.setVisible(true);
-								dispose();
+								GuiHandler.switchFrames(new WelcomeScreenFrame());
 							}
 						});
 					}
 				});
 
-		JButton buttonQuit = GuiUtils.createQuitButton(this);
+		JButton buttonQuit = GuiUtils.createQuitButton();
 
-		BlinkingStatusPanel panelStatus = GuiBuilder.getStatusPanel();
-		GuiBuilder.startStatusFlash();
-		
+		BlinkingStatusPanel panelStatus = GuiHandler.getStatusPanel();		
 		/*JPanel panelStatus = new JPanel();
 		Font font = new Font("Footlight MT Light", Font.BOLD, 18);
 		JLabel labelTitle = new JLabel("Status:");

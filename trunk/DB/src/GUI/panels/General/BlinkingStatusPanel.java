@@ -14,8 +14,10 @@ public class BlinkingStatusPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 		
 	private JLabel labelStatus;
-	
-	private Timer timer = new Timer(1000, new ActionListener() {
+	private Color visibleColor;
+	private Color inVisibleColor;
+		
+	private Timer timer = new Timer(100, new ActionListener() {
 		private boolean on = false;
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -28,6 +30,9 @@ public class BlinkingStatusPanel extends JPanel{
 		super();
 		
 		Font font = new Font("Footlight MT Light", Font.BOLD, 18);
+		visibleColor = Color.BLACK;
+		inVisibleColor = getBackground();
+		
 		JLabel labelTitle = new JLabel("Status:");
 		labelTitle.setFont(font);
 		labelStatus = new JLabel("Ready");
@@ -46,9 +51,9 @@ public class BlinkingStatusPanel extends JPanel{
 
 		private void flash(boolean on) {
 			if (on) {
-				labelStatus.setVisible(true);
+				labelStatus.setForeground(visibleColor);
 			} else {
-				labelStatus.setVisible(false);
+				labelStatus.setForeground(inVisibleColor);
 			}
 		}
 
