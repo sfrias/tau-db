@@ -122,6 +122,7 @@ CREATE TABLE job
 	(job_id int(11) NOT NULL AUTO_INCREMENT,
 	job_fb_id varchar(40) NOT NULL,
 	job_name varchar(80) NOT NULL,
+	KEY ix_job_id (job_id),
 	PRIMARY KEY (job_id));
 	
 CREATE TABLE disease
@@ -216,3 +217,40 @@ CREATE TABLE characters_and_diseases
 	PRIMARY KEY (characters_and_diseases_character_id,characters_and_diseases_disease_id),
 	FOREIGN KEY (characters_and_diseases_character_id) REFERENCES characters(character_id),
 	FOREIGN KEY (characters_and_diseases_disease_id) REFERENCES disease(disease_id));
+
+
+CREATE TABLE marriage 
+	(marriage_character_id1 int(11) NOT NULL,
+	marriage_character_id2 int(11) NOT NULL,
+	PRIMARY KEY (marriage_character_id1,marriage_character_id2),
+	FOREIGN KEY (marriage_character_id1) REFERENCES characters(character_id),
+	FOREIGN KEY (marriage_character_id2) REFERENCES characters(character_id));
+
+CREATE TABLE romantic_involvement
+	(romantic_involvement_character_id1 int(11) NOT NULL,
+	romantic_involvement_character_id2 int(11) NOT NULL,
+	PRIMARY KEY (romantic_involvement_character_id1,romantic_involvement_character_id2),
+	FOREIGN KEY (romantic_involvement_character_id1) REFERENCES characters(character_id),
+	FOREIGN KEY (romantic_involvement_character_id2) REFERENCES characters(character_id));
+
+CREATE TABLE sibling
+	(sibling_character_id1 int(11) NOT NULL,
+	sibling_character_id2 int(11) NOT NULL,
+	PRIMARY KEY (sibling_character_id1,sibling_character_id2),
+	FOREIGN KEY (sibling_character_id1) REFERENCES characters(character_id),
+	FOREIGN KEY (sibling_character_id2) REFERENCES characters(character_id));
+
+CREATE TABLE parent
+	(parent_child_character_id int(11) NOT NULL,
+	parent_parent_character_id int(11) NOT NULL,
+	PRIMARY KEY (parent_child_character_id,parent_parent_character_id),
+	FOREIGN KEY (parent_child_character_id) REFERENCES characters(character_id),
+	FOREIGN KEY (parent_parent_character_id) REFERENCES characters(character_id));
+
+CREATE TABLE characters_and_jobs
+	(characters_and_jobs_job_id int(11) NOT NULL,
+	characters_and_jobs_character_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_jobs_job_id,characters_and_jobs_character_id),
+	FOREIGN KEY (characters_and_jobs_job_id) REFERENCES job(job_id),
+	FOREIGN KEY (characters_and_jobs_character_id) REFERENCES characters(character_id));
+
