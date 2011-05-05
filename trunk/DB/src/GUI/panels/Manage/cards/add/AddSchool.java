@@ -2,7 +2,7 @@ package GUI.panels.Manage.cards.add;
 
 import Enums.Tables;
 
-public class AddSchool extends AddCard {
+public class AddSchool extends AddSimpleCard {
 	private static final long serialVersionUID = 1L;
 	
 	public AddSchool(){

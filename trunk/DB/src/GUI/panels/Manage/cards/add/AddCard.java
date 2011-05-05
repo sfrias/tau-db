@@ -1,14 +1,7 @@
 package GUI.panels.Manage.cards.add;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.SwingUtilities;
-
 import Enums.Tables;
-import GUI.GuiHandler;
 import GUI.panels.Manage.cards.GenericCardPanel;
-import GUI.workers.AddWorker;
 
 public abstract class AddCard extends GenericCardPanel{
 	private static final long serialVersionUID = 1L;
@@ -28,20 +21,4 @@ public abstract class AddCard extends GenericCardPanel{
 		return "add";
 	}
 	
-	public ActionListener createActionButtonListener() {
-		return new ActionListener() {
-
-			public void actionPerformed(ActionEvent event) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						String [] fieldNames = {table.toString()+"_name"};
-						String [] values = {textName.getText()};
-						AddWorker worker = new AddWorker(table, fieldNames, values);
-						GuiHandler.startStatusFlash();
-						worker.execute();
-					}
-				});
-			}
-		};
-	}
 }
