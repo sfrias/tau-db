@@ -1,10 +1,11 @@
 package GUI.panels.Manage.cards;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -26,37 +27,54 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 	private JPanel panelRecord = new JPanel();
 	private AutoCompleteComboBox comboRecord;
 	protected EditAndDeleteGenericCardPanel thisCard; 
-	
+
 	public EditAndDeleteGenericCardPanel(Tables table){
 		this(table, true);
 	}
-	
+
 	public EditAndDeleteGenericCardPanel(Tables table, boolean isSimpleCard){
 		super(table, isSimpleCard);
-		
+
 		thisCard = this;
 		/*Pair[] records = createRecordList();
 		AutoCompleteComboBox comboRecord = new AutoCompleteComboBox(records);
 		comboRecord.addActionListener(createRecordComboListener());
 		comboRecord.setPreferredSize(new Dimension(200,20));*/
-	
+
 		//comboRecord.setSelectedIndex(0);
-		
+
 		JPanel panelHead = new JPanel();
 		panelHead.setLayout(new BoxLayout(panelHead,BoxLayout.PAGE_AXIS));
-		
+
 		try {
 			createRecordCombo(true); //inserts combo into panelRecord
-			
+
 			panelHead.add(new JLabel("please select a record:"));
 			panelHead.add(panelRecord);
 			panelHead.add(new JSeparator(JSeparator.HORIZONTAL));
 			add(panelHead,BorderLayout.NORTH);
 		} catch (Exception e) {
 			GuiHandler.ShowErrorGetRecords();
-        	GuiHandler.switchFrames(new WelcomeScreenFrame());
+			GuiHandler.switchFrames(new WelcomeScreenFrame());
 		} 
-		
+
+		addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {				
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				try {
+					refreshCards();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+
 	}
 
 	public Pair[] createRecordList() throws Exception{
@@ -64,7 +82,7 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 		GuiHandler.startStatusFlash();
 		worker.execute();
 		try {
-			Pair[] result = worker.get(10,TimeUnit.MILLISECONDS);
+			Pair[] result = worker.get(2000,TimeUnit.MILLISECONDS);
 			GuiHandler.stopStatusFlash();
 			if (result != null){
 				return result;
@@ -73,10 +91,10 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 		catch (InterruptedException e) {}
 		catch (ExecutionException e) {}
 		catch (TimeoutException e) {}
-		
+
 		throw new Exception();
 	}
-	
+
 	public ActionListener createRecordComboListener() { 
 
 		return new ActionListener() {
@@ -92,25 +110,26 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 			}
 		};
 	}
-	
+
 	private void createRecordCombo(boolean isFirstCreation) throws Exception{
 		if (!isFirstCreation){
 			panelRecord.remove(comboRecord);
 		}
 		Pair[] records = createRecordList();
-		
+
 		comboRecord = new AutoCompleteComboBox(records);
 		comboRecord.addActionListener(createRecordComboListener());
 		comboRecord.setPreferredSize(new Dimension(200,20));
 		panelRecord.add(comboRecord,0);
 		panelRecord.validate();
+		
 	}
-	
+
 	public void refreshCards() throws Exception{
-		JPanel parent = (JPanel) getParent();
-		CardLayout layout = (CardLayout)parent.getLayout();
-		layout.show(parent,"default");
+		//JPanel parent = (JPanel) getParent();
+		//CardLayout layout = (CardLayout)parent.getLayout();
+		//layout.show(parent,"default");
 		createRecordCombo(false);
 	}
-	
+
 }

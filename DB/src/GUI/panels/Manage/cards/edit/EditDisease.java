@@ -2,11 +2,11 @@ package GUI.panels.Manage.cards.edit;
 
 import Enums.Tables;
 
-public class EditDiseases extends EditCard{
+public class EditDisease extends EditCard{
 
 	private static final long serialVersionUID = 1L;
 	
-	public EditDiseases(){
+	public EditDisease(){
 		super(Tables.disease);
 	}
 }
