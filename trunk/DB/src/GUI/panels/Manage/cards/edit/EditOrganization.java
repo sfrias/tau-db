@@ -6,7 +6,7 @@ public class EditOrganization extends EditCard{
 	
 	private static final long serialVersionUID = 1L;
 	
-	public EditOrganization(){
+	public EditOrganization() throws Exception{
 		super(Tables.organization);
 	}
 

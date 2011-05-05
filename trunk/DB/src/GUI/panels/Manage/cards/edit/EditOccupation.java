@@ -5,7 +5,7 @@ import Enums.Tables;
 public class EditOccupation extends EditCard {
 	private static final long serialVersionUID = 1L;
 
-	public EditOccupation(){
+	public EditOccupation() throws Exception{
 		super(Tables.occupation);
 	}
 }

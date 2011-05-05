@@ -7,7 +7,8 @@ import GUI.panels.Manage.cards.add.AddOccupation;
 
 public class UpdateTab extends GenericTab{
 	private static final long serialVersionUID = 1L;
-	public UpdateTab() {
+	
+	public UpdateTab() throws Exception {
 		super();
 	}
 

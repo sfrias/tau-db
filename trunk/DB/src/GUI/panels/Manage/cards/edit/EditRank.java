@@ -6,7 +6,7 @@ public class EditRank extends EditCard{
 	
 	private static final long serialVersionUID = 1L;
 	
-	public EditRank(){
+	public EditRank() throws Exception{
 		super(Tables.rank);
 	}
 

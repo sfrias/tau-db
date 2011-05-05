@@ -12,11 +12,11 @@ import GUI.workers.EditWorker;
 public class EditCard extends EditAndDeleteGenericCardPanel{
 	private static final long serialVersionUID = -1543391049010263975L;
 	
-	public EditCard(Tables table, boolean isSimpleCard){
+	public EditCard(Tables table, boolean isSimpleCard) throws Exception{
 		super(table ,isSimpleCard);
 	}
 	
-	public EditCard(Tables table){
+	public EditCard(Tables table) throws Exception{
 		this(table ,true);
 	}
 

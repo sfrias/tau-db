@@ -23,7 +23,7 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 	
 	private JPanel cards ;
 	
-	public GenericTab(){
+	public GenericTab() throws Exception{
 		super();
 		
 		JPanel panelHead = new JPanel();
@@ -51,7 +51,13 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		
 		cards = new JPanel(new CardLayout());
 		cards = addCards(cards);
-		add(cards,BorderLayout.CENTER);	
+		
+		if (cards != null){
+			add(cards,BorderLayout.CENTER);	
+		}
+		else{
+			throw new Exception();
+		}
 	}
 	
 	public void actionPerformed(ActionEvent e) {

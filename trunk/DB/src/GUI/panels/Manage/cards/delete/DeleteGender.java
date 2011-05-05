@@ -5,7 +5,7 @@ import Enums.Tables;
 public class DeleteGender extends DeleteCard {
 	private static final long serialVersionUID = 1L;
 	
-	public DeleteGender(){
+	public DeleteGender() throws Exception{
 		super(Tables.gender);
 	}
 

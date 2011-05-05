@@ -5,7 +5,7 @@ import Enums.Tables;
 public class DeleteCreator extends DeleteCard {
 	private static final long serialVersionUID = 1L;
 	
-	public DeleteCreator(){
+	public DeleteCreator() throws Exception{
 		super(Tables.creator);
 	}
 
