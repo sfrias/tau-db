@@ -22,8 +22,9 @@ import javax.swing.event.AncestorListener;
  *
  * This added support will only work when a JComponent is added as a Card.
  */
-public class RXCardLayout extends CardLayout implements AncestorListener
-{
+public class RXCardLayout extends CardLayout implements AncestorListener{
+	private static final long serialVersionUID = 1L;
+
 	private ArrayList<JComponent> cards = new ArrayList<JComponent>();
 	private JComponent firstCard;
 	private JComponent lastCard;
@@ -177,8 +178,9 @@ public class RXCardLayout extends CardLayout implements AncestorListener
 
 	public void ancestorRemoved(AncestorEvent event) {}
 
-	class CardAction extends AbstractAction
-	{
+	class CardAction extends AbstractAction{
+		private static final long serialVersionUID = 1L;
+		
 		private boolean isNext;
 
 		public CardAction(String text, boolean isNext)

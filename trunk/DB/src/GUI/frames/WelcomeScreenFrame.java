@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import Enums.Frames;
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;
@@ -57,7 +58,7 @@ public class WelcomeScreenFrame extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						GuiHandler.switchFrames(new PlayFrame());
+						GuiHandler.switchFrames(Frames.PlayFrame);
 					}
 				});
 
@@ -67,12 +68,8 @@ public class WelcomeScreenFrame extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						try {
-							GuiHandler.switchFrames(new ManageFrame());
-						} catch (Exception e) {
-							GuiHandler.ShowErrorGetRecords();
-							GuiHandler.switchFrames(new WelcomeScreenFrame());
-						}
+						GuiHandler.switchFrames(Frames.ManageFrame);
+					
 					}
 				});
 

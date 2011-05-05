@@ -4,13 +4,12 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
-import db.DatabaseManager;
-
 import Enums.ExecutionResult;
+import Enums.Frames;
 import Enums.Tables;
 import GUI.GuiHandler;
-import GUI.frames.WelcomeScreenFrame;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
+import db.DatabaseManager;
 
 public abstract class GenericWorker extends SwingWorker<ExecutionResult, Void> {
 	protected String[] fieldNames;
@@ -49,7 +48,7 @@ public abstract class GenericWorker extends SwingWorker<ExecutionResult, Void> {
 					card.refreshCards();
 				} catch (Exception e) {
 					GuiHandler.ShowErrorGetRecords();
-					GuiHandler.switchFrames(new WelcomeScreenFrame());
+					GuiHandler.switchFrames(Frames.WelcomeScreenFrame);
 				}
 					break;
 				case IntegrityConstraintViolationException:
