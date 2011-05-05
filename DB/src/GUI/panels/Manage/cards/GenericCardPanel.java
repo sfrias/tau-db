@@ -74,7 +74,7 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 				 fieldsComponents.size()==extraFields.size()));
 		
 		int numOfRows = fieldsNames==null ? 0 : fieldsNames.size();
-		FormLayout layout = new FormLayout("right:pref, 4dlu, pref, 4dlu, pref", buildRowsSpecs(numOfRows));
+		FormLayout layout = new FormLayout("left:pref, 4dlu, pref, 4dlu, pref", buildRowsSpecs(numOfRows));
 
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setDefaultDialogBorder();
