@@ -3,7 +3,7 @@ package GUI.panels.Manage.Tabs;
 import javax.swing.JPanel;
 
 import Enums.Tables;
-import GUI.panels.Manage.cards.DefaultCard;
+import GUI.panels.Manage.cards.add.AddCharacters;
 import GUI.panels.Manage.cards.add.AddCreator;
 import GUI.panels.Manage.cards.add.AddDisease;
 import GUI.panels.Manage.cards.add.AddEthnicity;
@@ -32,7 +32,8 @@ public class AddTab extends GenericTab {
 
 	@Override
 	public JPanel addCards(JPanel cards) {
-		cards.add(new DefaultCard(), "default");
+		//cards.add(new DefaultCard(), "default");
+		cards.add(new AddCharacters(), Tables.characters.toString().toUpperCase());
 		cards.add(new AddCreator(), Tables.creator.toString().toUpperCase());
 		cards.add(new AddDisease(), Tables.disease.toString().toUpperCase());
 		cards.add(new AddEthnicity(), Tables.ethnicity.toString().toUpperCase());
