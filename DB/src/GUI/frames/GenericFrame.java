@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import Enums.Frames;
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;
@@ -31,7 +32,7 @@ public class GenericFrame extends JFrame {
 					public void actionPerformed(ActionEvent arg0) {
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								GuiHandler.switchFrames(new WelcomeScreenFrame());
+								GuiHandler.switchFrames(Frames.WelcomeScreenFrame);
 							}
 						});
 					}

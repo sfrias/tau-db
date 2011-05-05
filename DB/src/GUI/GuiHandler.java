@@ -6,7 +6,10 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import Enums.Frames;
 import GUI.commons.GuiUtils;
+import GUI.frames.ManageFrame;
+import GUI.frames.PlayFrame;
 import GUI.frames.WelcomeScreenFrame;
 import GUI.panels.General.BlinkingStatusPanel;
 
@@ -42,11 +45,28 @@ public class GuiHandler {
            
         }
         
-        public static void switchFrames(JFrame frameToLoad){
+        public static void switchFrames(Frames frame){
 			loadedFrame.dispose();
-			frameToLoad.setVisible(true);
-			GuiUtils.centerOnScreen(frameToLoad);
-			loadedFrame=frameToLoad;
+			JFrame newFrame = null;
+			switch (frame){
+				case WelcomeScreenFrame:
+					newFrame = new WelcomeScreenFrame();
+					break;
+				case ManageFrame:
+					try{
+						newFrame = new ManageFrame();
+					} catch (Exception e) {
+						GuiHandler.ShowErrorGetRecords();
+						//GuiHandler.switchFrames(new WelcomeScreenFrame());
+					}
+					break;
+				case PlayFrame:
+					newFrame = new PlayFrame();
+					break;					
+			}
+			newFrame.setVisible(true);
+			GuiUtils.centerOnScreen(newFrame);
+			loadedFrame=newFrame;
 		}
         
         public static BlinkingStatusPanel getStatusPanel(){
@@ -111,4 +131,5 @@ public class GuiHandler {
     		ImageIcon icon = GuiUtils.readImageIcon("thumbDown.png");
     		JOptionPane.showMessageDialog(loadedFrame, msg, title, JOptionPane.OK_OPTION,icon);
     	}
+    	
 }
