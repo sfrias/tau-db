@@ -26,7 +26,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 public class DatabaseManager {
 
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "root";
+	private final static String PASSWORD = "mapo00";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
@@ -152,7 +152,7 @@ public class DatabaseManager {
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			Statement stmt = conn.createStatement();
-			ResultSet resultSet = stmt.executeQuery("SELECT * FROM " + table.toString());
+			ResultSet resultSet = stmt.executeQuery("SELECT * FROM " + table.toString() + " ORDER BY " + table.toString() + "_name ASC");
 
 			List<Pair> valuesList = new ArrayList<Pair>();
 
@@ -164,7 +164,6 @@ public class DatabaseManager {
 			stmt.close();
 			conn.close(); 
 			return valuesList.toArray(new Pair[]{});
-
 		} catch (SQLException e) {
 			System.err.println("An SQLException was thrown at executeQueryAndGetValues("+ table.toString() + ")");
 			return null;
@@ -226,26 +225,29 @@ public class DatabaseManager {
 
 	}
 
-	public ExecutionResult executeInset(Tables table, String[] fieldNames, String[] values) {
+	public ExecutionResult executeSimpleInsert(Tables table, String fieldName, String value) {
+
+		String tableName = table.toString();
 		try {
-			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append("INSERT IGNORE INTO " + table.toString() + " (");
-			int length = fieldNames.length;
-			for (int i=0; i < length - 1; i++){
-				stringBuilder.append(fieldNames[i] + ", ");
-			}
-			stringBuilder.append(fieldNames[length-1] + ") values(");
 			
-			for (int i=0; i < length - 1; i++){
-				stringBuilder.append("\'" + values[i] + "\', ");
+			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			Statement stmt1 = conn.createStatement();
+			ResultSet resultSet = stmt1.executeQuery("SELECT " + tableName+"_id FROM " + tableName + " WHERE " + tableName+ "_name LIKE \'" + value + "\'");
+			boolean alreadyAdded = resultSet.next();
+			resultSet.close();
+			stmt1.close();
+			conn.close();
+
+			if (alreadyAdded){
+				return ExecutionResult.Success;	
 			}
-			stringBuilder.append("\'" + values[length-1] + "\')");
 
-			Statement stmt = conn.createStatement();
-			stmt.executeUpdate(stringBuilder.toString());
+			Statement stmt2 = conn.createStatement();
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("INSERT IGNORE INTO " + table.toString() + " (" + fieldName + ") values(\'" + value + "\')");
+			stmt2.executeUpdate(stringBuilder.toString());
 
-			stmt.close();
+			stmt2.close();
 			conn.close(); 
 
 			return ExecutionResult.Success;

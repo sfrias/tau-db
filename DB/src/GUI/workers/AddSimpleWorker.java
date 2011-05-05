@@ -10,10 +10,10 @@ import GUI.GuiHandler;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 import db.DatabaseManager;
 
-public class AddWorker extends SwingWorker<ExecutionResult, Void>{
+public class AddSimpleWorker extends SwingWorker<ExecutionResult, Void>{
 	
-	protected String[] fieldNames;
-	protected String[] values;
+	protected String fieldName;
+	protected String value;
 	protected Tables table;
 	protected int recordId;
 	protected EditAndDeleteGenericCardPanel card;
@@ -22,10 +22,10 @@ public class AddWorker extends SwingWorker<ExecutionResult, Void>{
 	
 	protected static DatabaseManager databaseManager = DatabaseManager.getInstance();
 	
-	public AddWorker(Tables table, String [] fieldNames, String [] fieldValues){
+	public AddSimpleWorker(Tables table, String fieldName, String fieldValue){
 		super();
-		this.fieldNames = fieldNames;
-		this.values = fieldValues;
+		this.fieldName = fieldName;
+		this.value = fieldValue;
 		this.table = table;
 		this.ACTION = "add";
 	}
@@ -58,7 +58,7 @@ public class AddWorker extends SwingWorker<ExecutionResult, Void>{
 
 	@Override
 	protected ExecutionResult doInBackground() throws Exception {
-		return databaseManager.executeInset(table, fieldNames, values);		
+		return databaseManager.executeSimpleInsert(table, fieldName, value);		
 	}
 
 }
