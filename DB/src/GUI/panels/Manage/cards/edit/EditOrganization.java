@@ -1,6 +1,6 @@
 package GUI.panels.Manage.cards.edit;
 
-import Utils.Tables;
+import Enums.Tables;
 
 public class EditOrganization extends EditCard{
 	

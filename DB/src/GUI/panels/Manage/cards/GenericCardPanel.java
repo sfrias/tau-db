@@ -9,14 +9,15 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
+import Enums.Tables;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.buttons.IconButton;
-import Utils.DatabaseManager;
-import Utils.Tables;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import db.DatabaseManager;
 
 public abstract class GenericCardPanel extends JPanel implements GenericCardInerface{
 

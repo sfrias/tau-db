@@ -1,8 +1,8 @@
 package GUI.workers;
 
+import Enums.ExecutionResult;
+import Enums.Tables;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
-import Utils.ExecutionResult;
-import Utils.Tables;
 
 public class EditWorker extends EditAndDeleteGenericWorker {
 	

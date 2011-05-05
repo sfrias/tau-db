@@ -2,8 +2,8 @@ package GUI.panels.Manage.Tabs;
 
 import javax.swing.JPanel;
 
-import Utils.Tables;
 
+import Enums.Tables;
 import GUI.panels.Manage.cards.add.AddGender;
 import GUI.panels.Manage.cards.add.AddOccupation;
 

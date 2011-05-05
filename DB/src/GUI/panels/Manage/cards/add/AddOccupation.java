@@ -6,7 +6,7 @@ import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import Utils.Tables;
+import Enums.Tables;
 
 public class AddOccupation extends AddCard {
 	private static final long serialVersionUID = 1L;

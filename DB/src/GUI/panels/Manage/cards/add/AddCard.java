@@ -5,9 +5,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.SwingUtilities;
 
+import Enums.ExecutionResult;
+import Enums.Tables;
 import GUI.panels.Manage.cards.GenericCardPanel;
-import Utils.ExecutionResult;
-import Utils.Tables;
 
 public abstract class AddCard extends GenericCardPanel{
 	private static final long serialVersionUID = 1L;

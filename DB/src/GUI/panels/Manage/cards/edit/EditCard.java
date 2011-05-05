@@ -3,11 +3,11 @@ package GUI.panels.Manage.cards.edit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Enums.Tables;
 import GUI.GuiHandler;
 import GUI.commons.Pair;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 import GUI.workers.EditWorker;
-import Utils.Tables;
 
 public class EditCard extends EditAndDeleteGenericCardPanel{
 	private static final long serialVersionUID = -1543391049010263975L;

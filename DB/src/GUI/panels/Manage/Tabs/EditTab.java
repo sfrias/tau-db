@@ -2,6 +2,7 @@ package GUI.panels.Manage.Tabs;
 
 import javax.swing.JPanel;
 
+import Enums.Tables;
 import GUI.panels.Manage.cards.DefaultCard;
 import GUI.panels.Manage.cards.edit.EditCreator;
 import GUI.panels.Manage.cards.edit.EditDiseases;
@@ -16,7 +17,6 @@ import GUI.panels.Manage.cards.edit.EditRank;
 import GUI.panels.Manage.cards.edit.EditSchool;
 import GUI.panels.Manage.cards.edit.EditSpecies;
 import GUI.panels.Manage.cards.edit.EditUniverse;
-import Utils.Tables;
 
 public class EditTab extends GenericTab{
 	private static final long serialVersionUID = 1L;
