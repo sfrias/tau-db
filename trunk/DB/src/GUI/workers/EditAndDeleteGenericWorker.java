@@ -4,11 +4,12 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
+import db.DatabaseManager;
+
+import Enums.ExecutionResult;
+import Enums.Tables;
 import GUI.GuiHandler;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
-import Utils.DatabaseManager;
-import Utils.ExecutionResult;
-import Utils.Tables;
 
 public abstract class EditAndDeleteGenericWorker extends SwingWorker<ExecutionResult, Void> {
 	protected String[] fieldNames;

@@ -18,7 +18,11 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
-import Utils.AntUtils.Targets;
+import db.AntUtils;
+import db.DatabaseManager;
+import db.AntUtils.Targets;
+
+import Enums.Tables;
 
 public class TableUtilities {
 

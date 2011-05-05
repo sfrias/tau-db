@@ -8,6 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import Connection.JDCConnection;
+import Enums.Tables;
+import db.DatabaseManager;
+
 public class tal {
 	private static final String CREATE_TABLES_SQL_FILE_PATH = "sql/mysql/populate-tables.sql";
 	private DatabaseManager dbManager = DatabaseManager.getInstance();

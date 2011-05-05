@@ -1,4 +1,4 @@
-package Utils;
+package db;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -15,9 +15,13 @@ import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
-
+import Connection.JDCConnection;
+import Connection.JDCConnectionDriver;
+import Enums.ExecutionResult;
+import Enums.Tables;
 import GUI.commons.Pair;
+
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 public class DatabaseManager {
 

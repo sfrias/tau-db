@@ -3,11 +3,11 @@ package GUI.panels.Manage.cards.delete;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Enums.Tables;
 import GUI.GuiHandler;
 import GUI.commons.Pair;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 import GUI.workers.DeleteWorker;
-import Utils.Tables;
 
 public class DeleteCard extends EditAndDeleteGenericCardPanel{
 

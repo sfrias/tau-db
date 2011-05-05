@@ -11,9 +11,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
+import Enums.Tables;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.Pair;
-import Utils.Tables;
 
 public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel implements EditAndDeleteGenericCardInteface{
 	private static final long serialVersionUID = 1L;
