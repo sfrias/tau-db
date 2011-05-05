@@ -38,7 +38,7 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		setLayout(new BorderLayout());
 		
 		if (isSimpleCard){
-			addFields(null, null);
+			addFields(null, null,null);
 		}
 		
 		JPanel panelButton = new JPanel();
@@ -68,12 +68,13 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 	/** 
 	 * no need to send "name" - adds automatic
 	 */
-	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents) {
-		assert ((fieldsNames==null && fieldsComponents==null) ||
-				fieldsComponents.size()==fieldsNames.size());
+	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents, Vector<JComponent> extraFields) {
+		assert ((fieldsNames==null && fieldsComponents==null && extraFields==null) ||
+				(fieldsComponents.size()==fieldsNames.size() &&
+				 fieldsComponents.size()==extraFields.size()));
 		
 		int numOfRows = fieldsNames==null ? 0 : fieldsNames.size();
-		FormLayout layout = new FormLayout("right:pref, 4dlu, pref", buildRowsSpecs(numOfRows));
+		FormLayout layout = new FormLayout("right:pref, 4dlu, pref, 4dlu, pref", buildRowsSpecs(numOfRows));
 
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setDefaultDialogBorder();
@@ -84,6 +85,10 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		for (int i=0; i<numOfRows; i++){
 			builder.addLabel(fieldsNames.remove(0) + ":",cc.xy(1, 2*i+3));
 			builder.add(fieldsComponents.remove(0),cc.xy(3,2*i+3));
+			JPanel extraField =(JPanel) extraFields.remove(0);
+			if (extraField != null){
+				builder.add(extraField, cc.xy(5, 2*i+3));
+			}
 		}
 		
 		add(builder.getPanel(),BorderLayout.CENTER);

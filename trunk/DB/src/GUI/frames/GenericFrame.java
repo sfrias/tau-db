@@ -26,7 +26,7 @@ public class GenericFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(GuiUtils.defaultCloseWindowAdapter());
 		
-		IconButton buttonBack = GuiUtils.createActionButton("back", "back.png",
+		IconButton buttonBack = GuiUtils.createActionButton("Main", "home.png",
 				new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						SwingUtilities.invokeLater(new Runnable() {

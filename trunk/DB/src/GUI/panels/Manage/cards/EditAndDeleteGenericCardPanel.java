@@ -19,7 +19,6 @@ import Enums.Tables;
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.Pair;
-import GUI.frames.WelcomeScreenFrame;
 import GUI.workers.GetSimpleRecordsWorker;
 
 public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel implements EditAndDeleteGenericCardInteface{

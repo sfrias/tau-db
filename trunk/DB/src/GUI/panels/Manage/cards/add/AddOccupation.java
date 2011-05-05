@@ -1,11 +1,5 @@
 package GUI.panels.Manage.cards.add;
 
-import java.awt.event.ActionListener;
-import java.util.Vector;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-
 import Enums.Tables;
 
 public class AddOccupation extends AddCard {
@@ -15,16 +9,5 @@ public class AddOccupation extends AddCard {
 		super(Tables.occupation);
 	}
 
-	@Override
-	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents) {
-		add(new JLabel("name field"));
-		
-	}
-
-	@Override
-	public ActionListener createActionButtonListener() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

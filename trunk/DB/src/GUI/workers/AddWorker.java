@@ -1,4 +1,4 @@
-package GUI.panels.Manage.Tabs;
+package GUI.workers;
 
 import java.util.concurrent.ExecutionException;
 

@@ -7,8 +7,8 @@ import javax.swing.SwingUtilities;
 
 import Enums.Tables;
 import GUI.GuiHandler;
-import GUI.panels.Manage.Tabs.AddWorker;
 import GUI.panels.Manage.cards.GenericCardPanel;
+import GUI.workers.AddWorker;
 
 public abstract class AddCard extends GenericCardPanel{
 	private static final long serialVersionUID = 1L;
