@@ -4,6 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.List;
+import java.util.TreeMap;
 
 import Connection.JDCConnection;
 
@@ -11,7 +14,9 @@ public class algorithm {
 
 	private DatabaseManager dbManager = DatabaseManager.getInstance();
 	private JDCConnection conn;
+
 	Tables[] tbs;
+	int indexOfJumps;
 	
 	public int attributes = 20;
 
@@ -23,6 +28,57 @@ public class algorithm {
 	public JDCConnection getConnention(){
 		return conn;
 	}
+	
+	
+	private String[] buildTablesArray(){
+		TreeMap<String, String> joinedAttributesMap = new TreeMap<String,String>();
+		int numOfTables = tbs.length;
+		String atrTable;
+		String currentTable;
+		String putCouples;
+		String[] attributes = new String[numOfTables-1];
+		String[] result = new String[numOfTables-1];
+		
+		int indexOfAttr=0, indexOfResult=0;
+		for (int i=0; i< numOfTables; i++){
+			currentTable = tbs[i].toString();
+			if (currentTable.equals("characters")){
+				continue;
+			}
+			else if (!currentTable.contains("and")){
+				attributes[indexOfAttr]=tbs[i].toString();
+				indexOfAttr++;
+			}
+			else {
+				atrTable = currentTable.substring(15);
+				joinedAttributesMap.put(atrTable, currentTable);
+			}
+		}
+		
+		//first loop- looking for joinedTables
+		for (int i=0; i<indexOfAttr;i++){
+			putCouples = joinedAttributesMap.get(attributes[i]);
+			if (putCouples != null){
+				result[indexOfResult]=attributes[i];
+				result[indexOfResult+1]=putCouples;
+				indexOfResult = indexOfResult + 2;
+				attributes[i]="ok";
+			}
+		}
+
+		indexOfJumps=indexOfResult;
+		
+		//adding all other tables;
+		for (int i=0; i<indexOfAttr;i++){
+			if(!attributes[i].equals("ok")){
+				result[indexOfResult]=attributes[i];
+				indexOfResult++;
+			}
+		}
+		joinedAttributesMap.clear();
+		return result;
+	}
+	
 	
 	boolean connectionFinder(String[] fill, int start_id,int end_id, int recPhase, int prevId,boolean firstRun) throws SQLException{
 		
@@ -46,11 +102,11 @@ public class algorithm {
 			return false;
 		}
 		
-		//prepare two main statements
 		PreparedStatement atrStmt= null; 
 		PreparedStatement charAtrStmt = null; 
-		
 		Statement unspecifiedStmt;
+		
+		String[] tablesArr = buildTablesArray();
 				
 		//running on all attributes
 		for (int atr=1; atr<attributes; atr=atr+2){
@@ -250,13 +306,18 @@ public class algorithm {
 	
 	public static void main(String[] args) throws SQLException{
 		algorithm a = new algorithm();
-
+		String[] table = a.buildTablesArray();
+		for (int i=0;i<table.length;i++){
+			System.out.println(i+ ": " + table[i]);
+		}
+/*
 		long startTime = System.currentTimeMillis();
 		a.lookForConnection("Nathaniel Roberts", "Liz Burton");
 		long finishTime = System.currentTimeMillis();		
 		a.getConnention().close();
 		System.out.println("closed " + (finishTime - startTime));
 	}
-
+	*/
+	}
 	
 }
