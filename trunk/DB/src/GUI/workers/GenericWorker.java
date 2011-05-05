@@ -12,7 +12,7 @@ import GUI.GuiHandler;
 import GUI.frames.WelcomeScreenFrame;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 
-public abstract class EditAndDeleteGenericWorker extends SwingWorker<ExecutionResult, Void> {
+public abstract class GenericWorker extends SwingWorker<ExecutionResult, Void> {
 	protected String[] fieldNames;
 	protected String[] values;
 	protected Tables table;
@@ -23,11 +23,11 @@ public abstract class EditAndDeleteGenericWorker extends SwingWorker<ExecutionRe
 	
 	protected static DatabaseManager databaseManager = DatabaseManager.getInstance();
 	
-	public EditAndDeleteGenericWorker(String action, Tables table, int recordId, EditAndDeleteGenericCardPanel card){
+	public GenericWorker(String action, Tables table, int recordId, EditAndDeleteGenericCardPanel card){
 		this(action, table, null, null, recordId, card);
 	}
 	
-	public EditAndDeleteGenericWorker(String action, Tables table, String [] fieldNames, String [] fieldValues, int recordId,  EditAndDeleteGenericCardPanel card){
+	public GenericWorker(String action, Tables table, String [] fieldNames, String [] fieldValues, int recordId,  EditAndDeleteGenericCardPanel card){
 		super();
 		this.fieldNames = fieldNames;
 		this.values = fieldValues;

@@ -20,7 +20,7 @@ public class ManageFrame extends GenericFrame {
 
 	private void buildFrame() throws Exception{
 		setTitle("Manage");
-		setSize(600,500);
+		setSize(800,500);
 		setResizable(false);
 		add(BorderLayout.CENTER, tabPanelBuilder());
 		//setContentPane(mainPanelBuilder());

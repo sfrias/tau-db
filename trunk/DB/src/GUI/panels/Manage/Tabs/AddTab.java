@@ -31,7 +31,7 @@ public class AddTab extends GenericTab {
 	}
 
 	@Override
-	public JPanel addCards(JPanel cards) {
+	public JPanel addCards(JPanel cards) throws Exception {
 		//cards.add(new DefaultCard(), "default");
 		cards.add(new AddCharacters(), Tables.characters.toString().toUpperCase());
 		cards.add(new AddCreator(), Tables.creator.toString().toUpperCase());

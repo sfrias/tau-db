@@ -2,8 +2,6 @@ package GUI.panels.Manage.cards;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.concurrent.ExecutionException;
@@ -87,22 +85,6 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 		catch (TimeoutException e) {}
 
 		throw new Exception();
-	}
-
-	public ActionListener createRecordComboListener() { 
-
-		return new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cb = (AutoCompleteComboBox)e.getSource();
-				Pair record = (Pair) cb.getSelectedItem();
-				if (record != null){
-					String [] valuesArr = databaseManager.getCurrentValues(table, table.toString()+"_id", record.getId());
-					textName.setText(valuesArr[0]);
-				}
-			}
-		};
 	}
 
 	private void createRecordCombo(boolean isFirstCreation) throws Exception{
