@@ -25,29 +25,23 @@ public class DeleteTab extends GenericTab{
 		super();
 	}
 	@Override
-	public JPanel addCards(JPanel cards) {
+	public JPanel addCards(JPanel cards) throws Exception {
 
-
-		try {
-			cards.add(new DefaultCard(), "default");
-			cards.add(new DeleteCreator(), Tables.creator.toString().toUpperCase());
-			cards.add(new DeleteDisease(), Tables.disease.toString().toUpperCase());
-			cards.add(new DeleteEthnicity(), Tables.ethnicity.toString().toUpperCase());
-			cards.add(new DeleteGender(), Tables.gender.toString().toUpperCase());
-			cards.add(new DeleteJob(), Tables.job.toString().toUpperCase());
-			cards.add(new DeleteLocation(), Tables.location.toString().toUpperCase());
-			cards.add(new DeleteOccupation(), Tables.occupation.toString().toUpperCase());
-			cards.add(new DeleteOrganization(), Tables.organization.toString().toUpperCase());
-			cards.add(new DeletePower(), Tables.power.toString().toUpperCase());
-			cards.add(new DeleteRank(), Tables.rank.toString().toUpperCase());
-			cards.add(new DeleteSchool(), Tables.school.toString().toUpperCase());
-			cards.add(new DeleteSpecies(), Tables.species.toString().toUpperCase());
-			cards.add(new DeleteUniverse(), Tables.universe.toString().toUpperCase());
-			return cards;
-
-		} catch (Exception e) {
-			return null;
-		}
+		cards.add(new DefaultCard(), "default");
+		cards.add(new DeleteCreator(), Tables.creator.toString().toUpperCase());
+		cards.add(new DeleteDisease(), Tables.disease.toString().toUpperCase());
+		cards.add(new DeleteEthnicity(), Tables.ethnicity.toString().toUpperCase());
+		cards.add(new DeleteGender(), Tables.gender.toString().toUpperCase());
+		cards.add(new DeleteJob(), Tables.job.toString().toUpperCase());
+		cards.add(new DeleteLocation(), Tables.location.toString().toUpperCase());
+		cards.add(new DeleteOccupation(), Tables.occupation.toString().toUpperCase());
+		cards.add(new DeleteOrganization(), Tables.organization.toString().toUpperCase());
+		cards.add(new DeletePower(), Tables.power.toString().toUpperCase());
+		cards.add(new DeleteRank(), Tables.rank.toString().toUpperCase());
+		cards.add(new DeleteSchool(), Tables.school.toString().toUpperCase());
+		cards.add(new DeleteSpecies(), Tables.species.toString().toUpperCase());
+		cards.add(new DeleteUniverse(), Tables.universe.toString().toUpperCase());
+		return cards;
 	}
 
 	@Override
