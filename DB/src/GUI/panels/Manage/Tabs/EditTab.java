@@ -21,25 +21,31 @@ import GUI.panels.Manage.cards.edit.EditUniverse;
 public class EditTab extends GenericTab{
 	private static final long serialVersionUID = 1L;
 
-	public EditTab(){
+	public EditTab() throws Exception{
 		super();
 	}
 	@Override
 	public JPanel addCards(JPanel cards) {
-		cards.add(new DefaultCard(), "default");
-		cards.add(new EditCreator(), Tables.creator.toString().toUpperCase());
-		cards.add(new EditDisease(), Tables.disease.toString().toUpperCase());
-		cards.add(new EditEthnicity(), Tables.ethnicity.toString().toUpperCase());
-		cards.add(new EditGender(), Tables.gender.toString().toUpperCase());
-		cards.add(new EditJob(), Tables.job.toString().toUpperCase());
-		cards.add(new EditLocation(), Tables.location.toString().toUpperCase());
-		cards.add(new EditOccupation(), Tables.occupation.toString().toUpperCase());
-		cards.add(new EditOrganization(), Tables.organization.toString().toUpperCase());
-		cards.add(new EditPower(), Tables.power.toString().toUpperCase());
-		cards.add(new EditRank(), Tables.rank.toString().toUpperCase());
-		cards.add(new EditSchool(), Tables.school.toString().toUpperCase());
-		cards.add(new EditSpecies(), Tables.species.toString().toUpperCase());
-		cards.add(new EditUniverse(), Tables.universe.toString().toUpperCase());
+		try {
+			cards.add(new DefaultCard(), "default");
+			cards.add(new EditCreator(), Tables.creator.toString().toUpperCase());
+			cards.add(new EditDisease(), Tables.disease.toString().toUpperCase());
+			cards.add(new EditEthnicity(), Tables.ethnicity.toString().toUpperCase());
+			cards.add(new EditGender(), Tables.gender.toString().toUpperCase());
+			cards.add(new EditJob(), Tables.job.toString().toUpperCase());
+			cards.add(new EditLocation(), Tables.location.toString().toUpperCase());
+			cards.add(new EditOccupation(), Tables.occupation.toString().toUpperCase());
+			cards.add(new EditOrganization(), Tables.organization.toString().toUpperCase());
+			cards.add(new EditPower(), Tables.power.toString().toUpperCase());
+			cards.add(new EditRank(), Tables.rank.toString().toUpperCase());
+			cards.add(new EditSchool(), Tables.school.toString().toUpperCase());
+			cards.add(new EditSpecies(), Tables.species.toString().toUpperCase());
+			cards.add(new EditUniverse(), Tables.universe.toString().toUpperCase());
+		} 
+		catch (Exception e) {
+			return null;
+		}
+		
 		
 		return cards;
 	}

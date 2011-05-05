@@ -6,7 +6,7 @@ public class EditCreator extends EditCard{
 
 	private static final long serialVersionUID = 1L;
 	
-	public EditCreator(){
+	public EditCreator() throws Exception{
 		super(Tables.creator);
 	}
 }

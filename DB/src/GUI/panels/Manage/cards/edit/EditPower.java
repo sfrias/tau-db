@@ -6,7 +6,7 @@ public class EditPower extends EditCard{
 	
 	private static final long serialVersionUID = 1L;
 	
-	public EditPower(){
+	public EditPower() throws Exception{
 		super(Tables.power);
 	}
 

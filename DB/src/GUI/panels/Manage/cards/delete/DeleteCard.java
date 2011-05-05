@@ -13,12 +13,12 @@ public class DeleteCard extends EditAndDeleteGenericCardPanel{
 
 	private static final long serialVersionUID = 8694645404553404464L;
 
-	DeleteCard(Tables table, boolean isSimpleCard){
+	DeleteCard(Tables table, boolean isSimpleCard) throws Exception{
 		super(table, isSimpleCard);
 		textName.setEditable(false);
 	}
 	
-	DeleteCard(Tables table){
+	DeleteCard(Tables table) throws Exception{
 		super(table, true);
 		textName.setEditable(false);
 	}

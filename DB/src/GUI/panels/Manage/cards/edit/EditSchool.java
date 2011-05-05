@@ -6,7 +6,7 @@ public class EditSchool extends EditCard{
 
 	private static final long serialVersionUID = 1L;
 	
-	public EditSchool(){
+	public EditSchool() throws Exception{
 		super(Tables.school);
 	}
 }

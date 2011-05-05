@@ -28,11 +28,11 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 	private AutoCompleteComboBox comboRecord;
 	protected EditAndDeleteGenericCardPanel thisCard; 
 
-	public EditAndDeleteGenericCardPanel(Tables table){
+	public EditAndDeleteGenericCardPanel(Tables table) throws Exception{
 		this(table, true);
 	}
 
-	public EditAndDeleteGenericCardPanel(Tables table, boolean isSimpleCard){
+	public EditAndDeleteGenericCardPanel(Tables table, boolean isSimpleCard) throws Exception{
 		super(table, isSimpleCard);
 
 		thisCard = this;
@@ -46,17 +46,12 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 		JPanel panelHead = new JPanel();
 		panelHead.setLayout(new BoxLayout(panelHead,BoxLayout.PAGE_AXIS));
 
-		try {
-			createRecordCombo(true); //inserts combo into panelRecord
+		createRecordCombo(true); //inserts combo into panelRecord
 
-			panelHead.add(new JLabel("please select a record:"));
-			panelHead.add(panelRecord);
-			panelHead.add(new JSeparator(JSeparator.HORIZONTAL));
-			add(panelHead,BorderLayout.NORTH);
-		} catch (Exception e) {
-			GuiHandler.ShowErrorGetRecords();
-			GuiHandler.switchFrames(new WelcomeScreenFrame());
-		} 
+		panelHead.add(new JLabel("Please select a record:"));
+		panelHead.add(panelRecord);
+		panelHead.add(new JSeparator(JSeparator.HORIZONTAL));
+		add(panelHead,BorderLayout.NORTH); 
 
 		addFocusListener(new FocusListener() {
 
@@ -122,7 +117,7 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 		comboRecord.setPreferredSize(new Dimension(200,20));
 		panelRecord.add(comboRecord,0);
 		panelRecord.validate();
-		
+
 	}
 
 	public void refreshCards() throws Exception{
