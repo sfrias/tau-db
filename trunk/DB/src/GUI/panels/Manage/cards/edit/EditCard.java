@@ -22,6 +22,7 @@ public class EditCard extends EditAndDeleteGenericCardPanel{
 
 	public String getCardAction(){
 		return "edit";
+		
 	}
 
 	public ActionListener createActionButtonListener() {
@@ -30,12 +31,16 @@ public class EditCard extends EditAndDeleteGenericCardPanel{
 			public void actionPerformed(ActionEvent event) {
 				Pair selectedPair = (Pair) cb.getSelectedItem();
 				int recordId = selectedPair.getId();
-				EditWorker worker = new EditWorker(table, textName.getText(), recordId,thisCard);
+				String [] fieldNames = new String[]{table.toString()+"_name"};
+				String [] fieldValues = new String[]{textName.getText()};
+				EditWorker worker = new EditWorker(table, fieldNames, fieldValues, recordId,thisCard);
 				GuiHandler.startStatusFlash();
 				worker.execute();
 				//TODO - update combo
 			}
 		};
 	}
+	
+	
 
 }

@@ -24,13 +24,13 @@ public abstract class EditAndDeleteGenericWorker extends SwingWorker<ExecutionRe
 	protected static DatabaseManager databaseManager = DatabaseManager.getInstance();
 	
 	public EditAndDeleteGenericWorker(String action, Tables table, int recordId, EditAndDeleteGenericCardPanel card){
-		this(action, table, null, recordId, card);
+		this(action, table, null, null, recordId, card);
 	}
 	
-	public EditAndDeleteGenericWorker(String action, Tables table, String fieldValue, int recordId,  EditAndDeleteGenericCardPanel card){
+	public EditAndDeleteGenericWorker(String action, Tables table, String [] fieldNames, String [] fieldValues, int recordId,  EditAndDeleteGenericCardPanel card){
 		super();
-		fieldNames = new String[]{table.toString() + "_name"};
-		values = fieldValue == null ? null : new String[] {fieldValue};
+		this.fieldNames = fieldNames;
+		this.values = fieldValues;
 		this.table = table;
 		this.recordId = recordId;
 		this.ACTION = action;

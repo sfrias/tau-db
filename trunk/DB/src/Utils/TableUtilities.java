@@ -396,8 +396,8 @@ public class TableUtilities {
 		populateSimpleTableUsingBatchFile("", "INSERT INTO gender (gender_name, gender_fb_id) values(", "character_gender.tsv", 3, 2);
 		System.out.println("Finished gender");
 
-		//populateSimpleTableUsingBatchFile("", "INSERT INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv", 13, 2);
-		//System.out.println("Finished universe");
+		populateSimpleTableUsingBatchFile("", "INSERT INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv", 13, 2);
+		System.out.println("Finished universe");
 
 		populateSimpleTableUsingBatchFile("", "INSERT INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv", 3, 2);
 		System.out.println("Finished school");
@@ -420,8 +420,8 @@ public class TableUtilities {
 		populateSimpleTableUsingBatchFile("", "INSERT INTO disease (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2);
 		System.out.println("Finished disease");
 
-		//populateSimpleTableUsingBatchFile("location", "INSERT INTO location (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
-		//System.out.println("Finished location");
+		populateSimpleTableUsingBatchFile("location", "INSERT INTO location (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
+		System.out.println("Finished location");
 
 		populateSimpleTableUsingBatchFile("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(", "fictional_character.tsv",27,-1);
 		System.out.println("Finished place_of_birth");
@@ -438,27 +438,25 @@ public class TableUtilities {
 		}
 
 		
-
-		
 		//populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_universes (characters_and_universes_character_id, characters_and_universes_universe_id) values(","characters", "universe", 27, 12,"fictional_character.tsv");	
 		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_genders (characters_and_genders_character_id, characters_and_genders_gender_id) values(","characters", "gender", 27, 5,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_species (characters_and_species_character_id, characters_and_species_species_id) values(","characters", "species", 27, 6,"fictional_character.tsv");
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_creators (characters_and_creators_character_id, characters_and_creators_creator_id) values(","characters", "creator", 27, 16,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_organizations (characters_and_organizations_character_id, characters_and_organizations_organization_id) values(","characters", "organization", 27, 10,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_schools (characters_and_schools_character_id, characters_and_schools_school_id) values(","characters", "school", 27, 21,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_ranks (characters_and_ranks_character_id, characters_and_ranks_rank_id) values(","characters", "rank", 27, 9,"fictional_character.tsv");
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_ethnicities (characters_and_ethnicities_character_id, characters_and_ethnicities_ethnicity_id) values(","characters", "ethnicity", 27, 20,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_occupations (characters_and_occupations_character_id, characters_and_occupations_occupation_id) values(","characters", "occupation", 27, 8,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_powers (characters_and_powers_character_id, characters_and_powers_power_id) values(","characters", "power", 27, 11,"fictional_character.tsv");
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_diseases (characters_and_diseases_character_id, characters_and_diseases_disease_id) values(","characters", "disease", 27, 23,"fictional_character.tsv");
-	
-		//new tables
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO parent (parent_child_character_id, parent_parent_character_id) values(", "characters","characters", 27, 6,"fictional_character.tsv");
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_jobs (characters_and_jobs_job_id, characters_and_jobs_character_id) values(", "job","characters", 3, 3,"fictional_job_title.tsv");
-		CreateTwoFieldTable("INSERT IGNORE INTO marriage (marriage_character_id1, marriage_character_id2) values(", "marriage_of_fictional_characters.tsv", 3, 3);
-		CreateTwoFieldTable("INSERT IGNORE INTO romantic_involvement (romantic_involvement_character_id1, romantic_involvement_character_id2) values(", "romantic_involvement.tsv", 3, 3);
-		CreateTwoFieldTable("INSERT IGNORE INTO sibling (sibling_character_id1, sibling_character_id2) values(", "sibling_relationship_of_fictional_characters.tsv", 3, 3);
-		
+//		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_species (characters_and_species_character_id, characters_and_species_species_id) values(","characters", "species", 27, 6,"fictional_character.tsv");
+//		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_creators (characters_and_creators_character_id, characters_and_creators_creator_id) values(","characters", "creator", 27, 16,"fictional_character.tsv");	
+//		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_organizations (characters_and_organizations_character_id, characters_and_organizations_organization_id) values(","characters", "organization", 27, 10,"fictional_character.tsv");	
+//		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_schools (characters_and_schools_character_id, characters_and_schools_school_id) values(","characters", "school", 27, 21,"fictional_character.tsv");	
+//		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_ranks (characters_and_ranks_character_id, characters_and_ranks_rank_id) values(","characters", "rank", 27, 9,"fictional_character.tsv");
+//		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_ethnicities (characters_and_ethnicities_character_id, characters_and_ethnicities_ethnicity_id) values(","characters", "ethnicity", 27, 20,"fictional_character.tsv");	
+//		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_occupations (characters_and_occupations_character_id, characters_and_occupations_occupation_id) values(","characters", "occupation", 27, 8,"fictional_character.tsv");	
+//		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_powers (characters_and_powers_character_id, characters_and_powers_power_id) values(","characters", "power", 27, 11,"fictional_character.tsv");
+//		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_diseases (characters_and_diseases_character_id, characters_and_diseases_disease_id) values(","characters", "disease", 27, 23,"fictional_character.tsv");
+//	
+//		//new tables
+//		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO parent (parent_child_character_id, parent_parent_character_id) values(", "characters","characters", 27, 6,"fictional_character.tsv");
+//		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_jobs (characters_and_jobs_job_id, characters_and_jobs_character_id) values(", "job","characters", 3, 3,"fictional_job_title.tsv");
+//		CreateTwoFieldTable("INSERT IGNORE INTO marriage (marriage_character_id1, marriage_character_id2) values(", "marriage_of_fictional_characters.tsv", 3, 3);
+//		CreateTwoFieldTable("INSERT IGNORE INTO romantic_involvement (romantic_involvement_character_id1, romantic_involvement_character_id2) values(", "romantic_involvement.tsv", 3, 3);
+//		CreateTwoFieldTable("INSERT IGNORE INTO sibling (sibling_character_id1, sibling_character_id2) values(", "sibling_relationship_of_fictional_characters.tsv", 3, 3);
+//		
 		AntUtils.executeTarget(Targets.POPULATE);
 
 		long finishTime = System.currentTimeMillis();

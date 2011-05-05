@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 import Enums.Tables;
 import GUI.panels.Manage.cards.DefaultCard;
 import GUI.panels.Manage.cards.edit.EditCreator;
-import GUI.panels.Manage.cards.edit.EditDiseases;
+import GUI.panels.Manage.cards.edit.EditDisease;
 import GUI.panels.Manage.cards.edit.EditEthnicity;
 import GUI.panels.Manage.cards.edit.EditGender;
 import GUI.panels.Manage.cards.edit.EditJob;
@@ -28,7 +28,7 @@ public class EditTab extends GenericTab{
 	public JPanel addCards(JPanel cards) {
 		cards.add(new DefaultCard(), "default");
 		cards.add(new EditCreator(), Tables.creator.toString().toUpperCase());
-		cards.add(new EditDiseases(), Tables.disease.toString().toUpperCase());
+		cards.add(new EditDisease(), Tables.disease.toString().toUpperCase());
 		cards.add(new EditEthnicity(), Tables.ethnicity.toString().toUpperCase());
 		cards.add(new EditGender(), Tables.gender.toString().toUpperCase());
 		cards.add(new EditJob(), Tables.job.toString().toUpperCase());

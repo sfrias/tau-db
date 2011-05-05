@@ -5,8 +5,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.SwingUtilities;
 
-import Enums.ExecutionResult;
 import Enums.Tables;
+import GUI.GuiHandler;
+import GUI.panels.Manage.Tabs.AddWorker;
 import GUI.panels.Manage.cards.GenericCardPanel;
 
 public abstract class AddCard extends GenericCardPanel{
@@ -32,7 +33,9 @@ public abstract class AddCard extends GenericCardPanel{
 					public void run() {
 						String [] fieldNames = {table.toString()+"_name"};
 						String [] values = {textName.getText()};
-						ExecutionResult result = databaseManager.executeInset(table, fieldNames, values);
+						AddWorker worker = new AddWorker(table, fieldNames, values);
+						GuiHandler.startStatusFlash();
+						worker.execute();
 					}
 				});
 			}
