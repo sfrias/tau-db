@@ -11,6 +11,6 @@ public interface EditAndDeleteGenericCardInteface extends GenericCardInerface {
 	public ActionListener createRecordComboListener();
 
 	//each card should display a list of all its records. card implement.
-	public Pair[] createRecordList();
+	public Pair[] createRecordList() throws Exception;
 
 }
