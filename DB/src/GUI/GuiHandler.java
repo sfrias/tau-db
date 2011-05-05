@@ -103,6 +103,12 @@ public class GuiHandler {
     	private static void quit() {
 	       loadedFrame.dispose();
 	        System.exit(0);
-	}	
-      
+    	}
+    	
+    	public static void ShowErrorGetRecords(){
+    		String msg = "could not retrieve records";
+    		String title = "error";
+    		ImageIcon icon = GuiUtils.readImageIcon("thumbDown.png");
+    		JOptionPane.showMessageDialog(loadedFrame, msg, title, JOptionPane.OK_OPTION,icon);
+    	}
 }

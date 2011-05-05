@@ -9,6 +9,7 @@ import db.DatabaseManager;
 import Enums.ExecutionResult;
 import Enums.Tables;
 import GUI.GuiHandler;
+import GUI.frames.WelcomeScreenFrame;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 
 public abstract class EditAndDeleteGenericWorker extends SwingWorker<ExecutionResult, Void> {
@@ -44,7 +45,12 @@ public abstract class EditAndDeleteGenericWorker extends SwingWorker<ExecutionRe
 			switch (result){
 				case Success:
 					GuiHandler.showResultSuccessDialog(ACTION);
+				try {
 					card.refreshCards();
+				} catch (Exception e) {
+					GuiHandler.ShowErrorGetRecords();
+					GuiHandler.switchFrames(new WelcomeScreenFrame());
+				}
 					break;
 				case IntegrityConstraintViolationException:
 					GuiHandler.ShowResultIntegrityDialog();
