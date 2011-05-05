@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
@@ -45,7 +44,6 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 
 		createRecordCombo(true); //inserts combo into panelRecord
 
-		panelHead.add(new JLabel("Please select a record:"));
 		panelHead.add(panelRecord);
 		panelHead.add(new JSeparator(JSeparator.HORIZONTAL));
 		add(panelHead,BorderLayout.NORTH); 
@@ -98,14 +96,11 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 		comboRecord.setPreferredSize(new Dimension(200,20));
 		panelRecord.add(comboRecord,0);
 		panelRecord.validate();
-
 	}
 
 	public void refreshCards() throws Exception{
-		//JPanel parent = (JPanel) getParent();
-		//CardLayout layout = (CardLayout)parent.getLayout();
-		//layout.show(parent,"default");
 		createRecordCombo(false);
+		switchCard(DEFAULT_CARD);
 	}
 
 }

@@ -4,11 +4,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.List;
 import java.util.TreeMap;
 
 import Connection.JDCConnection;
+import Enums.Tables;
+import db.DatabaseManager;
 
 public class algorithm {
 

@@ -17,6 +17,7 @@ import javax.swing.JSeparator;
 
 import Enums.Tables;
 import GUI.buttons.AutoCompleteComboBox;
+import GUI.layouts.RXCardLayout;
 
 public abstract class GenericTab extends JPanel implements ActionListener, GenericTabInterface{
 	private static final long serialVersionUID = 1L;
@@ -49,7 +50,9 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		setLayout(new BorderLayout());
 		add(panelHead,BorderLayout.NORTH);
 
-		cards = new JPanel(new CardLayout());
+		//cards = new JPanel(new CardLayout());
+		cards = new JPanel(new RXCardLayout());
+		cards.setRequestFocusEnabled(true);
 		cards = addCards(cards);
 		add(cards,BorderLayout.CENTER);	
 	}

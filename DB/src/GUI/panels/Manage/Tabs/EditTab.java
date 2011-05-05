@@ -3,7 +3,6 @@ package GUI.panels.Manage.Tabs;
 import javax.swing.JPanel;
 
 import Enums.Tables;
-import GUI.panels.Manage.cards.DefaultCard;
 import GUI.panels.Manage.cards.edit.EditCreator;
 import GUI.panels.Manage.cards.edit.EditDisease;
 import GUI.panels.Manage.cards.edit.EditEthnicity;
@@ -26,8 +25,6 @@ public class EditTab extends GenericTab{
 	}
 	@Override
 	public JPanel addCards(JPanel cards) throws Exception {
-
-		cards.add(new DefaultCard(), "default");
 		cards.add(new EditCreator(), Tables.creator.toString().toUpperCase());
 		cards.add(new EditDisease(), Tables.disease.toString().toUpperCase());
 		cards.add(new EditEthnicity(), Tables.ethnicity.toString().toUpperCase());

@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import Enums.Tables;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.buttons.IconButton;
+import GUI.layouts.RXCardLayout;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -29,6 +30,11 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 	
 	protected boolean isSimpleCard;
 	protected Tables table;
+	JPanel fieldsNDefaultCards;
+	private RXCardLayout cardLayout= new RXCardLayout();
+	
+	public static String DEFAULT_CARD = "default";
+	public static String MAIN_CARD = "main";
 	
 	public GenericCardPanel(Tables table, boolean isSimpleCard){
 		super();
@@ -91,7 +97,22 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 			}
 		}
 		
-		add(builder.getPanel(),BorderLayout.CENTER);
+		fieldsNDefaultCards = new JPanel(cardLayout);
+		
+		fieldsNDefaultCards.add(new DefaultCard(),DEFAULT_CARD);
+		fieldsNDefaultCards.add(builder.getPanel(),MAIN_CARD);
+		
+		add(fieldsNDefaultCards,BorderLayout.CENTER);
+	}
+	
+	public void switchCard(String cardName){
+		if (cardName.compareTo(MAIN_CARD) == 0){
+			cardLayout.show(fieldsNDefaultCards,MAIN_CARD);
+		}else if (cardName.compareTo(DEFAULT_CARD)==0){
+			cardLayout.show(fieldsNDefaultCards,DEFAULT_CARD);
+		}else{
+			System.out.println("no such card");
+		}
 	}
 
 }

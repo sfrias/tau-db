@@ -15,13 +15,17 @@ public class DefaultCard extends JPanel {
 		super();
 		setLayout(new BorderLayout());
 		
-		JLabel arrowUp = new JLabel(GuiUtils.readImageIcon("arrowUp.png"));
+		JLabel arrowUp = new JLabel(GuiUtils.readImageIcon("arrowUpSmall.png"));
 		add(BorderLayout.NORTH, arrowUp);
-		
-		JLabel text = new JLabel(" choose a table");
-		text.setFont(new Font("Footlight MT Light", Font.BOLD, 72));
+	
+		JPanel panelText = new JPanel();
+
+		JLabel text = new JLabel("choose a record");
+		text.setFont(new Font("Footlight MT Light", Font.BOLD, 16));
 		text.setAlignmentX(CENTER_ALIGNMENT);
-		add(BorderLayout.CENTER, text);
+		panelText.add(text);
+		
+		add(BorderLayout.CENTER, panelText);
 		
 	}
 }
