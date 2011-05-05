@@ -58,6 +58,7 @@ public class AddCharacters extends AddCard {
 		populateVectors();
 
 		addFields(titles, components, extraAddPanels);
+		switchCard(MAIN_CARD);
 	}
 	
 	private void populateVectors() throws Exception{

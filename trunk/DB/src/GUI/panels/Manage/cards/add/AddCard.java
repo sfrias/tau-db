@@ -15,10 +15,13 @@ public abstract class AddCard extends GenericCardPanel{
 
 	public AddCard(Tables table, boolean isSimpleCard){
 		super(table, isSimpleCard);
+		if (!AddCharacters.class.isInstance(this)){
+			switchCard(MAIN_CARD);
+		}
 	}
 	
 	public AddCard(Tables table){
-		super(table, true);
+		this(table, true);
 	}
 	
 	public String getCardAction(){

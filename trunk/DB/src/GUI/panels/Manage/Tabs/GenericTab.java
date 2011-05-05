@@ -1,7 +1,6 @@
 package GUI.panels.Manage.Tabs;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +32,7 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 
 		//TODO insert all tabels names!!!!
 		//String[] categories = createAllTablesArray();
-		String[] categories = {Tables.creator.toString().toUpperCase(), Tables.disease.toString().toUpperCase(), Tables.ethnicity.toString().toUpperCase(),
+		String[] categories = {Tables.characters.toString().toUpperCase(), Tables.creator.toString().toUpperCase(), Tables.disease.toString().toUpperCase(), Tables.ethnicity.toString().toUpperCase(),
 				Tables.gender.toString().toUpperCase(), Tables.job.toString().toUpperCase(), Tables.location.toString().toUpperCase(),
 				Tables.occupation.toString().toUpperCase(), Tables.organization.toString().toUpperCase(), Tables.power.toString().toUpperCase(), Tables.rank.toString().toUpperCase(),
 				Tables.school.toString().toUpperCase(),  Tables.species.toString().toUpperCase(),Tables.universe.toString().toUpperCase() };
@@ -52,7 +51,6 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 
 		//cards = new JPanel(new CardLayout());
 		cards = new JPanel(new RXCardLayout());
-		cards.setRequestFocusEnabled(true);
 		cards = addCards(cards);
 		add(cards,BorderLayout.CENTER);	
 	}
@@ -60,8 +58,10 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 	public void actionPerformed(ActionEvent e) {
 		JComboBox cb = (JComboBox)e.getSource();
 		String cardName = (String)cb.getSelectedItem();
-		CardLayout cl = (CardLayout)(cards.getLayout());
+		RXCardLayout cl = (RXCardLayout)(cards.getLayout());
 		cl.show(cards, cardName);
+/*		GenericCardPanel card = (GenericCardPanel)cl.getCurrentCard();
+		card.switchCard(GenericCardPanel.MAIN_CARD);*/
 	}
 
 	private String[] createAllTablesArray(){

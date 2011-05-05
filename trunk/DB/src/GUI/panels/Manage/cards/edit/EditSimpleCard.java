@@ -42,6 +42,7 @@ public class EditSimpleCard extends EditCard{
 				cb = (AutoCompleteComboBox)e.getSource();
 				Pair record = (Pair) cb.getSelectedItem();
 				if (record != null){
+					switchCard(MAIN_CARD);
 					String [] valuesArr = databaseManager.getCurrentValues(table, table.toString()+"_id", record.getId());
 					textName.setText(valuesArr[0]);
 				}
