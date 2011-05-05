@@ -126,7 +126,7 @@ public class AddCharacters extends AddCard {
 		GuiHandler.startStatusFlash();
 		worker.execute();
 		try {
-			Pair[] result = worker.get(2000,TimeUnit.MILLISECONDS);
+			Pair[] result = worker.get(5000,TimeUnit.MILLISECONDS);
 			GuiHandler.stopStatusFlash();
 			if (result != null){
 				return result;
