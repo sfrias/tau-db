@@ -3,6 +3,7 @@ package Enums;
 public enum Tables {
 	characters,
 	occupation,
+	job,
 	characters_and_occupation,
 	power,
 	characters_and_power,

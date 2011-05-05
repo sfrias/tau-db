@@ -72,7 +72,7 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 		GuiHandler.startStatusFlash();
 		worker.execute();
 		try {
-			Pair[] result = worker.get(2000,TimeUnit.MILLISECONDS);
+			Pair[] result = worker.get(10000,TimeUnit.MILLISECONDS);
 			GuiHandler.stopStatusFlash();
 			if (result != null){
 				return result;

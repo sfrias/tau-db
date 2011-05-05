@@ -149,10 +149,18 @@ public class DatabaseManager {
 
 	public Pair[] executeQueryAndGetValues(Tables table, int interestingCol) {
 
+		String tableName = table.toString();
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			String statementString;
+			if (table.equals(Tables.characters)){
+				statementString = "SELECT * FROM characters ORDER BY character_name ASC";
+			}
+			else{
+				statementString = "SELECT * FROM " + tableName + " ORDER BY " + tableName + "_name ASC";
+			}
 			Statement stmt = conn.createStatement();
-			ResultSet resultSet = stmt.executeQuery("SELECT * FROM " + table.toString() + " ORDER BY " + table.toString() + "_name ASC");
+			ResultSet resultSet = stmt.executeQuery(statementString);
 
 			List<Pair> valuesList = new ArrayList<Pair>();
 
@@ -165,7 +173,7 @@ public class DatabaseManager {
 			conn.close(); 
 			return valuesList.toArray(new Pair[]{});
 		} catch (SQLException e) {
-			System.err.println("An SQLException was thrown at executeQueryAndGetValues("+ table.toString() + ")");
+			System.err.println("An SQLException was thrown at executeQueryAndGetValues("+ tableName + ")");
 			return null;
 		}
 	}
@@ -201,9 +209,10 @@ public class DatabaseManager {
 
 	public String[] getCurrentValues(Tables table, String idFieldName, int recordId) {
 
+		String tableName = table.toString();
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
-			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + table.toString() + " WHERE " + idFieldName + " = ?");
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + tableName + " WHERE " + idFieldName + " = ?");
 			stmt.setInt(1, recordId);
 			ResultSet resultSet = stmt.executeQuery();
 
@@ -219,7 +228,7 @@ public class DatabaseManager {
 			return valuesArr;
 
 		} catch (SQLException e) {
-			System.err.println("An SQLException was thrown at getCurrentValues("+ table.toString() + ")");
+			System.err.println("An SQLException was thrown at getCurrentValues("+ tableName + ")");
 			return null;
 		}
 
@@ -244,7 +253,7 @@ public class DatabaseManager {
 
 			Statement stmt2 = conn.createStatement();
 			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append("INSERT IGNORE INTO " + table.toString() + " (" + fieldName + ") values(\'" + value + "\')");
+			stringBuilder.append("INSERT IGNORE INTO " + tableName + " (" + fieldName + ") values(\'" + value + "\')");
 			stmt2.executeUpdate(stringBuilder.toString());
 
 			stmt2.close();
@@ -253,7 +262,7 @@ public class DatabaseManager {
 			return ExecutionResult.Success;
 
 		} catch (SQLException e) {
-			System.err.println("An SQLException was thrown at executeUpdate("+ table.toString() + ")");
+			System.err.println("An SQLException was thrown at executeUpdate("+ tableName + ")");
 			return ExecutionResult.Exception;
 		}
 	}
@@ -261,16 +270,17 @@ public class DatabaseManager {
 
 	public ExecutionResult executeUpdate(Tables table, String[] fieldNames, String[] values, int id) {
 
+		String tableName = table.toString();
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append("UPDATE " + table.toString() + " SET ");
+			stringBuilder.append("UPDATE " + tableName + " SET ");
 			int length = fieldNames.length;
 			for (int i=0; i < length - 1; i++){
 				stringBuilder.append(fieldNames[i] + " = \'" + values[i] + "\', ");
 			}
 			stringBuilder.append(fieldNames[length-1] + " = \'" + values[length -1] + "\'");
-			stringBuilder.append(" WHERE " + table.toString() + "_id = " + id);
+			stringBuilder.append(" WHERE " + tableName + "_id = " + id);
 
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(stringBuilder.toString());
@@ -281,16 +291,24 @@ public class DatabaseManager {
 			return ExecutionResult.Success;
 
 		} catch (SQLException e) {
-			System.err.println("An SQLException was thrown at executeUpdate("+ table.toString() + ")");
+			System.err.println("An SQLException was thrown at executeUpdate("+ tableName + ")");
 			return ExecutionResult.Exception;
 		}
 	}
 
 	public ExecutionResult executeDelete(Tables table, int id) {
+		
+		String tableName = table.toString();
+		
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			Statement stmt = conn.createStatement();
-			stmt.executeUpdate("DELETE FROM " + table.toString() + " WHERE " + table.toString() + "_id = " + id);		
+			if (table.equals(Tables.characters)){
+				stmt.executeUpdate("DELETE FROM characters WHERE character_id = " + id);		
+			}
+			else{
+				stmt.executeUpdate("DELETE FROM " + tableName + " WHERE " + tableName + "_id = " + id);		
+			}
 			stmt.close();
 			conn.close(); 
 			return ExecutionResult.Success;
@@ -299,7 +317,7 @@ public class DatabaseManager {
 			return ExecutionResult.IntegrityConstraintViolationException;
 		}
 		catch (SQLException e) {
-			System.err.println("An SQLException was thrown at executeDelete("+ table.toString() + ")");
+			System.err.println("An SQLException was thrown at executeDelete("+ tableName + ")");
 			return ExecutionResult.Exception;
 		}		
 	}
