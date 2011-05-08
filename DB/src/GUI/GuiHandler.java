@@ -46,7 +46,6 @@ public class GuiHandler {
 	}
 
 	public static void switchFrames(Frames frame){
-		loadedFrame.dispose();
 		JFrame newFrame = null;
 		switch (frame){
 		case WelcomeScreenFrame:
