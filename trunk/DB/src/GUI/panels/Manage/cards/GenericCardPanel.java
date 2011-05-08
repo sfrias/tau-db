@@ -6,6 +6,7 @@ import java.util.Vector;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
@@ -80,7 +81,7 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 				 fieldsComponents.size()==extraFields.size()));
 		
 		int numOfRows = fieldsNames==null ? 0 : fieldsNames.size();
-		FormLayout layout = new FormLayout("left:pref, 4dlu, pref, 4dlu, pref", buildRowsSpecs(numOfRows));
+		FormLayout layout = new FormLayout("left:pref, 4dlu, pref, 4dlu, left:pref", buildRowsSpecs(numOfRows));
 
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setDefaultDialogBorder();
@@ -102,7 +103,14 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		fieldsNDefaultCards.add(new DefaultCard(),DEFAULT_CARD);
 		fieldsNDefaultCards.add(builder.getPanel(),MAIN_CARD);
 		
-		add(fieldsNDefaultCards,BorderLayout.CENTER);
+		if (fieldsNames!=null){  //not simple card
+			JScrollPane panelScroll = new JScrollPane(fieldsNDefaultCards);
+			add(panelScroll,BorderLayout.CENTER);
+		} 
+		else{
+			add(fieldsNDefaultCards,BorderLayout.CENTER);
+		}
+		
 	}
 	
 	public void switchCard(String cardName){

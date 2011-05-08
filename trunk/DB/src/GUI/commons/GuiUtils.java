@@ -2,6 +2,7 @@ package GUI.commons;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -41,6 +42,13 @@ public class GuiUtils {
             return null;
 
         return new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(url));
+    }
+    
+    public static ImageIcon readImageIcon(String fileName, int width, int height){
+    	ImageIcon icon = readImageIcon(fileName);
+    	Image img = icon.getImage();
+    	Image scaledImg = img.getScaledInstance(width, height,Image.SCALE_DEFAULT);
+    	return new ImageIcon(scaledImg);
     }
     	
 	public static WindowAdapter defaultCloseWindowAdapter(){

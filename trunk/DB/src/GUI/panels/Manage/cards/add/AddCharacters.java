@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -17,12 +18,16 @@ import javax.swing.SwingUtilities;
 import Enums.Tables;
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
+import GUI.commons.GuiUtils;
 import GUI.commons.Pair;
 import GUI.workers.AddSimpleWorker;
 import GUI.workers.GetSimpleRecordsWorker;
 
 public class AddCharacters extends AddCard {
 	private static final long serialVersionUID = 1L;
+	ImageIcon addIcon = GuiUtils.readImageIcon("addIcon.png");
+	ImageIcon okIcon  = GuiUtils.readImageIcon("okIcon.png");
+	
 	
 	private AutoCompleteComboBox creator;
 	private JTextField addCreatorField = new JTextField(20);
@@ -56,7 +61,7 @@ public class AddCharacters extends AddCard {
 	Vector<JComponent> extraAddPanels = new Vector<JComponent>();
 
 	public AddCharacters() throws Exception{
-		super(Tables.characters, false);
+		super(Tables.characters, false);		
 		populateVectors();
 
 		addFields(titles, components, extraAddPanels);
@@ -87,15 +92,16 @@ public class AddCharacters extends AddCard {
 		Pair [] pairValues = createRecordList(table);
 		values = new AutoCompleteComboBox(pairValues);
 		values.setPreferredSize(new Dimension(200,20));
-
 		components.add(values);
+
 		if (addField != null){
-			JButton button = new JButton("add");
+			final JButton button = new JButton(GuiUtils.readImageIcon("addIcon.png", 15, 15));
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					if (addField.isVisible()){
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
+								button.setIcon(GuiUtils.readImageIcon("addIcon.png", 15, 15));
 								String fieldName = table.toString()+"_name";
 								String value = addField.getText();
 								AddSimpleWorker worker = new AddSimpleWorker(table, fieldName, value);
@@ -104,9 +110,12 @@ public class AddCharacters extends AddCard {
 							}
 						});
 						addField.setVisible(false);
+						revalidate();
 					}
 					else{
 						addField.setVisible(true);
+						button.setIcon(GuiUtils.readImageIcon("okIcon.png", 15, 15));
+						revalidate();
 					}
 				}
 			});
