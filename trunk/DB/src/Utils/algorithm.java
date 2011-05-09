@@ -1,5 +1,12 @@
 package Utils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +18,8 @@ import Enums.Tables;
 import db.DatabaseManager;
 
 public class algorithm {
-
+	
+	private static final String CREATE_TABLES_SQL_FILE_PATH = "sql/mysql/populate-tables.sql";
 	private DatabaseManager dbManager = DatabaseManager.getInstance();
 	private JDCConnection conn;
 
@@ -27,7 +35,63 @@ public class algorithm {
 		return conn;
 	}
 	
+	private static void populateTable(String FileName, String insertStatement) throws IOException {
+
+		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
+		FileWriter fileWriter = new FileWriter(sqlFile, true);
+		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+		
+		File dumpFile = new File("C:" + File.separatorChar +"fill" + File.separatorChar + FileName);
+		FileInputStream fileReader = new FileInputStream(dumpFile);
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileReader));
+		
+		bufferedReader.readLine();
+		String lineRead;
+		String[] strarr;
+		
+		while ((lineRead = bufferedReader.readLine()) != null) {
+			strarr = lineRead.split("\t", 2);
+			bufferedWriter.append(insertStatement);
+			bufferedWriter.append("'" + strarr[0] + "', '" + strarr[1] + "');\n");
+			bufferedWriter.flush();
+			}
+		}
 	
+	private void fillTables() throws IOException {
+		
+		populateTable( "gender.txt", "INSERT INTO gender (gender_name, gender_fb_id) values(");
+		populateTable( "species.txt", "INSERT INTO species (species_name, species_fb_id) values(");
+		populateTable( "creator.txt", "INSERT INTO creator (creator_name, creator_fb_id) values(");
+		populateTable( "organization.txt", "INSERT INTO organization (organization_name, organization_fb_id) values(");
+		populateTable( "school.txt", "INSERT INTO school (school_name, school_fb_id) values(");
+		populateTable( "rank.txt", "INSERT INTO rank (rank_name, rank_fb_id) values(");
+		populateTable( "ethnicity.txt", "INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(");
+		populateTable( "universe.txt", "INSERT INTO universe (universe_name, universe_fb_id) values(");
+		populateTable( "occupation.txt", "INSERT INTO occupation (occupation_name, occupation_fb_id) values(");
+		populateTable( "power.txt", "INSERT INTO power (power_name, power_fb_id) values(");
+		populateTable( "disease.txt", "INSERT INTO disease (disease_name, disease_fb_id) values(");
+		populateTable( "place_of_birth.txt", "INSERT INTO place_of_birth (place_of_birth_id, place_of_birth_name) values(");
+		
+		populateTable( "characters.txt", "INSERT INTO characters (character_name, character_fb_id) values(");
+		
+		populateTable("parent.txt", "INSERT IGNORE INTO parent (parent_child_character_id, parent_parent_character_id) values(");
+		populateTable("marriage.txt", "INSERT IGNORE INTO marriage (marriage_character_id1, marriage_character_id2) values(");
+		populateTable("romantic_involvement.txt", "INSERT IGNORE INTO romantic_involvement (romantic_involvement_character_id1, romantic_involvement_character_id2) values(");
+		populateTable("sibling.txt", "INSERT IGNORE INTO sibling (sibling_character_id1, sibling_character_id2) values(");
+		
+		populateTable("characters_and_universe.txt", "INSERT IGNORE INTO characters_and_universe (characters_and_universe_character_id, characters_and_universe_universe_id) values(");	
+		populateTable("characters_and_gender.txt", "INSERT IGNORE INTO characters_and_gender (characters_and_gender_character_id, characters_and_gender_gender_id) values(");	
+		populateTable("characters_and_species.txt", "INSERT IGNORE INTO characters_and_species (characters_and_species_character_id, characters_and_species_species_id) values(");
+		populateTable("characters_and_creator.txt", "INSERT IGNORE INTO characters_and_creator (characters_and_creator_character_id, characters_and_creator_creator_id) values(");	
+		populateTable("characters_and_organization.txt", "INSERT IGNORE INTO characters_and_organization (characters_and_organization_character_id, characters_and_organization_organization_id) values(");	
+		populateTable("characters_and_school.txt", "INSERT IGNORE INTO characters_and_school (characters_and_school_character_id, characters_and_school_school_id) values(");	
+		populateTable("characters_and_rank.txt", "INSERT IGNORE INTO characters_and_rank (characters_and_rank_character_id, characters_and_rank_rank_id) values(");
+		populateTable("characters_and_ethnicity.txt", "INSERT IGNORE INTO characters_and_ethnicity (characters_and_ethnicity_character_id, characters_and_ethnicity_ethnicity_id) values(");	
+		populateTable("characters_and_occupation.txt", "INSERT IGNORE INTO characters_and_occupation (characters_and_occupation_character_id, characters_and_occupation_occupation_id) values(");	
+		populateTable("characters_and_power.txt", "INSERT IGNORE INTO characters_and_power (characters_and_power_character_id, characters_and_power_power_id) values(");
+		populateTable("characters_and_disease.txt", "INSERT IGNORE INTO characters_and_disease (characters_and_disease_character_id, characters_and_disease_disease_id) values(");
+		
+	}
 	
 	/*
 	 * This function is used in order to build an organized array of all tables from the Tables' enum.
@@ -180,7 +244,7 @@ public class algorithm {
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
 			
-			System.out.println("trying "+ tablesArr[atr] + "in phase " + recPhase);
+			System.out.println("trying "+ tablesArr[atr] + " in phase " + recPhase);
 			currentAtr =tablesArr[atr];
 			if (atr < indexOfJumps) {
 				joinedAtr = tablesArr[atr+1];
@@ -240,7 +304,12 @@ public class algorithm {
 				
 				}catch (SQLException e) {
 					System.out.println("error execute query-" + e.toString());
-				}	
+				}
+				
+			    //added by tal	
+				if (resultFlag)
+					break;
+				
 				atr=atr+1;
 			} //end of first case
 			
@@ -436,14 +505,29 @@ public class algorithm {
 		
 		String currentName="";
 		String[] valueArr = new String[2];
-
+		String toPrint;
 		for (int i=0; i< connArr.length; i++){
 			
 				if (connArr[i] != null ) {
 					if (!connArr[i].equals("merged")){
 						valueArr = connArr[i].split(",");
 						currentName =getNameFromId(Integer.parseInt(valueArr[0]));
-						System.out.println(startName + " has the same "+ valueArr[1] + " as" + currentName + "\n" );
+						if ( valueArr[1].equals(Tables.sibling.toString()) || 
+							 valueArr[1].equals(Tables.marriage.toString()) ||
+							 valueArr[1].equals(Tables.romantic_involvement.toString()) ) {
+								toPrint = startName + " has a " + valueArr[1] + " relationship with " + currentName;
+						}
+						else if ( valueArr[1].equals("child")) {
+								toPrint = startName + " is " + currentName +"'s child";
+						}
+						else if (valueArr[1].equals("parent")) {
+								toPrint = startName + " is " + currentName +"'s parent";
+						}
+						else {
+							toPrint = startName + " has the same "+ valueArr[1] + " as " + currentName;
+						}
+						
+						System.out.println(toPrint);
 						startName=currentName;
 					}
 				}
@@ -490,16 +574,22 @@ public class algorithm {
 	
 	
 	
-	public static void main(String[] args) throws SQLException{
+	public static void main(String[] args) throws SQLException, IOException{
 		algorithm a = new algorithm();
 		String[] table = a.buildTablesArray();
-		System.out.println(a.indexOfJumps);
+		//System.out.println(a.indexOfJumps);
 	/*	for (int i=0;i<table.length;i++){
 			System.out.println(i+ ": " + table[i]);
 		}*/
-
 		
+		//a.fillTables();
+		
+		
+		a.lookForConnection(6,3);
 	}
+	
+	
+	
 	
 	
 	

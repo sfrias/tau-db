@@ -1,3 +1,9 @@
+CREATE TABLE place_of_birth
+		(place_of_birth_id int(11) NOT NULL AUTO_INCREMENT,
+		place_of_birth_name varchar(80) NOT NULL,
+		KEY ix_place_of_birth_id (place_of_birth_id),
+		PRIMARY KEY (place_of_birth_id),UNIQUE (place_of_birth_name));
+
 CREATE TABLE species 
 	(species_id int(11) NOT NULL AUTO_INCREMENT,
 	species_fb_id varchar(40) NOT NULL,
@@ -40,12 +46,6 @@ CREATE TABLE location
 	KEY ix_location_id (location_id),
 	PRIMARY KEY (location_id,location_name),
 	FOREIGN KEY (location_universe_id) REFERENCES universe (universe_id));
-	
-CREATE TABLE place_of_birth
-	(place_of_birth_id int(11) NOT NULL AUTO_INCREMENT,
-	place_of_birth_name varchar(80) NOT NULL,
-	KEY ix_place_of_birth_id (place_of_birth_id),
-	PRIMARY KEY (place_of_birth_id),UNIQUE (place_of_birth_name));
 	
 CREATE TABLE school
 	(school_id int(11) NOT NULL AUTO_INCREMENT,
@@ -100,7 +100,7 @@ CREATE TABLE characters
 	(character_id int(11) NOT NULL AUTO_INCREMENT,
 	character_fb_id varchar(40) NOT NULL,
 	character_name varchar(80) NOT NULL,
-	character_place_of_birth_id int(11) NOT NULL,
+	character_place_of_birth_id int(11) NOT NULL DEFAULT 1,
 	KEY ix_character_id (character_id),
 	PRIMARY KEY (character_id),
 	FOREIGN KEY (character_place_of_birth_id) REFERENCES place_of_birth(place_of_birth_id)) DEFAULT CHARSET=utf8;
