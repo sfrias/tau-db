@@ -7,10 +7,13 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.TreeMap;
 
 import com.mysql.jdbc.Connection;
@@ -21,6 +24,7 @@ import db.DatabaseManager;
 
 public class algorithm {
 	
+	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
 	private static final String CREATE_TABLES_SQL_FILE_PATH = "sql/mysql/populate-tables.sql";
 	private DatabaseManager dbManager = DatabaseManager.getInstance();
 	private JDCConnection conn;
@@ -109,8 +113,8 @@ public class algorithm {
 		String atrTable;
 		String currentTable;
 		String putCouples;
-		String[] attributes = new String[numOfTables-3]; //minus characters and gender tables
-		String[] result = new String[numOfTables-3];
+		String[] attributes = new String[numOfTables-2]; //minus characters and gender tables
+		String[] result = new String[numOfTables-2];
 		
 		int indexOfAttr=0, indexOfResult=0;
 		for (int i=0; i< numOfTables; i++){
@@ -568,7 +572,15 @@ public class algorithm {
 	}
 
 	
-	
+	private String getCurrentDate() {
+		
+		Calendar currentDate = Calendar.getInstance();
+		SimpleDateFormat formatter= new SimpleDateFormat("yyyy/MM/dd");
+		String dateNow = formatter.format(currentDate.getTime());
+		String [] d = dateNow.split("/");
+		String s = d[0]+"."+d[1]+"."+d[2];
+		return s;
+	}
 	
 	/*
 	 * main function for looking a connection between two characters
@@ -580,16 +592,66 @@ public class algorithm {
 			return true;
 		}
 
-
+		Statement stmt = null;
+		ResultSet rs = null;
+		String toQuery;
+		String date;
+		boolean result = false;
+		
 		String[] connections = new String[6];
 		
 		String start_name=getNameFromId(start_id);
 		String end_name=getNameFromId(end_id);
-
+		
+		// checks if the connection between this 2 character already in history table
+		stmt = conn.createStatement();
+		rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
+		if (rs.next()) {
+			result = true;	
+		}
+		else {
+			rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
+			if (rs.next()){
+				result = true;
+			}
+		}
+		
+		if (result) {
+			System.out.println("this connection was found in " + rs.getDate(3));
+			String[] con = rs.getString(4).split("\t");
+			System.out.println("Match found between "+ start_name +" and "+ end_name);
+			mergeConnection(con); 
+			getNameAndPrintConnections(con,start_name);
+			if (stmt!=null)
+				stmt.close();
+			if (rs!=null)
+				rs.close();
+			return true;
+		}
+		
 		//trying to find first connection
 		
 		if (connectionFinder(connections, start_id, end_id, 1, 0, true)){
 				System.out.println("Match found between "+ start_name +" and "+ end_name);
+				// add the relationship into history table
+				stmt = conn.createStatement();
+				date = getCurrentDate();
+				String r = "";
+				for (int i=0; i<connections.length-1; i++) {
+					if (connections[i]!=null){
+						if (connections[i+1]!=null)
+							r += connections[i]+ "\t";
+						else
+							r += connections[i];
+					}
+					else
+						break;
+				}
+			
+				toQuery = "INSERT INTO history (character_id1, character_id2, date, information) values (" + start_id + "," + end_id + ",'" + date + "', '" + r + "');";
+				stmt.executeUpdate(toQuery);
+				stmt.close();
+				
 				mergeConnection(connections);
 				getNameAndPrintConnections(connections,start_name);
 				return true;
@@ -613,9 +675,10 @@ public class algorithm {
 		}*/
 		
 		//a.fillTables();
+		    
+		a.lookForConnection(1,4);
 		
 		
-		a.lookForConnection(6,3);
 	}
 	
 	

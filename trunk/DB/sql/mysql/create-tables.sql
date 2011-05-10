@@ -217,5 +217,14 @@ CREATE TABLE characters_and_job
 	FOREIGN KEY (characters_and_job_job_id) REFERENCES job(job_id),
 	FOREIGN KEY (characters_and_job_character_id) REFERENCES characters(character_id));
 
+CREATE TABLE history
+	(character_id1 int(11) NOT NULL,
+	character_id2 int(11) NOT NULL,
+	date date DEFAULT NULL,
+	information varchar(80),
+	PRIMARY KEY (character_id1,character_id2),
+	FOREIGN KEY (character_id1) REFERENCES characters(character_id),
+	FOREIGN KEY (character_id2) REFERENCES characters(character_id));
+
 
 

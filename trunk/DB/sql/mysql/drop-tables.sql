@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS characters_and_occupation;
 DROP TABLE IF EXISTS characters_and_power;
 DROP TABLE IF EXISTS characters_and_disease;
 DROP TABLE IF EXISTS characters_and_job;
+DROP TABLE IF EXISTS history;
 DROP TABLE IF EXISTS marriage;
 DROP TABLE IF EXISTS romantic_involvement;
 DROP TABLE IF EXISTS sibling;
