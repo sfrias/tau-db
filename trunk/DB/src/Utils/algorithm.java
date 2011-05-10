@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.TreeMap;
 
+import com.mysql.jdbc.Connection;
+
 import Connection.JDCConnection;
 import Enums.Tables;
 import db.DatabaseManager;
@@ -107,8 +109,8 @@ public class algorithm {
 		String atrTable;
 		String currentTable;
 		String putCouples;
-		String[] attributes = new String[numOfTables-1];
-		String[] result = new String[numOfTables-1];
+		String[] attributes = new String[numOfTables-3]; //minus characters and gender tables
+		String[] result = new String[numOfTables-3];
 		
 		int indexOfAttr=0, indexOfResult=0;
 		for (int i=0; i< numOfTables; i++){
@@ -119,6 +121,9 @@ public class algorithm {
 			else if (!currentTable.contains("and")){
 				attributes[indexOfAttr]=tbs[i].toString();
 				indexOfAttr++;
+			}
+			else if (currentTable.contains("gender")){
+				continue;
 			}
 			else {
 				atrTable = currentTable.substring(15);
@@ -171,6 +176,24 @@ public class algorithm {
 	}
 	
 	
+	 public static int countRows(JDCConnection connection) throws SQLException {
+		    // select the number of rows in the table
+		    Statement stmt = null;
+		    ResultSet rs = null;
+		    int rowCount = -1;
+		    try {
+		      stmt = connection.createStatement();
+		      rs = stmt.executeQuery("SELECT COUNT(*) FROM characters");
+		      // get the number of rows from the result set
+		      rs.next();
+		      rowCount = rs.getInt(1);
+		    } finally {
+		      rs.close();
+		      stmt.close();
+		    }
+		    return rowCount;
+		  }
+
 	
 	/*
 	 * helper function which is called from connectionFinder which goes over all characters that has the same attribute (currentAtr) 
@@ -178,7 +201,7 @@ public class algorithm {
 	 * In case of a match - the process is stopped and returns true. Otherwise - returns false.
 	 */
 	private boolean helperForConnection(ResultSet charsWithAtrRS,int start_id,int end_id, int recPhase, 
-										boolean firstRun, String[] fill, String currentAtr){
+										boolean firstRun, String[] fill, String currentAtr, boolean[] characters){
 		boolean resultFlag = false;
 		int currentid=0;
 		try{
@@ -193,10 +216,15 @@ public class algorithm {
 				}
 				else {
 					// starting a recursive call with each character with the same attribute as the start_id
-					fill[recPhase-1]= currentid + "," + currentAtr;
-					if (connectionFinder(fill, currentid, end_id, recPhase+1, start_id, true)){
-						resultFlag= true;
-						break; //out of while loop
+					if (!characters[currentid]){ //checking if the character was already checked in the recursion
+						fill[recPhase-1]= currentid + "," + currentAtr;
+						if (connectionFinder(fill, currentid, end_id, recPhase+1, start_id, true)){
+							resultFlag= true;
+							break; //out of while loop
+						}
+						else { //changing the character to checked
+							characters[currentid]=true;
+						}
 					}
 				}
 			}
@@ -240,6 +268,8 @@ public class algorithm {
 		
 		String[] tablesArr = buildTablesArray();
 		int attributes = tablesArr.length;
+		int numOfCharacters = countRows(conn);
+		boolean[] alreadyCheckedCharactersArr = new boolean[numOfCharacters+1];
 				
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
@@ -290,7 +320,7 @@ public class algorithm {
 						charsWithAtrRS = charAtrStmt.executeQuery();
 					
 						//looking for a connection via the specific attribute
-						resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr);
+						resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr, alreadyCheckedCharactersArr);
 						
 						//found a connection
 						if (resultFlag){
@@ -363,7 +393,7 @@ public class algorithm {
 						if (tablesArr[atr].equals(Tables.parent.toString()) && i==2){
 							currentAtr="child";
 						}
-						resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr);
+						resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr,alreadyCheckedCharactersArr);
 						
 					}catch (SQLException e) {
 						System.out.println("error execute query-" + e.toString());
@@ -426,7 +456,7 @@ public class algorithm {
 				charAtrStmt.setInt(4, start_id);
 				charsWithAtrRS = charAtrStmt.executeQuery();
 				
-				resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr);
+				resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr,alreadyCheckedCharactersArr);
 				
 				//closing all open statements and result sets
 				closeAllOpenResources(atrValRS, charsWithAtrRS, unspecifiedRS, atrStmt, charAtrStmt, unspecifiedStmt);
