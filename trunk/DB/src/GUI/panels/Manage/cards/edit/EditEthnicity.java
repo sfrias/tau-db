@@ -6,7 +6,7 @@ public class EditEthnicity extends EditSimpleCard{
 	
 	private static final long serialVersionUID = 1L;
 	
-	public EditEthnicity() throws Exception{
+	public EditEthnicity(){
 		super(Tables.ethnicity);
 	}
 

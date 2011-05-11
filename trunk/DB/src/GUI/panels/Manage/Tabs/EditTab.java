@@ -20,11 +20,11 @@ import GUI.panels.Manage.cards.edit.EditUniverse;
 public class EditTab extends GenericTab{
 	private static final long serialVersionUID = 1L;
 
-	public EditTab() throws Exception{
+	public EditTab(){
 		super();
 	}
 	@Override
-	public JPanel addCards(JPanel cards) throws Exception {
+	public JPanel addCards(JPanel cards){
 		cards.add(new EditCreator(), Tables.creator.toString().toUpperCase());
 		cards.add(new EditDisease(), Tables.disease.toString().toUpperCase());
 		cards.add(new EditEthnicity(), Tables.ethnicity.toString().toUpperCase());

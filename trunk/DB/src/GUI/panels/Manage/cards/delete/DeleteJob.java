@@ -5,7 +5,7 @@ import Enums.Tables;
 public class DeleteJob extends DeleteCard {
 	private static final long serialVersionUID = 1L;
 	
-	public DeleteJob() throws Exception{
+	public DeleteJob(){
 		super(Tables.job);
 	}
 

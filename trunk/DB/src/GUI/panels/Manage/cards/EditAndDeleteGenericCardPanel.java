@@ -19,14 +19,14 @@ import GUI.workers.GetSimpleRecordsWorker;
 public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel implements EditAndDeleteGenericCardInteface{
 	private static final long serialVersionUID = 1L;
 	private AutoCompleteComboBox comboRecord;
-	protected EditAndDeleteGenericCardPanel thisCard;
+	protected EditAndDeleteGenericCardPanel thisCard = this;
 	private SimpleModel model;
 
 	public EditAndDeleteGenericCardPanel(Tables table) throws Exception{
 		this(table, true);
 	}
 
-	public EditAndDeleteGenericCardPanel(Tables table, boolean isSimpleCard) throws Exception{
+	public EditAndDeleteGenericCardPanel(Tables table, boolean isSimpleCard){
 		super(table, isSimpleCard);
 		//Pair[] records = createRecordList();
 		comboRecord = new AutoCompleteComboBox();
@@ -58,6 +58,9 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 				try {
 					System.out.println("start cards refreshing in " + this + " " + getCardAction());
 					refreshCards();
+
+					textName.setText("");/*
+					switchCard(DEFAULT_CARD);*/
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -110,7 +113,8 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 		for (int i=0; i<pairs.length; i++){
 			comboRecord.addItem(pairs[i]);
 		}
-		
+		comboRecord.setSelectedItem(null);
+		textName.setText("");
 		if (GuiHandler.isStatusFlashing()){
 			GuiHandler.stopStatusFlash();
 		}

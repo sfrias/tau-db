@@ -6,7 +6,7 @@ public class EditLocation extends EditSimpleCard{
 	
 	private static final long serialVersionUID = 1L;
 	
-	public EditLocation() throws Exception{
+	public EditLocation(){
 		super(Tables.location);
 	}
 

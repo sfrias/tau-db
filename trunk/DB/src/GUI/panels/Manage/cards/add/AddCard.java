@@ -8,9 +8,9 @@ public abstract class AddCard extends GenericCardPanel{
 
 	public AddCard(Tables table, boolean isSimpleCard){
 		super(table, isSimpleCard);
-		if (!AddCharacters.class.isInstance(this)){
+/*		if (!AddCharacters.class.isInstance(this)){
 			switchCard(MAIN_CARD);
-		}
+		}*/
 	}
 	
 	public AddCard(Tables table){

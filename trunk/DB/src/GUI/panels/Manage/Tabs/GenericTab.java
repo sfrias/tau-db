@@ -23,7 +23,7 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 
 	private JPanel cards ;
 
-	public GenericTab() throws Exception{
+	public GenericTab(){
 		super();
 
 		JPanel panelHead = new JPanel();

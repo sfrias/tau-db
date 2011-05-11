@@ -6,7 +6,7 @@ public class DeleteCharacters extends DeleteCard{
 
 	private static final long serialVersionUID = 1L;
 	
-	public DeleteCharacters() throws Exception{
+	public DeleteCharacters(){
 		super(Tables.characters);
 	}
 	

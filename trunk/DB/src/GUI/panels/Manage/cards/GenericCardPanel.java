@@ -13,7 +13,6 @@ import javax.swing.JTextField;
 import Enums.Tables;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.buttons.IconButton;
-import GUI.layouts.RXCardLayout;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -31,8 +30,8 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 	
 	protected boolean isSimpleCard;
 	protected Tables table;
-	JPanel fieldsNDefaultCards;
-	private RXCardLayout cardLayout= new RXCardLayout();
+	//JPanel fieldsNDefaultCards;
+	//private RXCardLayout cardLayout= new RXCardLayout();
 	
 	public static String DEFAULT_CARD = "default";
 	public static String MAIN_CARD = "main";
@@ -97,23 +96,25 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 				builder.add(extraField, cc.xy(5, 2*i+3));
 			}
 		}
-		
+		/*
 		fieldsNDefaultCards = new JPanel(cardLayout);
 		
 		fieldsNDefaultCards.add(new DefaultCard(),DEFAULT_CARD);
-		fieldsNDefaultCards.add(builder.getPanel(),MAIN_CARD);
+		fieldsNDefaultCards.add(builder.getPanel(),MAIN_CARD);*/
 		
 		if (fieldsNames!=null){  //not simple card
-			JScrollPane panelScroll = new JScrollPane(fieldsNDefaultCards);
+			JScrollPane panelScroll = new JScrollPane(builder.getPanel());
+			panelScroll.setWheelScrollingEnabled(true);
+			panelScroll.getVerticalScrollBar().setUnitIncrement(20);
 			add(panelScroll,BorderLayout.CENTER);
 		} 
 		else{
-			add(fieldsNDefaultCards,BorderLayout.CENTER);
+			add(builder.getPanel(),BorderLayout.CENTER);
 		}
 		
 	}
 	
-	public void switchCard(String cardName){
+/*	public void switchCard(String cardName){
 		if (cardName.compareTo(MAIN_CARD) == 0){
 			cardLayout.show(fieldsNDefaultCards,MAIN_CARD);
 		}else if (cardName.compareTo(DEFAULT_CARD)==0){
@@ -121,13 +122,13 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		}else{
 			System.out.println("no such card");
 		}
-	}
+	}*/
 	
 	public void refreshCards(){
 		//createRecordCombo(false);
 		generateRecords();
-		textName.setText("");
-		switchCard(DEFAULT_CARD);
+/*		textName.setText("");
+		switchCard(DEFAULT_CARD);*/
 	}
 
 

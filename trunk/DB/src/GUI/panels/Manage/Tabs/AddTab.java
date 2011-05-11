@@ -21,7 +21,7 @@ import GUI.panels.Manage.cards.add.AddUniverse;
 public class AddTab extends GenericTab {
 	private static final long serialVersionUID = 1L;
 
-	public AddTab() throws Exception{
+	public AddTab(){
 		super();
 	}
 	
@@ -31,7 +31,7 @@ public class AddTab extends GenericTab {
 	}
 
 	@Override
-	public JPanel addCards(JPanel cards) throws Exception {
+	public JPanel addCards(JPanel cards){
 		cards.add(new AddCharacters(), Tables.characters.toString().toUpperCase());
 		cards.add(new AddCreator(), Tables.creator.toString().toUpperCase());
 		cards.add(new AddDisease(), Tables.disease.toString().toUpperCase());

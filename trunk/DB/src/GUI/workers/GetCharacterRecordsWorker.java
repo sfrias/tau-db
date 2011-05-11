@@ -16,19 +16,19 @@ public class GetCharacterRecordsWorker extends GenericWorker{
 	protected ResultHolder doInBackground(){	
 		//TODO add exceptions
 		CharacterModel model = new CharacterModel();
-		model.setCreators(databaseManager.executeQueryAndGetValues(Tables.creator, 3));
-		model.setDiseases(databaseManager.executeQueryAndGetValues(Tables.disease, 3));
-		model.setEthnicities(databaseManager.executeQueryAndGetValues(Tables.ethnicity, 3));
-		model.setGenders(databaseManager.executeQueryAndGetValues(Tables.gender, 3));
-		model.setJobs(databaseManager.executeQueryAndGetValues(Tables.job, 3));
-		model.setLocations(databaseManager.executeQueryAndGetValues(Tables.location, 3));
-		model.setOccupations(databaseManager.executeQueryAndGetValues(Tables.occupation, 3));
-		model.setorganizations(databaseManager.executeQueryAndGetValues(Tables.organization, 3));
-		model.setPowers(databaseManager.executeQueryAndGetValues(Tables.power, 3));
-		model.setRanks(databaseManager.executeQueryAndGetValues(Tables.rank, 3));
-		model.setSchools(databaseManager.executeQueryAndGetValues(Tables.school, 3));
-		model.setSpecies(databaseManager.executeQueryAndGetValues(Tables.species, 3));
-		model.setUniverses(databaseManager.executeQueryAndGetValues(Tables.universe, 3));
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.creator, 3), Tables.creator);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.disease, 3), Tables.disease);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.ethnicity, 3),Tables.ethnicity);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.gender, 3),Tables.gender);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.job, 3),Tables.job);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.location, 3),Tables.location);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.occupation, 3),Tables.occupation);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.organization, 3),Tables.organization);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.power, 3),Tables.power);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.rank, 3),Tables.rank);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.school, 3),Tables.school);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.species, 3),Tables.species);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.universe, 3),Tables.universe);
 		
 		ResultHolder result = new ResultHolder(model, ExecutionResult.Success_Characters_Query);
 		return result;

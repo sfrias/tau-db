@@ -6,7 +6,7 @@ public class EditDisease extends EditSimpleCard{
 
 	private static final long serialVersionUID = 1L;
 	
-	public EditDisease() throws Exception{
+	public EditDisease(){
 		super(Tables.disease);
 	}
 }

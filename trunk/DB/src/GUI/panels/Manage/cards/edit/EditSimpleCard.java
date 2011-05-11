@@ -13,7 +13,7 @@ public class EditSimpleCard extends EditCard{
 	
 	private static final long serialVersionUID = 1L;
 
-	public EditSimpleCard(Tables table) throws Exception {
+	public EditSimpleCard(Tables table){
 		super(table, true);
 	}
 
@@ -42,7 +42,7 @@ public class EditSimpleCard extends EditCard{
 				cb = (AutoCompleteComboBox)e.getSource();
 				Pair record = (Pair) cb.getSelectedItem();
 				if (record != null){
-					switchCard(MAIN_CARD);
+					//switchCard(MAIN_CARD);
 					String [] valuesArr = databaseManager.getCurrentValues(table, table.toString().compareTo("characters")==0 ? "character_id" : table.toString()+"_id", record.getId());
 					textName.setText(valuesArr[0]);
 				}
