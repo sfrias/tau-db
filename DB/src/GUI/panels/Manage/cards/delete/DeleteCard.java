@@ -3,13 +3,12 @@ package GUI.panels.Manage.cards.delete;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import Enums.ExecutionResult;
 import Enums.Tables;
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.Pair;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
-import GUI.workers.GenericWorker;
+import GUI.workers.DeleteWorker;
 
 public class DeleteCard extends EditAndDeleteGenericCardPanel{
 
@@ -53,21 +52,12 @@ public class DeleteCard extends EditAndDeleteGenericCardPanel{
 				Pair record = (Pair) cb.getSelectedItem();
 				if (record != null){
 					switchCard(MAIN_CARD);
-					String [] valuesArr = databaseManager.getCurrentValues(table, table.toString()+"_id", record.getId());
+					String [] valuesArr = databaseManager.getCurrentValues(table, table.toString().compareTo("characters")==0 ? "character_id" : table.toString()+"_id", record.getId());
 					textName.setText(valuesArr[0]);
 				}
 			}
 		};
 	}
+
 	
-	private class DeleteWorker extends GenericWorker {
-
-		public DeleteWorker(Tables table, int recordId, EditAndDeleteGenericCardPanel card){
-			super("delete", table, recordId, card);
-		}
-
-		protected ExecutionResult doInBackground() throws Exception {
-			return  databaseManager.executeDelete(table, recordId);
-		}
-	}
 }

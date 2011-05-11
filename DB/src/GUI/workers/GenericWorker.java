@@ -5,60 +5,102 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
 import Enums.ExecutionResult;
-import Enums.Frames;
-import Enums.Tables;
 import GUI.GuiHandler;
+import GUI.model.CharacterModel;
+import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
+import GUI.panels.Manage.cards.add.AddCharacters;
+import GUI.panels.Manage.cards.add.AddSimpleCard;
 import db.DatabaseManager;
 
-public abstract class GenericWorker extends SwingWorker<ExecutionResult, Void> {
-	protected String[] fieldNames;
-	protected String[] values;
-	protected Tables table;
-	protected int recordId;
-	protected EditAndDeleteGenericCardPanel card;
+public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 	
-	private final String ACTION;
+	protected DatabaseManager databaseManager = DatabaseManager.getInstance();
+	private String action;
 	
-	protected static DatabaseManager databaseManager = DatabaseManager.getInstance();
+	private EditAndDeleteGenericCardPanel simpleEditDeleteCard;
+	private AddSimpleCard simpleAddCard;
+	private AddCharacters addCharCard;
 	
-	public GenericWorker(String action, Tables table, int recordId, EditAndDeleteGenericCardPanel card){
-		this(action, table, null, null, recordId, card);
-	}
 	
-	public GenericWorker(String action, Tables table, String [] fieldNames, String [] fieldValues, int recordId,  EditAndDeleteGenericCardPanel card){
+	public GenericWorker(String action, EditAndDeleteGenericCardPanel card) {
 		super();
-		this.fieldNames = fieldNames;
-		this.values = fieldValues;
-		this.table = table;
-		this.recordId = recordId;
-		this.ACTION = action;
-		this.card = card;
+		
+		this.action = action;
+		this.simpleEditDeleteCard = card;
 	}
+	
+	public GenericWorker(String action, AddSimpleCard card){
+		this.action = action;
+		this.simpleAddCard = card;
+	}
+	
+	public GenericWorker(String action, AddCharacters card) {
+		super();
+		
+		this.action = action;
+		this.addCharCard = card;
+	}
+	
+	//get list for general edit/delete
+	public GenericWorker(EditAndDeleteGenericCardPanel card){
+		this(null, card);
+	}
+	
+	//get all lists for combos in addCharacter
+	public GenericWorker(AddCharacters addCharCard){
+		this(null, addCharCard);
+	}
+	
+	public GenericWorker(String action){
+		this.action = action;
+	}
+	
+
+	
 	
 	@Override
 	public void done(){
-		GuiHandler.stopStatusFlash();
 		try {
-			ExecutionResult result = get();
-			switch (result){
-				case Success:
-					GuiHandler.showResultSuccessDialog(ACTION);
-				try {
-					card.refreshCards();
-				} catch (Exception e) {
-					GuiHandler.ShowErrorGetRecords();
-					GuiHandler.switchFrames(Frames.WelcomeScreenFrame);
-				}
+			CharacterModel charModel;
+			SimpleModel simpleModel;
+			
+			GuiHandler.stopStatusFlash();
+			ResultHolder result = get();
+			ExecutionResult e = result.getExecutionResult();
+			switch (e){
+				case Success_Simple_Add_Edit_Delete:  //
+					GuiHandler.showResultSuccessDialog(action);
+					if (action.compareTo("add")==0){
+						simpleAddCard.refreshCards();
+					}else{
+						simpleEditDeleteCard.refreshCards();
+					}
+					break;
+				case Success_Add_Character:    //for even sub fields
+					GuiHandler.showResultSuccessDialog(action);
+					charModel = (CharacterModel)result.getModel();
+					addCharCard.setModel(charModel);
+					addCharCard.refreshFromModel();
+					break;
+				case Success_Simple_Query:
+					simpleModel = (SimpleModel)result.getModel();
+					simpleEditDeleteCard.setModel(simpleModel);
+					simpleEditDeleteCard.refreshFromModel();
+					break;
+				case Success_Characters_Query:
+					charModel = (CharacterModel)result.getModel();
+					addCharCard.setModel(charModel);
+					addCharCard.refreshFromModel();
 					break;
 				case IntegrityConstraintViolationException:
 					GuiHandler.ShowResultIntegrityDialog();
 					break;
 				case Exception:
-					GuiHandler.ShowResultExceptionDialog(ACTION);
+					GuiHandler.ShowResultExceptionDialog(action);
 					break;
-			}
-
+					
+			}		
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -67,4 +109,6 @@ public abstract class GenericWorker extends SwingWorker<ExecutionResult, Void> {
 			e.printStackTrace();
 		}
 	}
+	
+
 }

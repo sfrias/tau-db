@@ -82,6 +82,10 @@ public class GuiHandler {
 	public static void stopStatusFlash(){
 		panelStatus.clearFlashing();
 	}
+	
+	public static boolean isStatusFlashing(){
+		return panelStatus.isFlashing();
+	}
 
 	public static void showQuitApplicationDialog(){
 		String message = "Are you sure you want to quit?";

@@ -122,6 +122,14 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 			System.out.println("no such card");
 		}
 	}
+	
+	public void refreshCards(){
+		//createRecordCombo(false);
+		generateRecords();
+		textName.setText("");
+		switchCard(DEFAULT_CARD);
+	}
+
 
 }
 
