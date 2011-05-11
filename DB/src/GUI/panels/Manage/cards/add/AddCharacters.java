@@ -27,8 +27,8 @@ public class AddCharacters extends AddCard {
 	ImageIcon okIcon  = GuiUtils.readImageIcon("okIcon.png");
 	private AddCharacters me = this;
 	private CharacterModel model;
-	
-	
+	private AutoCompleteComboBox[] comboIndex = new AutoCompleteComboBox[Tables.getMaxIndex()+1];
+	                                                                   	
 	private AutoCompleteComboBox creator;
 	private JTextField addCreatorField = new JTextField(20);
 	private AutoCompleteComboBox disease;
@@ -60,14 +60,15 @@ public class AddCharacters extends AddCard {
 	Vector<JComponent> components = new Vector<JComponent>();
 	Vector<JComponent> extraAddPanels = new Vector<JComponent>();
 
-	public AddCharacters() throws Exception{
+	public AddCharacters(){
 		super(Tables.characters, false);		
 		populateVectors();
 		
 		populateCombos();
+		createComboIndex();
 
 		addFields(titles, components, extraAddPanels);
-		switchCard(MAIN_CARD);
+		//switchCard(MAIN_CARD);
 	}
 	
 	private void populateCombos(){
@@ -76,7 +77,7 @@ public class AddCharacters extends AddCard {
 		worker.execute();
 	}
 	
-	private void populateVectors() throws Exception{
+	private void populateVectors(){
 		
 		creator = addEntries(Tables.creator, creator, addCreatorField);
 		disease = addEntries(Tables.disease, disease, addDiseaseField);
@@ -93,7 +94,7 @@ public class AddCharacters extends AddCard {
 		universe = addEntries(Tables.universe, universe, addUniverseField);
 	}
 	
-	private AutoCompleteComboBox addEntries(final Tables table, AutoCompleteComboBox values, final JTextField addField) throws Exception{
+	private AutoCompleteComboBox addEntries(final Tables table, AutoCompleteComboBox values, final JTextField addField){
 		
 		titles.add(table.toString().toLowerCase());
 		
@@ -228,19 +229,12 @@ public class AddCharacters extends AddCard {
 
 	@Override
 	public void refreshFromModel() {
-		populateCombo(creator, model.getCreators());
-		populateCombo(disease, model.getDiseases());
-		populateCombo(ethnicity, model.getEthnicities());
-		populateCombo(gender, model.getGenders());
-		populateCombo(job, model.getJobs());
-		populateCombo(location, model.getLocations());
-		populateCombo(occupation, model.getOccupations());
-		populateCombo(organization, model.getOrganizations());
-		populateCombo(power, model.getPowers());
-		populateCombo(rank, model.getRanks());
-		populateCombo(school, model.getSchools());
-		populateCombo(species, model.getSpecies());
-		populateCombo(universe, model.getUniverses());
+		for (int i=0; i<comboIndex.length; i++){
+			if (model.isAtrributeModified(i)){
+				populateCombo(comboIndex[i], model.getAttributePairs(i));
+				comboIndex[i].setSelectedItem(null);
+			}
+		}
 		
 		if (GuiHandler.isStatusFlashing()){
 			GuiHandler.stopStatusFlash();
@@ -262,5 +256,20 @@ public class AddCharacters extends AddCard {
 		return model;
 	}
 	
+	private void createComboIndex(){
+		comboIndex[Tables.creator.getIndex()] = creator;
+		comboIndex[Tables.disease.getIndex()] = disease;
+		comboIndex[Tables.ethnicity.getIndex()] = ethnicity;
+		comboIndex[Tables.gender.getIndex()] = gender;
+		comboIndex[Tables.job.getIndex()] = job;
+		comboIndex[Tables.location.getIndex()] = location;
+		comboIndex[Tables.occupation.getIndex()] = occupation;
+		comboIndex[Tables.organization.getIndex()] = organization;
+		comboIndex[Tables.power.getIndex()] = power;
+		comboIndex[Tables.rank.getIndex()] = rank;
+		comboIndex[Tables.school.getIndex()] = school;
+		comboIndex[Tables.species.getIndex()] = species;
+		comboIndex[Tables.universe.getIndex()] = universe;
+	}
 	
 }

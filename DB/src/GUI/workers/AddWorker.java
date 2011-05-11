@@ -2,7 +2,6 @@ package GUI.workers;
 
 import Enums.ExecutionResult;
 import Enums.Tables;
-import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 import GUI.panels.Manage.cards.add.AddSimpleCard;
 
 public class AddWorker extends GenericWorker{

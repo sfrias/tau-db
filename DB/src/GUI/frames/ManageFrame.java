@@ -13,12 +13,12 @@ import GUI.panels.Manage.Tabs.UpdateTab;
 public class ManageFrame extends GenericFrame {
 	private static final long serialVersionUID = 1L;
 
-	public ManageFrame() throws Exception{
+	public ManageFrame(){
 		super();
 		buildFrame();
 	}
 
-	private void buildFrame() throws Exception{
+	private void buildFrame(){
 		setTitle("Manage");
 		setSize(600,500);
 		setResizable(false);
@@ -32,7 +32,7 @@ public class ManageFrame extends GenericFrame {
 		return panel;
 	}*/
 
-	private JTabbedPane tabPanelBuilder() throws Exception{
+	private JTabbedPane tabPanelBuilder(){
 
 		JTabbedPane tabbedPanel = new JTabbedPane();
 		tabbedPanel.addTab("ADD", GuiUtils.readImageIcon("add.png"), new AddTab());

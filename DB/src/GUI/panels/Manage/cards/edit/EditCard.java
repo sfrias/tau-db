@@ -6,7 +6,7 @@ import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 public abstract class EditCard extends EditAndDeleteGenericCardPanel{
 	private static final long serialVersionUID = -1543391049010263975L;
 	
-	public EditCard(Tables table, boolean isSimpleCard) throws Exception{
+	public EditCard(Tables table, boolean isSimpleCard){
 		super(table ,isSimpleCard);
 	}
 

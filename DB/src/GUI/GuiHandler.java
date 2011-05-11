@@ -52,12 +52,7 @@ public class GuiHandler {
 			newFrame = new WelcomeScreenFrame();
 			break;
 		case ManageFrame:
-			try{
-				newFrame = new ManageFrame();
-			} catch (Exception e) {
-				GuiHandler.ShowErrorGetRecords();
-				//GuiHandler.switchFrames(new WelcomeScreenFrame());
-			}
+			newFrame = new ManageFrame();
 			break;
 		case PlayFrame:
 			newFrame = new PlayFrame();

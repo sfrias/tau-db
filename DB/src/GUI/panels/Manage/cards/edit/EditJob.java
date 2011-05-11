@@ -6,7 +6,7 @@ public class EditJob extends EditSimpleCard{
 	
 	private static final long serialVersionUID = 1L;
 	
-	public EditJob() throws Exception{
+	public EditJob(){
 		super(Tables.job);
 	}
 

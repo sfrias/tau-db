@@ -19,7 +19,7 @@ public class DeleteCard extends EditAndDeleteGenericCardPanel{
 		textName.setEditable(false);
 	}
 	
-	DeleteCard(Tables table) throws Exception{
+	DeleteCard(Tables table){
 		super(table, true);
 		textName.setEditable(false);
 	}
@@ -51,7 +51,7 @@ public class DeleteCard extends EditAndDeleteGenericCardPanel{
 				cb = (AutoCompleteComboBox)e.getSource();
 				Pair record = (Pair) cb.getSelectedItem();
 				if (record != null){
-					switchCard(MAIN_CARD);
+					//switchCard(MAIN_CARD);
 					String [] valuesArr = databaseManager.getCurrentValues(table, table.toString().compareTo("characters")==0 ? "character_id" : table.toString()+"_id", record.getId());
 					textName.setText(valuesArr[0]);
 				}

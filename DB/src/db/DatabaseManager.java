@@ -26,7 +26,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 public class DatabaseManager {
 
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "mapo00";
+	private final static String PASSWORD = "root";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
@@ -248,7 +248,7 @@ public class DatabaseManager {
 			conn.close();
 
 			if (alreadyAdded){
-				return ExecutionResult.Success;	
+				return ExecutionResult.Success_Simple_Add_Edit_Delete;	
 			}
 
 			Statement stmt2 = conn.createStatement();
@@ -259,7 +259,7 @@ public class DatabaseManager {
 			stmt2.close();
 			conn.close(); 
 
-			return ExecutionResult.Success;
+			return ExecutionResult.Success_Simple_Add_Edit_Delete;
 
 		} catch (SQLException e) {
 			System.err.println("An SQLException was thrown at executeUpdate("+ tableName + ")");
@@ -288,7 +288,7 @@ public class DatabaseManager {
 			stmt.close();
 			conn.close(); 
 
-			return ExecutionResult.Success;
+			return ExecutionResult.Success_Simple_Add_Edit_Delete;
 
 		} catch (SQLException e) {
 			System.err.println("An SQLException was thrown at executeUpdate("+ tableName + ")");
@@ -311,7 +311,7 @@ public class DatabaseManager {
 			}
 			stmt.close();
 			conn.close(); 
-			return ExecutionResult.Success;
+			return ExecutionResult.Success_Simple_Add_Edit_Delete;
 		} 
 		catch (MySQLIntegrityConstraintViolationException e){
 			return ExecutionResult.IntegrityConstraintViolationException;

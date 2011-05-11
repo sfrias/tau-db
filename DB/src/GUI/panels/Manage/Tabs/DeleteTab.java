@@ -21,11 +21,11 @@ import GUI.panels.Manage.cards.delete.DeleteUniverse;
 public class DeleteTab extends GenericTab{
 	private static final long serialVersionUID = 1L;
 
-	public DeleteTab() throws Exception{
+	public DeleteTab(){
 		super();
 	}
 	@Override
-	public JPanel addCards(JPanel cards) throws Exception {
+	public JPanel addCards(JPanel cards){
 		
 		cards.add(new DeleteCharacters(), Tables.characters.toString().toUpperCase());
 		cards.add(new DeleteCreator(), Tables.creator.toString().toUpperCase());

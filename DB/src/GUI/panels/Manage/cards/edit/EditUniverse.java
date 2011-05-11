@@ -6,7 +6,7 @@ public class EditUniverse extends EditSimpleCard{
 	
 	private static final long serialVersionUID = 1L;
 	
-	public EditUniverse() throws Exception{
+	public EditUniverse(){
 		super(Tables.universe);
 	}
 

@@ -6,7 +6,7 @@ public class EditSpecies extends EditSimpleCard{
 	
 	private static final long serialVersionUID = 1L;
 	
-	public EditSpecies() throws Exception{
+	public EditSpecies(){
 		super(Tables.species);
 	}
 

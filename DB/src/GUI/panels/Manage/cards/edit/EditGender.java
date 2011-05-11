@@ -5,7 +5,7 @@ import Enums.Tables;
 public class EditGender extends EditSimpleCard {
 	private static final long serialVersionUID = 1L;
 	
-	public EditGender()  throws Exception{
+	public EditGender(){
 		super(Tables.gender);
 	}
 }
