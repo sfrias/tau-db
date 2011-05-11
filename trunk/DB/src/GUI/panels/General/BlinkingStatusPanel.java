@@ -16,8 +16,9 @@ public class BlinkingStatusPanel extends JPanel{
 	private JLabel labelStatus;
 	private Color visibleColor;
 	private Color inVisibleColor;
+	private boolean isFlashing = false;
 		
-	private Timer timer = new Timer(100, new ActionListener() {
+	private Timer timer = new Timer(200, new ActionListener() {
 		private boolean on = false;
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -46,6 +47,8 @@ public class BlinkingStatusPanel extends JPanel{
 		
 	
 		public void flash() {
+			isFlashing = true;
+			labelStatus.setText("Busy");
 			timer.start();
 		}
 
@@ -58,8 +61,14 @@ public class BlinkingStatusPanel extends JPanel{
 		}
 
 		public void clearFlashing() {
+			isFlashing = false;
 			timer.stop();
-			labelStatus.setVisible(true);
+			labelStatus.setText("Ready");
+			labelStatus.setForeground(visibleColor);
+		}
+		
+		public boolean isFlashing(){
+			return isFlashing;
 		}
 		
 }

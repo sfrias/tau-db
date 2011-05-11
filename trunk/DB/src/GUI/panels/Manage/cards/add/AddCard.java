@@ -21,4 +21,8 @@ public abstract class AddCard extends GenericCardPanel{
 		return "add";
 	}
 	
+	public void refreshFromModel(){}
+	
+	public void generateRecords(){}
+	
 }

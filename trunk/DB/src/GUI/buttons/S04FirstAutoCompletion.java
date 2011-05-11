@@ -68,7 +68,7 @@ public class S04FirstAutoCompletion extends PlainDocument {
             Object currentItem = model.getElementAt(i);
             // current item starts with the pattern?
             if (startsWithIgnoreCase(currentItem.toString(), pattern)) {
-                System.out.println("'" + currentItem + "' matches pattern '" + pattern + "'");
+                //System.out.println("'" + currentItem + "' matches pattern '" + pattern + "'");
                 return currentItem;
             }
         }

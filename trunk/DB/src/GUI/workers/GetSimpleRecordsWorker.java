@@ -1,21 +1,25 @@
 package GUI.workers;
 
-import javax.swing.SwingWorker;
-
+import Enums.ExecutionResult;
 import Enums.Tables;
 import GUI.commons.Pair;
-import db.DatabaseManager;
+import GUI.model.SimpleModel;
+import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 
-public class GetSimpleRecordsWorker extends SwingWorker<Pair[], Void> {
+public class GetSimpleRecordsWorker extends GenericWorker {
 	private Tables table;
-	private DatabaseManager databaseManager = DatabaseManager.getInstance();
 	
-	public GetSimpleRecordsWorker(Tables table){
+	public GetSimpleRecordsWorker(Tables table, EditAndDeleteGenericCardPanel card){
+		super(card);
 		this.table = table;
 	}
 	
 	@Override
-	protected Pair[] doInBackground() throws Exception {
-		return databaseManager.executeQueryAndGetValues(table, 3);
+	protected ResultHolder doInBackground(){
+		//TODO add exceptions
+		Pair[] pairs =  databaseManager.executeQueryAndGetValues(table, 3);
+		SimpleModel model = new SimpleModel(pairs);		
+		ResultHolder result = new ResultHolder(model,ExecutionResult.Success_Simple_Query);
+		return result;
 	}
 }

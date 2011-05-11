@@ -7,12 +7,12 @@ import javax.swing.SwingUtilities;
 
 import Enums.Tables;
 import GUI.GuiHandler;
-import GUI.workers.AddSimpleWorker;
+import GUI.workers.AddWorker;
 
 public class AddSimpleCard extends AddCard {
 
 	private static final long serialVersionUID = 1L;
-
+	private AddSimpleCard me = this;
 	public AddSimpleCard(Tables table) {
 		super(table);
 	}
@@ -25,7 +25,7 @@ public class AddSimpleCard extends AddCard {
 					public void run() {
 						String fieldName = table.toString()+"_name";
 						String value = textName.getText();
-						AddSimpleWorker worker = new AddSimpleWorker(table, fieldName, value);
+						AddWorker worker = new AddWorker(table, fieldName, value, me);
 						GuiHandler.startStatusFlash();
 						worker.execute();
 					}
@@ -33,4 +33,5 @@ public class AddSimpleCard extends AddCard {
 			}
 		};
 	}
+
 }

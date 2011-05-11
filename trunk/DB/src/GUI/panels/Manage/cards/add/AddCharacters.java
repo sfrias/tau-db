@@ -4,9 +4,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,13 +17,16 @@ import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.GuiUtils;
 import GUI.commons.Pair;
-import GUI.workers.AddSimpleWorker;
-import GUI.workers.GetSimpleRecordsWorker;
+import GUI.model.CharacterModel;
+import GUI.workers.AddCharWorker;
+import GUI.workers.GetCharacterRecordsWorker;
 
 public class AddCharacters extends AddCard {
 	private static final long serialVersionUID = 1L;
 	ImageIcon addIcon = GuiUtils.readImageIcon("addIcon.png");
 	ImageIcon okIcon  = GuiUtils.readImageIcon("okIcon.png");
+	private AddCharacters me = this;
+	private CharacterModel model;
 	
 	
 	private AutoCompleteComboBox creator;
@@ -63,34 +63,43 @@ public class AddCharacters extends AddCard {
 	public AddCharacters() throws Exception{
 		super(Tables.characters, false);		
 		populateVectors();
+		
+		populateCombos();
 
 		addFields(titles, components, extraAddPanels);
 		switchCard(MAIN_CARD);
 	}
 	
-	private void populateVectors() throws Exception{
-		
-		addEntries(Tables.creator, creator, addCreatorField);
-		addEntries(Tables.disease, disease, addDiseaseField);
-		addEntries(Tables.ethnicity, ethnicity, addEthnicityField);
-		addEntries(Tables.gender, gender, addGenderField);
-		addEntries(Tables.job, job, addJobField);
-		addEntries(Tables.location, location, addLocaionField);
-		addEntries(Tables.occupation, occupation, addOccupationField);
-		addEntries(Tables.organization, organization, addOrganizationField);
-		addEntries(Tables.power, power, addPowerField);
-		addEntries(Tables.rank, rank, addRankField);
-		addEntries(Tables.school, school, addSchoolField);
-		addEntries(Tables.species, species, addSpeciesField);
-		addEntries(Tables.universe, universe, addUniverseField);
+	private void populateCombos(){
+		GetCharacterRecordsWorker worker = new GetCharacterRecordsWorker(this);
+		GuiHandler.startStatusFlash();
+		worker.execute();
 	}
 	
-	private void addEntries(final Tables table, AutoCompleteComboBox values, final JTextField addField) throws Exception{
+	private void populateVectors() throws Exception{
+		
+		creator = addEntries(Tables.creator, creator, addCreatorField);
+		disease = addEntries(Tables.disease, disease, addDiseaseField);
+		ethnicity = addEntries(Tables.ethnicity, ethnicity, addEthnicityField);
+		gender = addEntries(Tables.gender, gender, addGenderField);
+		job = addEntries(Tables.job, job, addJobField);
+		location = addEntries(Tables.location, location, addLocaionField);
+		occupation = addEntries(Tables.occupation, occupation, addOccupationField);
+		organization = addEntries(Tables.organization, organization, addOrganizationField);
+		power = addEntries(Tables.power, power, addPowerField);
+		rank = addEntries(Tables.rank, rank, addRankField);
+		school = addEntries(Tables.school, school, addSchoolField);
+		species = addEntries(Tables.species, species, addSpeciesField);
+		universe = addEntries(Tables.universe, universe, addUniverseField);
+	}
+	
+	private AutoCompleteComboBox addEntries(final Tables table, AutoCompleteComboBox values, final JTextField addField) throws Exception{
 		
 		titles.add(table.toString().toLowerCase());
 		
-		Pair [] pairValues = createRecordList(table);
-		values = new AutoCompleteComboBox(pairValues);
+/*		Pair [] pairValues = createRecordList(table);
+		values = new AutoCompleteComboBox(pairValues);*/
+		values = new AutoCompleteComboBox();
 		values.setPreferredSize(new Dimension(200,20));
 		components.add(values);
 
@@ -104,9 +113,11 @@ public class AddCharacters extends AddCard {
 								button.setIcon(GuiUtils.readImageIcon("addIcon.png", 15, 15));
 								String fieldName = table.toString()+"_name";
 								String value = addField.getText();
-								AddSimpleWorker worker = new AddSimpleWorker(table, fieldName, value);
-								GuiHandler.startStatusFlash();
-								worker.execute();
+								if (value.compareTo("")!=0){
+									AddCharWorker worker = new AddCharWorker(table, fieldName, value,me);
+									GuiHandler.startStatusFlash();								
+									worker.execute();
+								}
 							}
 						});
 						addField.setVisible(false);
@@ -119,6 +130,7 @@ public class AddCharacters extends AddCard {
 					}
 				}
 			});
+			
 			JPanel panel = new JPanel();
 			panel.add(addField);
 			panel.add(button);
@@ -127,11 +139,13 @@ public class AddCharacters extends AddCard {
 		} else{
 			extraAddPanels.add(null);
 		}
+		
+		return values;
 	}
 	
-	public Pair[] createRecordList(Tables table) throws Exception{
+/*	public Pair[] createRecordList(Tables table) throws Exception{
 		
-		GetSimpleRecordsWorker worker = new GetSimpleRecordsWorker(table);
+		GetSimpleRecordsWorker worker = new GetSimpleRecordsWorker(table, this);
 		GuiHandler.startStatusFlash();
 		worker.execute();
 		try {
@@ -146,7 +160,7 @@ public class AddCharacters extends AddCard {
 		catch (TimeoutException e) {}
 
 		throw new Exception();
-	}
+	}*/
 	
 	private String[] getValues() {
 		
@@ -203,7 +217,7 @@ public class AddCharacters extends AddCard {
 						
 						String fieldNames = table.toString()+"_name";
 						String values = "";
-						AddSimpleWorker worker = new AddSimpleWorker(table, fieldNames, values);
+						AddCharWorker worker = new AddCharWorker(table, fieldNames, values,me);
 						GuiHandler.startStatusFlash();
 						worker.execute();
 					}
@@ -211,5 +225,42 @@ public class AddCharacters extends AddCard {
 			}
 		};
 	}
+
+	@Override
+	public void refreshFromModel() {
+		populateCombo(creator, model.getCreators());
+		populateCombo(disease, model.getDiseases());
+		populateCombo(ethnicity, model.getEthnicities());
+		populateCombo(gender, model.getGenders());
+		populateCombo(job, model.getJobs());
+		populateCombo(location, model.getLocations());
+		populateCombo(occupation, model.getOccupations());
+		populateCombo(organization, model.getOrganizations());
+		populateCombo(power, model.getPowers());
+		populateCombo(rank, model.getRanks());
+		populateCombo(school, model.getSchools());
+		populateCombo(species, model.getSpecies());
+		populateCombo(universe, model.getUniverses());
+		
+		if (GuiHandler.isStatusFlashing()){
+			GuiHandler.stopStatusFlash();
+		}
+	}
+	
+	private void populateCombo(AutoCompleteComboBox combo, Pair[] records){
+		combo.removeAllItems();
+		for (int i=0; i<records.length; i++){
+			combo.addItem(records[i]);
+		}
+	}
+	
+	public void setModel(CharacterModel model){
+		this.model = model;
+	}
+	
+	public CharacterModel getModel(){
+		return model;
+	}
+	
 	
 }

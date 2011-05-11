@@ -18,4 +18,9 @@ public interface GenericCardInerface {
 	//each card should have a diffrent action - depends on the fields. 
 	///card implement
 	public ActionListener createActionButtonListener();
+	
+	public void refreshFromModel();
+	
+	public void generateRecords();
+	
 }
