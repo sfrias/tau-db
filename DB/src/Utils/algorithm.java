@@ -122,12 +122,12 @@ public class algorithm {
 			if (currentTable.equals("characters")){
 				continue;
 			}
+			else if (currentTable.equals(Tables.gender.toString())){
+				continue;
+			}
 			else if (!currentTable.contains("and")){
 				attributes[indexOfAttr]=currentTable;
 				indexOfAttr++;
-			}
-			else if (currentTable.equals(Tables.gender.toString())){
-				continue;
 			}
 			else {
 				atrTable = currentTable.substring(15);
@@ -712,6 +712,7 @@ public class algorithm {
 		}*/
 		
 		//a.fillTables();
+		//System.out.println("finished");
 		    
 		a.lookForConnection(1,4);
 		
