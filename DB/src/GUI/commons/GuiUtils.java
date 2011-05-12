@@ -11,12 +11,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.frames.WelcomeScreenFrame;
+import GUI.list.DisplayList;
 
 public class GuiUtils {
     
@@ -118,6 +120,14 @@ public class GuiUtils {
 
 			}
 		};
+	}
+	
+	public static void populateList(DisplayList list, Pair[] pairs){
+		DefaultListModel model = new DefaultListModel();
+		for (int i=0; i<pairs.length; i++){
+			model.addElement(pairs[i]);
+		}
+		list.setModel(model);
 	}
 	
 }
