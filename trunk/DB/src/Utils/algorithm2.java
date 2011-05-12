@@ -213,7 +213,7 @@ public class algorithm2 {
 	 */
 	private boolean helperForConnection(ResultSet charsWithAtrRS,int start_id,int end_id, 
 										int numOfConnections, String[] fill, String currentAtr, String atrID) throws SQLException{
-		boolean resultFlag = false, foundConnection = false;
+		boolean resultFlag = false;
 		int currentid=0;
 		try{
 			while (charsWithAtrRS.next()){
@@ -222,7 +222,6 @@ public class algorithm2 {
 				if (numOfConnections==1){ 
 					if (currentid == end_id) {
 						resultFlag=true;
-						foundConnection = true;
 						fill[numOfConnections-1]=currentid + "," + currentAtr + "," + atrID;
 						break;
 					}
@@ -243,9 +242,6 @@ public class algorithm2 {
 			System.out.println("error execute query-" + e.toString());
 		}
 		
-		if (!foundConnection){
-			connectionFinder(fill,global_start_id,global_end_id,0,numOfConnections+1);
-		}
 		return resultFlag;
 	}
 	
@@ -253,7 +249,7 @@ public class algorithm2 {
 	
 	
 	/*
-	 * private function that finds recursively a connection between two characters if so.
+	 * private function that finds connection between two characters in a specific number of connection.
 	 */
 	private boolean connectionFinder(String[] fill, int start_id,int end_id, int prevId,int numOfConnections) throws SQLException{
 		
@@ -270,9 +266,9 @@ public class algorithm2 {
 		String charactersWithAtr;
 	
 		//too many phases are taken without finding any connection
-		if (numOfConnections>4){
-			return false;
-		}
+		//if (numOfConnections>4){
+			//return false;
+		//}
 		
 		PreparedStatement atrStmt= null; 
 		PreparedStatement charAtrStmt = null; 
@@ -377,7 +373,7 @@ public class algorithm2 {
 				}
 				
 				for (int i=1; i<3;i++){
-					System.out.println(atr);
+					//System.out.println(atr);
 					if (tablesArr[atr].equals(Tables.parent.toString())) {
 						charactersWithAtr = "SELECT " + currentAtr+ child + 
 						" FROM " + currentAtr +
@@ -482,13 +478,13 @@ public class algorithm2 {
 
 		}// end of external loop
 		
-		//cannot find a direct connection, starting a recursive call
+		//cannot find connection in the specific number of connection required
 		if (!resultFlag){
 			 //return connectionFinder(fill,start_id,end_id,prevId,numOfConnections+1);
 			return false;
 		}
 		
-		return true;
+		return resultFlag;
 	}
 	
 	
@@ -596,7 +592,7 @@ public class algorithm2 {
 						}
 						else {
 							int temp = Integer.parseInt(valueArr[2]);
-							System.out.println(temp);
+							//System.out.println(temp);
 							String atrName = getAttributeNameFromID(valueArr[1], temp);
 							toPrint = startName + " has the same "+ valueArr[1] + " as " + currentName + " - " + atrName;
 						}
@@ -713,8 +709,12 @@ public class algorithm2 {
 		global_end_id = end_id;
 		global_recPhase = 1;
 		
-		if (connectionFinder(connections, start_id, end_id, 0, 1)){ // found a connection
-				System.out.println("Match found between "+ start_name +" and "+ end_name);
+		boolean matchFound = false;
+		
+		for (int num = 1; num<5; num++) {
+			matchFound = connectionFinder(connections, start_id, end_id, 0, num);
+			if (matchFound) {
+				System.out.println("Match found between "+ start_name +" and "+ end_name + " in " + num + " steps");
 				// add the relationship into history table
 				stmt = conn.createStatement();
 				date = getCurrentDate();
@@ -744,11 +744,15 @@ public class algorithm2 {
 				mergeConnection(connections);
 				getNameAndPrintConnections(connections,start_name);
 				return true;
+				
+			}
+			else {
+				System.out.println("cannot find a connection in " + num + " num of connection\n");
+			}
 		}
-		else{
-			System.out.println("couldn't find a connection");
-			return false;
-		}
+		
+		System.out.println("couldn't find a connection");
+		return false;
 
 	}
 	
@@ -766,7 +770,7 @@ public class algorithm2 {
 	//a.fillTables();
 	//	System.out.println("finished");
 		    
-	a.lookForConnection(10,3);
+	a.lookForConnection(45,7770);
 	//System.out.println(a.notRecursion);
 		
 	}
