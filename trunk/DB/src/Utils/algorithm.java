@@ -113,8 +113,8 @@ public class algorithm {
 		String atrTable;
 		String currentTable;
 		String putCouples;
-		String[] attributes = new String[numOfTables-2]; //minus characters and gender tables
-		String[] result = new String[numOfTables-2];
+		String[] attributes = new String[numOfTables-1]; 
+		String[] result = new String[numOfTables-1];
 		
 		int indexOfAttr=0, indexOfResult=0;
 		for (int i=0; i< numOfTables; i++){
@@ -123,10 +123,10 @@ public class algorithm {
 				continue;
 			}
 			else if (!currentTable.contains("and")){
-				attributes[indexOfAttr]=tbs[i].toString();
+				attributes[indexOfAttr]=currentTable;
 				indexOfAttr++;
 			}
-			else if (currentTable.contains("gender")){
+			else if (currentTable.equals(Tables.gender.toString())){
 				continue;
 			}
 			else {
@@ -134,7 +134,8 @@ public class algorithm {
 				joinedAttributesMap.put(atrTable, currentTable);
 			}
 		}
-		
+		attributes[indexOfAttr]=Tables.gender.toString();
+		indexOfAttr++;
 
 		for (int i=0; i<indexOfAttr;i++){ 		//first loop- looking for joinedTables
 			putCouples = joinedAttributesMap.get(attributes[i]);
@@ -205,7 +206,7 @@ public class algorithm {
 	 * In case of a match - the process is stopped and returns true. Otherwise - returns false.
 	 */
 	private boolean helperForConnection(ResultSet charsWithAtrRS,int start_id,int end_id, int recPhase, 
-										boolean firstRun, String[] fill, String currentAtr, boolean[] characters){
+										boolean firstRun, String[] fill, String currentAtr, boolean[] characters, String atrID){
 		boolean resultFlag = false;
 		int currentid=0;
 		try{
@@ -214,14 +215,14 @@ public class algorithm {
 				if (firstRun){ //running over all attributes in order to find a direct connection
 					if (currentid == end_id) {
 						resultFlag=true;
-						fill[recPhase-1]=currentid + "," + currentAtr;
+						fill[recPhase-1]=currentid + "," + currentAtr + "," + atrID;
 						break;
 					}
 				}
 				else {
 					// starting a recursive call with each character with the same attribute as the start_id
 					if (!characters[currentid]){ //checking if the character was already checked in the recursion
-						fill[recPhase-1]= currentid + "," + currentAtr;
+						fill[recPhase-1]= currentid + "," + currentAtr + "," + "," + atrID;
 						if (connectionFinder(fill, currentid, end_id, recPhase+1, start_id, true)){
 							resultFlag= true;
 							break; //out of while loop
@@ -253,7 +254,7 @@ public class algorithm {
 		
 		String 	currentAtr, joinedAtr;
 		
-		int unspecifiedId=0;
+		int unspecifiedId=0, getAtrint=0;
 		
 		//Preparing statement of a specific attribute
 		String selectAtrValues;
@@ -310,21 +311,22 @@ public class algorithm {
 						}
 						
 						//taking all characters with the same attribute as our character
-										
-						charactersWithAtr = 	"SELECT "+joinedAtr+"_character_id " +
+						
+						charactersWithAtr = 	"SELECT "+joinedAtr+"_character_id, " +
 												"FROM " + joinedAtr +  
 												" WHERE " + joinedAtr + "_" + currentAtr + "_id = ? AND " +
 												joinedAtr +  "_character_id != ? AND " +
 												joinedAtr +  "_character_id != ?";
 						
 						charAtrStmt =  conn.prepareStatement(charactersWithAtr);
-						charAtrStmt.setInt(1, atrValRS.getInt(1));
+						getAtrint = atrValRS.getInt(1);
+						charAtrStmt.setInt(1, getAtrint);
 						charAtrStmt.setInt(2, prevId);
 						charAtrStmt.setInt(3, start_id);
 						charsWithAtrRS = charAtrStmt.executeQuery();
 					
 						//looking for a connection via the specific attribute
-						resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr, alreadyCheckedCharactersArr);
+						resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr, alreadyCheckedCharactersArr, Integer.toString(getAtrint));
 						
 						//found a connection
 						if (resultFlag){
@@ -397,7 +399,7 @@ public class algorithm {
 						if (tablesArr[atr].equals(Tables.parent.toString()) && i==2){
 							currentAtr="child";
 						}
-						resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr,alreadyCheckedCharactersArr);
+						resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr,alreadyCheckedCharactersArr, currentAtr);
 						
 					}catch (SQLException e) {
 						System.out.println("error execute query-" + e.toString());
@@ -460,7 +462,7 @@ public class algorithm {
 				charAtrStmt.setInt(4, start_id);
 				charsWithAtrRS = charAtrStmt.executeQuery();
 				
-				resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr,alreadyCheckedCharactersArr);
+				resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, recPhase, firstRun, fill, currentAtr,alreadyCheckedCharactersArr, Integer.toString(placeOfBirth));
 				
 				//closing all open statements and result sets
 				closeAllOpenResources(atrValRS, charsWithAtrRS, unspecifiedRS, atrStmt, charAtrStmt, unspecifiedStmt);
@@ -489,13 +491,13 @@ public class algorithm {
 	 * for example - A is connection to B by gender, and B is connected to C by gender --> A is connection to C by gender
 	 */
 	private void mergeConnection (String[] connArr){
-		String[] valueArrfirst = new String[2];
-		String[] valueArrSecond = new String[2];
+		String[] valueArrfirst = new String[3];
+		String[] valueArrSecond = new String[3];
 		for (int i=0; i+1< connArr.length; i++){
 			if (connArr[i] != null && connArr[i+1] != null) {
 				valueArrfirst = connArr[i].split(",");
 				valueArrSecond = connArr[i+1].split(",");
-				if (valueArrfirst[1].equals(valueArrSecond[1])) {
+				if (valueArrfirst[1].equals(valueArrSecond[1]) || valueArrfirst[2].equals(valueArrSecond[2])) {
 					connArr[i]="merged";
 				}
 			}
@@ -538,7 +540,7 @@ public class algorithm {
 	private void getNameAndPrintConnections(String[] connArr, String startName) throws SQLException{
 		
 		String currentName="";
-		String[] valueArr = new String[2];
+		String[] valueArr = new String[3];
 		String toPrint;
 		for (int i=0; i< connArr.length; i++){
 			
@@ -558,7 +560,7 @@ public class algorithm {
 								toPrint = startName + " is " + currentName +"'s parent";
 						}
 						else {
-							toPrint = startName + " has the same "+ valueArr[1] + " as " + currentName;
+							toPrint = startName + " has the same "+ valueArr[1] + " as " + currentName + " - " + valueArr[2];
 						}
 						
 						System.out.println(toPrint);
@@ -583,28 +585,21 @@ public class algorithm {
 	}
 	
 	/*
-	 * main function for looking a connection between two characters
+	 * Searching for the connection in the history table. 
+	 * If exists - prints the connection to console.
 	 */
-	public boolean lookForConnection(int start_id, int end_id) throws SQLException {
-
-		if (start_id == end_id){
-			System.out.println("match of length 0");
-			return true;
-		}
-
+	private boolean lookForConnectionInHistory(String start_name, String end_name, int start_id, int end_id) throws SQLException{
 		Statement stmt = null;
 		ResultSet rs = null;
-		String toQuery;
-		String date;
 		boolean result = false;
 		
-		String[] connections = new String[6];
-		
-		String start_name=getNameFromId(start_id);
-		String end_name=getNameFromId(end_id);
-		
-		// checks if the connection between this 2 character already in history table
-		stmt = conn.createStatement();
+		// checks if the connection between these 2 characters already in history table
+		try {
+			stmt = conn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
 		if (rs.next()) {
 			result = true;	
@@ -616,28 +611,69 @@ public class algorithm {
 			}
 		}
 		
-		if (result) {
+		if (result) { //found the connection in the history table
 			System.out.println("this connection was found in " + rs.getDate(3));
 			String[] con = rs.getString(4).split("\t");
 			System.out.println("Match found between "+ start_name +" and "+ end_name);
 			mergeConnection(con); 
-			getNameAndPrintConnections(con,start_name);
-			if (stmt!=null)
-				stmt.close();
-			if (rs!=null)
-				rs.close();
+			try {
+				getNameAndPrintConnections(con,start_name);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (stmt!=null) stmt.close();
+			if (rs!=null) rs.close();
+			
 			return true;
 		}
 		
-		//trying to find first connection
 		
-		if (connectionFinder(connections, start_id, end_id, 1, 0, true)){
+		else { 
+			return false;
+		}
+		
+	}
+	
+	/*
+	 * main function for looking a connection between two characters
+	 */
+	public boolean lookForConnection(int start_id, int end_id) throws SQLException {
+
+		if (start_id == end_id){
+			System.out.println("match of length 0");
+			return true;
+		}
+
+		Statement stmt = null;
+		String toQuery;
+		String date;
+		boolean alreadyExists = false;
+		
+		String[] connections = new String[6];
+		
+		String start_name=getNameFromId(start_id);
+		String end_name=getNameFromId(end_id);
+		
+		// checks if the connection between these 2 characters already in history table
+		alreadyExists = lookForConnectionInHistory(start_name, end_name, start_id, end_id);
+		
+		//found a connection
+		if (alreadyExists){
+			return true;
+		}
+		
+		
+		
+		//couldn't find the connection in the history table, executing a search
+		
+		if (connectionFinder(connections, start_id, end_id, 1, 0, true)){ // found a connection
 				System.out.println("Match found between "+ start_name +" and "+ end_name);
 				// add the relationship into history table
 				stmt = conn.createStatement();
 				date = getCurrentDate();
 				String r = "";
-				for (int i=0; i<connections.length-1; i++) {
+				for (int i=0; i<connections.length-1; i++) { 
 					if (connections[i]!=null){
 						if (connections[i+1]!=null)
 							r += connections[i]+ "\t";
@@ -647,10 +683,11 @@ public class algorithm {
 					else
 						break;
 				}
-			
+		
+				//adding the result into the history table
 				toQuery = "INSERT INTO history (character_id1, character_id2, date, information) values (" + start_id + "," + end_id + ",'" + date + "', '" + r + "');";
 				stmt.executeUpdate(toQuery);
-				stmt.close();
+				if (stmt != null) stmt.close();
 				
 				mergeConnection(connections);
 				getNameAndPrintConnections(connections,start_name);
