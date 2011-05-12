@@ -4,6 +4,7 @@ CREATE TABLE place_of_birth
 		KEY ix_place_of_birth_id (place_of_birth_id),
 		PRIMARY KEY (place_of_birth_id),UNIQUE (place_of_birth_name));
 
+
 CREATE TABLE species 
 	(species_id int(11) NOT NULL AUTO_INCREMENT,
 	species_fb_id varchar(40) NOT NULL,
