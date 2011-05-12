@@ -44,7 +44,7 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		setLayout(new BorderLayout());
 		
 		if (isSimpleCard){
-			addFields(null, null,null);
+			addFields(null, null);
 		}
 		
 		JPanel panelButton = new JPanel();
@@ -65,22 +65,20 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		int i;
 		StringBuilder specs = new StringBuilder("");
 		for (i=0 ; i<nOfRows ; i++ ){
-			specs.append("p, 4dlu, ");
+			specs.append("top:p, 4dlu, ");
 		}
-		specs.append("p, 4dlu"); //one more for name field
+		specs.append("top:p, 4dlu"); //one more for name field
 		return specs.toString();
 	}
 	
 	/** 
 	 * no need to send "name" - adds automatic
 	 */
-	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents, Vector<JComponent> extraFields) {
-		assert ((fieldsNames==null && fieldsComponents==null && extraFields==null) ||
-				(fieldsComponents.size()==fieldsNames.size() &&
-				 fieldsComponents.size()==extraFields.size()));
+	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents) {
+		assert ((fieldsNames==null && fieldsComponents==null) || (fieldsComponents.size()==fieldsNames.size()));
 		
 		int numOfRows = fieldsNames==null ? 0 : fieldsNames.size();
-		FormLayout layout = new FormLayout("left:pref, 4dlu, pref, 4dlu, left:pref", buildRowsSpecs(numOfRows));
+		FormLayout layout = new FormLayout("left:pref, 4dlu, pref", buildRowsSpecs(numOfRows));
 
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setDefaultDialogBorder();
@@ -91,10 +89,6 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		for (int i=0; i<numOfRows; i++){
 			builder.addLabel(fieldsNames.remove(0) + ":",cc.xy(1, 2*i+3));
 			builder.add(fieldsComponents.remove(0),cc.xy(3,2*i+3));
-			JPanel extraField =(JPanel) extraFields.remove(0);
-			if (extraField != null){
-				builder.add(extraField, cc.xy(5, 2*i+3));
-			}
 		}
 		/*
 		fieldsNDefaultCards = new JPanel(cardLayout);
@@ -113,16 +107,6 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		}
 		
 	}
-	
-/*	public void switchCard(String cardName){
-		if (cardName.compareTo(MAIN_CARD) == 0){
-			cardLayout.show(fieldsNDefaultCards,MAIN_CARD);
-		}else if (cardName.compareTo(DEFAULT_CARD)==0){
-			cardLayout.show(fieldsNDefaultCards,DEFAULT_CARD);
-		}else{
-			System.out.println("no such card");
-		}
-	}*/
 	
 	public void refreshCards(){
 		//createRecordCombo(false);

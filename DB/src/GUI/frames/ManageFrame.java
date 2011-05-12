@@ -20,7 +20,7 @@ public class ManageFrame extends GenericFrame {
 
 	private void buildFrame(){
 		setTitle("Manage");
-		setSize(600,500);
+		setSize(800,650);
 		setResizable(false);
 		add(BorderLayout.CENTER, tabPanelBuilder());
 		//setContentPane(mainPanelBuilder());

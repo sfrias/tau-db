@@ -9,7 +9,7 @@ public interface GenericCardInerface {
 	
 	//each card should add diffrent fields. 
 	//card implement
-	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents, Vector<JComponent> extraFields);
+	public void addFields(Vector<String> fieldsNames, Vector<JComponent> fieldsComponents);
 	
 	//each card should have diffrent action. 
 	//abstract implement

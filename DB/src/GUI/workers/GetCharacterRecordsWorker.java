@@ -21,7 +21,6 @@ public class GetCharacterRecordsWorker extends GenericWorker{
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.ethnicity, 3),Tables.ethnicity);
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.gender, 3),Tables.gender);
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.job, 3),Tables.job);
-		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.location, 3),Tables.location);
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.occupation, 3),Tables.occupation);
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.organization, 3),Tables.organization);
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.power, 3),Tables.power);

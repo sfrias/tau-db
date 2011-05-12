@@ -1,17 +1,12 @@
 package GUI.panels.Manage.cards.add;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import Enums.Tables;
@@ -20,7 +15,8 @@ import GUI.commons.GuiUtils;
 import GUI.commons.Pair;
 import GUI.list.DisplayList;
 import GUI.model.CharacterModel;
-import GUI.workers.AddCharWorker;
+import GUI.panels.CharacterAttributePanel;
+import GUI.workers.AddCharacterWorker;
 import GUI.workers.GetCharacterRecordsWorker;
 
 public class AddCharacters extends AddCard {
@@ -29,44 +25,32 @@ public class AddCharacters extends AddCard {
 	ImageIcon okIcon  = GuiUtils.readImageIcon("okIcon.png");
 	private AddCharacters me = this;
 	private CharacterModel model;
-	private DisplayList[] listIndex = new DisplayList[Tables.getMaxIndex()+1];
+	private DisplayList[] allValuesIndex = new DisplayList[Tables.getMaxIndex()+1];
 	                                                                   	
 	private DisplayList creator;
 	private DisplayList creatorValues;
-	private JTextField addCreatorField = new JTextField(20);
 	private DisplayList disease;
 	private DisplayList diseaseValues;
-	private JTextField addDiseaseField = new JTextField(20);
 	private DisplayList ethnicity;
 	private DisplayList ethnicityValues;
-	private JTextField addEthnicityField = new JTextField(20);
 	private DisplayList gender;
 	private DisplayList genderValues;
-	private JTextField addGenderField = new JTextField(20);
 	private DisplayList job;
 	private DisplayList jobValues;
-	private JTextField addJobField = new JTextField(20);
 	private DisplayList occupation;
 	private DisplayList occupationValues;
-	private JTextField addOccupationField = new JTextField(20);
 	private DisplayList organization;
 	private DisplayList organizationValues;
-	private JTextField addOrganizationField = new JTextField(20);
 	private DisplayList power;
 	private DisplayList powerValues;
-	private JTextField addPowerField = new JTextField(20);
 	private DisplayList rank;
 	private DisplayList rankValues;
-	private JTextField addRankField = new JTextField(20);
 	private DisplayList school;
 	private DisplayList schoolValues;
-	private JTextField addSchoolField = new JTextField(20);
 	private DisplayList species;
 	private DisplayList speciesValues;
-	private JTextField addSpeciesField = new JTextField(20);
 	private DisplayList universe;
 	private DisplayList universeValues;
-	private JTextField addUniverseField = new JTextField(20);
 	
 	Vector<String> titles = new Vector<String>();
 	Vector<JComponent> components = new Vector<JComponent>();
@@ -78,7 +62,8 @@ public class AddCharacters extends AddCard {
 		populateLists();
 		createListIndex();
 
-		addFields(titles, components, extraAddPanels);
+		addFields(titles, components);
+		
 	}
 	
 	private void populateLists(){
@@ -88,71 +73,70 @@ public class AddCharacters extends AddCard {
 	}
 	
 	private void populateVectors(){
+		DisplayList [] lists;
+		lists = addEntries(Tables.creator);
+		creatorValues = lists[0];
+		creator = lists[1];
 		
-		creatorValues = addEntries(Tables.creator, addCreatorField);
-		diseaseValues = addEntries(Tables.disease, addDiseaseField);
-		ethnicityValues = addEntries(Tables.ethnicity, addEthnicityField);
-		genderValues =addEntries(Tables.gender, addGenderField);
-		jobValues = addEntries(Tables.job, addJobField);
-		occupationValues = addEntries(Tables.occupation, addOccupationField);
-		organizationValues = addEntries(Tables.organization, addOrganizationField);
-		powerValues = addEntries(Tables.power, addPowerField);
-		rankValues = addEntries(Tables.rank, addRankField);
-		schoolValues = addEntries(Tables.school, addSchoolField);
-		speciesValues = addEntries(Tables.species, addSpeciesField);
-		universeValues = addEntries(Tables.universe, addUniverseField);
+		lists = addEntries(Tables.disease);
+		diseaseValues = lists[0];
+		disease = lists[1];
+		
+		lists = addEntries(Tables.ethnicity);
+		ethnicityValues = lists[0];
+		ethnicity = lists[1];
+		
+		lists = addEntries(Tables.gender);
+		genderValues = lists[0];
+		gender = lists[1];
+		
+		lists = addEntries(Tables.job);
+		jobValues = lists[0];
+		job = lists[1];
+		
+		lists = addEntries(Tables.occupation);
+		occupationValues = lists[0];
+		occupation = lists[1];
+		
+		lists = addEntries(Tables.organization);
+		organizationValues = lists[0];
+		organization = lists[1];
+		
+		lists = addEntries(Tables.power);
+		powerValues = lists[0];
+		power = lists[1];
+		
+		lists = addEntries(Tables.rank);
+		rankValues = lists[0];
+		rank = lists[1];
+
+		lists = addEntries(Tables.school);
+		schoolValues = lists[0];
+		school = lists[1];
+		
+		lists = addEntries(Tables.species);
+		speciesValues = lists[0];
+		species = lists[1];	
+		
+		lists = addEntries(Tables.universe);
+		universeValues = lists[0];
+		universe = lists[1];
 	}
 	
-	private DisplayList addEntries(final Tables table, final JTextField addField){
+	private DisplayList[] addEntries(final Tables table){
 		
 		titles.add(table.toString().toLowerCase());
-		
-/*		Pair [] pairValues = createRecordList(table);
-		values = new AutoCompleteComboBox(pairValues);*/
-		DisplayList values = new DisplayList();
-		JScrollPane sPane = new JScrollPane(values);
-		sPane.setPreferredSize(new Dimension(150, 300));
-		values.ensureIndexIsVisible(20);
-		components.add(sPane);
 
-		if (addField != null){
-			final JButton button = new JButton(GuiUtils.readImageIcon("addIcon.png", 15, 15));
-			button.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					if (addField.isVisible()){
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-								button.setIcon(GuiUtils.readImageIcon("addIcon.png", 15, 15));
-								String fieldName = table.toString()+"_name";
-								String value = addField.getText();
-								if (value.compareTo("")!=0){
-									AddCharWorker worker = new AddCharWorker(table, fieldName, value,me);
-									GuiHandler.startStatusFlash();								
-									worker.execute();
-								}
-							}
-						});
-						addField.setVisible(false);
-						revalidate();
-					}
-					else{
-						addField.setVisible(true);
-						button.setIcon(GuiUtils.readImageIcon("okIcon.png", 15, 15));
-						revalidate();
-					}
-				}
-			});
-			
-			JPanel panel = new JPanel();
-			panel.add(addField);
-			panel.add(button);
-			addField.setVisible(false);
-			extraAddPanels.add(panel);
-		} else{
-			extraAddPanels.add(null);
-		}
+		CharacterAttributePanel panel = new CharacterAttributePanel(table, this);
 		
-		return values;
+		components.add(panel);
+
+		DisplayList allValuesList = panel.getAllValues();
+		DisplayList selectedValuesList = panel.getSelectedValues();
+		
+		DisplayList[] lists = new DisplayList[]{allValuesList,selectedValuesList};
+		return lists;
+
 	}
 	
 /*	private Pair[][] getValues() {
@@ -208,7 +192,7 @@ public class AddCharacters extends AddCard {
 						
 						String fieldNames = table.toString()+"_name";
 						String values = "";
-						AddCharWorker worker = new AddCharWorker(table, fieldNames, values,me);
+						AddCharacterWorker worker = new AddCharacterWorker(table, fieldNames, values,me);
 						GuiHandler.startStatusFlash();
 						worker.execute();
 					}
@@ -219,9 +203,9 @@ public class AddCharacters extends AddCard {
 
 	@Override
 	public void refreshFromModel() {
-		for (int i=0; i<listIndex.length; i++){
+		for (int i=0; i<allValuesIndex.length; i++){
 			if (model.isAtrributeModified(i)){
-				populateList(listIndex[i], model.getAttributePairs(i));
+				populateList(allValuesIndex[i], model.getAttributePairs(i));
 				// TODO listIndex[i].setSelectedIndex(listIndex[i].);
 			}
 		}
@@ -248,18 +232,18 @@ public class AddCharacters extends AddCard {
 	}
 	
 	private void createListIndex(){
-		listIndex[Tables.creator.getIndex()] = creatorValues;
-		listIndex[Tables.disease.getIndex()] = diseaseValues;
-		listIndex[Tables.ethnicity.getIndex()] = ethnicityValues;
-		listIndex[Tables.gender.getIndex()] = genderValues;
-		listIndex[Tables.job.getIndex()] = jobValues;
-		listIndex[Tables.occupation.getIndex()] = occupationValues;
-		listIndex[Tables.organization.getIndex()] = organizationValues;
-		listIndex[Tables.power.getIndex()] = powerValues;
-		listIndex[Tables.rank.getIndex()] = rankValues;
-		listIndex[Tables.school.getIndex()] = schoolValues;
-		listIndex[Tables.species.getIndex()] = speciesValues;
-		listIndex[Tables.universe.getIndex()] = universeValues;
+		allValuesIndex[Tables.creator.getIndex()] = creatorValues;
+		allValuesIndex[Tables.disease.getIndex()] = diseaseValues;
+		allValuesIndex[Tables.ethnicity.getIndex()] = ethnicityValues;
+		allValuesIndex[Tables.gender.getIndex()] = genderValues;
+		allValuesIndex[Tables.job.getIndex()] = jobValues;
+		allValuesIndex[Tables.occupation.getIndex()] = occupationValues;
+		allValuesIndex[Tables.organization.getIndex()] = organizationValues;
+		allValuesIndex[Tables.power.getIndex()] = powerValues;
+		allValuesIndex[Tables.rank.getIndex()] = rankValues;
+		allValuesIndex[Tables.school.getIndex()] = schoolValues;
+		allValuesIndex[Tables.species.getIndex()] = speciesValues;
+		allValuesIndex[Tables.universe.getIndex()] = universeValues;
 	}
 	
 }

@@ -56,9 +56,6 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 		this.action = action;
 	}
 	
-
-	
-	
 	@Override
 	public void done(){
 		try {
@@ -71,7 +68,7 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 			switch (e){
 				case Success_Simple_Add_Edit_Delete:  //
 					GuiHandler.showResultSuccessDialog(action);
-					if (action.compareTo("add")==0){
+					if (action.equals("add")){
 						simpleAddCard.refreshCards();
 					}else{
 						simpleEditDeleteCard.refreshCards();
@@ -99,6 +96,9 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				case Exception:
 					GuiHandler.ShowResultExceptionDialog(action);
 					break;
+			case Success_Add_Character_Attribute:
+				//TODO HILA!!
+				break;
 					
 			}		
 		} catch (InterruptedException e) {
