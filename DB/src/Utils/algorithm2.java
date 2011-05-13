@@ -610,6 +610,7 @@ public class algorithm2 {
 		}
 		return Name;
 	}
+	
 	private void getNameAndPrintConnections(String connArr, String splitBy) throws SQLException{
 		
 		String startName="", endName="";
@@ -655,6 +656,34 @@ public class algorithm2 {
 		return s;
 	}
 	
+	/* 
+	 * this function presents the 5 popular 
+	 */
+	public void topSerches () {
+		 
+		 Statement stmt;
+		 ResultSet rs;
+		 
+		 try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM history ORDER BY count DESC LIMIT 5");
+			while (rs.next()) {
+				String startName = getNameFromId(rs.getInt(1));
+				String endName = getNameFromId(rs.getInt(2));
+				System.out.println("this is a connection between " + startName + " and " + endName);
+				System.out.println("this connection was found in " + rs.getDate(3));
+				getNameAndPrintConnections(rs.getString(4),"&");
+				System.out.println();
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
+		 
+	 }
+	
 	/*
 	 * Searching for the connection in the history table. 
 	 * If exists - prints the connection to console.
@@ -663,6 +692,7 @@ public class algorithm2 {
 		Statement stmt = null;
 		ResultSet rs = null;
 		boolean result = false, opposite = false;
+		int count;
 		
 		// checks if the connection between these 2 characters already in history table
 		try {
@@ -684,9 +714,14 @@ public class algorithm2 {
 		}
 		
 		if (result) { //found the connection in the history table
+			count = rs.getInt("count");
+			count++;
+			int id1 = rs.getInt(1);
+			int id2 = rs.getInt(2);
 			System.out.println("this connection was found in " + rs.getDate(3));
 			String con = rs.getString(4);
 			System.out.println("Match found between "+ start_name +" and "+ end_name);
+			stmt.executeUpdate("UPDATE history SET count = " + count + " WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
 			 
 			if (opposite) {
 				start_name = end_name;
@@ -711,6 +746,68 @@ public class algorithm2 {
 		
 	}
 	
+	/*
+	 * this function add to history table the connection that found and all 
+	 * the sub connections that derived from it
+	 */
+	
+private void insertIntoHistory (String connections, int start_id, int end_id) {
+		
+		Statement stmt = null;
+		String toQuery;
+		String date;
+		String[] connectionsSplit = connections.split("&");
+		String[] values;
+		String[] arr;
+		int length = connectionsSplit.length;
+		int first, second;
+		
+		try {
+			stmt = conn.createStatement();
+			date = getCurrentDate();
+			String information = "";
+			//int previousCharacter = start_id;
+			
+			for (int i=0; i<length; i++) {
+				arr = connectionsSplit[i].split(","); 
+				first = Integer.parseInt(arr[0]);
+				
+				for (int j=i; j<length; j++) {
+					values = connectionsSplit[j].split(","); 
+					second = Integer.parseInt(values[1]);
+					information = "";
+					for (int k=i; k<j; k++) { 
+						if (connectionsSplit[k]!=null){
+							if (connectionsSplit[k+1]!=null){
+								information += connectionsSplit[k]+ "\t";
+							}
+							else {
+								information += connectionsSplit[k];
+								break;
+							}
+						}
+						else
+							break;
+					}
+				
+					if (connectionsSplit[j]!= null){
+						information += connectionsSplit[j];
+					}
+					toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
+					//previousCharacter = connectorCharacter;
+					stmt.executeUpdate(toQuery);
+				}
+				 
+			}
+			
+			
+			if (stmt != null) stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	/*
 	 * clears all hashmaps
 	 */
@@ -758,20 +855,10 @@ public class algorithm2 {
 			globalNumOfConnections = num;
 			matchFound = connectionFinder(connections, start_id, end_id, 0, num);
 			if (matchFound) {
-				System.out.println("Match found between "+ start_name +" and "+ end_name + " in " + globalNumOfConnections + " steps");
-				// add the relationship into history table
-				stmt = conn.createStatement();
-				date = getCurrentDate();
-				
-				//adding the result into the history table
-				toQuery = "INSERT INTO history (character_id1, character_id2, date, information) values (" + start_id + "," + end_id + ",'" + date + "', '" + connections[0] + "');";
-				stmt.executeUpdate(toQuery);
-				if (stmt != null) stmt.close();
-				
+				System.out.println("Match found between "+ start_name +" and "+ end_name);
+				insertIntoHistory(connections[0], start_id, end_id);
 				getNameAndPrintConnections(connections[0], "&");
-
 				return true;
-				
 			}
 			else {
 				System.out.println("cannot find a connection in " + num + " num of connection\n");
@@ -798,7 +885,8 @@ public class algorithm2 {
 	//a.fillTables();
 	//	System.out.println("finished");
 		    
-	a.lookForConnection(15,22);
+	//a.lookForConnection (1,5);
+		a.topSerches();
 	
 		
 	}

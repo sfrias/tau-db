@@ -101,7 +101,7 @@ CREATE TABLE characters
 	(character_id int(11) NOT NULL AUTO_INCREMENT,
 	character_fb_id varchar(40) NOT NULL,
 	character_name varchar(80) NOT NULL,
-	character_place_of_birth_id int(11) NOT NULL DEFAULT 1,
+	character_place_of_birth_id int(11) NOT NULL DEFAULT 5,
 	KEY ix_character_id (character_id),
 	PRIMARY KEY (character_id),
 	FOREIGN KEY (character_place_of_birth_id) REFERENCES place_of_birth(place_of_birth_id)) DEFAULT CHARSET=utf8;
@@ -223,6 +223,7 @@ CREATE TABLE history
 	character_id2 int(11) NOT NULL,
 	date date DEFAULT NULL,
 	information varchar(200),
+	count int(11) DEFAULT 1,
 	PRIMARY KEY (character_id1,character_id2),
 	FOREIGN KEY (character_id1) REFERENCES characters(character_id),
 	FOREIGN KEY (character_id2) REFERENCES characters(character_id));
