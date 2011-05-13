@@ -221,11 +221,11 @@ public class algorithm2 {
 			try {
 				while (charsWithAtrRS.next()) {
 					currentid = charsWithAtrRS.getInt(1);
+					connection = "";
 					if (currentid == end_id) {
 						resultFlag = true;
 						if (previousPhase.get(start_id) != null ){
-							connection = previousPhase.get(start_id);
-							connection = connection.split("previous id is")[0];
+							connection = previousPhase.get(start_id).split("previous id is")[0];
 						}
 						connection += start_id + "," + end_id + "," + currentAtr + "," + atrID;
 						fill[0]=connection; //writing the connection
@@ -233,13 +233,9 @@ public class algorithm2 {
 					}
 					else {
 						if (previousPhase.get(start_id) != null ){
-							connection = previousPhase.get(start_id);
-							connection = connection.split("previous id is")[0];
+							connection = previousPhase.get(start_id).split("previous id is")[0];
+						}
 
-						}
-						else { //list is empty
-							connection = "";
-						}
 						
 						connection += start_id + "," + currentid + "," + currentAtr + ","+ atrID + "&previous id is" + start_id;
 						currentPhase.put(currentid, connection);
@@ -260,17 +256,18 @@ public class algorithm2 {
 			recursivePhase.putAll(currentPhase);
 			currentPhase.clear();
 			
-			int currentID;
+
 			while (!recursivePhase.isEmpty() && recursivePhase.firstKey() != null) {
-				currentID = recursivePhase.firstKey();
-				String currentConnection = recursivePhase.get(currentID);
+				currentid = recursivePhase.firstKey();
+				String currentConnection = recursivePhase.get(currentid);
 				String prevID = currentConnection.split("previous id is")[1];
 				int prevId = Integer.parseInt(prevID);
-				if (connectionFinder(fill, currentID, end_id, prevId, 1)){
+				System.out.println("trying to find a connection with " + currentid + " in " + globalNumOfConnections + " steps");
+				if (connectionFinder(fill, currentid, end_id, prevId, 1)){
 						resultFlag= true;
 						break;
 					}
-				recursivePhase.remove(currentID);
+				recursivePhase.remove(currentid);
 				}
 			
 			} //didn't find any connections with numOfConnections
@@ -323,7 +320,7 @@ public class algorithm2 {
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
 			
-			System.out.println("trying "+ tablesArr[atr] + " with number of connections = " + globalNumOfConnections);
+//			System.out.println("trying "+ tablesArr[atr] + " with number of connections = " + globalNumOfConnections);
 			currentAtr =tablesArr[atr];
 			if (atr < indexOfJumps) {
 				joinedAtr = tablesArr[atr+1];
@@ -620,29 +617,31 @@ public class algorithm2 {
 		
 		String connections[] = connArr.split(splitBy);
 		for (int i=0; i<connections.length; i++){
-			valueArr = connections[i].split(",");
-			startName =getNameFromId(Integer.parseInt(valueArr[0]));
-			endName = getNameFromId(Integer.parseInt(valueArr[1]));
-			if ( valueArr[2].equals(Tables.sibling.toString()) || 
-				 valueArr[2].equals(Tables.marriage.toString()) ||
-				 valueArr[2].equals(Tables.romantic_involvement.toString()) ) {
-					toPrint = startName + " has a " + valueArr[2] + " relationship with " + endName;
+			if (connections[i] != ""){ 
+				valueArr = connections[i].split(",");
+				startName =getNameFromId(Integer.parseInt(valueArr[0]));
+				endName = getNameFromId(Integer.parseInt(valueArr[1]));
+				if ( valueArr[2].equals(Tables.sibling.toString()) || 
+					 valueArr[2].equals(Tables.marriage.toString()) ||
+					 valueArr[2].equals(Tables.romantic_involvement.toString()) ) {
+						toPrint = startName + " has a " + valueArr[2] + " relationship with " + endName;
+				}
+				else if ( valueArr[2].equals("child")) {
+						toPrint = startName + " is " + endName +"'s child";
+				}
+				else if (valueArr[2].equals("parent")) {
+						toPrint = startName + " is " + endName +"'s parent";
+				}
+				else {
+					int temp = Integer.parseInt(valueArr[3]);
+					//System.out.println(temp);
+					String atrName = getAttributeNameFromID(valueArr[2], temp);
+					toPrint = startName + " has the same "+ valueArr[2] + " as " + endName + " - " + atrName;
+				}
+				
+				System.out.println(toPrint);
 			}
-			else if ( valueArr[2].equals("child")) {
-					toPrint = startName + " is " + endName +"'s child";
 			}
-			else if (valueArr[2].equals("parent")) {
-					toPrint = startName + " is " + endName +"'s parent";
-			}
-			else {
-				int temp = Integer.parseInt(valueArr[3]);
-				//System.out.println(temp);
-				String atrName = getAttributeNameFromID(valueArr[2], temp);
-				toPrint = startName + " has the same "+ valueArr[2] + " as " + endName + " - " + atrName;
-			}
-			
-			System.out.println(toPrint);
-		}
 	}
 
 	
@@ -828,9 +827,6 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 			return true;
 		}
 
-		Statement stmt = null;
-		String toQuery;
-		String date;
 		boolean alreadyExists = false;
 		
 		String[] connections = new String[1];
@@ -884,10 +880,11 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 		
 	//a.fillTables();
 	//	System.out.println("finished");
-		    
+
 	//a.lookForConnection (1,5);
 		a.topSerches();
 	
+
 		
 	}
 	
