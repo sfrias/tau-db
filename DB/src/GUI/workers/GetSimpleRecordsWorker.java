@@ -5,12 +5,19 @@ import Enums.Tables;
 import GUI.commons.Pair;
 import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
+import GUI.panels.Play.CharacterDisplayPanel;
 
 public class GetSimpleRecordsWorker extends GenericWorker {
 	private Tables table;
 	
 	public GetSimpleRecordsWorker(Tables table, EditAndDeleteGenericCardPanel card){
 		super(card);
+		this.table = table;
+	}
+	
+	
+	public GetSimpleRecordsWorker(Tables table, CharacterDisplayPanel charI, CharacterDisplayPanel charII){
+		super(charI, charII);
 		this.table = table;
 	}
 	

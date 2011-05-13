@@ -30,6 +30,16 @@ public class GuiUtils {
             (screenSize.height - paneSize.height) / 2);
     }
 	
+    public static IconButton createActionButton(String text, String iconName,ActionListener actionListener){
+		IconButton button = new IconButton(text, iconName);
+		button.setPreferredSize(new Dimension(140, 40));
+		button.setMaximumSize(new Dimension(140, 40));
+		button.addActionListener(actionListener);
+		
+		return button;
+		
+	}
+
     public static JButton createIconButton(String icon) {
         JButton button = new JButton(readImageIcon(icon));
         button.setFocusPainted(true);
@@ -37,21 +47,12 @@ public class GuiUtils {
         button.setContentAreaFilled(true);
         return button;
     }
-
-    public static ImageIcon readImageIcon(String fileName) {
-        URL url = WelcomeScreenFrame.class.getResource("../images/" + fileName);
-        if (url == null)
-            return null;
-
-        return new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(url));
-    }
     
-    public static ImageIcon readImageIcon(String fileName, int width, int height){
-    	ImageIcon icon = readImageIcon(fileName);
-    	Image img = icon.getImage();
-    	Image scaledImg = img.getScaledInstance(width, height,Image.SCALE_DEFAULT);
-    	return new ImageIcon(scaledImg);
-    }
+    public static JButton createQuitButton(){
+		JButton button = GuiUtils.createActionButton("Quit","doorClosed.png",GuiUtils.defaultQuitActionListener());
+		button.addMouseListener(defaultQuitMouseListener(button));
+		return button;
+	}
     	
 	public static WindowAdapter defaultCloseWindowAdapter(){
 		return new WindowAdapter() {
@@ -70,21 +71,28 @@ public class GuiUtils {
 		};
 	}
 	
-	public static IconButton createActionButton(String text, String iconName,ActionListener actionListener){
-		IconButton button = new IconButton(text, iconName);
-		button.setPreferredSize(new Dimension(140, 40));
-		button.setMaximumSize(new Dimension(140, 40));
-		button.addActionListener(actionListener);
-		
-		return button;
-		
+	public static void populateList(DisplayList list, Pair[] pairs){
+		DefaultListModel model = new DefaultListModel();
+		for (int i=0; i<pairs.length; i++){
+			model.addElement(pairs[i]);
+		}
+		list.setModel(model);
 	}
 	
-	public static JButton createQuitButton(){
-		JButton button = GuiUtils.createActionButton("Quit","doorClosed.png",GuiUtils.defaultQuitActionListener());
-		button.addMouseListener(defaultQuitMouseListener(button));
-		return button;
-	}
+	public static ImageIcon readImageIcon(String fileName) {
+        URL url = WelcomeScreenFrame.class.getResource("../images/" + fileName);
+        if (url == null)
+            return null;
+
+        return new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(url));
+    }
+	
+	public static ImageIcon readImageIcon(String fileName, int width, int height){
+    	ImageIcon icon = readImageIcon(fileName);
+    	Image img = icon.getImage();
+    	Image scaledImg = img.getScaledInstance(width, height,Image.SCALE_DEFAULT);
+    	return new ImageIcon(scaledImg);
+    }
 	
 	private static MouseListener defaultQuitMouseListener(JButton buttonQuit){
 		final JButton button = buttonQuit;
@@ -120,14 +128,6 @@ public class GuiUtils {
 
 			}
 		};
-	}
-	
-	public static void populateList(DisplayList list, Pair[] pairs){
-		DefaultListModel model = new DefaultListModel();
-		for (int i=0; i<pairs.length; i++){
-			model.addElement(pairs[i]);
-		}
-		list.setModel(model);
 	}
 	
 }
