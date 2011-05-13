@@ -219,7 +219,7 @@ public class algorithm2 {
 		
 		if (numOfConnections==1) { //direct connection
 			try {
-				while (charsWithAtrRS.next()) {
+				while (charsWithAtrRS!= null && charsWithAtrRS.next()) {
 					currentid = charsWithAtrRS.getInt(1);
 					connection = "";
 					if (currentid == end_id) {
@@ -263,7 +263,7 @@ public class algorithm2 {
 				String prevID = currentConnection.split("previous id is")[1];
 				int prevId = Integer.parseInt(prevID);
 				System.out.println("trying to find a connection with " + currentid + " in " + globalNumOfConnections + " steps");
-				if (connectionFinder(fill, currentid, end_id, prevId, 1)){
+				if (connectionFinder(fill, currentid, end_id, prevId, 1, true)){
 						resultFlag= true;
 						break;
 					}
@@ -282,7 +282,7 @@ public class algorithm2 {
 	/*
 	 * private function that finds connection between two characters in a specific number of connection.
 	 */
-	private boolean connectionFinder(String[] fill, int start_id,int end_id, int prevId,int numOfConnections) throws SQLException{
+	private boolean connectionFinder(String[] fill, int start_id,int end_id, int prevId,int numOfConnections, boolean firstRun) throws SQLException{
 		
 		
 		ResultSet atrValRS=null,charsWithAtrRS=null,unspecifiedRS = null;
@@ -324,12 +324,11 @@ public class algorithm2 {
 			currentAtr =tablesArr[atr];
 			if (atr < indexOfJumps) {
 				joinedAtr = tablesArr[atr+1];
-						
 				selectAtrValues = 	"SELECT " + joinedAtr + "_" + currentAtr+ "_id"  + 
 									" FROM " + joinedAtr +"," + currentAtr +
 									" WHERE " +joinedAtr + "_character_id = ? AND " + 
 									joinedAtr + "_" + currentAtr + "_id =" + currentAtr + "_id";
-
+				
 				
 				atrStmt = conn.prepareStatement(selectAtrValues);
 	
@@ -353,17 +352,32 @@ public class algorithm2 {
 						
 						//taking all characters with the same attribute as our character
 						
-						charactersWithAtr = 	"SELECT "+joinedAtr+"_character_id " +
-												"FROM " + joinedAtr +  
-												" WHERE " + joinedAtr + "_" + currentAtr + "_id = ? AND " +
-												joinedAtr +  "_character_id != ? AND " +
-												joinedAtr +  "_character_id != ?";
+						if (!firstRun) {
+							charactersWithAtr = 	"SELECT "+joinedAtr+"_character_id " +
+													"FROM " + joinedAtr +  
+													" WHERE " + joinedAtr + "_" + currentAtr + "_id = ? AND " +
+													joinedAtr +  "_character_id != ? AND " +
+													joinedAtr +  "_character_id != ?";
+							
+							charAtrStmt =  conn.prepareStatement(charactersWithAtr);
+							getAtrint = atrValRS.getInt(1);
+							charAtrStmt.setInt(1, getAtrint);
+							charAtrStmt.setInt(2, prevId);
+							charAtrStmt.setInt(3, start_id);
+							
+						}
 						
-						charAtrStmt =  conn.prepareStatement(charactersWithAtr);
-						getAtrint = atrValRS.getInt(1);
-						charAtrStmt.setInt(1, getAtrint);
-						charAtrStmt.setInt(2, prevId);
-						charAtrStmt.setInt(3, start_id);
+						else {
+							charactersWithAtr = 	"SELECT "+joinedAtr+"_character_id " +
+							"FROM " + joinedAtr +  
+							" WHERE " + joinedAtr + "_" + currentAtr + "_id = ? AND " +
+							joinedAtr +  "_character_id = ?";
+							
+							charAtrStmt =  conn.prepareStatement(charactersWithAtr);
+							getAtrint = atrValRS.getInt(1);
+							charAtrStmt.setInt(1, getAtrint);
+							charAtrStmt.setInt(2, end_id);							
+						}
 						charsWithAtrRS = charAtrStmt.executeQuery();
 					
 						//looking for a connection via the specific attribute
@@ -412,28 +426,45 @@ public class algorithm2 {
 				
 				for (int i=1; i<3;i++){
 					//System.out.println(atr);
-					if (tablesArr[atr].equals(Tables.parent.toString())) {
+					if (tablesArr[atr].equals(Tables.parent.toString()) && !firstRun) {
 						charactersWithAtr = "SELECT " + currentAtr+ child + 
 						" FROM " + currentAtr +
 						" WHERE " +currentAtr + parent +" = ? AND " + 
 						currentAtr +parent + " != ? AND " +
 						currentAtr+ child + " != ?";
 					}
-					else {
+					else if (tablesArr[atr].equals(Tables.parent.toString()) && firstRun) {
+						charactersWithAtr = "SELECT " + currentAtr+ child + 
+						" FROM " + currentAtr +
+						" WHERE " +currentAtr + parent +" = ? AND " +
+						currentAtr+ child + " = ?";
+					}
+					else if (!firstRun){
 						charactersWithAtr = "SELECT " + currentAtr+ first + 
 						" FROM " + currentAtr+
 						" WHERE " +currentAtr + second +" = ? AND " + 
 						currentAtr +first + " != ? AND " + 
 						currentAtr+ first + " != ?";
-						;	
-					}					
+					}
+					else{
+						charactersWithAtr = "SELECT " + currentAtr+ first + 
+						" FROM " + currentAtr+
+						" WHERE " +currentAtr + second +" = ? AND " + 
+						currentAtr+ first + " = ?";
+					}
 					charAtrStmt = conn.prepareStatement(charactersWithAtr);
 					
 					try{	
 						//getting all the ids of the attributes that the character has
-						charAtrStmt.setInt(1, start_id);
-						charAtrStmt.setInt(2, unspecifiedId);
-						charAtrStmt.setInt(3, prevId);
+						if (!firstRun) {
+							charAtrStmt.setInt(1, start_id);
+							charAtrStmt.setInt(2, unspecifiedId);
+							charAtrStmt.setInt(3, prevId);
+						}
+						else {
+							charAtrStmt.setInt(1, start_id);
+							charAtrStmt.setInt(2, end_id);
+						}
 						charsWithAtrRS = charAtrStmt.executeQuery();
 					
 						//looking for a connection via the specific attribute
@@ -468,12 +499,22 @@ public class algorithm2 {
 			}	
 			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
 				int placeOfBirth=0;
-				charactersWithAtr = "SELECT character_id" +
-				" FROM characters" + 
-				" WHERE character_" + currentAtr+ "_id = ? AND " + 
-				"character_" + currentAtr+ "_id != ? AND " +
-				"character_id != ? AND "+ 
-				"character_id != ?";
+				if (!firstRun){
+					charactersWithAtr = "SELECT character_id" +
+					" FROM characters" + 
+					" WHERE character_" + currentAtr+ "_id = ? AND " + 
+					"character_" + currentAtr+ "_id != ? AND " +
+					"character_id != ? AND "+ 
+					"character_id != ?";
+				}
+				else {
+					charactersWithAtr = "SELECT character_id" +
+					" FROM characters" + 
+					" WHERE character_" + currentAtr+ "_id = ? AND " + 
+					"character_" + currentAtr+ "_id != ? AND " +
+					"character_id = ?";
+				}
+					
 				
 				
 				try{
@@ -497,10 +538,17 @@ public class algorithm2 {
 				}
 				
 				charAtrStmt = conn.prepareStatement(charactersWithAtr);
-				charAtrStmt.setInt(1, placeOfBirth);
-				charAtrStmt.setInt(2, unspecifiedId);
-				charAtrStmt.setInt(3, prevId);
-				charAtrStmt.setInt(4, start_id);
+				if (!firstRun){
+					charAtrStmt.setInt(1, placeOfBirth);
+					charAtrStmt.setInt(2, unspecifiedId);
+					charAtrStmt.setInt(3, prevId);
+					charAtrStmt.setInt(4, start_id);
+				}
+				else{
+					charAtrStmt.setInt(1, placeOfBirth);
+					charAtrStmt.setInt(2, unspecifiedId);
+					charAtrStmt.setInt(3, end_id);
+				}
 				charsWithAtrRS = charAtrStmt.executeQuery();
 				
 				resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, numOfConnections, fill, currentAtr, Integer.toString(placeOfBirth));
@@ -517,12 +565,12 @@ public class algorithm2 {
 		}// end of external loop
 		
 		//cannot find connection in the specific number of connection required
-		if (!resultFlag){
-			 //return connectionFinder(fill,start_id,end_id,prevId,numOfConnections+1);
-			return false;
+		if (firstRun && !resultFlag){
+			return connectionFinder(fill, start_id, end_id, prevId, numOfConnections, !firstRun);
 		}
 		
 		return resultFlag;
+	
 	}
 	
 	
@@ -849,7 +897,7 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 		
 		for (int num = 1; num<5; num++) {
 			globalNumOfConnections = num;
-			matchFound = connectionFinder(connections, start_id, end_id, 0, num);
+			matchFound = connectionFinder(connections, start_id, end_id, 0, num, true);
 			if (matchFound) {
 				System.out.println("Match found between "+ start_name +" and "+ end_name);
 				insertIntoHistory(connections[0], start_id, end_id);
@@ -881,8 +929,8 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 	//a.fillTables();
 	//	System.out.println("finished");
 
-	//a.lookForConnection (1,5);
-		a.topSerches();
+	a.lookForConnection (59,559);
+	//	a.topSerches();
 	
 
 		
