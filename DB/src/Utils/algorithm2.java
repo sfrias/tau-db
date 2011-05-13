@@ -31,11 +31,10 @@ public class algorithm2 {
 
 	Tables[] tbs;
 	int indexOfJumps;
-	int notRecursion;
-	int global_start_id;
-	int global_end_id;
-	int global_recPhase;
-
+	int globalNumOfConnections;
+	int numOfCharacters;
+	boolean [] charactersInPreviousPhase;
+	
 	public algorithm2(){
 		conn = dbManager.getConnection() ;
 		tbs = Tables.values();
@@ -69,7 +68,7 @@ public class algorithm2 {
 	
 
 	
-	private void fillTables() throws IOException {
+	public void fillTables() throws IOException {
 		
 		populateTable( "gender.txt", "INSERT INTO gender (gender_name, gender_fb_id) values(");
 		populateTable( "species.txt", "INSERT INTO species (species_name, species_fb_id) values(");
@@ -215,22 +214,56 @@ public class algorithm2 {
 										int numOfConnections, String[] fill, String currentAtr, String atrID) throws SQLException{
 		boolean resultFlag = false;
 		int currentid=0;
-		try{
+		
+		if (numOfConnections==1) {
+			try {
+				while (charsWithAtrRS.next()) {
+					currentid = charsWithAtrRS.getInt(1);
+					if (currentid == end_id) {
+						resultFlag = true;
+						fill[globalNumOfConnections-numOfConnections]=currentid + "," + currentAtr + "," + atrID;
+						break;
+					}
+					else {
+						charactersInPreviousPhase[currentid] = true;
+					}
+				}
+				
+				
+			}catch (SQLException e) {
+				System.out.println("error execute query-" + e.toString());
+			}
+		}
+		else {
+			for (int i=0; i<charactersInPreviousPhase.length; i++) {
+				if (charactersInPreviousPhase[i]){
+					if (connectionFinder(fill, i, end_id, start_id, 1)){
+						resultFlag= true;
+						charactersInPreviousPhase[i] = false;
+						break;
+				}
+			}
+		}
+		}
+		/*try{
 			while (charsWithAtrRS.next()){
 				currentid=charsWithAtrRS.getInt(1);
 				
 				if (numOfConnections==1){ 
 					if (currentid == end_id) {
 						resultFlag=true;
-						fill[numOfConnections-1]=currentid + "," + currentAtr + "," + atrID;
+						fill[globalNumOfConnections-numOfConnections]=currentid + "," + currentAtr + "," + atrID;
 						break;
+					}
+					else {
+						charactersInPreviousPhase[currentid] = true;
 					}
 				}
 				
 				else {
 					// starting a recursive call with each character with the same attribute as the start_id
 
-						fill[numOfConnections-1]= currentid + "," + currentAtr + "," + atrID;
+						fill[globalNumOfConnections-numOfConnections]= currentid + "," + currentAtr + "," + atrID;
 						if (connectionFinder(fill, currentid, end_id, start_id, numOfConnections-1)){
 							resultFlag= true;
 							break; //out of while loop
@@ -240,7 +273,7 @@ public class algorithm2 {
 			}
 		}catch (SQLException e) {
 			System.out.println("error execute query-" + e.toString());
-		}
+		}*/
 		
 		return resultFlag;
 	}
@@ -282,7 +315,7 @@ public class algorithm2 {
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
 			
-			System.out.println("trying "+ tablesArr[atr] + " with number of connections =" + numOfConnections);
+			System.out.println("trying "+ tablesArr[atr] + " with number of connections = " + numOfConnections);
 			currentAtr =tablesArr[atr];
 			if (atr < indexOfJumps) {
 				joinedAtr = tablesArr[atr+1];
@@ -702,16 +735,20 @@ public class algorithm2 {
 			return true;
 		}
 		
-		
+		try {
+			numOfCharacters = countRows(conn);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			charactersInPreviousPhase = new boolean[numOfCharacters+1];
 		
 		//couldn't find the connection in the history table, executing a search
-		global_start_id = start_id;
-		global_end_id = end_id;
-		global_recPhase = 1;
 		
 		boolean matchFound = false;
 		
 		for (int num = 1; num<5; num++) {
+			globalNumOfConnections = num;
 			matchFound = connectionFinder(connections, start_id, end_id, 0, num);
 			if (matchFound) {
 				System.out.println("Match found between "+ start_name +" and "+ end_name + " in " + num + " steps");
@@ -770,8 +807,8 @@ public class algorithm2 {
 	//a.fillTables();
 	//	System.out.println("finished");
 		    
-	a.lookForConnection(45,7770);
-	//System.out.println(a.notRecursion);
+	a.lookForConnection(1,5);
+	
 		
 	}
 	
