@@ -115,9 +115,6 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 		}
 		comboRecord.setSelectedItem(null);
 		textName.setText("");
-		if (GuiHandler.isStatusFlashing()){
-			GuiHandler.stopStatusFlash();
-		}
 	}
 	
 	
