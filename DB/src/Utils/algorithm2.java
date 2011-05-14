@@ -430,7 +430,7 @@ public class algorithm2 {
 						charactersWithAtr = "SELECT " + currentAtr+ child + 
 						" FROM " + currentAtr +
 						" WHERE " +currentAtr + parent +" = ? AND " + 
-						currentAtr +parent + " != ? AND " +
+						currentAtr +child + " != ? AND " +
 						currentAtr+ child + " != ?";
 					}
 					else if (tablesArr[atr].equals(Tables.parent.toString()) && firstRun) {
@@ -719,7 +719,7 @@ public class algorithm2 {
 				String endName = getNameFromId(rs.getInt(2));
 				System.out.println("this is a connection between " + startName + " and " + endName);
 				System.out.println("this connection was found in " + rs.getDate(3));
-				getNameAndPrintConnections(rs.getString(4),"&");
+				getNameAndPrintConnections(rs.getString(4),"\t");
 				System.out.println();
 			}
 			
@@ -774,7 +774,7 @@ public class algorithm2 {
 				start_name = end_name;
 			}
 			try {
-				getNameAndPrintConnections(con, "&");
+				getNameAndPrintConnections(con, "\t");
 
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -929,8 +929,8 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 	//a.fillTables();
 	//	System.out.println("finished");
 
-	a.lookForConnection (59,559);
-	//	a.topSerches();
+	a.lookForConnection (61,26);
+		//a.topSerches();
 	
 
 		
