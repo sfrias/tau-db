@@ -27,12 +27,14 @@ public class algorithm2 {
 	private JDCConnection conn;
 
 	Tables[] tbs;
+	String[] tablesArr;
 	int indexOfJumps;
 	int globalNumOfConnections;
 	int numOfCharacters;
 	TreeMap<Integer, String> recursivePhase = new TreeMap<Integer,String>();
 	TreeMap<Integer, String> currentPhase = new TreeMap<Integer,String>();
 	TreeMap<Integer, String> previousPhase = new TreeMap<Integer,String>();
+	TreeMap<String, Integer> unspecifiedIdOfTables = new TreeMap<String,Integer>();
 	
 	public algorithm2(){
 		conn = dbManager.getConnection() ;
@@ -111,9 +113,10 @@ public class algorithm2 {
 	 * and all the rest after (i.e place_of_birth, marriage).
 	 * The tables 'characters' is not included in this array.
 	 */
-	private String[] buildTablesArray(){
+	private void buildTablesArray(){
 		TreeMap<String, String> joinedAttributesMap = new TreeMap<String,String>();
 		int numOfTables = tbs.length;
+		int unspec=0;
 		String atrTable;
 		String currentTable;
 		String putCouples;
@@ -123,12 +126,13 @@ public class algorithm2 {
 		int indexOfAttr=0, indexOfResult=0;
 		for (int i=0; i< numOfTables; i++){
 			currentTable = tbs[i].toString();
-			if (currentTable.equals("characters")){
-				continue;
+			if (currentTable.equals(Tables.characters.toString())){
+				unspec = getUnspecifiedId(Tables.characters.toString());
+				unspecifiedIdOfTables.put(Tables.characters.toString(), unspec);
 			}
-			else if (currentTable.equals(Tables.gender.toString())){
-				continue;
-			}
+//			else if (currentTable.equals(Tables.gender.toString())){
+//				continue;
+//			}
 			else if (!currentTable.contains("and")){
 				attributes[indexOfAttr]=currentTable;
 				indexOfAttr++;
@@ -138,11 +142,21 @@ public class algorithm2 {
 				joinedAttributesMap.put(atrTable, currentTable);
 			}
 		}
-		attributes[indexOfAttr]=Tables.gender.toString();
-		indexOfAttr++;
+//		attributes[indexOfAttr]=Tables.gender.toString();
+//		indexOfAttr++;
 
 		for (int i=0; i<indexOfAttr;i++){ 		//first loop- looking for joinedTables
 			putCouples = joinedAttributesMap.get(attributes[i]);
+	
+			if (	//!attributes[i].equals(Tables.marriage.toString()) &&
+					!attributes[i].equals(Tables.parent.toString()) &&
+					!attributes[i].equals(Tables.romantic_involvement.toString()) // &&
+					//!attributes[i].equals(Tables.sibling.toString())
+					){
+				unspec = getUnspecifiedId(attributes[i]);
+				unspecifiedIdOfTables.put(attributes[i], unspec);
+			}
+
 			if (putCouples != null){
 				result[indexOfResult]=attributes[i];
 				result[indexOfResult+1]=putCouples;
@@ -161,7 +175,7 @@ public class algorithm2 {
 			}
 		}
 		joinedAttributesMap.clear();
-		return result;
+		tablesArr = result;
 	}
 	
 	
@@ -170,14 +184,12 @@ public class algorithm2 {
 	 * A function which is used to close all the open result sets and statements.
 	 * This is used a few times in connectionFinder.
 	 */
-	private void closeAllOpenResources(ResultSet rs1, ResultSet rs2, ResultSet rs3,PreparedStatement ps1, PreparedStatement ps2, Statement st ) {
+	private void closeAllOpenResources(ResultSet rs1, ResultSet rs2, PreparedStatement ps1, PreparedStatement ps2 ) {
 		try {
 		if (rs1!=null) rs1.close();
 		if (rs2!=null) rs2.close();
-		if (rs3!=null) rs3.close();
 		if (ps1!=null) ps1.close();
 		if (ps2!=null) ps2.close();
-		if (st!=null) st.close();	
 		} catch (SQLException e) {
 
 			e.printStackTrace();
@@ -256,7 +268,7 @@ public class algorithm2 {
 			recursivePhase.putAll(currentPhase);
 			currentPhase.clear();
 			
-
+			System.out.println(recursivePhase.size());
 			while (!recursivePhase.isEmpty() && recursivePhase.firstKey() != null) {
 				currentid = recursivePhase.firstKey();
 				String currentConnection = recursivePhase.get(currentid);
@@ -285,7 +297,7 @@ public class algorithm2 {
 	private boolean connectionFinder(String[] fill, int start_id,int end_id, int prevId,int numOfConnections, boolean firstRun) throws SQLException{
 		
 		
-		ResultSet atrValRS=null,charsWithAtrRS=null,unspecifiedRS = null;
+		ResultSet atrValRS=null,charsWithAtrRS=null;
 		boolean resultFlag=false;
 		String 	currentAtr, joinedAtr;
 		int unspecifiedId=0, getAtrint=0;
@@ -301,26 +313,16 @@ public class algorithm2 {
 			//return false;
 		//}
 		
-		PreparedStatement atrStmt= null; 
-		PreparedStatement charAtrStmt = null; 
-		Statement unspecifiedStmt = null;
+		PreparedStatement atrStmt= null, charAtrStmt = null; 
 		
-		String[] tablesArr = buildTablesArray();
 		int attributes = tablesArr.length;
-//		int numOfCharacters = countRows(conn);
-	//	boolean[] alreadyCheckedCharactersArr = new boolean[numOfCharacters+1];
-		
 		
 		if (numOfConnections>1){
 			return helperForConnection(null, start_id, end_id, numOfConnections, fill, null, null);
 		}
 			
-		
-		
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
-			
-//			System.out.println("trying "+ tablesArr[atr] + " with number of connections = " + globalNumOfConnections);
 			currentAtr =tablesArr[atr];
 			if (atr < indexOfJumps) {
 				joinedAtr = tablesArr[atr+1];
@@ -337,13 +339,9 @@ public class algorithm2 {
 					//getting all the ids of the attributes that the character has
 					atrStmt.setInt(1, start_id);
 					atrValRS = atrStmt.executeQuery();
-					
-					unspecifiedStmt= conn.createStatement();
-					unspecifiedRS = unspecifiedStmt.executeQuery("SELECT " + currentAtr + "_id FROM " + currentAtr + " WHERE " + currentAtr + "_name LIKE 'Unspecified'");
-					unspecifiedRS.first();
-					unspecifiedId = unspecifiedRS.getInt(1);
-					
-					
+				
+					unspecifiedId = unspecifiedIdOfTables.get(currentAtr);
+						
 					while (atrValRS.next()){ //all attributes
 						
 						if (atrValRS.getInt(1)== unspecifiedId ) { //not relevant 
@@ -390,7 +388,7 @@ public class algorithm2 {
 					}
 			
 				//closing all open statements and result sets
-				closeAllOpenResources(atrValRS, charsWithAtrRS, unspecifiedRS, atrStmt, charAtrStmt, unspecifiedStmt);
+				closeAllOpenResources(atrValRS, charsWithAtrRS, atrStmt, charAtrStmt);
 
 				
 				}catch (SQLException e) {
@@ -404,8 +402,8 @@ public class algorithm2 {
 				atr=atr+1;
 			} //end of first case
 			
-			else if (	tablesArr[atr].equals(Tables.sibling.toString()) || 
-						tablesArr[atr].equals(Tables.marriage.toString()) ||
+			else if (	//tablesArr[atr].equals(Tables.sibling.toString()) || 
+						//tablesArr[atr].equals(Tables.marriage.toString()) ||
 						tablesArr[atr].equals(Tables.romantic_involvement.toString()) ||
 						tablesArr[atr].equals(Tables.parent.toString())){
 				
@@ -414,15 +412,7 @@ public class algorithm2 {
 				String parent = "_parent_character_id";
 				String child = "_child_character_id";
 				
-				try{
-					unspecifiedStmt= conn.createStatement();
-					unspecifiedRS = unspecifiedStmt.executeQuery("SELECT character_id FROM characters where character_name LIKE 'Unspecified'");
-					unspecifiedRS.first();
-					unspecifiedId = unspecifiedRS.getInt(1);
-					
-				}catch (SQLException e) {
-					System.out.println("error execute query-" + e.toString());
-				}
+				unspecifiedId = unspecifiedIdOfTables.get(Tables.characters.toString());
 				
 				for (int i=1; i<3;i++){
 					//System.out.println(atr);
@@ -490,7 +480,7 @@ public class algorithm2 {
 
 				
 				//closing all open statements and result sets
-				closeAllOpenResources(atrValRS, charsWithAtrRS, unspecifiedRS, atrStmt, charAtrStmt, unspecifiedStmt);
+				closeAllOpenResources(atrValRS, charsWithAtrRS, atrStmt, charAtrStmt);
 				
 				if (resultFlag){
 					break; //end of external for
@@ -518,10 +508,8 @@ public class algorithm2 {
 				
 				
 				try{
-					unspecifiedStmt= conn.createStatement();
-					unspecifiedRS = unspecifiedStmt.executeQuery("SELECT " + currentAtr + "_id FROM " + currentAtr+" where " + currentAtr + "_name LIKE 'Unspecified'");
-					unspecifiedRS.first();
-					unspecifiedId = unspecifiedRS.getInt(1);
+					
+					unspecifiedId = unspecifiedIdOfTables.get(currentAtr);
 					
 					selectAtrValues = 	"SELECT character_" + currentAtr+ "_id"  + 
 					" FROM characters" +
@@ -554,7 +542,7 @@ public class algorithm2 {
 				resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, numOfConnections, fill, currentAtr, Integer.toString(placeOfBirth));
 				
 				//closing all open statements and result sets
-				closeAllOpenResources(atrValRS, charsWithAtrRS, unspecifiedRS, atrStmt, charAtrStmt, unspecifiedStmt);
+				closeAllOpenResources(atrValRS, charsWithAtrRS, atrStmt, charAtrStmt);
 				
 				if (resultFlag){
 					break; //end of external for
@@ -669,8 +657,8 @@ public class algorithm2 {
 				valueArr = connections[i].split(",");
 				startName =getNameFromId(Integer.parseInt(valueArr[0]));
 				endName = getNameFromId(Integer.parseInt(valueArr[1]));
-				if ( valueArr[2].equals(Tables.sibling.toString()) || 
-					 valueArr[2].equals(Tables.marriage.toString()) ||
+				if (// valueArr[2].equals(Tables.sibling.toString()) || 
+					// valueArr[2].equals(Tables.marriage.toString()) ||
 					 valueArr[2].equals(Tables.romantic_involvement.toString()) ) {
 						toPrint = startName + " has a " + valueArr[2] + " relationship with " + endName;
 				}
@@ -727,6 +715,38 @@ public class algorithm2 {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		 
+		 
+	 }
+	
+	
+	private int getUnspecifiedId(String table) {
+		 
+		 Statement stmt;
+		 ResultSet rs;
+		 int unspecifiedID = 0;
+		 String field = "";
+		 if (table.equals(Tables.characters.toString())){
+			 field = "character";
+		 }
+		 else {
+			 field = table;
+		 }
+		 
+		 try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
+			rs.first();
+			unspecifiedID= rs.getInt(1);
+			if (stmt != null) stmt.close();
+			if (rs != null) rs.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return unspecifiedID;
 		 
 		 
 	 }
@@ -895,7 +915,7 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 		
 		boolean matchFound = false;
 		
-		for (int num = 1; num<5; num++) {
+		for (int num = 1; num<4; num++) {
 			globalNumOfConnections = num;
 			matchFound = connectionFinder(connections, start_id, end_id, 0, num, true);
 			if (matchFound) {
@@ -920,7 +940,7 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 	
 	public static void main(String[] args) throws SQLException, IOException{
 		algorithm2 a = new algorithm2();
-		String[] table = a.buildTablesArray();
+		a.buildTablesArray();
 		//System.out.println(a.indexOfJumps);
 	/*	for (int i=0;i<table.length;i++){
 			System.out.println(i+ ": " + table[i]);
@@ -929,7 +949,7 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 	//a.fillTables();
 	//	System.out.println("finished");
 
-	a.lookForConnection (61,26);
+	a.lookForConnection (15,98);
 		//a.topSerches();
 	
 
