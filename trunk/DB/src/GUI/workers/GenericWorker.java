@@ -6,12 +6,12 @@ import javax.swing.SwingWorker;
 
 import Enums.ExecutionResult;
 import GUI.GuiHandler;
+import GUI.frames.PlayFrame;
 import GUI.model.CharacterModel;
 import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 import GUI.panels.Manage.cards.add.AddCharacters;
 import GUI.panels.Manage.cards.add.AddSimpleCard;
-import GUI.panels.Play.CharacterDisplayPanel;
 import db.DatabaseManager;
 
 public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
@@ -22,16 +22,13 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 	private EditAndDeleteGenericCardPanel simpleEditDeleteCard;
 	private AddSimpleCard simpleAddCard;
 	private AddCharacters addCharCard;
-	private CharacterDisplayPanel charI;
-	private CharacterDisplayPanel charII;
+	private PlayFrame playFrame;
 
 
-	public GenericWorker(CharacterDisplayPanel charI, CharacterDisplayPanel charII){
+	public GenericWorker(PlayFrame playFrame){
 		super();
 
-		this.charI = charI;
-		this.charII = charII;
-
+		this.playFrame = playFrame;
 	}
 
 	public GenericWorker(String action, EditAndDeleteGenericCardPanel card) {
@@ -94,10 +91,8 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 					simpleEditDeleteCard.setModel(simpleModel);
 					simpleEditDeleteCard.refreshFromModel();
 				} else{
-					charI.setSimpleModel(simpleModel);
-					charII.setSimpleModel(simpleModel);
-					charI.refreshFromModel();
-					charII.refreshFromModel();
+					playFrame.setSimpleModel(simpleModel);
+					playFrame.refreshFromModel();
 				}
 				break;
 			case Success_Characters_Query:

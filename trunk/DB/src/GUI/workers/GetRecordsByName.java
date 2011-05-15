@@ -5,28 +5,26 @@ import Enums.Tables;
 import GUI.commons.Pair;
 import GUI.frames.PlayFrame;
 import GUI.model.SimpleModel;
-import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 
-public class GetSimpleRecordsWorker extends GenericWorker {
+public class GetRecordsByName extends GenericWorker {
+
 	private Tables table;
-	
-	public GetSimpleRecordsWorker(Tables table, EditAndDeleteGenericCardPanel card){
-		super(card);
-		this.table = table;
-	}
+	private String queryString;
 	
 	
-	public GetSimpleRecordsWorker(Tables table, PlayFrame playFrame){
+	public GetRecordsByName(Tables table, PlayFrame playFrame, String queryString){
 		super(playFrame);
-		this.table = table;
+		
+		this.table = table;	
+		this.queryString = queryString;
 	}
 	
-	@Override
 	protected ResultHolder doInBackground(){
 		//TODO add exceptions
-		Pair[] pairs =  databaseManager.executeQueryAndGetValues(table, 3);
+		Pair[] pairs =  databaseManager.executeLimetedQueryAndGetValues(table, 3, queryString);
 		SimpleModel model = new SimpleModel(pairs);		
 		ResultHolder result = new ResultHolder(model,ExecutionResult.Success_Simple_Query);
 		return result;
 	}
+
 }

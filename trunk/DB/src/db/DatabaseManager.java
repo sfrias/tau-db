@@ -177,6 +177,39 @@ public class DatabaseManager {
 			return null;
 		}
 	}
+	
+	public Pair[] executeLimetedQueryAndGetValues(Tables table, int interestingCol, String queryName) {
+
+		String tableName = table.toString();
+		try {
+			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			String statementString;
+			if (table.equals(Tables.characters)){
+				statementString = "SELECT * FROM characters " +
+						"WHERE character_name REGEXP '^" + queryName + "' ORDER BY character_name ASC LIMIT 5000";
+			}
+			else{
+				statementString = "SELECT * FROM " + tableName + " WHERE " + tableName + "_name REGEXP '^" +
+						queryName + "' ORDER BY " + tableName + "_name ASC LIMIT 5000";
+			}
+			Statement stmt = conn.createStatement();
+			ResultSet resultSet = stmt.executeQuery(statementString);
+
+			List<Pair> valuesList = new ArrayList<Pair>();
+
+			while (resultSet.next()) {
+				valuesList.add(new Pair(resultSet.getString(interestingCol), resultSet.getInt(1)));
+			}
+
+			resultSet.close();
+			stmt.close();
+			conn.close(); 
+			return valuesList.toArray(new Pair[]{});
+		} catch (SQLException e) {
+			System.err.println("An SQLException was thrown at executeQueryAndGetValues("+ tableName + ")");
+			return null;
+		}
+	}
 
 	public TreeMap<String, Integer> generateHashMapFromQuery(String query,  int intCol, int stringCol) throws UnsupportedEncodingException {
 
