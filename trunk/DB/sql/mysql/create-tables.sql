@@ -228,5 +228,11 @@ CREATE TABLE history
 	FOREIGN KEY (character_id1) REFERENCES characters(character_id),
 	FOREIGN KEY (character_id2) REFERENCES characters(character_id));
 
-
+CREATE TABLE failed_searches
+	(character_id1 int(11) NOT NULL,
+	character_id2 int(11) NOT NULL,
+	date date DEFAULT NULL,
+	PRIMARY KEY (character_id1,character_id2),
+	FOREIGN KEY (character_id1) REFERENCES characters(character_id),
+	FOREIGN KEY (character_id2) REFERENCES characters(character_id));
 
