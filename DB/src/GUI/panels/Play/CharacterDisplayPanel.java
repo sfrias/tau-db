@@ -8,12 +8,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import Enums.Tables;
-import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.GuiUtils;
-import GUI.commons.Pair;
 import GUI.list.DisplayList;
 import GUI.model.CharacterModel;
-import GUI.model.SimpleModel;
 import GUI.panels.CustomScrollPanel;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -35,10 +32,8 @@ public class CharacterDisplayPanel extends JPanel{
 	private DisplayList school  = new DisplayList();
 	private DisplayList species = new DisplayList();
 	private DisplayList universe = new DisplayList();
-	private AutoCompleteComboBox charSelectCombo;
 	
 
-	private SimpleModel simpleModel;
 	private CharacterModel charModel;
 	private Vector<JComponent> listVector = new Vector<JComponent>();
 	private Vector<String> namesVector = new Vector<String>();
@@ -48,10 +43,9 @@ public class CharacterDisplayPanel extends JPanel{
 	public static String CHAR_MODEL = "CHAR_MODEL";
 	public static String SIMPLE_MODEL = "SIMPLE_MODEL";
 	
-	public CharacterDisplayPanel(AutoCompleteComboBox charSelectCombo){
+	public CharacterDisplayPanel(){
 		super();
 		
-		this.charSelectCombo = charSelectCombo;
 		setLayout(new BorderLayout());
 		populateLists();
 		createListsIndex();
@@ -118,9 +112,7 @@ public class CharacterDisplayPanel extends JPanel{
 		namesVector.add(Tables.universe.toString());
 	}
     
-	public void setSimpleModel(SimpleModel model){
-		this.simpleModel = model;
-	}
+
 	
 	public void setCharModel(CharacterModel model){
 		this.charModel = model;
@@ -129,10 +121,7 @@ public class CharacterDisplayPanel extends JPanel{
 	public CharacterModel getCharModel(){
 		return charModel;
 	}
-	
-	public SimpleModel getSimpleModel(){
-		return simpleModel;
-	}
+
 	
 	private void createListsIndex(){
 		listIndex[Tables.creator.getIndex()] = creator;
@@ -154,7 +143,7 @@ public class CharacterDisplayPanel extends JPanel{
 		if (charModel != null){
 			refreshFromCharModel();
 		} else {
-			refreshFromSimpleModel();
+			//srefreshFromSimpleModel();
 		}
 	}
 	
@@ -167,16 +156,7 @@ public class CharacterDisplayPanel extends JPanel{
 		charModel = null;
 	}
 	
-	private void refreshFromSimpleModel(){
-		charSelectCombo.removeAllItems();
-		Pair[] pairs = simpleModel.getRecords();
-		for (int i=0; i<pairs.length; i++){
-			charSelectCombo.addItem(pairs[i]);
-		}
-		charSelectCombo.setSelectedItem(null);
-		
-		simpleModel = null;
-	}
+
 	
 	
 

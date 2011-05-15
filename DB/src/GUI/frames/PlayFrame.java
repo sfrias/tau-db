@@ -12,41 +12,32 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import Enums.Tables;
 import GUI.GuiHandler;
-import GUI.buttons.AutoCompleteComboBox;
+import GUI.buttons.QueryComboBox;
+import GUI.commons.Pair;
+import GUI.model.SimpleModel;
 import GUI.panels.Play.CharacterDisplayPanel;
-import GUI.workers.GetSimpleRecordsWorker;
 
 public class PlayFrame extends GenericFrame {
 	private static final long serialVersionUID = 1L;
 
-	private AutoCompleteComboBox comboCharI ;
-	private AutoCompleteComboBox comboCharII;
+	private QueryComboBox comboCharI ;
+	private QueryComboBox comboCharII;
 	private CharacterDisplayPanel panelRightDetails;
 	private CharacterDisplayPanel panelLeftDetails;
+	private SimpleModel simpleModel;
 	
-	private JPanel mainPanel;
-
-
 	public PlayFrame(){
 		super();
 		
+		setGlassPane(GuiHandler.getGlassPane());
 		buildFrame();
-		populateLists();
-	}
-
-	private void populateLists(){
-		GetSimpleRecordsWorker worker = new GetSimpleRecordsWorker(Tables.characters,panelLeftDetails, panelRightDetails);
-		GuiHandler.startStatusFlash();
-		worker.execute();
 	}
 
 	private void buildFrame(){
 		setTitle("Play");
 		setSize(800,650);
-		mainPanel = mainPanelBuilder();
-		add(BorderLayout.CENTER,mainPanel);
+		add(BorderLayout.CENTER, mainPanelBuilder());
 
 	}
 
@@ -58,7 +49,7 @@ public class PlayFrame extends GenericFrame {
 		panelLeftHead.setLayout(new BoxLayout(panelLeftHead, BoxLayout.Y_AXIS));
 		JLabel labelCharI = new JLabel("Character I");
 		labelCharI.setAlignmentX(CENTER_ALIGNMENT);
-		comboCharI = new AutoCompleteComboBox();
+		comboCharI = new QueryComboBox(this);
 		comboCharI.setPreferredSize(new Dimension(200, 20));
 		JPanel panelCombo1 = new JPanel();
 		panelCombo1.add(comboCharI);
@@ -69,7 +60,7 @@ public class PlayFrame extends GenericFrame {
 		panelRightHead.setLayout(new BoxLayout(panelRightHead,BoxLayout.Y_AXIS));
 		JLabel labelCharII = new JLabel("Character II");
 		labelCharII.setAlignmentX(CENTER_ALIGNMENT);
-		comboCharII = new AutoCompleteComboBox();
+		comboCharII = new QueryComboBox(this);
 		comboCharII.setPreferredSize(new Dimension(200, 20));
 		JPanel panelCombo2 = new JPanel();
 		panelCombo2.add(comboCharII);
@@ -92,8 +83,8 @@ public class PlayFrame extends GenericFrame {
 		panelSelection.add(Box.createHorizontalGlue());
 		panelSelection.add(panelRightHead);
 
-		panelLeftDetails = new CharacterDisplayPanel(comboCharI);
-		panelRightDetails = new CharacterDisplayPanel(comboCharII);
+		panelLeftDetails = new CharacterDisplayPanel();
+		panelRightDetails = new CharacterDisplayPanel();
 
 		JPanel panelDetails = new JPanel();
 		panelDetails.setLayout(new BoxLayout(panelDetails, BoxLayout.X_AXIS));
@@ -118,6 +109,25 @@ public class PlayFrame extends GenericFrame {
 		panelMain.setBorder(new EmptyBorder(20,20,20,20));
 
 		return panelMain;
+	}
+	
+	public void refreshFromModel(){
+		comboCharI.setUpdating(true);
+		comboCharI.removeAllItems();
+		Pair[] pairs = simpleModel.getRecords();
+		for (int i=0; i<pairs.length; i++){
+			comboCharI.addItem(pairs[i]);
+		}
+		comboCharI.setUpdating(false);
+		
+	}
+	
+	public void setSimpleModel(SimpleModel model){
+		this.simpleModel = model;
+	}
+	
+	public SimpleModel getSimpleModel(){
+		return simpleModel;
 	}
 
 }
