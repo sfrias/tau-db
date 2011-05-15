@@ -1,28 +1,21 @@
 package Utils;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.HashSet;
 import java.util.TreeMap;
-
 import Connection.JDCConnection;
 import Enums.Tables;
 import db.DatabaseManager;
 
+
+
 public class algorithm2 {
 	
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
-	private static final String CREATE_TABLES_SQL_FILE_PATH = "sql/mysql/populate-tables.sql";
 	private DatabaseManager dbManager = DatabaseManager.getInstance();
 	private JDCConnection conn;
 
@@ -31,9 +24,10 @@ public class algorithm2 {
 	int indexOfJumps;
 	int globalNumOfConnections;
 	int numOfCharacters;
-	TreeMap<Integer, String> recursivePhase = new TreeMap<Integer,String>();
-	TreeMap<Integer, String> currentPhase = new TreeMap<Integer,String>();
-	TreeMap<Integer, String> previousPhase = new TreeMap<Integer,String>();
+	HashSet<Integer> foundCharactersIDs = new HashSet<Integer>();
+	TreeMap<Integer, ConnectionElement> recursivePhase = new TreeMap<Integer,ConnectionElement>();
+	TreeMap<Integer, ConnectionElement> currentPhase = new TreeMap<Integer,ConnectionElement>();
+	TreeMap<Integer, ConnectionElement> previousPhase = new TreeMap<Integer,ConnectionElement>();
 	TreeMap<String, Integer> unspecifiedIdOfTables = new TreeMap<String,Integer>();
 	
 	public algorithm2(){
@@ -45,65 +39,6 @@ public class algorithm2 {
 		return conn;
 	}
 	
-	private static void populateTable(String FileName, String insertStatement) throws IOException {
-
-		File sqlFile = new File(CREATE_TABLES_SQL_FILE_PATH);
-		FileWriter fileWriter = new FileWriter(sqlFile, true);
-		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-		
-		File dumpFile = new File("C:" + File.separatorChar +"fill" + File.separatorChar + FileName);
-		FileInputStream fileReader = new FileInputStream(dumpFile);
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileReader));
-		
-		bufferedReader.readLine();
-		String lineRead;
-		String[] strarr;
-		
-		while ((lineRead = bufferedReader.readLine()) != null) {
-			strarr = lineRead.split("\t", 2);
-			bufferedWriter.append(insertStatement);
-			bufferedWriter.append("'" + strarr[0] + "', '" + strarr[1] + "');\n");
-			bufferedWriter.flush();
-			}
-		}
-	
-
-	
-	public void fillTables() throws IOException {
-		
-		populateTable( "gender.txt", "INSERT INTO gender (gender_name, gender_fb_id) values(");
-		populateTable( "species.txt", "INSERT INTO species (species_name, species_fb_id) values(");
-		populateTable( "creator.txt", "INSERT INTO creator (creator_name, creator_fb_id) values(");
-		populateTable( "organization.txt", "INSERT INTO organization (organization_name, organization_fb_id) values(");
-		populateTable( "school.txt", "INSERT INTO school (school_name, school_fb_id) values(");
-		populateTable( "rank.txt", "INSERT INTO rank (rank_name, rank_fb_id) values(");
-		populateTable( "ethnicity.txt", "INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(");
-		populateTable( "universe.txt", "INSERT INTO universe (universe_name, universe_fb_id) values(");
-		populateTable( "occupation.txt", "INSERT INTO occupation (occupation_name, occupation_fb_id) values(");
-		populateTable( "power.txt", "INSERT INTO power (power_name, power_fb_id) values(");
-		populateTable( "disease.txt", "INSERT INTO disease (disease_name, disease_fb_id) values(");
-		populateTable( "place_of_birth.txt", "INSERT INTO place_of_birth (place_of_birth_id, place_of_birth_name) values(");
-		
-		populateTable( "characters.txt", "INSERT INTO characters (character_name, character_fb_id) values(");
-		
-		populateTable("parent.txt", "INSERT IGNORE INTO parent (parent_child_character_id, parent_parent_character_id) values(");
-		populateTable("marriage.txt", "INSERT IGNORE INTO marriage (marriage_character_id1, marriage_character_id2) values(");
-		populateTable("romantic_involvement.txt", "INSERT IGNORE INTO romantic_involvement (romantic_involvement_character_id1, romantic_involvement_character_id2) values(");
-		populateTable("sibling.txt", "INSERT IGNORE INTO sibling (sibling_character_id1, sibling_character_id2) values(");
-		
-		populateTable("characters_and_universe.txt", "INSERT IGNORE INTO characters_and_universe (characters_and_universe_character_id, characters_and_universe_universe_id) values(");	
-		populateTable("characters_and_gender.txt", "INSERT IGNORE INTO characters_and_gender (characters_and_gender_character_id, characters_and_gender_gender_id) values(");	
-		populateTable("characters_and_species.txt", "INSERT IGNORE INTO characters_and_species (characters_and_species_character_id, characters_and_species_species_id) values(");
-		populateTable("characters_and_creator.txt", "INSERT IGNORE INTO characters_and_creator (characters_and_creator_character_id, characters_and_creator_creator_id) values(");	
-		populateTable("characters_and_organization.txt", "INSERT IGNORE INTO characters_and_organization (characters_and_organization_character_id, characters_and_organization_organization_id) values(");	
-		populateTable("characters_and_school.txt", "INSERT IGNORE INTO characters_and_school (characters_and_school_character_id, characters_and_school_school_id) values(");	
-		populateTable("characters_and_rank.txt", "INSERT IGNORE INTO characters_and_rank (characters_and_rank_character_id, characters_and_rank_rank_id) values(");
-		populateTable("characters_and_ethnicity.txt", "INSERT IGNORE INTO characters_and_ethnicity (characters_and_ethnicity_character_id, characters_and_ethnicity_ethnicity_id) values(");	
-		populateTable("characters_and_occupation.txt", "INSERT IGNORE INTO characters_and_occupation (characters_and_occupation_character_id, characters_and_occupation_occupation_id) values(");	
-		populateTable("characters_and_power.txt", "INSERT IGNORE INTO characters_and_power (characters_and_power_character_id, characters_and_power_power_id) values(");
-		populateTable("characters_and_disease.txt", "INSERT IGNORE INTO characters_and_disease (characters_and_disease_character_id, characters_and_disease_disease_id) values(");
-		
-	}
 
 	/*
 	 * This function is used in order to build an organized array of all tables from the Tables' enum.
@@ -127,7 +62,7 @@ public class algorithm2 {
 		for (int i=0; i< numOfTables; i++){
 			currentTable = tbs[i].toString();
 			if (currentTable.equals(Tables.characters.toString())){
-				unspec = getUnspecifiedId(Tables.characters.toString());
+				unspec = algorithmUtils.getUnspecifiedId(Tables.characters.toString(), conn);
 				unspecifiedIdOfTables.put(Tables.characters.toString(), unspec);
 			}
 //			else if (currentTable.equals(Tables.gender.toString())){
@@ -153,7 +88,7 @@ public class algorithm2 {
 					!attributes[i].equals(Tables.romantic_involvement.toString()) // &&
 					//!attributes[i].equals(Tables.sibling.toString())
 					){
-				unspec = getUnspecifiedId(attributes[i]);
+				unspec = algorithmUtils.getUnspecifiedId(attributes[i], conn);
 				unspecifiedIdOfTables.put(attributes[i], unspec);
 			}
 
@@ -179,161 +114,133 @@ public class algorithm2 {
 	}
 	
 	
-	
-	/*
-	 * A function which is used to close all the open result sets and statements.
-	 * This is used a few times in connectionFinder.
-	 */
-	private void closeAllOpenResources(ResultSet rs1, ResultSet rs2, PreparedStatement ps1, PreparedStatement ps2 ) {
-		try {
-		if (rs1!=null) rs1.close();
-		if (rs2!=null) rs2.close();
-		if (ps1!=null) ps1.close();
-		if (ps2!=null) ps2.close();
-		} catch (SQLException e) {
 
-			e.printStackTrace();
-		}
-	}
+/*
+ * this function runs over all characters with a direct connection to start_id.
+ * If a match found to end id - returns true.
+ * Otherwise- adds the character to the connections already found.	
+ */
 	
-	/*
-	 * counting all rows of the characters table
-	 */
-	 public static int countRows(JDCConnection connection) throws SQLException {
-		    // select the number of rows in the table
-		    Statement stmt = null;
-		    ResultSet rs = null;
-		    int rowCount = -1;
-		    try {
-		      stmt = connection.createStatement();
-		      rs = stmt.executeQuery("SELECT COUNT(*) FROM characters");
-		      // get the number of rows from the result set
-		      rs.next();
-		      rowCount = rs.getInt(1);
-		    } finally {
-		      rs.close();
-		      stmt.close();
-		    }
-		    return rowCount;
-		  }
-
 	
-	/*
-	 * helper function which is called from connectionFinder which goes over all characters that has the same attribute (currentAtr) 
-	 * as the current character checked (start_id) and compares them to the end_id.
-	 * In case of a match - the process is stopped and returns true. Otherwise - returns false.
-	 */
-	private boolean helperForConnection(ResultSet charsWithAtrRS,int start_id,int end_id, 
-										int numOfConnections, String[] fill, String currentAtr, String atrID) throws SQLException{
+	private boolean helperForDirectConnection	(ResultSet charsWithAtrRS,int start_id,int end_id, ConnectionElement[] conResult, String currentAtr, int atrID){
 		boolean resultFlag = false;
 		int currentid=0;
-		String connection = "";
-		
-		if (numOfConnections==1) { //direct connection
-			try {
-				while (charsWithAtrRS!= null && charsWithAtrRS.next()) {
-					currentid = charsWithAtrRS.getInt(1);
-					connection = "";
-					if (currentid == end_id) {
-						resultFlag = true;
-						if (previousPhase.get(start_id) != null ){
-							connection = previousPhase.get(start_id).split("previous id is")[0];
-						}
-						connection += start_id + "," + end_id + "," + currentAtr + "," + atrID;
-						fill[0]=connection; //writing the connection
-						break;
-					}
-					else {
-						if (previousPhase.get(start_id) != null ){
-							connection = previousPhase.get(start_id).split("previous id is")[0];
-						}
+		ConnectionElement connection, temp;
 
-						
-						connection += start_id + "," + currentid + "," + currentAtr + ","+ atrID + "&previous id is" + start_id;
-						currentPhase.put(currentid, connection);
-						
-					}
-				}
-				
-				
-			}catch (SQLException e) {
-				System.out.println("error execute query-" + e.toString());
-			}
-		} //not a direct connection
-		else {
-			if (!previousPhase.isEmpty()) {
-				previousPhase.clear();
-			}
-			previousPhase.putAll(currentPhase);
-			recursivePhase.putAll(currentPhase);
-			currentPhase.clear();
-			
-			System.out.println(recursivePhase.size());
-			while (!recursivePhase.isEmpty() && recursivePhase.firstKey() != null) {
-				currentid = recursivePhase.firstKey();
-				String currentConnection = recursivePhase.get(currentid);
-				String prevID = currentConnection.split("previous id is")[1];
-				int prevId = Integer.parseInt(prevID);
-				System.out.println("trying to find a connection with " + currentid + " in " + globalNumOfConnections + " steps");
-				if (connectionFinder(fill, currentid, end_id, prevId, 1, true)){
-						resultFlag= true;
-						break;
-					}
-				recursivePhase.remove(currentid);
-				}
-			
-			} //didn't find any connections with numOfConnections
 		
+		try {
+			while (charsWithAtrRS!= null && charsWithAtrRS.next()) {
+				currentid = charsWithAtrRS.getInt(1);
+				temp = new ConnectionElement(start_id, currentid,currentAtr, atrID);		
+				if (previousPhase.get(start_id) != null ){
+					connection = previousPhase.get(start_id);
+					temp = new ConnectionElement(start_id, currentid, currentAtr, atrID);
+					temp.prev=connection;
+					connection.next=temp;
+				}
+				if (currentid == end_id) {
+					resultFlag = true;
+					conResult[0]=temp; //writing the connection
+					break;
+				}
+				currentPhase.put(currentid, temp);	
+			}
+			
+			
+		}catch (SQLException e) {
+			System.out.println("error execute query-" + e.toString());
+		}
+
 		return resultFlag;
 		
+	}
+	
+	
+	/*
+	 * this function is used to find connection of 2 steps or more.
+	 * It runs over all connection already found in the last phase and tries to find a direct connection with each
+	 * one of them to the end_id.
+	 */
+	
+	private boolean helperForRecursiveConnection	(int start_id,int end_id, ConnectionElement[] theConnection) throws SQLException{
+
+		boolean resultFlag = false;
+		int currentid=0, prevId;
+		
+		if (!previousPhase.isEmpty()) {
+			previousPhase.clear();
 		}
-			
+		
+		previousPhase.putAll(currentPhase);
+		recursivePhase.putAll(currentPhase);
+		currentPhase.clear();
+		
+		System.out.println(recursivePhase.size());
+		while (!recursivePhase.isEmpty() && recursivePhase.firstKey() != null) {
+			currentid = recursivePhase.firstKey();
+			prevId = recursivePhase.get(currentid).start_id;
+			System.out.println("trying to find a connection with " + currentid + " in " + globalNumOfConnections + " steps");
+			if (DirectConnection(theConnection, currentid, end_id, prevId, true)){
+					resultFlag= true;
+					break;
+				}
+			recursivePhase.remove(currentid);
+			}
+		return resultFlag;
+}
 	
 	
 	
+	int debugRunCount = 0;
 	/*
 	 * private function that finds connection between two characters in a specific number of connection.
 	 */
-	private boolean connectionFinder(String[] fill, int start_id,int end_id, int prevId,int numOfConnections, boolean firstRun) throws SQLException{
+	
+	
+	private String specificAttributeValuesQuery(String joinedAtr, String currentAtr){
+		return 	
+			"SELECT " + joinedAtr + "_" + currentAtr+ "_id"  + 
+			" FROM " + joinedAtr + 
+			" WHERE " +joinedAtr + "_character_id = ? ";
+	}
+	
+	private String allCharactersWithTheSameAttributeQuery(String select, String from,String where1, String where2, boolean firstRun){
+		String query;
+		query = "SELECT "+select +" FROM " + from +" WHERE " + where1 + "= ? AND " ;
+						
+		if (!firstRun){
+			query+= where2 +  "!= ?" + " AND " 
+					+ where2+ " != ?";
+		}
+		else {
+			query+= where2+" = ?";
+		}
+		return query;
+	}
+	
+	
+	private boolean DirectConnection(ConnectionElement[] theConnection, int start_id,int end_id, int prevId, boolean firstRun) throws SQLException{
 		
-		
+		if(foundCharactersIDs.contains(start_id)){
+			System.out.println("It Works!!");
+			return false;
+		}
+		debugRunCount++;
 		ResultSet atrValRS=null,charsWithAtrRS=null;
 		boolean resultFlag=false;
-		String 	currentAtr, joinedAtr;
+		String 	currentAtr, joinedAtr,selectAtrValues, charactersWithAtr;
 		int unspecifiedId=0, getAtrint=0;
-		
-		//Preparing statement of a specific attribute
-		String selectAtrValues;
-		
-		//Preparing statement of all characters with the same attribute above 		
-		String charactersWithAtr;
-	
-		//too many phases are taken without finding any connection
-		//if (numOfConnections>4){
-			//return false;
-		//}
-		
 		PreparedStatement atrStmt= null, charAtrStmt = null; 
-		
 		int attributes = tablesArr.length;
 		
-		if (numOfConnections>1){
-			return helperForConnection(null, start_id, end_id, numOfConnections, fill, null, null);
-		}
-			
+		
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
 			currentAtr =tablesArr[atr];
 			if (atr < indexOfJumps) {
 				joinedAtr = tablesArr[atr+1];
-				selectAtrValues = 	"SELECT " + joinedAtr + "_" + currentAtr+ "_id"  + 
-									" FROM " + joinedAtr +"," + currentAtr +
-									" WHERE " +joinedAtr + "_character_id = ? AND " + 
-									joinedAtr + "_" + currentAtr + "_id =" + currentAtr + "_id";
-				
-				
+				selectAtrValues = 	specificAttributeValuesQuery(joinedAtr, currentAtr);
 				atrStmt = conn.prepareStatement(selectAtrValues);
-	
 			
 				try {
 					//getting all the ids of the attributes that the character has
@@ -350,36 +257,24 @@ public class algorithm2 {
 						
 						//taking all characters with the same attribute as our character
 						
-						if (!firstRun) {
-							charactersWithAtr = 	"SELECT "+joinedAtr+"_character_id " +
-													"FROM " + joinedAtr +  
-													" WHERE " + joinedAtr + "_" + currentAtr + "_id = ? AND " +
-													joinedAtr +  "_character_id != ? AND " +
-													joinedAtr +  "_character_id != ?";
-							
-							charAtrStmt =  conn.prepareStatement(charactersWithAtr);
-							getAtrint = atrValRS.getInt(1);
-							charAtrStmt.setInt(1, getAtrint);
+						charactersWithAtr = allCharactersWithTheSameAttributeQuery(joinedAtr + "_character_id" , 
+											joinedAtr, joinedAtr + "_" + currentAtr + "_id",
+											joinedAtr +  "_character_id", firstRun);
+						charAtrStmt =  conn.prepareStatement(charactersWithAtr);
+						getAtrint = atrValRS.getInt(1);
+						charAtrStmt.setInt(1, getAtrint);
+						if (firstRun) {
+							charAtrStmt.setInt(2, end_id);
+						}
+						else {
 							charAtrStmt.setInt(2, prevId);
 							charAtrStmt.setInt(3, start_id);
-							
 						}
 						
-						else {
-							charactersWithAtr = 	"SELECT "+joinedAtr+"_character_id " +
-							"FROM " + joinedAtr +  
-							" WHERE " + joinedAtr + "_" + currentAtr + "_id = ? AND " +
-							joinedAtr +  "_character_id = ?";
-							
-							charAtrStmt =  conn.prepareStatement(charactersWithAtr);
-							getAtrint = atrValRS.getInt(1);
-							charAtrStmt.setInt(1, getAtrint);
-							charAtrStmt.setInt(2, end_id);							
-						}
 						charsWithAtrRS = charAtrStmt.executeQuery();
 					
 						//looking for a connection via the specific attribute
-						resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, numOfConnections, fill, currentAtr, Integer.toString(getAtrint));
+						resultFlag = helperForDirectConnection(charsWithAtrRS, start_id, end_id, theConnection, currentAtr, getAtrint);
 						
 						//found a connection
 						if (resultFlag){
@@ -388,14 +283,13 @@ public class algorithm2 {
 					}
 			
 				//closing all open statements and result sets
-				closeAllOpenResources(atrValRS, charsWithAtrRS, atrStmt, charAtrStmt);
+				algorithmUtils.closeAllOpenResources(atrValRS, charsWithAtrRS, atrStmt, charAtrStmt);
 
 				
 				}catch (SQLException e) {
 					System.out.println("error execute query-" + e.toString());
 				}
 				
-			    //added by tal	
 				if (resultFlag)
 					break; //break of the for
 				
@@ -416,43 +310,24 @@ public class algorithm2 {
 				
 				for (int i=1; i<3;i++){
 					//System.out.println(atr);
-					if (tablesArr[atr].equals(Tables.parent.toString()) && !firstRun) {
-						charactersWithAtr = "SELECT " + currentAtr+ child + 
-						" FROM " + currentAtr +
-						" WHERE " +currentAtr + parent +" = ? AND " + 
-						currentAtr +child + " != ? AND " +
-						currentAtr+ child + " != ?";
+					if (tablesArr[atr].equals(Tables.parent.toString())) {
+						charactersWithAtr = allCharactersWithTheSameAttributeQuery(currentAtr+ child, currentAtr, currentAtr + parent, currentAtr +child, firstRun);
 					}
-					else if (tablesArr[atr].equals(Tables.parent.toString()) && firstRun) {
-						charactersWithAtr = "SELECT " + currentAtr+ child + 
-						" FROM " + currentAtr +
-						" WHERE " +currentAtr + parent +" = ? AND " +
-						currentAtr+ child + " = ?";
+				
+					else {
+						charactersWithAtr = allCharactersWithTheSameAttributeQuery(currentAtr+ first, currentAtr, currentAtr + second, currentAtr+ first, firstRun);
 					}
-					else if (!firstRun){
-						charactersWithAtr = "SELECT " + currentAtr+ first + 
-						" FROM " + currentAtr+
-						" WHERE " +currentAtr + second +" = ? AND " + 
-						currentAtr +first + " != ? AND " + 
-						currentAtr+ first + " != ?";
-					}
-					else{
-						charactersWithAtr = "SELECT " + currentAtr+ first + 
-						" FROM " + currentAtr+
-						" WHERE " +currentAtr + second +" = ? AND " + 
-						currentAtr+ first + " = ?";
-					}
+		
 					charAtrStmt = conn.prepareStatement(charactersWithAtr);
+					charAtrStmt.setInt(1, start_id);
 					
 					try{	
 						//getting all the ids of the attributes that the character has
-						if (!firstRun) {
-							charAtrStmt.setInt(1, start_id);
+						if (!firstRun) {		
 							charAtrStmt.setInt(2, unspecifiedId);
 							charAtrStmt.setInt(3, prevId);
 						}
 						else {
-							charAtrStmt.setInt(1, start_id);
 							charAtrStmt.setInt(2, end_id);
 						}
 						charsWithAtrRS = charAtrStmt.executeQuery();
@@ -461,7 +336,7 @@ public class algorithm2 {
 						if (tablesArr[atr].equals(Tables.parent.toString()) && i==2){
 							currentAtr="child";
 						}
-						resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, numOfConnections, fill, currentAtr, currentAtr);
+						resultFlag = helperForDirectConnection(charsWithAtrRS, start_id, end_id, theConnection, currentAtr, -1);
 						
 					}catch (SQLException e) {
 						System.out.println("error execute query-" + e.toString());
@@ -480,7 +355,7 @@ public class algorithm2 {
 
 				
 				//closing all open statements and result sets
-				closeAllOpenResources(atrValRS, charsWithAtrRS, atrStmt, charAtrStmt);
+				algorithmUtils.closeAllOpenResources(atrValRS, charsWithAtrRS, atrStmt, charAtrStmt);
 				
 				if (resultFlag){
 					break; //end of external for
@@ -489,20 +364,20 @@ public class algorithm2 {
 			}	
 			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
 				int placeOfBirth=0;
+				
+				//TODO change the query builder
+				charactersWithAtr = "SELECT character_id" +
+				" FROM characters" + 
+				" WHERE character_" + currentAtr+ "_id = ? AND " + 
+				"character_" + currentAtr+ "_id != ? AND ";
+				
 				if (!firstRun){
-					charactersWithAtr = "SELECT character_id" +
-					" FROM characters" + 
-					" WHERE character_" + currentAtr+ "_id = ? AND " + 
-					"character_" + currentAtr+ "_id != ? AND " +
+					 charactersWithAtr +=
 					"character_id != ? AND "+ 
 					"character_id != ?";
 				}
 				else {
-					charactersWithAtr = "SELECT character_id" +
-					" FROM characters" + 
-					" WHERE character_" + currentAtr+ "_id = ? AND " + 
-					"character_" + currentAtr+ "_id != ? AND " +
-					"character_id = ?";
+					charactersWithAtr +="character_id = ?";
 				}
 					
 				
@@ -511,9 +386,7 @@ public class algorithm2 {
 					
 					unspecifiedId = unspecifiedIdOfTables.get(currentAtr);
 					
-					selectAtrValues = 	"SELECT character_" + currentAtr+ "_id"  + 
-					" FROM characters" +
-					" WHERE character_id = ?";
+					selectAtrValues = 	"SELECT character_" + currentAtr+ "_id"  + " FROM characters" +" WHERE character_id = ?";
 					
 					atrStmt = conn.prepareStatement(selectAtrValues);
 					atrStmt.setInt(1, start_id);
@@ -526,23 +399,21 @@ public class algorithm2 {
 				}
 				
 				charAtrStmt = conn.prepareStatement(charactersWithAtr);
+				charAtrStmt.setInt(1, placeOfBirth);
+				charAtrStmt.setInt(2, unspecifiedId);
 				if (!firstRun){
-					charAtrStmt.setInt(1, placeOfBirth);
-					charAtrStmt.setInt(2, unspecifiedId);
 					charAtrStmt.setInt(3, prevId);
 					charAtrStmt.setInt(4, start_id);
 				}
 				else{
-					charAtrStmt.setInt(1, placeOfBirth);
-					charAtrStmt.setInt(2, unspecifiedId);
 					charAtrStmt.setInt(3, end_id);
 				}
 				charsWithAtrRS = charAtrStmt.executeQuery();
 				
-				resultFlag = helperForConnection(charsWithAtrRS, start_id, end_id, numOfConnections, fill, currentAtr, Integer.toString(placeOfBirth));
+				resultFlag = helperForDirectConnection(charsWithAtrRS, start_id, end_id, theConnection, currentAtr, placeOfBirth);
 				
 				//closing all open statements and result sets
-				closeAllOpenResources(atrValRS, charsWithAtrRS, atrStmt, charAtrStmt);
+				algorithmUtils.closeAllOpenResources(atrValRS, charsWithAtrRS, atrStmt, charAtrStmt);
 				
 				if (resultFlag){
 					break; //end of external for
@@ -552,204 +423,22 @@ public class algorithm2 {
 
 		}// end of external loop
 		
+		System.out.println(Integer.toString(debugRunCount) + "_" +Long.toString(System.currentTimeMillis()));
 		//cannot find connection in the specific number of connection required
-		if (firstRun && !resultFlag){
-			return connectionFinder(fill, start_id, end_id, prevId, numOfConnections, !firstRun);
-		}
 		
+		if (firstRun && !resultFlag){
+			return DirectConnection(theConnection, start_id, end_id, prevId, !firstRun);
+		}
+		if(firstRun) {
+			foundCharactersIDs.add(start_id);
+		}
 		return resultFlag;
 	
 	}
 	
 	
-	
-	
-	
-	/* 
-	 * merges sequential connections if identical.
-	 * for example - A is connection to B by gender, and B is connected to C by gender --> A is connection to C by gender
-	 */
-	/*
-	private void mergeConnection (String[] connArr){
-		String[] valueArrfirst = new String[3];
-		String[] valueArrSecond = new String[3];
-		for (int i=0; i+1< connArr.length; i++){
-			if (connArr[i] != null && connArr[i+1] != null) {
-				valueArrfirst = connArr[i].split(",");
-				valueArrSecond = connArr[i+1].split(",");
-				if (valueArrfirst[1].equals(valueArrSecond[1]) && valueArrfirst[2].equals(valueArrSecond[2])){
-					if ( valueArrfirst[1].equals(Tables.sibling.toString()) || 
-							valueArrfirst[1].equals(Tables.marriage.toString()) ||
-							valueArrfirst[1].equals(Tables.romantic_involvement.toString()) ||
-							valueArrfirst[1].equals("child") ||
-							valueArrfirst[1].equals("parent")) {
-							continue;
-						}
-					else {
-						connArr[i]="merged";
-					}
-				}
-			}
-			else {
-				break;
-			}
-		}
-	}
-	*/
-	
-	
-	
-	/* 
-	 * gets the character's name by his/her id 
-	 */
-	private String getNameFromId(int id){
-		Statement stmt;
-		String Name = null;
-		try {
-			stmt = conn.createStatement();
-
-		ResultSet rs = stmt.executeQuery("SELECT character_name FROM characters WHERE character_id=" +id +"");
-		rs.first();
-		Name = rs.getString("character_name");
-		rs.close(); 
-		stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return Name;
 		
-	}
-	
-	
-	
-	
-	/* 
-	 * used to print the connection chain, in case needed
-	 */
-	
-	private String getAttributeNameFromID(String table, int id){
-		Statement stmt;
-		String Name = null;
-		try {
-			stmt = conn.createStatement();
-
-		ResultSet rs = stmt.executeQuery("SELECT " +table+"_name FROM " + table+ " WHERE " + table+"_id=" + id);
-		rs.first();
-		Name = rs.getString(1);
-		rs.close(); 
-		stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return Name;
-	}
-	
-	private void getNameAndPrintConnections(String connArr, String splitBy) throws SQLException{
 		
-		String startName="", endName="";
-		String[] valueArr = new String[4];
-		String toPrint;
-	
-		
-		String connections[] = connArr.split(splitBy);
-		for (int i=0; i<connections.length; i++){
-			if (connections[i] != ""){ 
-				valueArr = connections[i].split(",");
-				startName =getNameFromId(Integer.parseInt(valueArr[0]));
-				endName = getNameFromId(Integer.parseInt(valueArr[1]));
-				if (// valueArr[2].equals(Tables.sibling.toString()) || 
-					// valueArr[2].equals(Tables.marriage.toString()) ||
-					 valueArr[2].equals(Tables.romantic_involvement.toString()) ) {
-						toPrint = startName + " has a " + valueArr[2] + " relationship with " + endName;
-				}
-				else if ( valueArr[2].equals("child")) {
-						toPrint = startName + " is " + endName +"'s child";
-				}
-				else if (valueArr[2].equals("parent")) {
-						toPrint = startName + " is " + endName +"'s parent";
-				}
-				else {
-					int temp = Integer.parseInt(valueArr[3]);
-					//System.out.println(temp);
-					String atrName = getAttributeNameFromID(valueArr[2], temp);
-					toPrint = startName + " has the same "+ valueArr[2] + " as " + endName + " - " + atrName;
-				}
-				
-				System.out.println(toPrint);
-			}
-			}
-	}
-
-	
-	private String getCurrentDate() {
-		
-		Calendar currentDate = Calendar.getInstance();
-		SimpleDateFormat formatter= new SimpleDateFormat("yyyy/MM/dd");
-		String dateNow = formatter.format(currentDate.getTime());
-		String [] d = dateNow.split("/");
-		String s = d[0]+"."+d[1]+"."+d[2];
-		return s;
-	}
-	
-	/* 
-	 * this function presents the 5 popular 
-	 */
-	public void topSerches () {
-		 
-		 Statement stmt;
-		 ResultSet rs;
-		 
-		 try {
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM history ORDER BY count DESC LIMIT 5");
-			while (rs.next()) {
-				String startName = getNameFromId(rs.getInt(1));
-				String endName = getNameFromId(rs.getInt(2));
-				System.out.println("this is a connection between " + startName + " and " + endName);
-				System.out.println("this connection was found in " + rs.getDate(3));
-				getNameAndPrintConnections(rs.getString(4),"\t");
-				System.out.println();
-			}
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 
-		 
-	 }
-	
-	
-	private int getUnspecifiedId(String table) {
-		 
-		 Statement stmt;
-		 ResultSet rs;
-		 int unspecifiedID = 0;
-		 String field = "";
-		 if (table.equals(Tables.characters.toString())){
-			 field = "character";
-		 }
-		 else {
-			 field = table;
-		 }
-		 
-		 try {
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
-			rs.first();
-			unspecifiedID= rs.getInt(1);
-			if (stmt != null) stmt.close();
-			if (rs != null) rs.close();
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return unspecifiedID;
-		 
-		 
-	 }
 	
 	/*
 	 * Searching for the connection in the history table. 
@@ -786,7 +475,7 @@ public class algorithm2 {
 			int id1 = rs.getInt(1);
 			int id2 = rs.getInt(2);
 			System.out.println("this connection was found in " + rs.getDate(3));
-			String con = rs.getString(4);
+			String getConnectionOfCharacters = rs.getString(4);
 			System.out.println("Match found between "+ start_name +" and "+ end_name);
 			stmt.executeUpdate("UPDATE history SET count = " + count + " WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
 			 
@@ -794,7 +483,7 @@ public class algorithm2 {
 				start_name = end_name;
 			}
 			try {
-				getNameAndPrintConnections(con, "\t");
+				algorithmUtils.getNameAndPrintConnections(getConnectionOfCharacters, conn);
 
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -817,63 +506,6 @@ public class algorithm2 {
 	 * this function add to history table the connection that found and all 
 	 * the sub connections that derived from it
 	 */
-	
-private void insertIntoHistory (String connections, int start_id, int end_id) {
-		
-		Statement stmt = null;
-		String toQuery;
-		String date;
-		String[] connectionsSplit = connections.split("&");
-		String[] values;
-		String[] arr;
-		int length = connectionsSplit.length;
-		int first, second;
-		
-		try {
-			stmt = conn.createStatement();
-			date = getCurrentDate();
-			String information = "";
-			//int previousCharacter = start_id;
-			
-			for (int i=0; i<length; i++) {
-				arr = connectionsSplit[i].split(","); 
-				first = Integer.parseInt(arr[0]);
-				
-				for (int j=i; j<length; j++) {
-					values = connectionsSplit[j].split(","); 
-					second = Integer.parseInt(values[1]);
-					information = "";
-					for (int k=i; k<j; k++) { 
-						if (connectionsSplit[k]!=null){
-							if (connectionsSplit[k+1]!=null){
-								information += connectionsSplit[k]+ "\t";
-							}
-							else {
-								information += connectionsSplit[k];
-								break;
-							}
-						}
-						else
-							break;
-					}
-				
-					if (connectionsSplit[j]!= null){
-						information += connectionsSplit[j];
-					}
-					toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
-					//previousCharacter = connectorCharacter;
-					stmt.executeUpdate(toQuery);
-				}
-				 
-			}
-			
-			
-			if (stmt != null) stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	/*
 	 * clears all hashmaps
@@ -883,11 +515,38 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 		currentPhase.clear();
 		previousPhase.clear();
 		recursivePhase.clear();
+		foundCharactersIDs.clear();
 	}
+	
+
+
+	private boolean findDirectConnection(ConnectionElement[] theConnection,int start_id,int end_id,int prevID, boolean firstRun) throws SQLException{
+		return DirectConnection(theConnection, start_id, end_id, prevID, firstRun);
+	}
+	
+	
+	
+	private boolean findRecursiveConnection(ConnectionElement[] theConnection,int start_id,int end_id,int prevID, boolean firstRun) throws SQLException{
+		return helperForRecursiveConnection(start_id, end_id, theConnection);
+		
+	}
+	
+	private boolean findAnyConnection(ConnectionElement[] theConnection,int start_id,int end_id,int prevID,int numOfConnection, boolean firstRun) throws SQLException{
+		if (numOfConnection>1){
+			return findRecursiveConnection(theConnection, start_id, end_id, 0, true);
+		}
+		else {
+			return findDirectConnection(theConnection, start_id, end_id, 0, true);
+		}
+	}
+
+	
+	
 	
 	/*
 	 * main function for looking a connection between two characters
 	 */
+	
 	public boolean lookForConnection(int start_id, int end_id) throws SQLException {
 
 		if (start_id == end_id){
@@ -897,10 +556,8 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 
 		boolean alreadyExists = false;
 		
-		String[] connections = new String[1];
-		
-		String start_name=getNameFromId(start_id);
-		String end_name=getNameFromId(end_id);
+		String start_name=algorithmUtils.getNameFromId(start_id,conn);
+		String end_name=algorithmUtils.getNameFromId(end_id,conn);
 		
 		// checks if the connection between these 2 characters already in history table
 		alreadyExists = lookForConnectionInHistory(start_name, end_name, start_id, end_id);
@@ -910,18 +567,19 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 			return true;
 		}
 
-		
 		//couldn't find the connection in the history table, executing a search
 		
 		boolean matchFound = false;
+		ConnectionElement[] theConnection = new ConnectionElement[1];
 		
 		for (int num = 1; num<4; num++) {
 			globalNumOfConnections = num;
-			matchFound = connectionFinder(connections, start_id, end_id, 0, num, true);
+			matchFound = findAnyConnection(theConnection, start_id, end_id, 0, num, true);
 			if (matchFound) {
 				System.out.println("Match found between "+ start_name +" and "+ end_name);
-				insertIntoHistory(connections[0], start_id, end_id);
-				getNameAndPrintConnections(connections[0], "&");
+				String connectionString = algorithmUtils.getNameAndPrintConnections(theConnection[0],conn);
+				algorithmUtils.insertIntoHistory(connectionString, start_id, end_id,conn);
+
 				return true;
 			}
 			else {
@@ -949,7 +607,7 @@ private void insertIntoHistory (String connections, int start_id, int end_id) {
 	//a.fillTables();
 	//	System.out.println("finished");
 
-	a.lookForConnection (15,98);
+	a.lookForConnection (263,70);
 		//a.topSerches();
 	
 
