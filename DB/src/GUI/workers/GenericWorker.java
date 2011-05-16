@@ -101,10 +101,10 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				addCharCard.refreshFromModel();
 				break;
 			case IntegrityConstraintViolationException:
-				GuiHandler.ShowResultIntegrityDialog();
+				GuiHandler.showResultIntegrityDialog();
 				break;
 			case Exception:
-				GuiHandler.ShowResultExceptionDialog(action);
+				GuiHandler.showResultExceptionDialog(action);
 				break;
 			case Success_Add_Character_Attribute:
 				charModel = (CharacterModel)result.getModel();

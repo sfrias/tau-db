@@ -40,14 +40,7 @@ public class GuiUtils {
 		
 	}
 
-    public static JButton createIconButton(String icon) {
-        JButton button = new JButton(readImageIcon(icon));
-        button.setFocusPainted(true);
-        button.setBorderPainted(true);
-        button.setContentAreaFilled(true);
-        return button;
-    }
-    
+      
     public static JButton createQuitButton(){
 		JButton button = GuiUtils.createActionButton("Quit","doorClosed.png",GuiUtils.defaultQuitActionListener());
 		button.addMouseListener(defaultQuitMouseListener(button));
@@ -97,35 +90,15 @@ public class GuiUtils {
 	private static MouseListener defaultQuitMouseListener(JButton buttonQuit){
 		final JButton button = buttonQuit;
 		return new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
+			public void mouseClicked(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {}
+			
 			public void mouseEntered(MouseEvent e) {
 				button.setIcon(GuiUtils.readImageIcon("doorOpen.png"));
-
 			}
-
-			@Override
 			public void mouseExited(MouseEvent e) {
 				button.setIcon(GuiUtils.readImageIcon("doorClosed.png"));
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 		};
 	}

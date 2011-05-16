@@ -11,12 +11,14 @@ import GUI.commons.GuiUtils;
 import GUI.frames.ManageFrame;
 import GUI.frames.PlayFrame;
 import GUI.frames.WelcomeScreenFrame;
+import GUI.panels.CustomGlassPane;
 import GUI.panels.General.BlinkingStatusPanel;
 
 
 public class GuiHandler {
 
-	private static BlinkingStatusPanel panelStatus = new BlinkingStatusPanel();   
+	private static BlinkingStatusPanel panelStatus = new BlinkingStatusPanel();  
+	//private static CustomGlassPane glassPane = new CustomGlassPane();
 	private static JFrame loadedFrame = null;
 
 	private static void installLookAndFeel() {
@@ -35,6 +37,10 @@ public class GuiHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static CustomGlassPane getGlassPane(){
+		return glassPane;
 	}
 
 	public static void main(String[] args) {
@@ -72,6 +78,7 @@ public class GuiHandler {
 
 	public static void startStatusFlash(){
 		panelStatus.flash();
+	//	glassPane.setVisible(true);
 	}
 
 	public static void stopStatusFlash(){
@@ -99,34 +106,49 @@ public class GuiHandler {
 		String msg = "The " + action + " completed successfully";
 		String title = "Success";
 		ImageIcon icon = GuiUtils.readImageIcon("thumbUp.png");
-		ShowResultDialog(msg, title, icon);    		
+		showResultDialog(msg, title, icon);    		
 	}
 
 	//only during delete
-	public static void ShowResultIntegrityDialog(){
+	public static void showResultIntegrityDialog(){
 		String msg = "This value is in use by some characters";
 		String title = "Integrity Error";
 		ImageIcon icon = GuiUtils.readImageIcon("thumbDown.png");
-		ShowResultDialog(msg, title, icon);
+		showResultDialog(msg, title, icon);
 	}
 
-	public static void ShowResultExceptionDialog(String action){
+	public static void showResultExceptionDialog(String action){
 		String msg = "An error occoured during " + action + " process";
 		String title = "error";
 		ImageIcon icon = GuiUtils.readImageIcon("thumbDown.png");
-		ShowResultDialog(msg, title, icon);
+		showResultDialog(msg, title, icon);
+	}
+	
+	public static void showCancelOperationDialog(){
+		String msg = "Update operation aborted";
+		String title = "Cancel";
+		ImageIcon icon = GuiUtils.readImageIcon("thumbDown.png");
+		showResultDialog(msg, title, icon);
 	}
 
-	private static void ShowResultDialog(String msg, String title, ImageIcon icon){
+	public static void showUpdateCompleteDialog(){
+		String msg = "Update completed Successfuly";
+		String title = "done";
+		ImageIcon icon = GuiUtils.readImageIcon("thumbUp.png");
+		showResultDialog(msg, title, icon);
+	}
+
+	private static void showResultDialog(String msg, String title, ImageIcon icon){
 		JOptionPane.showMessageDialog(loadedFrame, msg, title, JOptionPane.OK_OPTION, icon);       	    		
 	}
+	
 
 	private static void quit() {
 		loadedFrame.dispose();
 		System.exit(0);
 	}
 
-	public static void ShowErrorGetRecords(){
+	public static void showErrorGetRecords(){
 		String msg = "could not retrieve records";
 		String title = "error";
 		ImageIcon icon = GuiUtils.readImageIcon("thumbDown.png");
