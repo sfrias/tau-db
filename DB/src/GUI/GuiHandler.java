@@ -11,7 +11,6 @@ import GUI.commons.GuiUtils;
 import GUI.frames.ManageFrame;
 import GUI.frames.PlayFrame;
 import GUI.frames.WelcomeScreenFrame;
-import GUI.panels.CustomGlassPane;
 import GUI.panels.General.BlinkingStatusPanel;
 
 
@@ -39,9 +38,9 @@ public class GuiHandler {
 		}
 	}
 	
-	public static CustomGlassPane getGlassPane(){
+/*	public static CustomGlassPane getGlassPane(){
 		return glassPane;
-	}
+	}*/
 
 	public static void main(String[] args) {
 		installLookAndFeel();
