@@ -7,6 +7,7 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 
 import Enums.Tables;
@@ -26,7 +27,7 @@ public class AddCharacters extends AddCard {
 	private AddCharacters me = this;
 	private CharacterModel model;
 	private DisplayList[] allValuesIndex = new DisplayList[Tables.getMaxIndex()+1];
-	                                                                   	
+
 	private DisplayList creator;
 	private DisplayList creatorValues;
 	private DisplayList disease;
@@ -51,7 +52,7 @@ public class AddCharacters extends AddCard {
 	private DisplayList speciesValues;
 	private DisplayList universe;
 	private DisplayList universeValues;
-	
+
 	Vector<String> titles = new Vector<String>();
 	Vector<JComponent> components = new Vector<JComponent>();
 	Vector<JComponent> extraAddPanels = new Vector<JComponent>();
@@ -63,49 +64,57 @@ public class AddCharacters extends AddCard {
 		createListIndex();
 
 		addFields(titles, components);
-		
+
 	}
-	
+
+	public void setModel(CharacterModel model){
+		this.model = model;
+	}
+
+	public CharacterModel getModel(){
+		return model;
+	}
+
 	private void populateLists(){
 		GetCharacterRecordsWorker worker = new GetCharacterRecordsWorker(this);
 		GuiHandler.startStatusFlash();
 		worker.execute();
 	}
-	
+
 	private void populateVectors(){
 		DisplayList [] lists;
 		lists = addEntries(Tables.creator);
 		creatorValues = lists[0];
 		creator = lists[1];
-		
+
 		lists = addEntries(Tables.disease);
 		diseaseValues = lists[0];
 		disease = lists[1];
-		
+
 		lists = addEntries(Tables.ethnicity);
 		ethnicityValues = lists[0];
 		ethnicity = lists[1];
-		
+
 		lists = addEntries(Tables.gender);
 		genderValues = lists[0];
 		gender = lists[1];
-		
+
 		lists = addEntries(Tables.job);
 		jobValues = lists[0];
 		job = lists[1];
-		
+
 		lists = addEntries(Tables.occupation);
 		occupationValues = lists[0];
 		occupation = lists[1];
-		
+
 		lists = addEntries(Tables.organization);
 		organizationValues = lists[0];
 		organization = lists[1];
-		
+
 		lists = addEntries(Tables.power);
 		powerValues = lists[0];
 		power = lists[1];
-		
+
 		lists = addEntries(Tables.rank);
 		rankValues = lists[0];
 		rank = lists[1];
@@ -113,86 +122,94 @@ public class AddCharacters extends AddCard {
 		lists = addEntries(Tables.school);
 		schoolValues = lists[0];
 		school = lists[1];
-		
+
 		lists = addEntries(Tables.species);
 		speciesValues = lists[0];
 		species = lists[1];	
-		
+
 		lists = addEntries(Tables.universe);
 		universeValues = lists[0];
 		universe = lists[1];
 	}
-	
+
 	private DisplayList[] addEntries(final Tables table){
-		
+
 		titles.add(table.toString().toLowerCase());
 
 		CharacterAttributePanel panel = new CharacterAttributePanel(table, this);
-		
+
 		components.add(panel);
 
 		DisplayList allValuesList = panel.getAllValues();
 		DisplayList selectedValuesList = panel.getSelectedValues();
-		
+
 		DisplayList[] lists = new DisplayList[]{allValuesList,selectedValuesList};
 		return lists;
 
 	}
-	
-/*	private Pair[][] getValues() {
+
+	private Pair[][] getValues() {
+
+		Pair[][] values = new Pair[13][];
+
+		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
+		values[1] = getPairs(creator);
+		values[2] = getPairs(disease);
+		values[3] = getPairs(ethnicity);ethnicity.getSelectedValues();
+		values[4] = getPairs(gender);gender.getSelectedValues();
+		values[5] = getPairs(job);
+		values[6] = getPairs(occupation);
+		values[7] = getPairs(organization);
+		values[8] = getPairs(power);
+		values[9] = getPairs(rank);
+		values[10] = getPairs(school);
+		values[11] = getPairs(species);
+		values[12] = getPairs(universe);
+		return values;
+	}
+
+	private Pair[] getPairs(DisplayList list){
 		
-		Pair[][] values = new Pair[14][];
+		ListModel model = list.getModel();
 		
-		values[0] = new Pair[1];
-		values[1] = (Pair []) creatorValues.getSelectedValue();
-		values[2] = (Pair []) diseaseValues.getSelectedValue();
-		values[3] = (Pair[]) ethnicityValues.getSelectedValue();
-		values[4] = (Pair[]) genderValues.getSelectedValue();
-		values[5] = (Pair[]) jobValues.getSelectedValue();
-		values[7] = (Pair[]) occupationValues.getSelectedValue();
-		values[8] = (Pair[]) organizationValues.getSelectedValue();
-		values[9] = (Pair[]) powerValues.getSelectedValue();
-		values[10] = (Pair[]) rankValues.getSelectedValue();
-		values[11] = (Pair[]) schoolValues.getSelectedValue();
-		values[12] = (Pair[]) speciesValues.getSelectedValue();
-		values[13] = (Pair[]) universeValues.getSelectedValue();
+		Pair[] values = new Pair[model.getSize()];
+		for (int i=0; i < model.getSize(); i++) {
+			values[i] = (Pair) model.getElementAt(i);
+		}
 		
 		return values;
 	}
-	
-	private String[] getFields() {
-		
-		String[] values = new String[14];
-		
-		values[0] = "character_name";
-		values[1] = ((Pair) creator.getSelectedItem()).getName();
-		values[2] = ((Pair) disease.getSelectedItem()).getName();
-		values[3] = ((Pair) ethnicity.getSelectedItem()).getName();
-		values[4] = ((Pair) gender.getSelectedItem()).getName();
-		values[5] = ((Pair) job.getSelectedItem()).getName();
-		values[6] = ((Pair) location.getSelectedItem()).getName();
-		values[7] = ((Pair) occupation.getSelectedItem()).getName();
-		values[8] = ((Pair) organization.getSelectedItem()).getName();
-		values[9] = ((Pair) power.getSelectedItem()).getName();
-		values[10] = ((Pair) rank.getSelectedItem()).getName();
-		values[11] = ((Pair) school.getSelectedItem()).getName();
-		values[12] = ((Pair) species.getSelectedItem()).getName();
-		values[13] = ((Pair) universe.getSelectedItem()).getName();
-		
-		return values;
 
-	}*/
-	
+	private String[] getTablesNames() {
+
+		String [] values = new String[13];
+		values[0] = "characters";
+		values[1] = Tables.creator.name();
+		values[2] = Tables.disease.name();
+		values[3] = Tables.ethnicity.name();
+		values[4] = Tables.gender.name();
+		values[5] = Tables.job.name();
+		values[6] = Tables.occupation.name();
+		values[7] = Tables.organization.name();
+		values[8] = Tables.power.name();
+		values[9] = Tables.rank.name();
+		values[10] = Tables.school.name();
+		values[11] = Tables.species.name();
+		values[12] = Tables.universe.name();
+
+		return values;
+	}
+
 	public ActionListener createActionButtonListener() {
 		return new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						
-						String fieldNames = table.toString()+"_name";
-						String values = "";
-						AddCharacterWorker worker = new AddCharacterWorker(table, fieldNames, values,me);
+
+						String[] tables = getTablesNames();
+						Pair[][] values = getValues();
+						AddCharacterWorker worker = new AddCharacterWorker(tables, values, me);
 						GuiHandler.startStatusFlash();
 						worker.execute();
 					}
@@ -206,15 +223,15 @@ public class AddCharacters extends AddCard {
 		for (int i=0; i<allValuesIndex.length; i++){
 			if (model.isAtrributeModified(i)){
 				populateList(allValuesIndex[i], model.getAttributePairs(i));
-				// TODO listIndex[i].setSelectedIndex(listIndex[i].);
+				//model.resetAttributeCell(i);
 			}
 		}
-		
+
 		if (GuiHandler.isStatusFlashing()){
 			GuiHandler.stopStatusFlash();
 		}
 	}
-	
+
 	private void populateList(DisplayList list, Pair[] records){
 		DefaultListModel model = new DefaultListModel();
 		for (int i=0; i<records.length; i++){
@@ -222,15 +239,7 @@ public class AddCharacters extends AddCard {
 		}
 		list.setModel(model);
 	}
-	
-	public void setModel(CharacterModel model){
-		this.model = model;
-	}
-	
-	public CharacterModel getModel(){
-		return model;
-	}
-	
+
 	private void createListIndex(){
 		allValuesIndex[Tables.creator.getIndex()] = creatorValues;
 		allValuesIndex[Tables.disease.getIndex()] = diseaseValues;
@@ -245,5 +254,5 @@ public class AddCharacters extends AddCard {
 		allValuesIndex[Tables.species.getIndex()] = speciesValues;
 		allValuesIndex[Tables.universe.getIndex()] = universeValues;
 	}
-	
+
 }

@@ -107,7 +107,10 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				GuiHandler.ShowResultExceptionDialog(action);
 				break;
 			case Success_Add_Character_Attribute:
-				//TODO HILA!!
+				charModel = (CharacterModel)result.getModel();
+				addCharCard.setModel(charModel);
+				addCharCard.refreshFromModel();
+				GuiHandler.showResultSuccessDialog(action);
 				break;
 
 			}		

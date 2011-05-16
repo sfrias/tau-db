@@ -3,7 +3,6 @@ package GUI.panels.Manage.Tabs;
 import javax.swing.JPanel;
 
 import Enums.Tables;
-import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.delete.DeleteCreator;
 import GUI.panels.Manage.cards.delete.DeleteDisease;
 import GUI.panels.Manage.cards.delete.DeleteEthnicity;
@@ -27,7 +26,7 @@ public class DeleteTab extends GenericTab{
 	@Override
 	public JPanel addCards(JPanel cards){
 		
-		cards.add(new DeleteCharacters(), Tables.characters.toString().toUpperCase());
+		//cards.add(new DeleteCharacters(), Tables.characters.toString().toUpperCase());
 		cards.add(new DeleteCreator(), Tables.creator.toString().toUpperCase());
 		cards.add(new DeleteDisease(), Tables.disease.toString().toUpperCase());
 		cards.add(new DeleteEthnicity(), Tables.ethnicity.toString().toUpperCase());
