@@ -44,10 +44,9 @@ public class CharacterAttributePanel extends JPanel{
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
 								button.setIcon(GuiUtils.readImageIcon("addIcon.png", 15, 15));
-								String fieldName = table.toString()+"_name";
 								String value = addField.getText();
 								if (value.compareTo("")!=0){
-									AddCharacterAttributeWorker worker = new AddCharacterAttributeWorker(table, fieldName, value, addCharactersCard);
+									AddCharacterAttributeWorker worker = new AddCharacterAttributeWorker(table, value, addCharactersCard);
 									GuiHandler.startStatusFlash();								
 									worker.execute();
 								}
@@ -77,8 +76,8 @@ public class CharacterAttributePanel extends JPanel{
 			allValues = new DisplayList();
 			CustomScrollPanel allValuesScrollPane = new CustomScrollPanel(allValues, 200, 80);
 
-			final JButton addValueToListButton = new JButton(GuiUtils.readImageIcon("blueArrowLeft.png", 15, 15));
-			addValueToListButton.addActionListener(new ActionListener() {
+			final JButton removeValueFromListButton = new JButton(GuiUtils.readImageIcon("blueArrowLeft.png", 15, 15));
+			removeValueFromListButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					Object[] values = selectedValues.getSelectedValues();
 					DefaultListModel model = (DefaultListModel) selectedValues.getModel();
@@ -91,11 +90,11 @@ public class CharacterAttributePanel extends JPanel{
 				}
 			});
 
-			final JButton removeValueFromListButton = new JButton(GuiUtils.readImageIcon("blueArrowRight.png", 15, 15));
-			removeValueFromListButton.addActionListener(new ActionListener() {
+			final JButton addValueToListButton = new JButton(GuiUtils.readImageIcon("blueArrowRight.png", 15, 15));
+			addValueToListButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					Object[] values = allValues.getSelectedValues();
-					DefaultListModel model = new DefaultListModel();
+					DefaultListModel model = (DefaultListModel) selectedValues.getModel();
 					for (int i=0; i<values.length; i++){
 						model.addElement(values[i]);
 					}
@@ -106,10 +105,12 @@ public class CharacterAttributePanel extends JPanel{
 
 			JPanel panelAddRemoveValuesButtons = new JPanel();
 			panelAddRemoveValuesButtons.setLayout(new BoxLayout(panelAddRemoveValuesButtons, BoxLayout.PAGE_AXIS));
-			panelAddRemoveValuesButtons.add(removeValueFromListButton);
 			panelAddRemoveValuesButtons.add(addValueToListButton);
+			panelAddRemoveValuesButtons.add(removeValueFromListButton);
 
 			selectedValues = new DisplayList();
+			DefaultListModel model = new DefaultListModel();
+			selectedValues.setModel(model);
 			CustomScrollPanel selectedValuesScrollPane = new CustomScrollPanel(selectedValues, 200, 80);
 
 			JPanel panelCenter = new JPanel();

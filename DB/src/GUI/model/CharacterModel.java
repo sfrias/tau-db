@@ -28,5 +28,9 @@ public class CharacterModel {
 	public boolean isAtrributeModified(int i){
 		return attArr[i] != null;
 	}
+	
+	public void resetAttributeCell(int i){
+		attArr[i] = null;
+	}
 
 }

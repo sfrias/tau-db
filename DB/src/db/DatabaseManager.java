@@ -26,7 +26,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 public class DatabaseManager {
 
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "123";
+	private final static String PASSWORD = "mapo00";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
@@ -177,7 +177,7 @@ public class DatabaseManager {
 			return null;
 		}
 	}
-	
+
 	public Pair[] executeLimetedQueryAndGetValues(Tables table, int interestingCol, String queryName) {
 
 		String tableName = table.toString();
@@ -186,11 +186,11 @@ public class DatabaseManager {
 			String statementString;
 			if (table.equals(Tables.characters)){
 				statementString = "SELECT * FROM characters " +
-						"WHERE character_name REGEXP '^" + queryName + "' ORDER BY character_name ASC LIMIT 5000";
+				"WHERE character_name REGEXP '^" + queryName + "' ORDER BY character_name ASC LIMIT 5000";
 			}
 			else{
 				statementString = "SELECT * FROM " + tableName + " WHERE " + tableName + "_name REGEXP '^" +
-						queryName + "' ORDER BY " + tableName + "_name ASC LIMIT 5000";
+				queryName + "' ORDER BY " + tableName + "_name ASC LIMIT 5000";
 			}
 			Statement stmt = conn.createStatement();
 			ResultSet resultSet = stmt.executeQuery(statementString);
@@ -271,7 +271,7 @@ public class DatabaseManager {
 
 		String tableName = table.toString();
 		try {
-			
+
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			Statement stmt1 = conn.createStatement();
 			ResultSet resultSet = stmt1.executeQuery("SELECT " + tableName+"_id FROM " + tableName + " WHERE " + tableName+ "_name LIKE \'" + value + "\'");
@@ -298,6 +298,63 @@ public class DatabaseManager {
 			System.err.println("An SQLException was thrown at executeUpdate("+ tableName + ")");
 			return ExecutionResult.Exception;
 		}
+	}
+
+	public ExecutionResult executeInsertCharacter(String[] tables, Pair[][] values) {
+
+		JDCConnection conn = null;
+		Statement stmt = null;		
+		Statement stmt2 = null;
+		try {
+			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn.setAutoCommit(false);
+			stmt = conn.createStatement();
+			Pair pair = values[0][0];
+			stmt.execute("INSERT IGNORE INTO characters (character_name) values (\'"+pair.getName()+"\')", Statement.RETURN_GENERATED_KEYS);
+			ResultSet generatedKey = stmt.getGeneratedKeys();
+			int key = 0;
+			while(generatedKey.next()){
+				key = generatedKey.getInt(1);
+			}
+			generatedKey.close();
+			stmt2 = conn.createStatement();
+			for (int i=1; i < tables.length; i++){
+
+				for (int j=0; j < values[i].length; j++){
+					String tableName = "characters_and_"+tables[i];
+					Pair currentPair = values[i][j];
+					int currentAttrId = currentPair.getId();
+					stmt2.addBatch("INSERT IGNORE INTO " + tableName + " values(" + key + ", " + currentAttrId + ")");				}
+			}
+			stmt2.executeBatch();
+			
+			conn.commit();
+
+			return ExecutionResult.Success_Add_Character;
+		}
+		catch (SQLException e ) {
+			try {
+				conn.rollback();
+			} 
+			catch(SQLException excep) {
+			}
+			return ExecutionResult.Exception;
+		}
+		finally {
+			try {
+				
+				if (stmt != null) { 
+					stmt.close(); 
+				}
+				if (stmt2 != null) { 
+					stmt2.close(); 
+				}
+				conn.setAutoCommit(true);
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}	
 	}
 
 
@@ -330,9 +387,9 @@ public class DatabaseManager {
 	}
 
 	public ExecutionResult executeDelete(Tables table, int id) {
-		
+
 		String tableName = table.toString();
-		
+
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			Statement stmt = conn.createStatement();
