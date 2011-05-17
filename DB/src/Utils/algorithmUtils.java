@@ -340,7 +340,7 @@ public class algorithmUtils {
 						if (connectionsSplit[j]!= null){
 							information += connectionsSplit[j];
 						}
-						toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
+						toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information, num_of_connections) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
 						//previousCharacter = connectorCharacter;
 						stmt.executeUpdate(toQuery);
 					}
@@ -355,6 +355,145 @@ public class algorithmUtils {
 			}
 		}
 	
+	
+public static void insertIntoFailedSearchesTable (int start_id, int end_id, JDCConnection conn) {
+		
+		Statement stmt = null;
+		String toQuery;
+		String date;
+		
+		try {
+			stmt = conn.createStatement();
+			date = getCurrentDate();
+			
+			toQuery = "INSERT IGNORE INTO failed_searches (character_id1, character_id2, date) values (" + start_id + "," + end_id + ",'" + date + "');";
+			stmt.executeUpdate(toQuery);
+			
+			if (stmt != null) stmt.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+public static void insertIntoStatisticTable (int start_id, int end_id, JDCConnection conn, int num) {
+	
+	Statement stmt = null;
+	String toQuery;
+	
+	try {
+		stmt = conn.createStatement();
+		
+		toQuery = "INSERT IGNORE INTO statistic (character_id1, character_id2, num) values (" + start_id + "," + end_id + "," + num + ");";
+		stmt.executeUpdate(toQuery);
+		
+		if (stmt != null) stmt.close();
+		
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+}
+
+/*
+ * Searching for the couple in the failed_searches table. 
+ */
+public boolean lookForConnectionInFailedSearchesTable (String start_name, String end_name, int start_id, int end_id, JDCConnection conn) throws SQLException{
+	
+	Statement stmt = null;
+	ResultSet rs = null;
+	boolean result = false;
+	
+	// checks if the couple is in failed_searches table
+	try {
+		stmt = conn.createStatement();
+	} catch (SQLException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+	rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
+	if (rs.next()) {
+		result = true;	
+	}
+	else {
+		rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
+		if (rs.next()){
+			result = true;
+		}
+	}
+	
+	if (result) { //found the couple in the failed_searches table
+		System.out.println("couldn't find a connection between "+ start_name +" and "+ end_name);
+	}
+	
+	if (stmt!=null) stmt.close();
+	if (rs!=null) rs.close();
+	
+	return result;
+}
+	
+
+/*
+ * Searching for the connection in the history table. 
+ * If exists - prints the connection to console.
+ */
+public boolean lookForConnectionInHistory(String start_name, String end_name, int start_id, int end_id, JDCConnection conn) throws SQLException{
+	Statement stmt = null;
+	ResultSet rs = null;
+	boolean result = false, opposite = false;
+	int count;
+	
+	// checks if the connection between these 2 characters already in history table
+	try {
+		stmt = conn.createStatement();
+	} catch (SQLException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+	rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
+	if (rs.next()) {
+		result = true;	
+	}
+	else {
+		rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
+		if (rs.next()){
+			result = true;
+			opposite = true;
+		}
+	}
+	
+	if (result) { //found the connection in the history table
+		count = rs.getInt("count");
+		count++;
+		int id1 = rs.getInt(1);
+		int id2 = rs.getInt(2);
+		System.out.println("this connection was found in " + rs.getDate(3));
+		String getConnectionOfCharacters = rs.getString(4);
+		System.out.println("Match found between "+ start_name +" and "+ end_name);
+		stmt.executeUpdate("UPDATE history SET count = " + count + " WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
+		 
+		if (opposite) {
+			start_name = end_name;
+		}
+		try {
+			algorithmUtils.getNameAndPrintConnections(getConnectionOfCharacters, conn);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	if (stmt!=null) stmt.close();
+	if (rs!=null) rs.close();
+	
+
+	return result;
+
+}
 
 /*	public static void closeQueryResurces(ResultSet rs, Statement st) throws SQLException{
 		if (rs != null) rs.close();
