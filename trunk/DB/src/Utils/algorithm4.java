@@ -175,11 +175,11 @@ public class algorithm4{
 		int currentAtrVal = -2;
 		Statement atrStmt=null, charWithAtrStmt=null;
 		
-		/*-should never happen - check is redundant-*/
+		/*-should never happen - check is redundant-
 		if (start_element.hasConnections){ //already found connections of this character
 			skips++;
 			return true;
-		}
+		}*/
 		
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
@@ -200,10 +200,17 @@ public class algorithm4{
 					
 					charToAny = algorithmUtils.queryToAny(charWithAtrStmt,charactersWithAtr,conn); 
 					helperForDirectConnectionToAny(charToAny, start_element, currentAtr, currentAtrVal);
-					algorithmUtils.closeQueryResurces(null, charWithAtrStmt);
+					//algorithmUtils.closeQueryResurces(null, charWithAtrStmt);
+					if (charWithAtrStmt != null) charWithAtrStmt.close();
+					charWithAtrStmt = null;
 					
 				}//end of while loop
-				algorithmUtils.closeQueryResurces(atrValRS, atrStmt);
+				//algorithmUtils.closeQueryResurces(atrValRS, atrStmt);
+				if (atrValRS != null) atrValRS.close();
+				if (atrStmt != null) atrStmt.close();
+				atrStmt = null;
+				atrValRS = null;
+				
 				atr=atr+1;
 			} 
 			
@@ -228,7 +235,7 @@ public class algorithm4{
 
 				charToAny = algorithmUtils.queryToAny(charWithAtrStmt,charactersWithAtr, conn); 
 				helperForDirectConnectionToAnyInRealtions(charToAny, start_element, currentAtr);
-				algorithmUtils.closeQueryResurces(charToAny, charWithAtrStmt);
+				//algorithmUtils.closeQueryResurces(charToAny, charWithAtrStmt);
 			}
 			
 			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
@@ -239,8 +246,12 @@ public class algorithm4{
 				charactersWithAtr = algorithmUtils.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + currentAtr+ "_id =" + placeOfBirth ,  "character_id != " + unspecifiedIdOfCharacter,"character_" + currentAtr+ "_id !=" +unspecifiedIdOfTables.get(currentAtr), false);
 				charToAny = algorithmUtils.queryToAny(charWithAtrStmt,charactersWithAtr,conn); 
 				helperForDirectConnectionToAny(charToAny, start_element, currentAtr, placeOfBirth);
-				algorithmUtils.closeQueryResurces(charToAny, charWithAtrStmt);
+				//algorithmUtils.closeQueryResurces(charToAny, charWithAtrStmt);
 			}
+			if (charToAny != null) charToAny.close();
+			if (charWithAtrStmt != null) charWithAtrStmt.close();
+			charToAny=null;
+			charWithAtrStmt=null;
 		}
 		start_element.hasConnections=true;
 
@@ -286,7 +297,11 @@ public class algorithm4{
 					break;				
 				}
 				atr=atr+1;
-				algorithmUtils.closeQueryResurces(atrValRS, atrStmt);
+				//algorithmUtils.closeQueryResurces(atrValRS, atrStmt);
+				if (atrValRS != null) atrValRS.close();
+				if (atrStmt != null) atrStmt.close();
+				atrValRS = null;
+				atrStmt = null;
 			} //end of while loop
 			
 			else if (	//tablesArr[atr].equals(Tables.sibling.toString()) || 
@@ -468,7 +483,7 @@ public class algorithm4{
 		charElement startElement = new charElement(start_id, null);
 		previousPhase.add(startElement);
 		
-		maxConnection=4;
+		maxConnection=6;
 		for (int level = 1; level<maxConnection+1; level++) {
 			globalNumOfConnections = level;
 			matchFound = findConnection(theConnection);
@@ -555,7 +570,7 @@ public class algorithm4{
 		
 	//a.fillTables();
 	long start = System.currentTimeMillis();
-	a.lookForConnection (1,2);
+	a.lookForConnection (290,89);
 	long finish = System.currentTimeMillis();
 	long total = start-finish;
 	String time = String.format("%d min, %d sec",      TimeUnit.MILLISECONDS.toMinutes(total),     TimeUnit.MILLISECONDS.toSeconds(total) -      TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(total)) );

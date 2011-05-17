@@ -356,13 +356,13 @@ public class algorithmUtils {
 		}
 	
 
-	public static void closeQueryResurces(ResultSet rs, Statement st) throws SQLException{
+/*	public static void closeQueryResurces(ResultSet rs, Statement st) throws SQLException{
 		if (rs != null) rs.close();
 		if (st != null) st.close();
 		rs=null;
 		st=null;
 	
-	}
+	}*/
 	
 	
 	public static String specificAttributeValuesQuery(String joinedAtr, String currentAtr, int charid){
@@ -394,8 +394,10 @@ public class algorithmUtils {
 			e.printStackTrace();
 		}
 		
-		closeQueryResurces(rs, st);
-		
+		if (rs!= null) rs.close();
+		if (st!= null) st.close();
+		rs = null;
+		st = null;
 		return result;
 		
 	}
@@ -440,7 +442,10 @@ public class algorithmUtils {
 			e.printStackTrace();
 		}
 		
-		closeQueryResurces(charToEnd, charAtrStmt);
+		if(charToEnd != null) charToEnd.close();
+		if(charAtrStmt != null) charAtrStmt.close();
+		charToEnd = null;
+		charAtrStmt = null;
 		
 		return found;
 		
