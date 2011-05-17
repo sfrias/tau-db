@@ -416,6 +416,17 @@ public class algorithmUtils {
 		return query;
 	}
 	
+	
+	public static String relationsQuery(String field1,String field2,String from,int start_id, int unspecified){
+
+		String query = "SELECT " +from + "_" + field1+  ","  +from + "_" + field2 +
+				" FROM " + from 
+				+" WHERE (" + from + "_" + field1  + "=" + start_id + " AND " + from + "_" + field2 + "!=" + unspecified
+				+ ") OR " + "(" + from + "_" + field2  + "=" + start_id + " AND " + from + "_" + field1 + "!=" + unspecified +")";
+		
+		return query;
+	}
+	
 	public static boolean queryToEnd(String query,JDCConnection conn) throws SQLException {
 
 		boolean found = false;

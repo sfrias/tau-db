@@ -64,9 +64,7 @@ public class algorithm4{
 		
 		while (iterator.hasNext() ){
 			currentElement = iterator.next();
-			if (currentElement.characterId==150588){
-				System.out.println("whatttt");
-			}
+
 			if (!currentElement.hasConnections){
 				resultFlag = DirectConnectionToEnd(currentElement, result);
 			}
@@ -102,9 +100,7 @@ public class algorithm4{
 		try {
 			while (charsWithAtrRS!= null && charsWithAtrRS.next()) {
 				currentid = charsWithAtrRS.getInt(1);
-				if (start_element.characterId== 104017){
-					System.out.println("wtf");
-				}
+
 				if (foundCharactersIDs.contains(currentid)){ //already found a connection in this phase.
 					continue;	
 				}
@@ -125,6 +121,47 @@ public class algorithm4{
 		
 	}
 	
+	private void helperForDirectConnectionToAnyInRealtions(ResultSet charsWithAtrRS,charElement start_element, String currentAtr){
+		
+		int currentidField1, currentidField2=0, currentid;
+		charElement connection;
+		String atr = currentAtr;
+		
+		try {
+			while (charsWithAtrRS!= null && charsWithAtrRS.next()) {
+				currentidField1 = charsWithAtrRS.getInt(1);
+				currentidField2 = charsWithAtrRS.getInt(2);
+				if (currentidField1 == start_element.characterId){
+					currentid = currentidField2;
+					if (currentAtr.equals(Tables.parent.toString())){
+						atr = "child";
+					}
+				}
+				else {
+					currentid = currentidField1;
+				}
+				
+
+				if (foundCharactersIDs.contains(currentid)){ //already found a connection in this phase.
+					continue;	
+				}
+//				System.out.println("adding to " + currentAtr +  " id number " + currentid + "in phase " + globalNumOfConnections);
+				connection = new charElement(currentid, start_element);
+				short attribute = tablesMap.get(atr);
+				connection.connectedAttribute = attribute;;
+				connection.attributeValue = -2;
+
+				foundCharactersIDs.add(currentid);
+				currentPhase.add(connection);
+			}
+			
+			
+		}catch (SQLException e) {
+			System.out.println("error execute query-" + e.toString());
+		}
+		
+	}
+	
 	
 	private boolean directConnectionToAny(charElement start_element) throws SQLException{
 		
@@ -132,7 +169,7 @@ public class algorithm4{
 		String 	currentAtr, joinedAtr,selectAtrValues, charactersWithAtr;
 		int unspecifiedId=0;
 		int unspecifiedIdOfCharacter = unspecifiedIdOfTables.get(Tables.characters.toString()); 
-		System.out.println("Unsepcified id is " +unspecifiedIdOfCharacter);
+	//	System.out.println("Unsepcified id is " +unspecifiedIdOfCharacter);
 		int attributes = tablesArr.length;
 		int start_id = start_element.characterId;
 		int currentAtrVal = -2;
@@ -175,35 +212,24 @@ public class algorithm4{
 						tablesArr[atr].equals(Tables.romantic_involvement.toString()) ||
 						tablesArr[atr].equals(Tables.parent.toString())){
 				
-				String first = "_character_id1";
-				String second = "_character_id2";
-				String parent = "_parent_character_id";
-				String child = "_child_character_id";
+				String first = "character_id1";
+				String second = "character_id2";
+				String parent = "parent_character_id";
+				String child = "child_character_id";
 				
 				
-				for (int i=1; i<3;i++){
-					currentAtrVal = -2;
-					//System.out.println(atr);
-					System.out.println(unspecifiedIdOfCharacter);
-					if (tablesArr[atr].equals(Tables.parent.toString())) {
-						charactersWithAtr = algorithmUtils.allCharactersWithTheSameAttributeQuery(currentAtr+ child, currentAtr, currentAtr + parent + "=" +start_id, currentAtr +child + "!=" + unspecifiedIdOfCharacter,null, true);
-					}
-					else {
-						charactersWithAtr =algorithmUtils.allCharactersWithTheSameAttributeQuery(currentAtr+ first, currentAtr, currentAtr + second  +"=" +start_id, currentAtr+ first + "!=" +unspecifiedIdOfCharacter,null, true);
-					}
-	
-					if (i==2){
-						currentAtr="child";
-					}
-					charToAny = algorithmUtils.queryToAny(charWithAtrStmt,charactersWithAtr, conn); 
-					helperForDirectConnectionToAny(charToAny, start_element, currentAtr, currentAtrVal);
-					algorithmUtils.closeQueryResurces(charToAny, charWithAtrStmt);
-					first = "_character_id2";
-					second = "_character_id1";
-					parent = "_child_character_id";
-					child = "_parent_character_id";
+
+				if (tablesArr[atr].equals(Tables.parent.toString())) {
+					charactersWithAtr = algorithmUtils.relationsQuery(parent, child, currentAtr, start_id, unspecifiedIdOfCharacter);
 				}
-			}	
+				else {
+					charactersWithAtr = algorithmUtils.relationsQuery(first, second, currentAtr, start_id, unspecifiedIdOfCharacter);
+				}
+
+				charToAny = algorithmUtils.queryToAny(charWithAtrStmt,charactersWithAtr, conn); 
+				helperForDirectConnectionToAnyInRealtions(charToAny, start_element, currentAtr);
+				algorithmUtils.closeQueryResurces(charToAny, charWithAtrStmt);
+			}
 			
 			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
 				int placeOfBirth; 
@@ -401,7 +427,7 @@ public class algorithm4{
 	 * clears all hashmaps
 	 */
 	
-	private void clearHashMaps(){
+	private void clearAll(){
 		currentPhase.clear();
 		previousPhase.clear();
 		foundCharactersIDs.clear();
@@ -459,9 +485,9 @@ public class algorithm4{
 			}
 		}
 		
-		System.out.println(previousPhase.size());
+	//	System.out.println(previousPhase.size());
 		System.out.println(currentPhase.size());
-		clearHashMaps();
+		clearAll();
 		System.out.println("couldn't find a connection");
 		return false;
 
