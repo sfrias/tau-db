@@ -466,6 +466,22 @@ public class algorithmUtils {
 		
 	}
 	
+	public static ResultSet queryToEnd(Statement charAtrStmt , String query, JDCConnection conn) throws SQLException {
+
+		ResultSet charToAny = null;
+		try {
+			charAtrStmt = conn.createStatement();
+			charToAny = charAtrStmt.executeQuery(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	
+		
+		return charToAny;
+		
+	}
+	
+	
 	
 	
 	
@@ -561,7 +577,7 @@ public class algorithmUtils {
 		alg.tablesMap.put("child", (short)alg.tablesArr.length);
 		algorithm4.reverseTablesMap.put((short)alg.tablesArr.length, "child");
 	}
-	public static void buildTablesArray2(algorithm4 alg){
+	public static void buildTablesArray2(noEndAlg alg){
 		TreeMap<String, String> joinedAttributesMap = new TreeMap<String,String>();
 		int numOfTables = alg.tbs.length;
 		int unspec=0;
