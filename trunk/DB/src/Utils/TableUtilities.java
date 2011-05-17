@@ -20,8 +20,6 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
-import com.mysql.jdbc.Connection;
-
 import Connection.JDCConnection;
 import Enums.Tables;
 import db.AntUtils;
