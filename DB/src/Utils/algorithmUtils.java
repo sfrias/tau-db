@@ -13,10 +13,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import Utils.ConnectionElement;
+import java.util.TreeMap;
+
 import Connection.JDCConnection;
 import Enums.Tables;
-import db.DatabaseManager;
 
 public class algorithmUtils {
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
@@ -183,6 +183,7 @@ public class algorithmUtils {
 		return toHisory;
 		
 	}
+
 
 	
 	
@@ -353,7 +354,271 @@ public class algorithmUtils {
 				e.printStackTrace();
 			}
 		}
+	
 
+	public static void closeQueryResurces(ResultSet rs, Statement st) throws SQLException{
+		if (rs != null) rs.close();
+		if (st != null) st.close();
+		rs=null;
+		st=null;
+	
+	}
+	
+	
+	public static String specificAttributeValuesQuery(String joinedAtr, String currentAtr, int charid){
+		return 	
+			"SELECT " + joinedAtr + "_" + currentAtr+ "_id"  + 
+			" FROM " + joinedAtr + 
+			" WHERE " +joinedAtr + "_character_id = " + charid;
+	}
+	
+	static String simpleQuery(String select, String from, String where){
+		return 	
+			"SELECT " + select +
+			" FROM " + from + 
+			" WHERE " +where;
+	}
+	
+	
+	public static int simpleQueryIntResult(String query, JDCConnection conn) throws SQLException{
+
+		Statement st = null;
+		ResultSet rs = null;
+		int result = 0;
+		try {
+			st = conn.createStatement();
+			rs = st.executeQuery(query);
+			rs.first();
+			result = rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		closeQueryResurces(rs, st);
+		
+		return result;
+		
+	}
+	
+	public static String allCharactersWithTheSameAttributeQuery(String select, String from,String where1, String where2,String where3, boolean firstRun){
+		String query;
+		query = "SELECT "+select +" FROM " + from +" WHERE " + where1 + " AND "; 
+		
+		if (!firstRun){
+		 query +=   where2 +   " AND " 
+					+ where3 ;
+		}
+		else{
+			query += where2 ;
+			
+		}
+	
+		return query;
+	}
+	
+	public static boolean queryToEnd(String query,JDCConnection conn) throws SQLException {
+
+		boolean found = false;
+		Statement charAtrStmt = null;
+		ResultSet charToEnd = null;
+		try {
+			charAtrStmt = conn.createStatement();
+			charToEnd = charAtrStmt.executeQuery(query);
+			found = charToEnd.first();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		closeQueryResurces(charToEnd, charAtrStmt);
+		
+		return found;
+		
+	}
+	
+	public static ResultSet queryToAny(Statement charAtrStmt , String query, JDCConnection conn) throws SQLException {
+
+		ResultSet charToAny = null;
+		try {
+			charAtrStmt = conn.createStatement();
+			charToAny = charAtrStmt.executeQuery(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	
+		
+		return charToAny;
+		
+	}
+	
+	
+	
+	
+	public static ResultSet getAllAtributesQuery( Statement atrStmt, String joinedAtr, String currentAtr, int id, JDCConnection conn) throws SQLException{
+		
+		String selectAtrValues = 	specificAttributeValuesQuery(joinedAtr, currentAtr, id);
+		ResultSet atrValRS = null;
+
+		try {
+			atrStmt = conn.createStatement();
+			atrValRS = atrStmt.executeQuery(selectAtrValues);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return atrValRS;
+
+
+	}
+
+	
+	public static void buildTablesArray(algorithm4 alg){
+		TreeMap<String, String> joinedAttributesMap = new TreeMap<String,String>();
+		int numOfTables = alg.tbs.length;
+		int unspec=0;
+		String atrTable;
+		String currentTable;
+		String putCouples;
+		String[] attributes = new String[numOfTables-1]; 
+		String[] result = new String[numOfTables-1];
+		
+		int indexOfAttr=0, indexOfResult=0;
+		for (int i=0; i< numOfTables; i++){
+			currentTable = alg.tbs[i].toString();
+			if (currentTable.equals(Tables.characters.toString())){
+				unspec = algorithmUtils.getUnspecifiedId(currentTable, alg.conn);
+				alg.unspecifiedIdOfTables.put(Tables.characters.toString(), unspec);
+			}
+//			else if (currentTable.equals(Tables.gender.toString())){
+//				continue;
+//			}
+			else if (!currentTable.contains("and")){
+				attributes[indexOfAttr]=currentTable;
+				indexOfAttr++;
+			}
+			else {
+				atrTable = currentTable.substring(15);
+				joinedAttributesMap.put(atrTable, currentTable);
+			}
+		}
+//		attributes[indexOfAttr]=Tables.gender.toString();
+//		indexOfAttr++;
+
+		for (int i=0; i<indexOfAttr;i++){ 		//first loop- looking for joinedTables
+			putCouples = joinedAttributesMap.get(attributes[i]);
+	
+			if (	//!attributes[i].equals(Tables.marriage.toString()) &&
+					!attributes[i].equals(Tables.parent.toString()) &&
+					!attributes[i].equals(Tables.romantic_involvement.toString()) // &&
+					//!attributes[i].equals(Tables.sibling.toString())
+					){
+				unspec = algorithmUtils.getUnspecifiedId(attributes[i], alg.conn);
+				alg.unspecifiedIdOfTables.put(attributes[i], unspec);
+			}
+
+			if (putCouples != null){
+				result[indexOfResult]=attributes[i];
+				result[indexOfResult+1]=putCouples;
+				indexOfResult = indexOfResult + 2;
+				attributes[i]="ok";
+			}
+		}
+
+		alg.indexOfJumps=indexOfResult; //this index is used in connectionFinder
+		
+		//adding all other tables;
+		for (int i=0; i<indexOfAttr;i++){
+			if(!attributes[i].equals("ok")){
+				result[indexOfResult]=attributes[i];
+				indexOfResult++;
+			}
+		}
+
+
+		joinedAttributesMap.clear();
+		alg.tablesArr = result;
+		
+		for (short i=0; i<alg.tablesArr.length;i++){
+			alg.tablesMap.put(alg.tablesArr[i],i);
+			algorithm4.reverseTablesMap.put((short)i, alg.tablesArr[i]);
+		}
+		
+		alg.tablesMap.put("child", (short)alg.tablesArr.length);
+		algorithm4.reverseTablesMap.put((short)alg.tablesArr.length, "child");
+	}
+	public static void buildTablesArray2(algorithm4 alg){
+		TreeMap<String, String> joinedAttributesMap = new TreeMap<String,String>();
+		int numOfTables = alg.tbs.length;
+		int unspec=0;
+		String atrTable;
+		String currentTable;
+		String putCouples;
+		String[] attributes = new String[numOfTables-1]; 
+		String[] result = new String[numOfTables-1];
+		
+		int indexOfAttr=0, indexOfResult=0;
+		for (int i=0; i< numOfTables; i++){
+			currentTable = alg.tbs[i].toString();
+			if (currentTable.equals(Tables.characters.toString())){
+				unspec = algorithmUtils.getUnspecifiedId(currentTable, alg.conn);
+				alg.unspecifiedIdOfTables.put(Tables.characters.toString(), unspec);
+			}
+//			else if (currentTable.equals(Tables.gender.toString())){
+//				continue;
+//			}
+			else if (!currentTable.contains("and")){
+				attributes[indexOfAttr]=currentTable;
+				indexOfAttr++;
+			}
+			else {
+				atrTable = currentTable.substring(15);
+				joinedAttributesMap.put(atrTable, currentTable);
+			}
+		}
+//		attributes[indexOfAttr]=Tables.gender.toString();
+//		indexOfAttr++;
+
+		for (int i=0; i<indexOfAttr;i++){ 		//first loop- looking for joinedTables
+			putCouples = joinedAttributesMap.get(attributes[i]);
+	
+			if (	//!attributes[i].equals(Tables.marriage.toString()) &&
+					!attributes[i].equals(Tables.parent.toString()) &&
+					!attributes[i].equals(Tables.romantic_involvement.toString()) // &&
+					//!attributes[i].equals(Tables.sibling.toString())
+					){
+				unspec = algorithmUtils.getUnspecifiedId(attributes[i], alg.conn);
+				alg.unspecifiedIdOfTables.put(attributes[i], unspec);
+			}
+
+			if (putCouples != null){
+				result[indexOfResult]=attributes[i];
+				result[indexOfResult+1]=putCouples;
+				indexOfResult = indexOfResult + 2;
+				attributes[i]="ok";
+			}
+		}
+
+		alg.indexOfJumps=indexOfResult; //this index is used in connectionFinder
+		
+		//adding all other tables;
+		for (int i=0; i<indexOfAttr;i++){
+			if(!attributes[i].equals("ok")){
+				result[indexOfResult]=attributes[i];
+				indexOfResult++;
+			}
+		}
+
+
+		joinedAttributesMap.clear();
+		alg.tablesArr = result;
+		
+		for (short i=0; i<alg.tablesArr.length;i++){
+			alg.tablesMap.put(alg.tablesArr[i],i);
+			algorithm4.reverseTablesMap.put((short)i, alg.tablesArr[i]);
+		}
+		
+		alg.tablesMap.put("child", (short)alg.tablesArr.length);
+		algorithm4.reverseTablesMap.put((short)alg.tablesArr.length, "child");
+	}
 
 
 	
