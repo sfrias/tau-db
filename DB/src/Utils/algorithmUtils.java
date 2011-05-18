@@ -340,7 +340,7 @@ public class algorithmUtils {
 						if (connectionsSplit[j]!= null){
 							information += connectionsSplit[j];
 						}
-						toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information, num_of_connections) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
+						toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
 						//previousCharacter = connectorCharacter;
 						stmt.executeUpdate(toQuery);
 					}
@@ -386,7 +386,7 @@ public static void insertIntoStatisticTable (int start_id, int end_id, JDCConnec
 	try {
 		stmt = conn.createStatement();
 		
-		toQuery = "INSERT IGNORE INTO statistic (character_id1, character_id2, num) values (" + start_id + "," + end_id + "," + num + ");";
+		toQuery = "INSERT IGNORE INTO statistic (character_id1, character_id2, num_of_connections) values (" + start_id + "," + end_id + "," + num + ");";
 		stmt.executeUpdate(toQuery);
 		
 		if (stmt != null) stmt.close();
