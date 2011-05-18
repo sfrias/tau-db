@@ -288,10 +288,10 @@ public class noEndAlg{
 				
 
 				if (tablesArr[atr].equals(Tables.parent.toString())) {
-					charactersWithAtr = algorithmUtils.relationsQuery(parent, child, currentAtr, start_id, unspecifiedIdOfCharacter);
+					charactersWithAtr = algorithmUtils.relationsQueryToAny(parent, child, currentAtr, start_id, unspecifiedIdOfCharacter);
 				}
 				else {
-					charactersWithAtr = algorithmUtils.relationsQuery(first, second, currentAtr, start_id, unspecifiedIdOfCharacter);
+					charactersWithAtr = algorithmUtils.relationsQueryToAny(first, second, currentAtr, start_id, unspecifiedIdOfCharacter);
 				}
 
 				charToAny = algorithmUtils.queryToAny(charWithAtrStmt,charactersWithAtr, conn); 
