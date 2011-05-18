@@ -391,7 +391,7 @@ private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charEl
 			currentAtrVal = -1;
 		}	
 			
-			else if (tablesArr[atr].equals(Tables.\e_of_birth.toString())){
+			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
 				int placeOfBirth; 
 				selectAtrValues = 	algorithmUtils.simpleQuery("character_" + tablesArr[atr]+ "_id" ,"characters","character_id =" + start_id );
 				atrStmt= conn.createStatement();
