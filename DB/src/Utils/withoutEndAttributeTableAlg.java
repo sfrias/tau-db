@@ -91,20 +91,20 @@ public class withoutEndAttributeTableAlg{
 	
 	
 
-private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charElement start_element, charElement[] result, String atrString, int attributeVal){
+private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charElement start_element, charElement[] result, short atrint, int attributeVal){
 		
 		int currentid=0, atrID;
 		charElement connection;
-		String currentAtr;
+		short currentAtr;
 		try {
 			while (charsWithAtrRS!= null && charsWithAtrRS.next()) {
 				currentid = charsWithAtrRS.getInt(1);
-				if (atrString == null){
-					currentAtr = charsWithAtrRS.getString(2);
+				if (atrint == -1){
+					currentAtr = (short)charsWithAtrRS.getInt(2);
 					atrID = charsWithAtrRS.getInt(3);
 				}
 				else {
-					currentAtr= atrString;
+					currentAtr= atrint;
 					atrID= attributeVal;
 				}
 				
@@ -114,8 +114,7 @@ private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charEl
 				}
 //				System.out.println("adding to " + currentAtr +  " id number " + currentid + "in phase " + globalNumOfConnections);
 				connection = new charElement(currentid, start_element);
-				short attribute = tablesMap.get(currentAtr);
-				connection.connectedAttribute = attribute;;
+				connection.connectedAttribute = currentAtr;;
 				connection.attributeValue = atrID;
 				if (currentid == end_id){
 					result[0] = connection;
@@ -183,7 +182,8 @@ private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charEl
 	private boolean directConnectionToAny(charElement start_element, charElement[] result) throws SQLException{
 		
 		ResultSet atrValRS=null, charToAny = null;
-		String 	currentAtr, joinedAtr,selectAtrValues, charactersWithAtr;
+		String 	 selectAtrValues, charactersWithAtr;
+		short currentAtr=-1;
 		int unspecifiedId=0;
 		int unspecifiedIdOfCharacter = unspecifiedIdOfTables.get(Tables.characters.toString()); 
 	//	System.out.println("Unsepcified id is " +unspecifiedIdOfCharacter);
@@ -197,16 +197,19 @@ private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charEl
 		System.out.println("checking for " + start_id + " in time " + time);
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
-			currentAtr =tablesArr[atr];
+			currentAtr =tablesMap.get(tablesArr[atr]);
+			atrStmt=conn.createStatement();
+			charWithAtrStmt=conn.createStatement();
 			if (atr < indexOfJumps) {
-				joinedAtr = tablesArr[atr+1];
-				atrValRS = algorithmUtils.joinedAttributeValuesQuery(atrStmt,start_id,conn);
+				//joinedAtr = tablesArr[atr+1];
+				
+				atrValRS = atrStmt.executeQuery(algorithmUtils.joinedAttributeValuesQueryString(start_id));
 				charactersWithAtr = "SELECT * " +
 				" FROM characters_and_attributes" + 
 				" WHERE characters_and_attributes_character_id !=" + unspecifiedIdOfCharacter + " AND " +
 				"characters_and_attributes_character_id !=" + start_id + " AND (";
 				while (atrValRS != null && atrValRS.next()){ //all attributes
-					currentAtr = atrValRS.getString(1);
+					currentAtr =(short) atrValRS.getInt(1);
 					currentAtrVal = atrValRS.getInt(2);
 					unspecifiedId = unspecifiedIdOfTables.get(currentAtr);
 					if (currentAtrVal== unspecifiedId ) { //not relevant 
@@ -216,18 +219,22 @@ private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charEl
 						charactersWithAtr += " OR ";
 					}
 					isEmpryQuery = false;
-					charactersWithAtr +=  "(characters_and_attributes_attribute_name = '" + currentAtr + "' AND " +
+					charactersWithAtr +=  "(characters_and_attributes_attribute_name = " + currentAtr + " AND " +
 					"characters_and_attributes_attribute_id =" + currentAtrVal + ")";
 				}
 				charactersWithAtr +=")";
-				charToAny = algorithmUtils.queryToAny(charWithAtrStmt,charactersWithAtr, conn); 
-				foundmatch = helperForDirectConnectionToAny2(charToAny, start_element, result, null,-1);
-
-				//algorithmUtils.closeQueryResurces(atrValRS, atrStmt);
+				
 				if (atrValRS != null) atrValRS.close();
 				if (atrStmt != null) atrStmt.close();
 				atrStmt = null;
 				atrValRS = null;
+				
+				if (!isEmpryQuery){ //not every time the query needs to be checked
+					charToAny = algorithmUtils.queryToAny(charWithAtrStmt,charactersWithAtr, conn); 
+					foundmatch = helperForDirectConnectionToAny2(charToAny, start_element, result, (short)-1,-1);
+				}
+				//algorithmUtils.closeQueryResurces(atrValRS, atrStmt);
+	
 				
 				atr=indexOfJumps-1;
 			} 
@@ -245,26 +252,33 @@ private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charEl
 				
 
 				if (tablesArr[atr].equals(Tables.parent.toString())) {
-					charactersWithAtr = algorithmUtils.relationsQueryToAny(parent, child, currentAtr, start_id, unspecifiedIdOfCharacter);
+					charactersWithAtr = algorithmUtils.relationsQueryToAny(parent, child, tablesArr[atr], start_id, unspecifiedIdOfCharacter);
 				}
 				else {
-					charactersWithAtr = algorithmUtils.relationsQueryToAny(first, second, currentAtr, start_id, unspecifiedIdOfCharacter);
+					charactersWithAtr = algorithmUtils.relationsQueryToAny(first, second, tablesArr[atr], start_id, unspecifiedIdOfCharacter);
 				}
 
-				charToAny = algorithmUtils.queryToAny(charWithAtrStmt,charactersWithAtr, conn); 
-				foundmatch = helperForDirectConnectionToAnyInRealtions(charToAny, start_element, currentAtr, result);
+				charToAny = charWithAtrStmt.executeQuery(charactersWithAtr);
+				if (charToAny.next()){
+					foundmatch = helperForDirectConnectionToAnyInRealtions(charToAny, start_element, tablesArr[atr], result);
+				}
+				currentAtrVal=-1;
 				//algorithmUtils.closeQueryResurces(charToAny, charWithAtrStmt);
 			}
 			
 			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
 				int placeOfBirth; 
-				selectAtrValues = 	algorithmUtils.simpleQuery("character_" + currentAtr+ "_id" ,"characters","character_id =" + start_id);
-				placeOfBirth = algorithmUtils.simpleQueryIntResult(selectAtrValues,conn);
-				unspecifiedId = tablesMap.get(currentAtr);
+				selectAtrValues = 	algorithmUtils.simpleQuery("character_" + tablesArr[atr]+ "_id" ,"characters","character_id =" + start_id);
+				atrValRS = atrStmt.executeQuery(selectAtrValues);
+				placeOfBirth = atrValRS.getInt(1);
+				unspecifiedId = tablesMap.get(tablesArr[atr]);
 				charactersWithAtr = algorithmUtils.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + currentAtr+ "_id =" + placeOfBirth ,  "character_id != " + unspecifiedIdOfCharacter,"character_" + currentAtr+ "_id !=" +unspecifiedIdOfTables.get(currentAtr), false);
-				charToAny = algorithmUtils.queryToAny(charWithAtrStmt,charactersWithAtr,conn); 
+				if (atrValRS!=null) atrValRS.close();
+				if (atrStmt!= null) atrStmt.close();
+				charToAny = charWithAtrStmt.executeQuery(charactersWithAtr); 
 				foundmatch = helperForDirectConnectionToAny2(charToAny, start_element, result,currentAtr, placeOfBirth);
 				//algorithmUtils.closeQueryResurces(charToAny, charWithAtrStmt);
+				currentAtrVal=placeOfBirth;
 			}
 			if (charToAny != null) charToAny.close();
 			if (charWithAtrStmt != null) charWithAtrStmt.close();
@@ -283,7 +297,8 @@ private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charEl
 	private boolean DirectConnectionToEnd(charElement start_element, charElement[] result) throws SQLException{
 		
 		ResultSet atrValRS=null, charsWithAtrRS=null;
-		String 	currentAtr="", joinedAtr,selectAtrValues, charactersWithAtr;
+		String selectAtrValues, charactersWithAtr;
+		short currentAtr=-1;
 		int unspecifiedId=0; 
 		int attributes = tablesArr.length;
 		int start_id = start_element.characterId;
@@ -294,17 +309,19 @@ private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charEl
 		String[] attribute = new String[1];
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
-			currentAtr =tablesArr[atr];
+			currentAtr =tablesMap.get(tablesArr[atr]);
+			charAtrStmt = conn.createStatement();
 			if (atr < indexOfJumps) {
-				joinedAtr = tablesArr[atr+1];
-				
-				atrValRS = algorithmUtils.joinedAttributeValuesQuery(atrStmt,start_id,conn);
+				atrStmt = conn.createStatement();
+				//joinedAtr = tablesArr[atr+1];
+				atrValRS = atrStmt.executeQuery(algorithmUtils.joinedAttributeValuesQueryString(start_id)); 
+				//atrValRS = algorithmUtils.joinedAttributeValuesQuery(atrStmt,start_id,conn);
 				
 				charactersWithAtr = "SELECT characters_and_attributes_attribute_name, characters_and_attributes_attribute_id " +
 				" FROM characters_and_attributes" + 
 				" WHERE characters_and_attributes_character_id=" + end_id + " AND (";
 				while (atrValRS != null && atrValRS.next()){ //all attributes
-					currentAtr = atrValRS.getString(1);
+					currentAtr = (short) atrValRS.getInt(1);
 					currentAtrVal = atrValRS.getInt(2);
 					unspecifiedId = unspecifiedIdOfTables.get(currentAtr);
 					if (currentAtrVal== unspecifiedId ) { //not relevant 
@@ -314,15 +331,18 @@ private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charEl
 						charactersWithAtr += " OR ";
 					}
 					isEmpryQuery = false;
-					charactersWithAtr +=  "(characters_and_attributes_attribute_name = '" + currentAtr + "' AND " +
+					charactersWithAtr +=  "(characters_and_attributes_attribute_name = " + currentAtr + " AND " +
 					"characters_and_attributes_attribute_id =" + currentAtrVal + ")";
 				}
+				if (atrValRS!=null) atrValRS.close();
+				if (atrStmt != null) atrStmt.close();
 				
 				if (!isEmpryQuery){
 					charactersWithAtr += ")";
+					
 					charsWithAtrRS= algorithmUtils.queryToEnd(charAtrStmt,charactersWithAtr,conn);
 					if (charsWithAtrRS != null && charsWithAtrRS.next()){
-						currentAtr = charsWithAtrRS.getString(1);
+						currentAtr = (short)charsWithAtrRS.getInt(1);
 						currentAtrVal =charsWithAtrRS.getInt(2);
 						foundMatch=true;
 					}
@@ -346,27 +366,48 @@ private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charEl
 			
 
 			if (tablesArr[atr].equals(Tables.parent.toString())) {
-				charactersWithAtr = algorithmUtils.relationsQueryToEnd(parent, child, currentAtr, start_id, end_id);
+				charactersWithAtr = algorithmUtils.relationsQueryToEnd(parent, child, tablesArr[atr], start_id, end_id);
 			}
 			else {
-				charactersWithAtr = algorithmUtils.relationsQueryToEnd(first, second, currentAtr, start_id, end_id);
+				charactersWithAtr = algorithmUtils.relationsQueryToEnd(first, second, tablesArr[atr], start_id, end_id);
 			}
-
-			foundMatch = algorithmUtils.queryToEnd(charactersWithAtr,conn,attribute,end_id);
-			currentAtr=attribute[0];
-
+			charsWithAtrRS = charAtrStmt.executeQuery(charactersWithAtr);
+			if (charsWithAtrRS != null && charsWithAtrRS.next()){
+				if (charsWithAtrRS.getInt(1)==end_id){
+					attribute[0] = "child";
+				}
+				else{
+					attribute[0] = "parent";
+				}
+				foundMatch=true;
+			}
+			
+			currentAtr=tablesMap.get(attribute[0]);
+			currentAtrVal = -1;
 		}	
 			
 			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
 				int placeOfBirth; 
-				selectAtrValues = 	algorithmUtils.simpleQuery("character_" + currentAtr+ "_id" ,"characters","character_id =" + start_id );
-				placeOfBirth = algorithmUtils.simpleQueryIntResult(selectAtrValues,conn);
+				selectAtrValues = 	algorithmUtils.simpleQuery("character_" + tablesArr[atr]+ "_id" ,"characters","character_id =" + start_id );
+				atrStmt= conn.createStatement();
+				atrValRS = atrStmt.executeQuery(selectAtrValues);
+				placeOfBirth = atrValRS.getInt(1);
 				if (unspecifiedIdOfTables.get(currentAtr)== placeOfBirth){
 					continue;
 				}
-				charactersWithAtr = algorithmUtils.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + currentAtr+ "_id =" + placeOfBirth ,  "character_id = " + end_id,null, true);
-				foundMatch = algorithmUtils.queryToEnd(charactersWithAtr,conn);
 				
+				if (atrValRS != null) atrValRS.close();
+				if (atrStmt != null) atrStmt.close();
+				atrValRS=null;
+				atrStmt=null;
+				
+				
+				charactersWithAtr = algorithmUtils.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + tablesArr[atr]+ "_id =" + placeOfBirth ,  "character_id = " + end_id,null, true);
+				charsWithAtrRS = charAtrStmt.executeQuery(charactersWithAtr);
+				if (charsWithAtrRS != null && charsWithAtrRS.next()){
+					foundMatch=true;
+				}
+				currentAtrVal = placeOfBirth;
 				
 			}
 			
@@ -386,7 +427,7 @@ private boolean helperForDirectConnectionToAny2	(ResultSet charsWithAtrRS,charEl
 		}// end of external loop
 		if (foundMatch){
 			end_element = new charElement(end_id, start_element);
-			end_element.connectedAttribute = tablesMap.get(currentAtr);
+			end_element.connectedAttribute =currentAtr;
 			end_element.attributeValue = currentAtrVal;
 			result[0] = end_element;
 			return true;
