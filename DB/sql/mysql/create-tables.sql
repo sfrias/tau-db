@@ -236,6 +236,7 @@ CREATE TABLE failed_searches
 	FOREIGN KEY (character_id1) REFERENCES characters(character_id),
 	FOREIGN KEY (character_id2) REFERENCES characters(character_id));
 
+
 CREATE TABLE statistic
 	(character_id1 int(11) NOT NULL,
 	character_id2 int(11) NOT NULL,
@@ -244,3 +245,10 @@ CREATE TABLE statistic
 	PRIMARY KEY (character_id1,character_id2),
 	FOREIGN KEY (character_id1) REFERENCES characters(character_id),
 	FOREIGN KEY (character_id2) REFERENCES characters(character_id));
+
+CREATE TABLE characters_and_attributes
+	(characters_and_attributes_character_id int(11) NOT NULL,
+	characters_and_attributes_attribute_name varchar(80) NOT NULL,
+	characters_and_attributes_attribute_id int(11) NOT NULL,
+	PRIMARY KEY (characters_and_attributes_character_id, characters_and_attributes_attribute_name, characters_and_attributes_attribute_id),
+	FOREIGN KEY (characters_and_attributes_character_id) REFERENCES characters(character_id));
