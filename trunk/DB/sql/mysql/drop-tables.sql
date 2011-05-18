@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS marriage;
 DROP TABLE IF EXISTS romantic_involvement;
 DROP TABLE IF EXISTS sibling;
 DROP TABLE IF EXISTS parent;
+DROP TABLE IF EXISTS characters_and_attributes;
 DROP TABLE IF EXISTS characters;
 DROP TABLE IF EXISTS location;
 DROP TABLE IF EXISTS place_of_birth;
