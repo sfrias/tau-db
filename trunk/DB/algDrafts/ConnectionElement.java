@@ -1,5 +1,6 @@
 package Utils;
 
+
 public class ConnectionElement {
 
 	ConnectionElement next;
@@ -9,7 +10,17 @@ public class ConnectionElement {
 	String attribute;
 	int attributeValueId;
 	
+	//DEBUG
+//	static HashSet<Integer> usedStartID = new HashSet<Integer>();
+	
 	public ConnectionElement(int start_id, int end_id, String attribute, int atrValue){
+		//DEBUG:
+	/*	if(usedStartID.contains(start_id))
+			System.out.println("double-creation:" + start_id + " to " + end_id + " with " +attribute);
+		else
+			usedStartID.add(start_id);
+			*/
+				
 		this.start_id=start_id;
 		this.end_id = end_id;
 		this.attribute= attribute;

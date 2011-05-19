@@ -31,6 +31,7 @@ public class algorithm {
 
 	Tables[] tbs;
 	int indexOfJumps;
+	int notRecursion;
 
 	public algorithm(){
 		conn = dbManager.getConnection() ;
@@ -212,13 +213,15 @@ public class algorithm {
 		try{
 			while (charsWithAtrRS.next()){
 				currentid=charsWithAtrRS.getInt(1);
-				if (firstRun){ //running over all attributes in order to find a direct connection
+				
+				if (firstRun){ //running over all characters in a specific attribute in order to find a direct connection
 					if (currentid == end_id) {
 						resultFlag=true;
 						fill[recPhase-1]=currentid + "," + currentAtr + "," + atrID;
 						break;
 					}
 				}
+				
 				else {
 					// starting a recursive call with each character with the same attribute as the start_id
 					if (!characters[currentid]){ //checking if the character was already checked in the recursion
@@ -230,6 +233,10 @@ public class algorithm {
 						else { //changing the character to checked
 							characters[currentid]=true;
 						}
+					}
+					else { //have already been checked;
+						notRecursion++;
+						
 					}
 				}
 			}
@@ -249,11 +256,8 @@ public class algorithm {
 		
 		
 		ResultSet atrValRS=null,charsWithAtrRS=null,unspecifiedRS = null;
-
 		boolean resultFlag=false;
-		
 		String 	currentAtr, joinedAtr;
-		
 		int unspecifiedId=0, getAtrint=0;
 		
 		//Preparing statement of a specific attribute
@@ -279,7 +283,7 @@ public class algorithm {
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
 			
-			System.out.println("trying "+ tablesArr[atr] + " in phase " + recPhase);
+			System.out.println("trying "+ tablesArr[atr] + " in phase " + recPhase + " with first run =" + firstRun);
 			currentAtr =tablesArr[atr];
 			if (atr < indexOfJumps) {
 				joinedAtr = tablesArr[atr+1];
@@ -330,7 +334,7 @@ public class algorithm {
 						
 						//found a connection
 						if (resultFlag){
-							break;
+							break; //break of the while
 						}
 					}
 			
@@ -344,7 +348,7 @@ public class algorithm {
 				
 			    //added by tal	
 				if (resultFlag)
-					break;
+					break; //break of the for
 				
 				atr=atr+1;
 			} //end of first case
@@ -382,7 +386,7 @@ public class algorithm {
 						charactersWithAtr = "SELECT " + currentAtr+ first + 
 						" FROM " + currentAtr+
 						" WHERE " +currentAtr + second +" = ? AND " + 
-						currentAtr +second + " != ? AND " + 
+						currentAtr +first + " != ? AND " + 
 						currentAtr+ first + " != ?";
 						;	
 					}					
@@ -441,7 +445,7 @@ public class algorithm {
 					unspecifiedRS.first();
 					unspecifiedId = unspecifiedRS.getInt(1);
 					
-					selectAtrValues = 	"SELECT " + currentAtr+ "_id"  + 
+					selectAtrValues = 	"SELECT character_" + currentAtr+ "_id"  + 
 					" FROM characters" +
 					" WHERE character_id = ?";
 					
@@ -475,6 +479,7 @@ public class algorithm {
 
 		}// end of external loop
 		
+		//cannot find a direct connection, starting a recursive call
 		if (firstRun && !resultFlag){
 			 return connectionFinder(fill,start_id,end_id,recPhase,prevId,!firstRun);
 		}
@@ -754,8 +759,8 @@ public class algorithm {
 	//a.fillTables();
 	//	System.out.println("finished");
 		    
-	a.lookForConnection(15,24);
-		
+	a.lookForConnection(11,14);
+	//System.out.println(a.notRecursion);
 		
 	}
 	

@@ -1,7 +1,6 @@
 package Utils;
 
 import java.io.IOException;
-import java.lang.Thread.State;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,11 +17,11 @@ import db.DatabaseManager;
 
 
 
-public class noEndAlg{
+public class withEndAlg{
 	
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
 	private DatabaseManager dbManager = DatabaseManager.getInstance();
-	static JDCConnection conn;
+	JDCConnection conn;
 
 	Tables[] tbs;
 	String[] tablesArr;
@@ -32,14 +31,14 @@ public class noEndAlg{
 	int skips=0;
 	int end_id;
 	
-	static TreeMap<String, Short> tablesMap = new TreeMap<String, Short>();
+	TreeMap<String, Short> tablesMap = new TreeMap<String, Short>();
 	static TreeMap<Short, String> reverseTablesMap = new TreeMap<Short, String>();
 	static HashSet<Integer> foundCharactersIDs = new HashSet<Integer>();
 	List<charElement> currentPhase = new ArrayList<charElement>();
 	List<charElement> previousPhase = new ArrayList<charElement>();
 	TreeMap<String, Integer> unspecifiedIdOfTables = new TreeMap<String,Integer>();
 	
-	public noEndAlg(){
+	public withEndAlg(){
 		conn = dbManager.getConnection() ;
 		tbs = Tables.values();
 	}
@@ -54,44 +53,40 @@ public class noEndAlg{
 	
 		boolean resultFlag = false;
 		charElement currentElement;
-		if (globalNumOfConnections==maxConnection){ //last phase, only needs to check direct connection
-			while (iterator.hasNext() ){
-				currentElement = iterator.next();
-				resultFlag = DirectConnectionToEnd(currentElement, result);
-			
-				if (resultFlag){
-					return true;
-				}
+		 //last phase, only needs to check direct connection
+		while (iterator.hasNext() ){
+			currentElement = iterator.next();
+			resultFlag = DirectConnectionToEnd(currentElement, result);
+			if (resultFlag){
+				return true;
 			}
-			
+		}
+
+		if (globalNumOfConnections==maxConnection){
 			return false;
 		}
 		
 		iterator = previousPhase.iterator();
+		
 		while (iterator.hasNext()){
 			currentElement = iterator.next();
-			if (currentElement.characterId==49242){
-				System.out.println("debugginh 49242");
-			}
-			resultFlag = directConnectionToAny(currentElement, result);
+			directConnectionToAny(currentElement, result);
 			if (resultFlag){
 					break;
 				}
 			}
 		
-		previousPhase.clear();
-		previousPhase.addAll(currentPhase);
-		currentPhase.clear();		
+		previousPhase = currentPhase;
+		currentPhase = new ArrayList<charElement>();		
 		return resultFlag;
 	}
 	
 	
 	
-	private boolean helperForDirectConnectionToAnyPlaceOfBirth(ResultSet charsWithAtrRS,charElement start_element, String currentAtr, int atrID, charElement[] result){
+	private void helperForDirectConnectionToAnyPlaceOfBirth(ResultSet charsWithAtrRS,charElement start_element, String currentAtr, int atrID, charElement[] result){
 		
 		int currentid=0;
-		boolean foundMatch = false;
-		
+	
 		try {
 			while (charsWithAtrRS.next()) {
 				currentid = charsWithAtrRS.getInt(1);
@@ -99,22 +94,17 @@ public class noEndAlg{
 				if (foundCharactersIDs.contains(currentid)){ //already found a connection in this phase.
 					continue;	
 				}
-				foundMatch = addNewConnection(currentid, start_element, currentAtr, atrID, result);
-				if (foundMatch){
-					return true;
-				}
+				addNewConnection(currentid, start_element, currentAtr, atrID, result);
 			}
-			
 			
 		}catch (SQLException e) {
 			System.out.println("error execute query-" + e.toString());
 		}
-		return foundMatch;
 		
 	}
 	
 	
-	private boolean helperForDirectConnectionToAll	(ResultSet charsWithAtrRS,charElement start_element, String currentAtr, charElement[] result){
+	private void helperForDirectConnectionToAll	(ResultSet charsWithAtrRS,charElement start_element, String currentAtr, charElement[] result){
 		
 		int currentid=0, atrID;
 		boolean foundMatch = false;
@@ -128,37 +118,27 @@ public class noEndAlg{
 					continue;	
 				}
 
-				foundMatch= addNewConnection(currentid, start_element, currentAtr, atrID, result);
-				if (foundMatch){
-					return true;
-				}
+				addNewConnection(currentid, start_element, currentAtr, atrID, result);
 			}			
 		}catch (SQLException e) {
 			System.out.println("error execute query-" + e.toString());
 		}
-		return foundMatch;
 	}
 	
 	
 	
-	private boolean addNewConnection(int currentid, charElement start_element, String currentAtr, int atrID, charElement[] result){
+	private void addNewConnection(int currentid, charElement start_element, String currentAtr, int atrID, charElement[] result){
 		charElement connection = new charElement(currentid, start_element);
 		short attribute = tablesMap.get(currentAtr);
 		connection.connectedAttribute = attribute;;
 		connection.attributeValue = atrID;
-		
-		if (currentid == end_id){
-			result[0] = connection;
-			return true;
-		}
 		foundCharactersIDs.add(currentid);
 		currentPhase.add(connection);
-		return false;
 	}
 	
 	
 	
-	private boolean helperForDirectConnectionToAnyInRealtions(ResultSet charsWithAtrRS,charElement start_element, String currentAtr, charElement[] result){
+	private void helperForDirectConnectionToAnyInRealtions(ResultSet charsWithAtrRS,charElement start_element, String currentAtr, charElement[] result){
 		
 		int currentidField1, currentidField2=0, currentid;
 		String atr = currentAtr;
@@ -182,17 +162,13 @@ public class noEndAlg{
 					continue;	
 				}
 				
-				foundMatch = addNewConnection(currentidField2, start_element, atr, -2, result);
-				if (foundMatch){
-					return true;
-				}
+				addNewConnection(currentidField2, start_element, atr, -2, result);
 			}
 			
 			
 		}catch (SQLException e) {
 			System.out.println("error execute query-" + e.toString());
 		}
-		return foundMatch;
 	}
 	
 	
@@ -258,10 +234,10 @@ public class noEndAlg{
 			charactersWithAtr = algorithmUtils.relationsQuery(parent, child, currentAtr,"=", start_id, end_id);
 		}
 		else if (currentAtr.equals(Tables.parent.toString())){
-			charactersWithAtr = algorithmUtils.relationsQuery(parent, child, currentAtr,"!=", start_id, unspecifiedIdOfCharacter);
+			charactersWithAtr = algorithmUtils.relationsQuery(parent, child, currentAtr, "!=",start_id, unspecifiedIdOfCharacter);
 		}
 		else if (directToEnd){
-			charactersWithAtr = algorithmUtils.relationsQuery(first, second, currentAtr,"=", start_id, end_id);			
+			charactersWithAtr = algorithmUtils.relationsQuery(first, second, currentAtr,"=",start_id, end_id);			
 		}
 		else {
 			charactersWithAtr = algorithmUtils.relationsQuery(first, second, currentAtr,"!=", start_id, unspecifiedIdOfCharacter);
@@ -307,7 +283,7 @@ public class noEndAlg{
 	
 	
 	
-	private boolean directConnectionToAny(charElement start_element, charElement[] result) throws SQLException{
+	private void directConnectionToAny(charElement start_element, charElement[] result) throws SQLException{
 		
 		ResultSet charToAny = null;
 		String 	currentAtr, joinedAtr, charactersWithAtr;
@@ -315,7 +291,6 @@ public class noEndAlg{
 		int attributes = tablesArr.length;
 		int start_id = start_element.characterId;
 		Statement charWithAtrStmt=null;
-		boolean foundMatch = false;
 		int[] valPlaceOfBirth = new int[1];
 
 		//running on all attributes
@@ -327,7 +302,7 @@ public class noEndAlg{
 				charactersWithAtr = findConnectedCharacters(joinedAtr, currentAtr, start_id, unspecifiedIdOfCharacter, false); 
 				if (charactersWithAtr!=null){
 					charToAny = charWithAtrStmt.executeQuery(charactersWithAtr);
-					foundMatch = helperForDirectConnectionToAll(charToAny, start_element, currentAtr,result);
+					helperForDirectConnectionToAll(charToAny, start_element, currentAtr,result);
 				}
 				atr = atr+1;
 			} 
@@ -339,14 +314,14 @@ public class noEndAlg{
 				
 				charactersWithAtr = directConnectionRealtions(currentAtr, start_id, unspecifiedIdOfCharacter, false);
 				charToAny = charWithAtrStmt.executeQuery(charactersWithAtr);
-				foundMatch = helperForDirectConnectionToAnyInRealtions(charToAny, start_element, currentAtr, result);
+				helperForDirectConnectionToAnyInRealtions(charToAny, start_element, currentAtr, result);
 			}
 			
 			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
 				charactersWithAtr = directConnetionPlaceOfBirth(start_id, unspecifiedIdOfCharacter,valPlaceOfBirth, false);
 				if (charactersWithAtr!=null){ //place of birth of character is not unspecified
 					charToAny = charWithAtrStmt.executeQuery(charactersWithAtr); 
-					foundMatch = helperForDirectConnectionToAnyPlaceOfBirth(charToAny, start_element, currentAtr, valPlaceOfBirth[0], result);
+					helperForDirectConnectionToAnyPlaceOfBirth(charToAny, start_element, currentAtr, valPlaceOfBirth[0], result);
 				}
 			}
 			
@@ -354,13 +329,9 @@ public class noEndAlg{
 			if (charWithAtrStmt != null) charWithAtrStmt.close();
 			charToAny=null;
 			charWithAtrStmt=null;
-			
-			if (foundMatch){ //found a match between start_id and end_id
-				break;
-			}
 		}
-		return foundMatch;
 	}
+	
 	
 	
 
@@ -376,14 +347,11 @@ public class noEndAlg{
 		Statement charAtrStmt = null;
 		int valPlaceOfBirth[] = new int[1];
 		
-
-		
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
 			currentAtr =tablesArr[atr];
 			charAtrStmt = conn.createStatement();
 			if (atr < indexOfJumps) {
-
 				joinedAtr = tablesArr[atr+1];
 				charactersWithAtr = findConnectedCharacters(joinedAtr, currentAtr, start_id, -1, true);
 				if (charactersWithAtr != null){
@@ -493,7 +461,7 @@ public class noEndAlg{
 			if (matchFound) {
 				System.out.println("Match found between "+ start_name +" and "+ end_name);
 				String connectionString = getNameAndPrintConnections(theConnection,conn);
-				//algorithmUtils.insertIntoHistory(connectionString, start_id, end_id,conn);
+			//	algorithmUtils.insertIntoHistory(connectionString, start_id, end_id,conn);
 				clearAll();
 				return true;
 			}
@@ -503,7 +471,7 @@ public class noEndAlg{
 		}
 		
 	//	System.out.println(previousPhase.size());
-		System.out.println(currentPhase.size());
+		//System.out.println(currentPhase.size());
 		clearAll();
 		System.out.println("couldn't find a connection");
 		return false;
@@ -558,37 +526,41 @@ public class noEndAlg{
 			
 		}
 
-	
-	public int getGlobalNumOfConnections(){
+	public int getGlobalNumOfConnections() {
 		return globalNumOfConnections;
-	}
+	}	
+	
 	
 	
 	public static void main(String[] args) throws SQLException, IOException{
-		noEndAlg a = new noEndAlg();
-//		algorithmUtils.prepareTablesAndHashMaps(a);
+		withEndAlg a = new withEndAlg();
+		algorithmUtils.prepareTablesAndHashMaps(a);
 		//System.out.println(a.indexOfJumps);
 	/*	for (int i=0;i<table.length;i++){
 			System.out.println(i+ ": " + table[i]);
 		}*/
 		
 	//a.fillTables();
-	
-	
-	long start = System.currentTimeMillis();	
-	//long finish = System.currentTimeMillis();
-	//long total = finish-start;
-	//String time = String.format("%d min, %d sec",      TimeUnit.MILLISECONDS.toMinutes(total),     TimeUnit.MILLISECONDS.toSeconds(total) -      TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(total)) );
-	//System.out.println("operation took total time of " + total +"\n" + time);
+
+	long start = System.currentTimeMillis();
+	a.lookForConnection (7,8);
+	long finish = System.currentTimeMillis();
+	long total = start-finish;
+	String time = String.format("%d min, %d sec",      TimeUnit.MILLISECONDS.toMinutes(total),     TimeUnit.MILLISECONDS.toSeconds(total) -      TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(total)));
+	System.out.println("operation took total time of " + total +"\n" + time);
+	System.out.println(a.getGlobalNumOfConnections());
 	//System.out.println(a.skips);
 	//System.out.println(foundCharactersIDs.size());
-	//System.out.println(a.getGlobalNumOfConnections());
+	
  
 		//a.topSerches();
 	
-		//Tester.tester();
+
+//		Tester.tester();
 		
 	}
+
+
 	
 	
 	

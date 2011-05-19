@@ -610,7 +610,7 @@ public class algorithm3{
 		
 		boolean matchFound = false;
 		characterElement[] theConnection = new characterElement[1];
-		maxConnection=3;
+		maxConnection=4;
 		for (int level = 1; level<maxConnection+1; level++) {
 			globalNumOfConnections = level;
 			matchFound = findAnyConnection(theConnection, start_id, 0, level);
