@@ -28,19 +28,14 @@ public class algorithm4{
 	int indexOfJumps;
 	int maxConnection;
 	int globalNumOfConnections;
-	//int numOfCharacters;
 	int skips=0;
 	int end_id;
 	
 	TreeMap<String, Short> tablesMap = new TreeMap<String, Short>();
 	static TreeMap<Short, String> reverseTablesMap = new TreeMap<Short, String>();
-	
-	
 	static HashSet<Integer> foundCharactersIDs = new HashSet<Integer>();
 	List<charElement> currentPhase = new ArrayList<charElement>();
 	List<charElement> previousPhase = new ArrayList<charElement>();
-	
-	//maps all unspecified ids
 	TreeMap<String, Integer> unspecifiedIdOfTables = new TreeMap<String,Integer>();
 	
 	public algorithm4(){
@@ -94,7 +89,7 @@ public class algorithm4{
 		
 		int currentid=0;
 		charElement connection;
-		
+
 		try {
 			while (charsWithAtrRS!= null && charsWithAtrRS.next()) {
 				currentid = charsWithAtrRS.getInt(1);
@@ -143,7 +138,6 @@ public class algorithm4{
 				if (foundCharactersIDs.contains(currentid)){ //already found a connection in this phase.
 					continue;	
 				}
-//				System.out.println("adding to " + currentAtr +  " id number " + currentid + "in phase " + globalNumOfConnections);
 				connection = new charElement(currentid, start_element);
 				short attribute = tablesMap.get(atr);
 				connection.connectedAttribute = attribute;;

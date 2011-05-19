@@ -1,17 +1,15 @@
 package Utils;
 
-
-public class charElement {
+public class CharElement2 {
 	int characterId;
-	charElement prevElement;
+	CharElement2 prevElement;
 	Short connectedAttribute;
 	Integer attributeValue;
-	
-	public charElement(int id, charElement prev){
+		
+	public CharElement2(int id, CharElement2 prev){
 		this.characterId=id;
 		this.prevElement = prev;
 		this.connectedAttribute=-1;
 		this.attributeValue=-1;
-
 	}
 }

@@ -79,13 +79,15 @@ public class withoutEndAttributeTableAlg{
 		while (iterator.hasNext()){
 			System.out.println(i);
 			if (i==431){
+				i++;
 				continue;
 			}
 			currentElement = iterator.next();
 			resultFlag = directConnectionToAny(currentElement, result);
 			if (resultFlag){
 					break;
-				}	
+				}
+			i++;
 		}
 		
 		previousPhase = currentPhase;
