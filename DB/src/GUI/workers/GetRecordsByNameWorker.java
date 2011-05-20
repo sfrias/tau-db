@@ -4,6 +4,8 @@ import Enums.ExecutionResult;
 import GUI.commons.Pair;
 import GUI.frames.PlayFrame;
 import GUI.model.SimpleModel;
+import GUI.panels.Manage.cards.delete.DeleteCharacters;
+import GUI.panels.Manage.cards.edit.EditCharacters;
 
 public class GetRecordsByNameWorker extends GenericWorker {
 
@@ -16,6 +18,18 @@ public class GetRecordsByNameWorker extends GenericWorker {
 		super(Action.QUERY, playFrame);
 		this.queryString = queryString;
 		this.charNum = charNum;
+	}
+
+	public GetRecordsByNameWorker(EditCharacters card, int charNum, String queryString) {
+		super(Action.QUERY, card);
+		this.queryString = queryString;
+		this.charNum = charNum;
+	}
+
+	public GetRecordsByNameWorker(DeleteCharacters card, int charNum, String queryString) {
+		super(Action.QUERY, card);
+		this.queryString = queryString;
+		this.charNum = charNum;	
 	}
 
 	protected ResultHolder doInBackground(){
