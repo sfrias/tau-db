@@ -63,16 +63,12 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 		this.card = card;
 	}
 
-	/*	//get list for general edit/delete
-	public GenericWorker(EditAndDeleteGenericCardPanel card){
-		this(null, card);
+
+	public GenericWorker(Action action, DeleteCharacters card) {
+		super();
+		this.action = action;
+		this.card = card;	
 	}
-
-	//get all lists for combos in addCharacter
-	public GenericWorker(AddCharacters addCharCard){
-		this(null, addCharCard);
-	}*/
-
 
 	@Override
 	public void done(){

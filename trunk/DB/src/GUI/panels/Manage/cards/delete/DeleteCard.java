@@ -31,20 +31,18 @@ public class DeleteCard extends EditAndDeleteGenericCardPanel{
 		textName.setEditable(false);
 	}
 
+	public DeleteCard(Tables table, boolean isSimpleTable, boolean generateRecords) {
+		super(table, isSimpleTable, generateRecords);
+	}
+
 	public String getCardAction(){
 		return "delete";
 	}
 	
 	public void refreshFromModel(){
-		long start = System.currentTimeMillis();
 		comboRecord.removeAllItems();
 		ComboBoxModel comboModel = new DefaultComboBoxModel(model.getRecords());
 		comboRecord.setModel(comboModel);
-		comboRecord.setSelectedItem(null);
-		textName.setText("");
-		
-		long finish = System.currentTimeMillis();
-		System.out.println(finish - start);
 	}
 	
 	public void setModel(SimpleModel model){
@@ -77,9 +75,9 @@ public class DeleteCard extends EditAndDeleteGenericCardPanel{
 			public void actionPerformed(ActionEvent e) {
 				cb = (AutoCompleteComboBox)e.getSource();
 				DefaultComboBoxModel model = (DefaultComboBoxModel) cb.getModel();
-				Pair record = (Pair) model.getSelectedItem();
-				if (record != null){
-					textName.setText(record.getName());
+				Object record =  model.getSelectedItem();
+				if (record != null && record instanceof Pair){
+					textName.setText(((Pair)record).getName());
 				}
 			}
 		};
