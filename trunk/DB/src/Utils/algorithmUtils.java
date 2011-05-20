@@ -377,6 +377,47 @@ public class algorithmUtils {
 		" WHERE " +joinedAtr + "_character_id = " + charid;
 	}
 
+	public static String specificAttributeValuesQueryAny(String joinedAtr, String currentAtr, int charid, int unspecifiedidofCharacter, int unspecifiedIdOfAtr){
+		return 	
+		"SELECT DISTINCT x." + joinedAtr + "_character_id , x." + joinedAtr + "_" + currentAtr + "_id " +
+		" FROM " + joinedAtr + " AS x, " + joinedAtr + " AS y " +
+		" WHERE x." +joinedAtr + "_" + currentAtr+ "_id = y."+joinedAtr + "_" + currentAtr+ "_id" +
+		" AND y."  + joinedAtr +  "_character_id =" + charid +
+		" AND x." + joinedAtr +  "_character_id !=" + unspecifiedidofCharacter +
+		" AND y."+joinedAtr + "_" + currentAtr+ "_id !=" +unspecifiedIdOfAtr;
+	}
+	
+	public static String specificAttributeValuesQueryEnd(String joinedAtr, String currentAtr, int charid, int end_id, int unSpecAtr){
+		return 	
+		"SELECT DISTINCT x." + joinedAtr + "_character_id , x." + joinedAtr + "_" + currentAtr + "_id " +
+		" FROM " + joinedAtr + " AS x, " + joinedAtr + " AS y " +
+		" WHERE x." +joinedAtr + "_" + currentAtr+ "_id = y."+joinedAtr + "_" + currentAtr+"_id" +
+		" AND y."  + joinedAtr +  "_character_id =" + charid +
+		" AND x." + joinedAtr +  "_character_id =" + end_id +
+		" AND y."+joinedAtr + "_" + currentAtr+"_id !=" +unSpecAtr;
+	}
+
+	public static String placeOfBirthQueryAny(String currentAtr, int charid, int unSpecChar, int unSpecPlace){
+		return 	
+		"SELECT DISTINCT x.character_id, x.character_" + currentAtr+ "_id "+  
+		" FROM characters AS x, characters AS y " +
+		" WHERE x.character_" + currentAtr+ "_id  = y.character_" + currentAtr+ "_id " +
+		" AND y.character_id = " + charid + 
+		" AND y.character_" + currentAtr+ "_id != " + unSpecChar +
+		" AND y.character_" + currentAtr+ "_id !=" + unSpecPlace;
+	}
+	
+	public static String placeOfBirthQueryEnd(String currentAtr, int charid, int end_id, int unspecifiedIdPlaceOfBirth){
+		return 	
+		"SELECT DISTINCT x.character_" + currentAtr+ "_id "+  
+		" FROM characters AS x, characters AS y " +
+		" WHERE x.character_" + currentAtr+ "_id  = y.character_" + currentAtr+ "_id " +
+		" AND y.character_id = " + charid + 
+		" AND x.character_id = " + end_id +
+		" AND y.character_" + currentAtr+ "_id !=" + unspecifiedIdPlaceOfBirth;
+	}
+	
+	
 
 	/*
 	 * builds a query for finding all characters and attribute values that have a common attribute value with 'charid'
