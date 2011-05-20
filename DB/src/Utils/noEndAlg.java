@@ -79,9 +79,8 @@ public class noEndAlg{
 				}
 			}
 		
-		previousPhase.clear();
-		previousPhase.addAll(currentPhase);
-		currentPhase.clear();		
+		previousPhase = currentPhase;
+		currentPhase = new ArrayList<charElement>();
 		return resultFlag;
 	}
 	
@@ -324,11 +323,11 @@ public class noEndAlg{
 			charWithAtrStmt = conn.createStatement();
 			if (atr < indexOfJumps) {
 				joinedAtr = tablesArr[atr+1];
-				charactersWithAtr = findConnectedCharacters(joinedAtr, currentAtr, start_id, unspecifiedIdOfCharacter, false); 
-				if (charactersWithAtr!=null){
-					charToAny = charWithAtrStmt.executeQuery(charactersWithAtr);
-					foundMatch = helperForDirectConnectionToAll(charToAny, start_element, currentAtr,result);
-				}
+				charactersWithAtr = algorithmUtils.specificAttributeValuesQueryAny(joinedAtr, currentAtr, start_id, unspecifiedIdOfCharacter, unspecifiedIdOfTables.get(currentAtr));
+				//if (charactersWithAtr!=null){
+				charToAny = charWithAtrStmt.executeQuery(charactersWithAtr);
+				foundMatch = helperForDirectConnectionToAll(charToAny, start_element, currentAtr,result);
+				//}
 				atr = atr+1;
 			} 
 			
@@ -343,11 +342,12 @@ public class noEndAlg{
 			}
 			
 			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
-				charactersWithAtr = directConnetionPlaceOfBirth(start_id, unspecifiedIdOfCharacter,valPlaceOfBirth, false);
-				if (charactersWithAtr!=null){ //place of birth of character is not unspecified
+				//charactersWithAtr = directConnetionPlaceOfBirth(start_id, unspecifiedIdOfCharacter,valPlaceOfBirth, false);
+				charactersWithAtr = algorithmUtils.placeOfBirthQueryAny(currentAtr, start_id, unspecifiedIdOfCharacter, unspecifiedIdOfTables.get(currentAtr));
+				//if (charactersWithAtr!=null){ //place of birth of character is not unspecified
 					charToAny = charWithAtrStmt.executeQuery(charactersWithAtr); 
 					foundMatch = helperForDirectConnectionToAnyPlaceOfBirth(charToAny, start_element, currentAtr, valPlaceOfBirth[0], result);
-				}
+				//}
 			}
 			
 			if (charToAny != null) charToAny.close();
@@ -385,14 +385,15 @@ public class noEndAlg{
 			if (atr < indexOfJumps) {
 
 				joinedAtr = tablesArr[atr+1];
-				charactersWithAtr = findConnectedCharacters(joinedAtr, currentAtr, start_id, -1, true);
-				if (charactersWithAtr != null){
+				//charactersWithAtr = findConnectedCharacters(joinedAtr, currentAtr, start_id, -1, true);
+				charactersWithAtr = algorithmUtils.specificAttributeValuesQueryEnd(joinedAtr, currentAtr, start_id, end_id, unspecifiedIdOfTables.get(currentAtr));
+				//if (charactersWithAtr != null){
 					charsWithAtrRS= charAtrStmt.executeQuery(charactersWithAtr);
 					if (charsWithAtrRS.next()){
 						currentAtrVal =charsWithAtrRS.getInt(1);
 						foundMatch=true;
 						}
-				}
+				//}
 				atr=atr+1;
 			} //end of while loop
 			
@@ -413,14 +414,15 @@ public class noEndAlg{
 			}	
 			
 			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
-				charactersWithAtr = directConnetionPlaceOfBirth(start_id, -1,valPlaceOfBirth, true);
-				if (charactersWithAtr!= null){
+				//charactersWithAtr = directConnetionPlaceOfBirth(start_id, -1,valPlaceOfBirth, true);
+				charactersWithAtr = algorithmUtils.placeOfBirthQueryEnd(currentAtr, start_id, end_id, unspecifiedIdOfTables.get(currentAtr));
+				//if (charactersWithAtr!= null){
 					charsWithAtrRS= charAtrStmt.executeQuery(charactersWithAtr);
 					if (charsWithAtrRS.first()){
 						foundMatch=true;
-						currentAtrVal = valPlaceOfBirth[0];
+						currentAtrVal = charsWithAtrRS.getInt(1);
 					}	
-				}
+				//}
 			}
 			
 			if (charAtrStmt!= null) charAtrStmt.close();
@@ -566,7 +568,9 @@ public class noEndAlg{
 	
 	public static void main(String[] args) throws SQLException, IOException{
 		noEndAlg a = new noEndAlg();
-//		algorithmUtils.prepareTablesAndHashMaps(a);
+		algorithmUtils.prepareTablesAndHashMaps(a);
+		long start = System.currentTimeMillis();
+		a.lookForConnection(1, 7);
 		//System.out.println(a.indexOfJumps);
 	/*	for (int i=0;i<table.length;i++){
 			System.out.println(i+ ": " + table[i]);
@@ -574,12 +578,10 @@ public class noEndAlg{
 		
 	//a.fillTables();
 	
-	
-	long start = System.currentTimeMillis();	
-	//long finish = System.currentTimeMillis();
-	//long total = finish-start;
-	//String time = String.format("%d min, %d sec",      TimeUnit.MILLISECONDS.toMinutes(total),     TimeUnit.MILLISECONDS.toSeconds(total) -      TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(total)) );
-	//System.out.println("operation took total time of " + total +"\n" + time);
+	long finish = System.currentTimeMillis();
+	long total = finish-start;
+	String time = String.format("%d min, %d sec",      TimeUnit.MILLISECONDS.toMinutes(total),     TimeUnit.MILLISECONDS.toSeconds(total) -      TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(total)) );
+	System.out.println("operation took total time of " + total +"\n" + time);
 	//System.out.println(a.skips);
 	//System.out.println(foundCharactersIDs.size());
 	//System.out.println(a.getGlobalNumOfConnections());
