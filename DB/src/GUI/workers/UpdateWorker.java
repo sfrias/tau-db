@@ -30,8 +30,8 @@ import Enums.UpdateResult;
 import GUI.GuiHandler;
 import GUI.panels.Manage.Tabs.UpdateTab;
 import db.AntUtils;
-import db.AntUtils.Targets;
 import db.DatabaseManager;
+import db.AntUtils.Targets;
 
 public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 	private File pathDir, sqlFile, extractDir, fictUniverseDir;
@@ -125,6 +125,18 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 				case exception:
 					removeTemporaryFiles();
 					parent.refreshTab(result);
+					break;
+				case cancel_accepted:
+					break;
+				case finish_delete:
+					break;
+				case finish_download:
+					break;
+				case finish_extract:
+					break;
+				case finish_update_table:
+					break;
+				case start_update_table:
 					break;
 				} 
 			}catch (InterruptedException e) {

@@ -47,6 +47,6 @@ public enum Tables {
 	}
 	
 	public static int getMaxIndex(){
-		return 12; 
+		return 11; 
 	}
 }

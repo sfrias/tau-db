@@ -1,7 +1,8 @@
 package GUI.workers;
 
 import Enums.Tables;
-import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
+import GUI.panels.Manage.cards.delete.DeleteCard;
+import GUI.panels.Manage.cards.edit.EditSimpleCard;
 
 public abstract class GenericEditDeleteWorker extends GenericWorker {
 	protected Tables table;
@@ -9,17 +10,16 @@ public abstract class GenericEditDeleteWorker extends GenericWorker {
 	protected String[] values ;
 	protected int recordId;
 	
-	public GenericEditDeleteWorker(String action, Tables table, String [] fieldNames, String [] fieldValue, int recordId, 
-			EditAndDeleteGenericCardPanel card) {
-		super(action, card);
+	public GenericEditDeleteWorker(Tables table, String [] fieldNames, String [] fieldValue, int recordId, EditSimpleCard card) {
+		super(card);
 		this.table = table;
 		this.fieldNames = fieldNames;
 		this.values = fieldValue;
 		this.recordId = recordId;
 	}
 	
-	public GenericEditDeleteWorker(String action, Tables table, int recordId, EditAndDeleteGenericCardPanel card){
-		super(action, card);
+	public GenericEditDeleteWorker(Tables table, int recordId, DeleteCard card){
+		super(card);
 		this.table = table;
 		this.recordId = recordId;
 	}

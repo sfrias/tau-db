@@ -53,6 +53,8 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		cards = new JPanel(new RXCardLayout());
 		cards = addCards(cards);
 		add(cards,BorderLayout.CENTER);	
+		comboCategory.setSelectedIndex(0);
+
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -7,8 +7,12 @@ Inside JComboBox: adding automatic completion
 Author: Thomas Bierhance
         thomas@orbital-computer.de
 */
-import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.ComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.PlainDocument;
 
 public class S04FirstAutoCompletion extends PlainDocument {
     
@@ -39,10 +43,12 @@ public class S04FirstAutoCompletion extends PlainDocument {
         super.insertString(offs, str, a);
         // lookup and select a matching item
         Object item = lookupItem(getText(0, getLength()));
-        setSelectedItem(item);
+        if (item != null){
+        	        setSelectedItem(item);
         setText(item.toString());
         // select the completed part
         highlightCompletedText(offs+str.length());
+        }
     }
     
     private void setText(String text) throws BadLocationException {

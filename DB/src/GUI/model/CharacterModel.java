@@ -3,7 +3,7 @@ package GUI.model;
 import Enums.Tables;
 import GUI.commons.Pair;
 
-public class CharacterModel {
+public class CharacterModel{
 
 	private Pair[][] attArr = new Pair[Tables.getMaxIndex()+1][];
 	

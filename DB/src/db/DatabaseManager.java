@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,6 +24,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 public class DatabaseManager {
 
+	//TODO add finally statements to all methods and check null!!!
 	private final static String USERNAME = "root";
 	private final static String PASSWORD = "mapo00";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
@@ -185,8 +185,7 @@ public class DatabaseManager {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			String statementString;
 			if (table.equals(Tables.characters)){
-				statementString = "SELECT * FROM characters " +
-				"WHERE character_name REGEXP '^" + queryName + "' ORDER BY character_name ASC LIMIT 5000";
+				statementString = "SELECT * FROM characters WHERE character_name REGEXP '^" + queryName + "' ORDER BY character_name ASC LIMIT 5000";
 			}
 			else{
 				statementString = "SELECT * FROM " + tableName + " WHERE " + tableName + "_name REGEXP '^" +
@@ -240,29 +239,106 @@ public class DatabaseManager {
 		}
 	}
 
-	public String[] getCurrentValues(Tables table, String idFieldName, int recordId) {
+	public Pair[] getCharacters(String recordName) {
 
-		String tableName = table.toString();
+		JDCConnection conn = null;
+		Statement stmt = null;
+		ResultSet resultSet = null;
 		try {
-			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
-			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + tableName + " WHERE " + idFieldName + " = ?");
-			stmt.setInt(1, recordId);
-			ResultSet resultSet = stmt.executeQuery();
+			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			stmt = conn.createStatement();
+			resultSet = stmt.executeQuery("SELECT character_id, character_name FROM characters WHERE character_name REGEXP '^" + recordName + "\' ORDER BY character_name");
+			List<Pair> valuesList = new ArrayList<Pair>() ;
 
-			//TODO: this is ugly, fix that.
-			String[] valuesArr = new String[1];
-
-			resultSet.next();
-			valuesArr[0] = resultSet.getString(3);
-
-			resultSet.close();
-			stmt.close();
-			conn.close(); 
-			return valuesArr;
+			while(resultSet.next()){
+				Pair pair = new Pair(resultSet.getString(2), resultSet.getInt(1));
+				valuesList.add(pair);
+			}
+			return valuesList.toArray(new Pair[valuesList.size()]);
 
 		} catch (SQLException e) {
-			System.err.println("An SQLException was thrown at getCurrentValues("+ tableName + ")");
+			System.err.println("An SQLException was thrown at getCurrentValues("+ recordName + ")");
 			return null;
+		}
+		finally{
+			try {
+				if (resultSet != null){
+					resultSet.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		}
+
+	}
+
+	public Pair[][] getCharacterAttributes(int recordId, String [] tables){
+
+		JDCConnection conn = null;
+		Statement stmt = null;
+		ResultSet resultSet = null;
+
+		try {
+			Pair [][] values = new Pair[tables.length][];
+			                                         
+			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			stmt = conn.createStatement();
+			for (int i=0; i < tables.length; i++){
+				List<Pair> currentAttr = new ArrayList<Pair>();
+				String currentTable = tables[i];
+				resultSet = stmt.executeQuery("SELECT " + currentTable+"_id, " + currentTable + "_name FROM characters_and_" 
+						+ currentTable + ", " + currentTable + " WHERE characters_and_" + currentTable + "_" + currentTable 
+						+ "_id = " + currentTable + "_id AND characters_and_" + currentTable + "_character_id = " + recordId);
+				while (resultSet.next()){
+					int id = resultSet.getInt(1);
+					String name = resultSet.getString(2);
+					Pair pair = new Pair(name, id);
+					currentAttr.add(pair);
+				}
+				
+				resultSet.close();
+				values[i] = currentAttr.toArray(new Pair[currentAttr.size()]);				
+			}
+			return values;
+
+		} catch (SQLException e) {
+			System.err.println("An SQLException was thrown at getCharacterAttributes("+ recordId+ ")");
+			return null;
+		}
+		finally{
+			try {
+				if (resultSet != null){
+					resultSet.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
 		}
 
 	}
@@ -327,7 +403,7 @@ public class DatabaseManager {
 					stmt2.addBatch("INSERT IGNORE INTO " + tableName + " values(" + key + ", " + currentAttrId + ")");				}
 			}
 			stmt2.executeBatch();
-			
+
 			conn.commit();
 
 			return ExecutionResult.Success_Add_Character;
@@ -342,7 +418,7 @@ public class DatabaseManager {
 		}
 		finally {
 			try {
-				
+
 				if (stmt != null) { 
 					stmt.close(); 
 				}

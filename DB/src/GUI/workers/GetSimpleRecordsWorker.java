@@ -3,21 +3,26 @@ package GUI.workers;
 import Enums.ExecutionResult;
 import Enums.Tables;
 import GUI.commons.Pair;
-import GUI.frames.PlayFrame;
 import GUI.model.SimpleModel;
-import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
+import GUI.panels.Manage.cards.delete.DeleteCard;
+import GUI.panels.Manage.cards.edit.EditCharacters;
+import GUI.panels.Manage.cards.edit.EditSimpleCard;
 
 public class GetSimpleRecordsWorker extends GenericWorker {
 	private Tables table;
 	
-	public GetSimpleRecordsWorker(Tables table, EditAndDeleteGenericCardPanel card){
+	public GetSimpleRecordsWorker(Tables table, EditSimpleCard card){
 		super(card);
 		this.table = table;
 	}
 	
+	public GetSimpleRecordsWorker(Tables table, EditCharacters card){
+		super(Action.QUERY, card);
+		this.table = table;
+	}
 	
-	public GetSimpleRecordsWorker(Tables table, PlayFrame playFrame){
-		super(playFrame);
+	public GetSimpleRecordsWorker(Tables table, DeleteCard card){
+		super(card);
 		this.table = table;
 	}
 	

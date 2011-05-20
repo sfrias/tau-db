@@ -17,7 +17,9 @@ import Enums.Tables;
 import GUI.GuiHandler;
 import GUI.commons.GuiUtils;
 import GUI.list.DisplayList;
+import GUI.panels.Manage.cards.GenericCardPanel;
 import GUI.panels.Manage.cards.add.AddCharacters;
+import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.workers.AddCharacterAttributeWorker;
 
 public class CharacterAttributePanel extends JPanel{
@@ -31,7 +33,7 @@ public class CharacterAttributePanel extends JPanel{
 	private DisplayList allValues;
 	private JTextField addField = new JTextField(20);
 
-	public CharacterAttributePanel(final Tables table, final AddCharacters addCharactersCard){
+	public CharacterAttributePanel(final Tables table, final GenericCardPanel card){
 		super();
 
 		setLayout(new BorderLayout());
@@ -46,7 +48,13 @@ public class CharacterAttributePanel extends JPanel{
 								button.setIcon(GuiUtils.readImageIcon("addIcon.png", 15, 15));
 								String value = addField.getText();
 								if (value.compareTo("")!=0){
-									AddCharacterAttributeWorker worker = new AddCharacterAttributeWorker(table, value, addCharactersCard);
+									AddCharacterAttributeWorker worker;
+									if (card instanceof EditCharacters){
+										worker = new AddCharacterAttributeWorker(table, value, (EditCharacters) card);
+									}
+									else{
+										worker = new AddCharacterAttributeWorker(table, value, (AddCharacters) card);
+									}
 									GuiHandler.startStatusFlash();								
 									worker.execute();
 								}
