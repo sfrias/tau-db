@@ -11,5 +11,5 @@ public interface EditAndDeleteGenericCardInteface extends GenericCardInerface {
 	public void refreshFromModel();
 	
 	public void generateRecords();
-
+	
 }

@@ -4,11 +4,16 @@ import Enums.ExecutionResult;
 import Enums.Tables;
 import GUI.model.CharacterModel;
 import GUI.panels.Manage.cards.add.AddCharacters;
+import GUI.panels.Manage.cards.edit.EditCharacters;
 
-public class GetCharacterRecordsWorker extends GenericWorker{
+public class GetAllAttributesWorker extends GenericWorker{
 	
-	public GetCharacterRecordsWorker(AddCharacters parent) {
+	public GetAllAttributesWorker(AddCharacters parent) {
 		super(parent);
+	}
+	
+	public GetAllAttributesWorker(EditCharacters parent) {
+		super(Action.QUERY, parent);
 	}
 	
 	

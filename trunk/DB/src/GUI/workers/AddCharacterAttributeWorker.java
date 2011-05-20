@@ -4,6 +4,7 @@ import Enums.ExecutionResult;
 import Enums.Tables;
 import GUI.model.CharacterModel;
 import GUI.panels.Manage.cards.add.AddCharacters;
+import GUI.panels.Manage.cards.edit.EditCharacters;
 
 public class AddCharacterAttributeWorker extends GenericWorker {
 	
@@ -11,11 +12,16 @@ public class AddCharacterAttributeWorker extends GenericWorker {
 	protected Tables table ;
 
 	public AddCharacterAttributeWorker(Tables table, String fieldValue, AddCharacters card){
-		super("add", card);
+		super(card);
 		this.value = fieldValue;
 		this.table = table;
 	}
 
+	public AddCharacterAttributeWorker(Tables table, String fieldValue, EditCharacters card){
+		super(Action.ADD, card);
+		this.value = fieldValue;
+		this.table = table;
+	}
 
 	@Override
 	protected ResultHolder doInBackground() throws Exception {

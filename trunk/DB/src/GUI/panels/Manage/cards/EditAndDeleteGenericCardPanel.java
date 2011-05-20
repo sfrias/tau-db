@@ -12,15 +12,14 @@ import javax.swing.JSeparator;
 import Enums.Tables;
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
-import GUI.commons.Pair;
-import GUI.model.SimpleModel;
+import GUI.panels.Manage.cards.delete.DeleteCard;
+import GUI.panels.Manage.cards.edit.EditCharacters;
+import GUI.panels.Manage.cards.edit.EditSimpleCard;
 import GUI.workers.GetSimpleRecordsWorker;
 
 public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel implements EditAndDeleteGenericCardInteface{
 	private static final long serialVersionUID = 1L;
-	private AutoCompleteComboBox comboRecord;
-	protected EditAndDeleteGenericCardPanel thisCard = this;
-	private SimpleModel model;
+	protected AutoCompleteComboBox comboRecord;
 
 	public EditAndDeleteGenericCardPanel(Tables table) throws Exception{
 		this(table, true);
@@ -30,6 +29,7 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 		super(table, isSimpleCard);
 		//Pair[] records = createRecordList();
 		comboRecord = new AutoCompleteComboBox();
+		comboRecord.setPrototypeDisplayValue("XXX");
 		comboRecord.addActionListener(createRecordComboListener());
 		comboRecord.setPreferredSize(new Dimension(200,20));
 		JPanel panelRecord = new JPanel();
@@ -70,62 +70,21 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 
 	}
 
-/*	public Pair[] createRecordList() throws Exception{
-		GetSimpleRecordsWorker worker = new GetSimpleRecordsWorker(table, this);
-		GuiHandler.startStatusFlash();
-		worker.execute();
-		try {
-			Pair[] result = worker.get(10000,TimeUnit.MILLISECONDS);
-			GuiHandler.stopStatusFlash();
-			if (result != null){
-				return result;
-			} 
-		} 
-		catch (InterruptedException e) {}
-		catch (ExecutionException e) {}
-		catch (TimeoutException e) {}
-
-		throw new Exception();
-	}*/
-
-/*	private void createRecordCombo(boolean isFirstCreation) throws Exception{
-		if (!isFirstCreation){
-			panelRecord.remove(comboRecord);
-		}
-		Pair[] records = createRecordList();
-
-		comboRecord = new AutoCompleteComboBox(records);
-		comboRecord.addActionListener(createRecordComboListener());
-		comboRecord.setPreferredSize(new Dimension(200,20));
-		panelRecord.add(comboRecord,0);
-		panelRecord.validate();
-	}*/
-
 	public void generateRecords(){
-		GetSimpleRecordsWorker worker = new GetSimpleRecordsWorker(table, this);
+		GetSimpleRecordsWorker worker;
+
+		if (this instanceof EditSimpleCard){
+			worker = new GetSimpleRecordsWorker(table, (EditSimpleCard) this);
+		}
+		else if(this instanceof DeleteCard){
+			worker = new GetSimpleRecordsWorker(table, (DeleteCard) this);
+
+		}
+		else{
+			worker = new GetSimpleRecordsWorker(table, (EditCharacters) this);
+		}
 		GuiHandler.startStatusFlash();
 		worker.execute();
 	}
-	
-	public void refreshFromModel(){
-		comboRecord.removeAllItems();
-		Pair[] pairs = model.getRecords();
-		for (int i=0; i<pairs.length; i++){
-			comboRecord.addItem(pairs[i]);
-		}
-		comboRecord.setSelectedItem(null);
-		textName.setText("");
-	}
-	
-	
-	public void setModel(SimpleModel model){
-		this.model = model;
-	}
-	
-	public SimpleModel getModel(){
-		return model;
-	}
-	
-
 
 }

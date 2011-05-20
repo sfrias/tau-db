@@ -6,6 +6,12 @@ public enum ExecutionResult {
 	Success_Add_Character,
 	Success_Add_Character_Attribute,
 	Success_Simple_Query,
+	Success_Get_Characters_For_First_Character,
+	Success_Get_Characters_For_Second_Character,
+	Success_Get_Characters,
+	Success_Get_Character_Attributes,
+	Success_Get_Character_Attributes_For_First_Character,
+	Success_Get_Character_Attributes_For_Second_Character,
 	Success_Characters_Query,
 	IntegrityConstraintViolationException,
 	Exception;

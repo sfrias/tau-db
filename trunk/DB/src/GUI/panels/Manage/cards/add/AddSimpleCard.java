@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
 
 import Enums.Tables;
 import GUI.GuiHandler;
-import GUI.workers.AddWorker;
+import GUI.workers.AddSimpleWorker;
 
 public class AddSimpleCard extends AddCard {
 
@@ -25,7 +25,7 @@ public class AddSimpleCard extends AddCard {
 					public void run() {
 						String fieldName = table.toString()+"_name";
 						String value = textName.getText();
-						AddWorker worker = new AddWorker(table, fieldName, value, me);
+						AddSimpleWorker worker = new AddSimpleWorker(table, fieldName, value, me);
 						GuiHandler.startStatusFlash();
 						worker.execute();
 					}

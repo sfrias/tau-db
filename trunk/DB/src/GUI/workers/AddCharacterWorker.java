@@ -10,7 +10,7 @@ public class AddCharacterWorker extends GenericWorker {
 	protected String [] tables ;
 	
 	public AddCharacterWorker(String [] tables, Pair[][] values, AddCharacters card) {
-		super("add", card);
+		super(card);
 		this.tables = tables;
 		this.values = values;
 		

@@ -2,12 +2,12 @@ package GUI.workers;
 
 import Enums.ExecutionResult;
 import Enums.Tables;
-import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
+import GUI.panels.Manage.cards.delete.DeleteCard;
 
 public class DeleteWorker extends GenericEditDeleteWorker {
 
-	public DeleteWorker(Tables table, int recordId, EditAndDeleteGenericCardPanel card){
-		super("delete", table, recordId, card);
+	public DeleteWorker(Tables table, int recordId, DeleteCard card){
+		super(table, recordId, card);
 	}
 
 	protected ResultHolder doInBackground(){

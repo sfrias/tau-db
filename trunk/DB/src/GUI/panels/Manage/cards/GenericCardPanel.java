@@ -18,13 +18,10 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import db.DatabaseManager;
-
 public abstract class GenericCardPanel extends JPanel implements GenericCardInerface{
 
 	private static final long serialVersionUID = 1L;
 
-	protected static DatabaseManager databaseManager = DatabaseManager.getInstance();
 	protected AutoCompleteComboBox cb;
 	protected final JTextField textName = new JTextField(20);
 	

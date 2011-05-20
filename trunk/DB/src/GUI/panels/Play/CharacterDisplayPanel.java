@@ -155,9 +155,4 @@ public class CharacterDisplayPanel extends JPanel{
 		}
 		charModel = null;
 	}
-	
-
-	
-	
-
 }

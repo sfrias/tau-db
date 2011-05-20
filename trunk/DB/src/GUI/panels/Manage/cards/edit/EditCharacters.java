@@ -1,4 +1,4 @@
-package GUI.panels.Manage.cards.add;
+package GUI.panels.Manage.cards.edit;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,16 +16,18 @@ import GUI.commons.GuiUtils;
 import GUI.commons.Pair;
 import GUI.list.DisplayList;
 import GUI.model.CharacterModel;
+import GUI.model.SimpleModel;
 import GUI.panels.CharacterAttributePanel;
-import GUI.workers.AddCharacterWorker;
+import GUI.workers.EditCharacterWorker;
 import GUI.workers.GetAllAttributesWorker;
 
-public class AddCharacters extends AddCard {
+public class EditCharacters extends EditCard{
 	private static final long serialVersionUID = 1L;
 	ImageIcon addIcon = GuiUtils.readImageIcon("addIcon.png");
 	ImageIcon okIcon  = GuiUtils.readImageIcon("okIcon.png");
-	private AddCharacters me = this;
-	private CharacterModel model;
+	private EditCharacters me = this;
+	private CharacterModel charModel;
+	private SimpleModel simpleModel;
 	private DisplayList[] allValuesIndex = new DisplayList[Tables.getMaxIndex()+1];
 
 	private DisplayList creator;
@@ -53,27 +55,35 @@ public class AddCharacters extends AddCard {
 	private DisplayList universe;
 	private DisplayList universeValues;
 
-	private Vector<String> titles = new Vector<String>();
-	private Vector<JComponent> components = new Vector<JComponent>();
+	Vector<String> titles = new Vector<String>();
+	Vector<JComponent> components = new Vector<JComponent>();
+	Vector<JComponent> extraAddPanels = new Vector<JComponent>();
 
-	public AddCharacters(){
+	public EditCharacters(){
 		super(Tables.characters, false);		
 		populateVectors();
 		populateLists();
 		createListIndex();
-
 		addFields(titles, components);
 
 	}
 
-	public void setModel(CharacterModel model){
-		this.model = model;
+	public void setCharacterModel(CharacterModel model){
+		this.charModel = model;
 	}
 
-	public CharacterModel getModel(){
-		return model;
+	public CharacterModel getCharacterModel(){
+		return charModel;
 	}
 
+	public void setSimpleModel(SimpleModel model){
+		this.simpleModel = model;
+	}
+
+	public SimpleModel getSimpleModel(){
+		return simpleModel;
+	}
+	
 	private void populateLists(){
 		GetAllAttributesWorker worker = new GetAllAttributesWorker(this);
 		GuiHandler.startStatusFlash();
@@ -208,7 +218,7 @@ public class AddCharacters extends AddCard {
 
 						String[] tables = getTablesNames();
 						Pair[][] values = getValues();
-						AddCharacterWorker worker = new AddCharacterWorker(tables, values, me);
+						EditCharacterWorker worker = new EditCharacterWorker(tables, values, me);
 						GuiHandler.startStatusFlash();
 						worker.execute();
 					}
@@ -216,12 +226,21 @@ public class AddCharacters extends AddCard {
 			}
 		};
 	}
+	
+	public void refreshFromModel(){
+		comboRecord.removeAllItems();
+		Pair[] pairs = simpleModel.getRecords();
+		for (int i=0; i<pairs.length; i++){
+			comboRecord.addItem(pairs[i]);
+		}
+		comboRecord.setSelectedItem(null);
+		textName.setText("");
+	}
 
-	@Override
-	public void refreshFromModel() {
+	public void refreshFromCharacterModel() {
 		for (int i=0; i<allValuesIndex.length; i++){
-			if (model.isAtrributeModified(i)){
-				populateList(allValuesIndex[i], model.getAttributePairs(i));
+			if (charModel.isAtrributeModified(i)){
+				populateList(allValuesIndex[i], charModel.getAttributePairs(i));
 				//model.resetAttributeCell(i);
 			}
 		}
@@ -281,6 +300,13 @@ public class AddCharacters extends AddCard {
 		allValuesIndex[Tables.school.getIndex()] = schoolValues;
 		allValuesIndex[Tables.species.getIndex()] = speciesValues;
 		allValuesIndex[Tables.universe.getIndex()] = universeValues;
+	}
+
+
+	@Override
+	public ActionListener createRecordComboListener() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
