@@ -13,7 +13,7 @@ public class Tester {
 	
 	public static void tester () throws SQLException  {
 		
-		withEndAlg a = new withEndAlg();
+		noEndAlg a = new noEndAlg();
 		algorithmUtils.prepareTablesAndHashMaps(a);
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -77,6 +77,10 @@ public class Tester {
 			rs = stmt.executeQuery("SELECT avg(time) FROM statistic WHERE num_of_connections = -1");
 			rs.first();
 			System.out.println("the avg time of -1 is " + rs.getLong(1));
+			
+			rs = stmt.executeQuery("SELECT max(time) FROM statistic");
+			rs.first();
+			System.out.println("the max time is " + rs.getLong(1));
 			
 			if (stmt != null) stmt.close();
 			if (rs != null) rs.close();
