@@ -59,18 +59,12 @@ public class GetCharacterAttributesWorker extends GenericWorker {
 	private String[] getTablesNames() {
 
 		String [] values = new String[Tables.getMaxIndex()+1];
-		values[0] = Tables.creator.name();
-		values[1] = Tables.disease.name();
-		values[2] = Tables.ethnicity.name();
-		values[3] = Tables.gender.name();
-		values[4] = Tables.job.name();
-		values[5] = Tables.occupation.name();
-		values[6] = Tables.organization.name();
-		values[7] = Tables.power.name();
-		values[8] = Tables.rank.name();
-		values[9] = Tables.school.name();
-		values[10] = Tables.species.name();
-		values[11] = Tables.universe.name();
+		values[Tables.disease.getIndex()] = Tables.disease.name();
+		values[Tables.occupation.getIndex()] = Tables.occupation.name();
+		values[Tables.organization.getIndex()] = Tables.organization.name();
+		values[Tables.power.getIndex()] = Tables.power.name();
+		values[Tables.school.getIndex()] = Tables.school.name();
+		values[Tables.universe.getIndex()] = Tables.universe.name();
 
 		return values;
 	}
@@ -83,18 +77,12 @@ public class GetCharacterAttributesWorker extends GenericWorker {
 		else{
 			
 			CharacterModel model = new CharacterModel();
-			model.setAttributePairs(pairs[0], Tables.creator);
-			model.setAttributePairs(pairs[1], Tables.disease);
-			model.setAttributePairs(pairs[2], Tables.ethnicity);
-			model.setAttributePairs(pairs[3], Tables.gender);
-			model.setAttributePairs(pairs[4], Tables.job);
-			model.setAttributePairs(pairs[5], Tables.occupation);
-			model.setAttributePairs(pairs[6], Tables.organization);
-			model.setAttributePairs(pairs[7], Tables.power);
-			model.setAttributePairs(pairs[8], Tables.rank);
-			model.setAttributePairs(pairs[9], Tables.school);
-			model.setAttributePairs(pairs[10], Tables.species);
-			model.setAttributePairs(pairs[11], Tables.universe);
+			model.setAttributePairs(pairs[Tables.disease.getIndex()], Tables.disease);
+			model.setAttributePairs(pairs[Tables.occupation.getIndex()], Tables.occupation);
+			model.setAttributePairs(pairs[Tables.organization.getIndex()], Tables.organization);
+			model.setAttributePairs(pairs[Tables.power.getIndex()], Tables.power);
+			model.setAttributePairs(pairs[Tables.school.getIndex()], Tables.school);
+			model.setAttributePairs(pairs[Tables.universe.getIndex()], Tables.universe);
 			
 			return model;
 			

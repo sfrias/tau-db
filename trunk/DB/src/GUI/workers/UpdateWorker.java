@@ -475,30 +475,7 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 		String[] strarr;
 		String tempString;
 
-		if (table.equals(Tables.location.toString())){
-			while ((lineRead = bufferedReader.readLine()) != null) {
-				strarr = lineRead.split("\t", splitNum);
-				strarr[0] = strarr[0].replace("\'", "\\'");
-				String [] locationarr = strarr[2].split(",");
-				int len = locationarr.length;
-
-				for (int i = 0; i < len; i++) {
-					tempString = locationarr[i].replace("\'", "\\'");
-					locationarr[i] = tempString;
-					if (!locationarr[i].equals("")) {
-
-						bufferedWriter.append(insertStatement);
-						bufferedWriter.append("'" + locationarr[i] + "', " + "(SELECT universe_id FROM universe Where universe_fb_id LIKE '" + strarr[1] + "' AND universe_name like'" + strarr[0]+ "'));\n");
-						bufferedWriter.flush();
-					}
-
-				}
-			}
-			bufferedWriter.append(insertStatement);
-			bufferedWriter.append("'Unspecified', (SELECT universe_id FROM universe Where universe_fb_id LIKE 'Unspecified'));\n");
-		}
-
-		else if (table.equals(Tables.place_of_birth.toString())){	
+		if (table.equals(Tables.place_of_birth.toString())){	
 			while ((lineRead = bufferedReader.readLine()) != null) {
 				strarr = lineRead.split("\t", splitNum);
 				tempString = strarr[3].replace("\'", "\\'");

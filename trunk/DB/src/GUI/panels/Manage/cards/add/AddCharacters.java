@@ -28,28 +28,16 @@ public class AddCharacters extends AddCard {
 	private CharacterModel model;
 	private DisplayList[] allValuesIndex = new DisplayList[Tables.getMaxIndex()+1];
 
-	private DisplayList creator;
-	private DisplayList creatorValues;
 	private DisplayList disease;
 	private DisplayList diseaseValues;
-	private DisplayList ethnicity;
-	private DisplayList ethnicityValues;
-	private DisplayList gender;
-	private DisplayList genderValues;
-	private DisplayList job;
-	private DisplayList jobValues;
 	private DisplayList occupation;
 	private DisplayList occupationValues;
 	private DisplayList organization;
 	private DisplayList organizationValues;
 	private DisplayList power;
 	private DisplayList powerValues;
-	private DisplayList rank;
-	private DisplayList rankValues;
 	private DisplayList school;
 	private DisplayList schoolValues;
-	private DisplayList species;
-	private DisplayList speciesValues;
 	private DisplayList universe;
 	private DisplayList universeValues;
 
@@ -82,25 +70,10 @@ public class AddCharacters extends AddCard {
 
 	private void populateVectors(){
 		DisplayList [] lists;
-		lists = addEntries(Tables.creator);
-		creatorValues = lists[0];
-		creator = lists[1];
 
 		lists = addEntries(Tables.disease);
 		diseaseValues = lists[0];
 		disease = lists[1];
-
-		lists = addEntries(Tables.ethnicity);
-		ethnicityValues = lists[0];
-		ethnicity = lists[1];
-
-		lists = addEntries(Tables.gender);
-		genderValues = lists[0];
-		gender = lists[1];
-
-		lists = addEntries(Tables.job);
-		jobValues = lists[0];
-		job = lists[1];
 
 		lists = addEntries(Tables.occupation);
 		occupationValues = lists[0];
@@ -113,19 +86,11 @@ public class AddCharacters extends AddCard {
 		lists = addEntries(Tables.power);
 		powerValues = lists[0];
 		power = lists[1];
-
-		lists = addEntries(Tables.rank);
-		rankValues = lists[0];
-		rank = lists[1];
-
+		
 		lists = addEntries(Tables.school);
 		schoolValues = lists[0];
 		school = lists[1];
-
-		lists = addEntries(Tables.species);
-		speciesValues = lists[0];
-		species = lists[1];	
-
+		
 		lists = addEntries(Tables.universe);
 		universeValues = lists[0];
 		universe = lists[1];
@@ -133,7 +98,7 @@ public class AddCharacters extends AddCard {
 
 	private DisplayList[] addEntries(final Tables table){
 
-		titles.add(table.toString().toLowerCase());
+		titles.add(table.toString());
 
 		CharacterAttributePanel panel = new CharacterAttributePanel(table, this);
 
@@ -149,21 +114,15 @@ public class AddCharacters extends AddCard {
 
 	private Pair[][] getValues() {
 
-		Pair[][] values = new Pair[13][];
+		Pair[][] values = new Pair[Tables.getMaxIndex()+2][];
 
 		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
-		values[1] = getPairs(creator);
-		values[2] = getPairs(disease);
-		values[3] = getPairs(ethnicity);ethnicity.getSelectedValues();
-		values[4] = getPairs(gender);gender.getSelectedValues();
-		values[5] = getPairs(job);
-		values[6] = getPairs(occupation);
-		values[7] = getPairs(organization);
-		values[8] = getPairs(power);
-		values[9] = getPairs(rank);
-		values[10] = getPairs(school);
-		values[11] = getPairs(species);
-		values[12] = getPairs(universe);
+		values[Tables.disease.getIndex() + 1] = getPairs(disease);
+		values[Tables.occupation.getIndex() + 1] = getPairs(occupation);
+		values[Tables.organization.getIndex() + 1] = getPairs(organization);
+		values[Tables.power.getIndex() + 1] = getPairs(power);
+		values[Tables.school.getIndex() + 1] = getPairs(school);
+		values[Tables.universe.getIndex() + 1] = getPairs(universe);
 		return values;
 	}
 
@@ -181,19 +140,13 @@ public class AddCharacters extends AddCard {
 
 	private String[] getTablesNames() {
 
-		String [] values = new String[13];
+		String [] values = new String[Tables.getMaxIndex() + 2];
 		values[0] = "characters";
-		values[1] = Tables.creator.name();
 		values[2] = Tables.disease.name();
-		values[3] = Tables.ethnicity.name();
-		values[4] = Tables.gender.name();
-		values[5] = Tables.job.name();
 		values[6] = Tables.occupation.name();
 		values[7] = Tables.organization.name();
 		values[8] = Tables.power.name();
-		values[9] = Tables.rank.name();
 		values[10] = Tables.school.name();
-		values[11] = Tables.species.name();
 		values[12] = Tables.universe.name();
 
 		return values;
@@ -235,17 +188,11 @@ public class AddCharacters extends AddCard {
 	public void clearValues() {
 		
 		textName.setText("");
-		resetModel(creator);
 		resetModel(disease);
-		resetModel(ethnicity);
-		resetModel(gender);
-		resetModel(job);
 		resetModel(occupation);
 		resetModel(organization);
 		resetModel(power);
-		resetModel(rank);
 		resetModel(school);
-		resetModel(species);
 		resetModel(universe);
 		
 		if (GuiHandler.isStatusFlashing()){
@@ -269,17 +216,11 @@ public class AddCharacters extends AddCard {
 	}
 
 	private void createListIndex(){
-		allValuesIndex[Tables.creator.getIndex()] = creatorValues;
 		allValuesIndex[Tables.disease.getIndex()] = diseaseValues;
-		allValuesIndex[Tables.ethnicity.getIndex()] = ethnicityValues;
-		allValuesIndex[Tables.gender.getIndex()] = genderValues;
-		allValuesIndex[Tables.job.getIndex()] = jobValues;
 		allValuesIndex[Tables.occupation.getIndex()] = occupationValues;
 		allValuesIndex[Tables.organization.getIndex()] = organizationValues;
 		allValuesIndex[Tables.power.getIndex()] = powerValues;
-		allValuesIndex[Tables.rank.getIndex()] = rankValues;
 		allValuesIndex[Tables.school.getIndex()] = schoolValues;
-		allValuesIndex[Tables.species.getIndex()] = speciesValues;
 		allValuesIndex[Tables.universe.getIndex()] = universeValues;
 	}
 

@@ -32,10 +32,9 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 
 		//TODO insert all tabels names!!!!
 		//String[] categories = createAllTablesArray();
-		String[] categories = {Tables.characters.toString().toUpperCase(), Tables.creator.toString().toUpperCase(), Tables.disease.toString().toUpperCase(), Tables.ethnicity.toString().toUpperCase(),
-				Tables.gender.toString().toUpperCase(), Tables.job.toString().toUpperCase(), Tables.location.toString().toUpperCase(),
-				Tables.occupation.toString().toUpperCase(), Tables.organization.toString().toUpperCase(), Tables.power.toString().toUpperCase(), Tables.rank.toString().toUpperCase(),
-				Tables.school.toString().toUpperCase(),  Tables.species.toString().toUpperCase(),Tables.universe.toString().toUpperCase() };
+		String[] categories = {Tables.characters.toString().toUpperCase(), Tables.disease.toString().toUpperCase(),
+				Tables.occupation.toString().toUpperCase(), Tables.organization.toString().toUpperCase(), 
+				Tables.power.toString().toUpperCase(),  Tables.school.toString().toUpperCase() ,Tables.universe.toString().toUpperCase() };
 
 		AutoCompleteComboBox comboCategory = new AutoCompleteComboBox(categories);
 		comboCategory.setPreferredSize(new Dimension(200,20));

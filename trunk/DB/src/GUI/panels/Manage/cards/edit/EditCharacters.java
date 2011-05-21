@@ -29,28 +29,16 @@ public class EditCharacters extends EditCard{
 	private DisplayList[] allValuesIndex = new DisplayList[Tables.getMaxIndex()+1];
 	private DisplayList[] characterValuesIndex = new DisplayList[Tables.getMaxIndex()+1];
 
-	private DisplayList creatorCharacterValues;
-	private DisplayList creatorValues;
 	private DisplayList diseaseCharacterValues;
 	private DisplayList diseaseValues;
-	private DisplayList ethnicityCharacterValues;
-	private DisplayList ethnicityValues;
-	private DisplayList genderCharacterValues;
-	private DisplayList genderValues;
-	private DisplayList jobCharacterValues;
-	private DisplayList jobValues;
 	private DisplayList occupationCharacterValues;
 	private DisplayList occupationValues;
 	private DisplayList organizationCharacterValues;
 	private DisplayList organizationValues;
 	private DisplayList powerCharacterValues;
 	private DisplayList powerValues;
-	private DisplayList rankCharacterValues;
-	private DisplayList rankValues;
 	private DisplayList schoolCharacterValues;
 	private DisplayList schoolValues;
-	private DisplayList speciesCharacterValues;
-	private DisplayList speciesValues;
 	private DisplayList universeCharacterValues;
 	private DisplayList universeValues;
 
@@ -121,17 +109,11 @@ public class EditCharacters extends EditCard{
 	public void clearValues() {
 
 		textName.setText("");
-		resetModel(creatorCharacterValues);
 		resetModel(diseaseCharacterValues);
-		resetModel(ethnicityCharacterValues);
-		resetModel(genderCharacterValues);
-		resetModel(jobCharacterValues);
 		resetModel(occupationCharacterValues);
 		resetModel(organizationCharacterValues);
 		resetModel(powerCharacterValues);
-		resetModel(rankCharacterValues);
 		resetModel(schoolCharacterValues);
-		resetModel(speciesCharacterValues);
 		resetModel(universeCharacterValues);
 
 		if (GuiHandler.isStatusFlashing()){
@@ -182,25 +164,10 @@ public class EditCharacters extends EditCard{
 
 	private void populateVectors(){
 		DisplayList [] lists;
-		lists = addEntries(Tables.creator);
-		creatorValues = lists[0];
-		creatorCharacterValues = lists[1];
 
 		lists = addEntries(Tables.disease);
 		diseaseValues = lists[0];
 		diseaseCharacterValues = lists[1];
-
-		lists = addEntries(Tables.ethnicity);
-		ethnicityValues = lists[0];
-		ethnicityCharacterValues = lists[1];
-
-		lists = addEntries(Tables.gender);
-		genderValues = lists[0];
-		genderCharacterValues = lists[1];
-
-		lists = addEntries(Tables.job);
-		jobValues = lists[0];
-		jobCharacterValues = lists[1];
 
 		lists = addEntries(Tables.occupation);
 		occupationValues = lists[0];
@@ -214,17 +181,9 @@ public class EditCharacters extends EditCard{
 		powerValues = lists[0];
 		powerCharacterValues = lists[1];
 
-		lists = addEntries(Tables.rank);
-		rankValues = lists[0];
-		rankCharacterValues = lists[1];
-
 		lists = addEntries(Tables.school);
 		schoolValues = lists[0];
 		schoolCharacterValues = lists[1];
-
-		lists = addEntries(Tables.species);
-		speciesValues = lists[0];
-		speciesCharacterValues = lists[1];	
 
 		lists = addEntries(Tables.universe);
 		universeValues = lists[0];
@@ -252,17 +211,11 @@ public class EditCharacters extends EditCard{
 		Pair[][] values = new Pair[13][];
 
 		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
-		values[1] = getPairs(creatorCharacterValues);
 		values[2] = getPairs(diseaseCharacterValues);
-		values[3] = getPairs(ethnicityCharacterValues);
-		values[4] = getPairs(genderCharacterValues);
-		values[5] = getPairs(jobCharacterValues);
 		values[6] = getPairs(occupationCharacterValues);
 		values[7] = getPairs(organizationCharacterValues);
 		values[8] = getPairs(powerCharacterValues);
-		values[9] = getPairs(rankCharacterValues);
 		values[10] = getPairs(schoolCharacterValues);
-		values[11] = getPairs(speciesCharacterValues);
 		values[12] = getPairs(universeCharacterValues);
 		
 		return values;
@@ -282,20 +235,14 @@ public class EditCharacters extends EditCard{
 
 	private String[] getTablesNames() {
 
-		String [] values = new String[13];
+		String [] values = new String[Tables.getMaxIndex() + 2];
 		values[0] = "characters";
-		values[1] = Tables.creator.name();
-		values[2] = Tables.disease.name();
-		values[3] = Tables.ethnicity.name();
-		values[4] = Tables.gender.name();
-		values[5] = Tables.job.name();
-		values[6] = Tables.occupation.name();
-		values[7] = Tables.organization.name();
-		values[8] = Tables.power.name();
-		values[9] = Tables.rank.name();
-		values[10] = Tables.school.name();
-		values[11] = Tables.species.name();
-		values[12] = Tables.universe.name();
+		values[Tables.disease.getIndex() + 1] = Tables.disease.name();
+		values[Tables.occupation.getIndex()] = Tables.occupation.name();
+		values[Tables.organization.getIndex()] = Tables.organization.name();
+		values[Tables.power.getIndex()] = Tables.power.name();
+		values[Tables.school.getIndex()] = Tables.school.name();
+		values[Tables.universe.getIndex()] = Tables.universe.name();
 
 		return values;
 	}
@@ -316,33 +263,21 @@ public class EditCharacters extends EditCard{
 	
 	private void createCharacterAttributesListIndex(){
 		
-		characterValuesIndex[Tables.creator.getIndex()] = creatorCharacterValues;
 		characterValuesIndex[Tables.disease.getIndex()] = diseaseCharacterValues;
-		characterValuesIndex[Tables.ethnicity.getIndex()] = ethnicityCharacterValues;
-		characterValuesIndex[Tables.gender.getIndex()] = genderCharacterValues;
-		characterValuesIndex[Tables.job.getIndex()] = jobCharacterValues;
 		characterValuesIndex[Tables.occupation.getIndex()] = occupationCharacterValues;
 		characterValuesIndex[Tables.organization.getIndex()] = organizationCharacterValues;
 		characterValuesIndex[Tables.power.getIndex()] = powerCharacterValues;
-		characterValuesIndex[Tables.rank.getIndex()] = rankCharacterValues;
 		characterValuesIndex[Tables.school.getIndex()] = schoolCharacterValues;
-		characterValuesIndex[Tables.species.getIndex()] = speciesCharacterValues;
 		characterValuesIndex[Tables.universe.getIndex()] = universeCharacterValues;
 	}
 
 	private void createAllAttributesListIndex(){
 		
-		allValuesIndex[Tables.creator.getIndex()] = creatorValues;
 		allValuesIndex[Tables.disease.getIndex()] = diseaseValues;
-		allValuesIndex[Tables.ethnicity.getIndex()] = ethnicityValues;
-		allValuesIndex[Tables.gender.getIndex()] = genderValues;
-		allValuesIndex[Tables.job.getIndex()] = jobValues;
 		allValuesIndex[Tables.occupation.getIndex()] = occupationValues;
 		allValuesIndex[Tables.organization.getIndex()] = organizationValues;
 		allValuesIndex[Tables.power.getIndex()] = powerValues;
-		allValuesIndex[Tables.rank.getIndex()] = rankValues;
 		allValuesIndex[Tables.school.getIndex()] = schoolValues;
-		allValuesIndex[Tables.species.getIndex()] = speciesValues;
 		allValuesIndex[Tables.universe.getIndex()] = universeValues;
 	}
 }
