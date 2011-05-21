@@ -119,12 +119,9 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 		if (this instanceof EditSimpleCard){
 			worker = new GetSimpleRecordsWorker(table, (EditSimpleCard) this);
 		}
-		else if(this instanceof DeleteCard){
+		else {
 			worker = new GetSimpleRecordsWorker(table, (DeleteCard) this);
 
-		}
-		else{
-			worker = new GetSimpleRecordsWorker(table, (EditCharacters) this);
 		}
 		GuiHandler.startStatusFlash();
 		worker.execute();

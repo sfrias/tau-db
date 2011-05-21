@@ -5,14 +5,12 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.ListModel;
-import javax.swing.SwingUtilities;
 
 import Enums.Tables;
 import GUI.GuiHandler;
-import GUI.commons.GuiUtils;
+import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.Pair;
 import GUI.list.DisplayList;
 import GUI.model.CharacterModel;
@@ -20,39 +18,40 @@ import GUI.model.SimpleModel;
 import GUI.panels.CharacterAttributePanel;
 import GUI.workers.EditCharacterWorker;
 import GUI.workers.GetAllAttributesWorker;
+import GUI.workers.GetCharacterAttributesWorker;
 
 public class EditCharacters extends EditCard{
+	
 	private static final long serialVersionUID = 1L;
-	ImageIcon addIcon = GuiUtils.readImageIcon("addIcon.png");
-	ImageIcon okIcon  = GuiUtils.readImageIcon("okIcon.png");
 	private EditCharacters me = this;
 	private CharacterModel charModel;
 	private SimpleModel simpleModel;
 	private DisplayList[] allValuesIndex = new DisplayList[Tables.getMaxIndex()+1];
+	private DisplayList[] characterValuesIndex = new DisplayList[Tables.getMaxIndex()+1];
 
-	private DisplayList creator;
+	private DisplayList creatorCharacterValues;
 	private DisplayList creatorValues;
-	private DisplayList disease;
+	private DisplayList diseaseCharacterValues;
 	private DisplayList diseaseValues;
-	private DisplayList ethnicity;
+	private DisplayList ethnicityCharacterValues;
 	private DisplayList ethnicityValues;
-	private DisplayList gender;
+	private DisplayList genderCharacterValues;
 	private DisplayList genderValues;
-	private DisplayList job;
+	private DisplayList jobCharacterValues;
 	private DisplayList jobValues;
-	private DisplayList occupation;
+	private DisplayList occupationCharacterValues;
 	private DisplayList occupationValues;
-	private DisplayList organization;
+	private DisplayList organizationCharacterValues;
 	private DisplayList organizationValues;
-	private DisplayList power;
+	private DisplayList powerCharacterValues;
 	private DisplayList powerValues;
-	private DisplayList rank;
+	private DisplayList rankCharacterValues;
 	private DisplayList rankValues;
-	private DisplayList school;
+	private DisplayList schoolCharacterValues;
 	private DisplayList schoolValues;
-	private DisplayList species;
+	private DisplayList speciesCharacterValues;
 	private DisplayList speciesValues;
-	private DisplayList universe;
+	private DisplayList universeCharacterValues;
 	private DisplayList universeValues;
 
 	Vector<String> titles = new Vector<String>();
@@ -60,10 +59,12 @@ public class EditCharacters extends EditCard{
 	Vector<JComponent> extraAddPanels = new Vector<JComponent>();
 
 	public EditCharacters(){
-		super(Tables.characters, false);		
+		
+		super(Tables.characters, false, false);		
 		populateVectors();
 		populateLists();
-		createListIndex();
+		createAllAttributesListIndex();
+		createCharacterAttributesListIndex();
 		addFields(titles, components);
 
 	}
@@ -83,7 +84,96 @@ public class EditCharacters extends EditCard{
 	public SimpleModel getSimpleModel(){
 		return simpleModel;
 	}
+
+	public void refreshFromModel(){
+		comboRecord.removeAllItems();
+		Pair[] pairs = simpleModel.getRecords();
+		for (int i=0; i<pairs.length; i++){
+			comboRecord.addItem(pairs[i]);
+		}
+	}
+
 	
+	public void refreshCharaterAttributesFromCharacterModel() {
+		for (int i=0; i < characterValuesIndex.length; i++){
+			if (charModel.isAtrributeModified(i)){
+				populateList(characterValuesIndex[i], charModel.getAttributePairs(i));
+			}
+		}
+
+		if (GuiHandler.isStatusFlashing()){
+			GuiHandler.stopStatusFlash();
+		}
+	}
+	
+	public void refreshAllAttributesFromCharacterModel() {
+		for (int i=0; i < allValuesIndex.length; i++){
+			if (charModel.isAtrributeModified(i)){
+				populateList(allValuesIndex[i], charModel.getAttributePairs(i));
+			}
+		}
+
+		if (GuiHandler.isStatusFlashing()){
+			GuiHandler.stopStatusFlash();
+		}
+	}
+	
+	public void clearValues() {
+
+		textName.setText("");
+		resetModel(creatorCharacterValues);
+		resetModel(diseaseCharacterValues);
+		resetModel(ethnicityCharacterValues);
+		resetModel(genderCharacterValues);
+		resetModel(jobCharacterValues);
+		resetModel(occupationCharacterValues);
+		resetModel(organizationCharacterValues);
+		resetModel(powerCharacterValues);
+		resetModel(rankCharacterValues);
+		resetModel(schoolCharacterValues);
+		resetModel(speciesCharacterValues);
+		resetModel(universeCharacterValues);
+
+		if (GuiHandler.isStatusFlashing()){
+			GuiHandler.stopStatusFlash();
+		}
+	}
+	
+	public ActionListener createRecordComboListener() {
+
+		return new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AutoCompleteComboBox cb = (AutoCompleteComboBox)e.getSource();
+				Object selected = cb.getSelectedItem();
+				if (selected != null && selected instanceof Pair){
+					Pair record = (Pair) selected;
+					if (record != null){
+						textName.setText(record.getName());
+						GetCharacterAttributesWorker worker = new GetCharacterAttributesWorker(me, record.getId(), -1);
+						GuiHandler.startStatusFlash();
+						worker.execute();
+					}
+				}
+			}
+		};
+	}
+	
+	public ActionListener createActionButtonListener() {
+		return new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				String[] tables = getTablesNames();
+				Pair[][] values = getValues();
+				EditCharacterWorker worker = new EditCharacterWorker(tables, values, me);
+				GuiHandler.startStatusFlash();
+				worker.execute();
+
+			}
+		};
+	}
+
 	private void populateLists(){
 		GetAllAttributesWorker worker = new GetAllAttributesWorker(this);
 		GuiHandler.startStatusFlash();
@@ -94,51 +184,51 @@ public class EditCharacters extends EditCard{
 		DisplayList [] lists;
 		lists = addEntries(Tables.creator);
 		creatorValues = lists[0];
-		creator = lists[1];
+		creatorCharacterValues = lists[1];
 
 		lists = addEntries(Tables.disease);
 		diseaseValues = lists[0];
-		disease = lists[1];
+		diseaseCharacterValues = lists[1];
 
 		lists = addEntries(Tables.ethnicity);
 		ethnicityValues = lists[0];
-		ethnicity = lists[1];
+		ethnicityCharacterValues = lists[1];
 
 		lists = addEntries(Tables.gender);
 		genderValues = lists[0];
-		gender = lists[1];
+		genderCharacterValues = lists[1];
 
 		lists = addEntries(Tables.job);
 		jobValues = lists[0];
-		job = lists[1];
+		jobCharacterValues = lists[1];
 
 		lists = addEntries(Tables.occupation);
 		occupationValues = lists[0];
-		occupation = lists[1];
+		occupationCharacterValues = lists[1];
 
 		lists = addEntries(Tables.organization);
 		organizationValues = lists[0];
-		organization = lists[1];
+		organizationCharacterValues = lists[1];
 
 		lists = addEntries(Tables.power);
 		powerValues = lists[0];
-		power = lists[1];
+		powerCharacterValues = lists[1];
 
 		lists = addEntries(Tables.rank);
 		rankValues = lists[0];
-		rank = lists[1];
+		rankCharacterValues = lists[1];
 
 		lists = addEntries(Tables.school);
 		schoolValues = lists[0];
-		school = lists[1];
+		schoolCharacterValues = lists[1];
 
 		lists = addEntries(Tables.species);
 		speciesValues = lists[0];
-		species = lists[1];	
+		speciesCharacterValues = lists[1];	
 
 		lists = addEntries(Tables.universe);
 		universeValues = lists[0];
-		universe = lists[1];
+		universeCharacterValues = lists[1];
 	}
 
 	private DisplayList[] addEntries(final Tables table){
@@ -162,30 +252,31 @@ public class EditCharacters extends EditCard{
 		Pair[][] values = new Pair[13][];
 
 		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
-		values[1] = getPairs(creator);
-		values[2] = getPairs(disease);
-		values[3] = getPairs(ethnicity);ethnicity.getSelectedValues();
-		values[4] = getPairs(gender);gender.getSelectedValues();
-		values[5] = getPairs(job);
-		values[6] = getPairs(occupation);
-		values[7] = getPairs(organization);
-		values[8] = getPairs(power);
-		values[9] = getPairs(rank);
-		values[10] = getPairs(school);
-		values[11] = getPairs(species);
-		values[12] = getPairs(universe);
+		values[1] = getPairs(creatorCharacterValues);
+		values[2] = getPairs(diseaseCharacterValues);
+		values[3] = getPairs(ethnicityCharacterValues);
+		values[4] = getPairs(genderCharacterValues);
+		values[5] = getPairs(jobCharacterValues);
+		values[6] = getPairs(occupationCharacterValues);
+		values[7] = getPairs(organizationCharacterValues);
+		values[8] = getPairs(powerCharacterValues);
+		values[9] = getPairs(rankCharacterValues);
+		values[10] = getPairs(schoolCharacterValues);
+		values[11] = getPairs(speciesCharacterValues);
+		values[12] = getPairs(universeCharacterValues);
+		
 		return values;
 	}
 
 	private Pair[] getPairs(DisplayList list){
-		
+
 		ListModel model = list.getModel();
-		
+
 		Pair[] values = new Pair[model.getSize()];
 		for (int i=0; i < model.getSize(); i++) {
 			values[i] = (Pair) model.getElementAt(i);
 		}
-		
+
 		return values;
 	}
 
@@ -208,77 +299,13 @@ public class EditCharacters extends EditCard{
 
 		return values;
 	}
-
-	public ActionListener createActionButtonListener() {
-		return new ActionListener() {
-
-			public void actionPerformed(ActionEvent event) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-
-						String[] tables = getTablesNames();
-						Pair[][] values = getValues();
-						EditCharacterWorker worker = new EditCharacterWorker(tables, values, me);
-						GuiHandler.startStatusFlash();
-						worker.execute();
-					}
-				});
-			}
-		};
-	}
-	
-	public void refreshFromModel(){
-		comboRecord.removeAllItems();
-		Pair[] pairs = simpleModel.getRecords();
-		for (int i=0; i<pairs.length; i++){
-			comboRecord.addItem(pairs[i]);
-		}
-		comboRecord.setSelectedItem(null);
-		textName.setText("");
-	}
-
-	public void refreshFromCharacterModel() {
-		for (int i=0; i<allValuesIndex.length; i++){
-			if (charModel.isAtrributeModified(i)){
-				populateList(allValuesIndex[i], charModel.getAttributePairs(i));
-				//model.resetAttributeCell(i);
-			}
-		}
-
-		if (GuiHandler.isStatusFlashing()){
-			GuiHandler.stopStatusFlash();
-		}
-	}
-
-	
-	public void clearValues() {
-		
-		textName.setText("");
-		resetModel(creator);
-		resetModel(disease);
-		resetModel(ethnicity);
-		resetModel(gender);
-		resetModel(job);
-		resetModel(occupation);
-		resetModel(organization);
-		resetModel(power);
-		resetModel(rank);
-		resetModel(school);
-		resetModel(species);
-		resetModel(universe);
-		
-		if (GuiHandler.isStatusFlashing()){
-			GuiHandler.stopStatusFlash();
-		}
-	}
-	
 	
 	private void resetModel(DisplayList list){
-		
+
 		DefaultListModel model = new DefaultListModel();
 		list.setModel(model);
 	}
-	
+
 	private void populateList(DisplayList list, Pair[] records){
 		DefaultListModel model = new DefaultListModel();
 		for (int i=0; i<records.length; i++){
@@ -286,8 +313,25 @@ public class EditCharacters extends EditCard{
 		}
 		list.setModel(model);
 	}
+	
+	private void createCharacterAttributesListIndex(){
+		
+		characterValuesIndex[Tables.creator.getIndex()] = creatorCharacterValues;
+		characterValuesIndex[Tables.disease.getIndex()] = diseaseCharacterValues;
+		characterValuesIndex[Tables.ethnicity.getIndex()] = ethnicityCharacterValues;
+		characterValuesIndex[Tables.gender.getIndex()] = genderCharacterValues;
+		characterValuesIndex[Tables.job.getIndex()] = jobCharacterValues;
+		characterValuesIndex[Tables.occupation.getIndex()] = occupationCharacterValues;
+		characterValuesIndex[Tables.organization.getIndex()] = organizationCharacterValues;
+		characterValuesIndex[Tables.power.getIndex()] = powerCharacterValues;
+		characterValuesIndex[Tables.rank.getIndex()] = rankCharacterValues;
+		characterValuesIndex[Tables.school.getIndex()] = schoolCharacterValues;
+		characterValuesIndex[Tables.species.getIndex()] = speciesCharacterValues;
+		characterValuesIndex[Tables.universe.getIndex()] = universeCharacterValues;
+	}
 
-	private void createListIndex(){
+	private void createAllAttributesListIndex(){
+		
 		allValuesIndex[Tables.creator.getIndex()] = creatorValues;
 		allValuesIndex[Tables.disease.getIndex()] = diseaseValues;
 		allValuesIndex[Tables.ethnicity.getIndex()] = ethnicityValues;
@@ -301,12 +345,4 @@ public class EditCharacters extends EditCard{
 		allValuesIndex[Tables.species.getIndex()] = speciesValues;
 		allValuesIndex[Tables.universe.getIndex()] = universeValues;
 	}
-
-
-	@Override
-	public ActionListener createRecordComboListener() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

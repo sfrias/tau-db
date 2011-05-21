@@ -119,7 +119,7 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				else{
 					EditCharacters editCharCard = (EditCharacters) card;
 					editCharCard.setCharacterModel(charModel);
-					editCharCard.refreshFromCharacterModel();					
+					editCharCard.refreshAllAttributesFromCharacterModel();					
 				}
 				break;
 			}
@@ -139,7 +139,7 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				else{
 					EditCharacters editCharCard1 = (EditCharacters) card;
 					editCharCard1.setCharacterModel(charModel);
-					editCharCard1.refreshFromCharacterModel();					
+					editCharCard1.refreshAllAttributesFromCharacterModel();					
 				}
 				GuiHandler.showResultSuccessDialog(action.toString());
 				break;
@@ -171,7 +171,11 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				break;
 			}
 			case Success_Get_Character_Attributes:{
-
+				CharacterModel model = (CharacterModel)result.getModel();
+				EditCharacters editCharactersCard = (EditCharacters) card;
+				editCharactersCard.setCharacterModel(model);
+				editCharactersCard.refreshCharaterAttributesFromCharacterModel();
+				break;
 			}
 			case Success_Get_Character_Attributes_For_First_Character:{
 				CharacterModel model = (CharacterModel)result.getModel();
@@ -181,6 +185,11 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 			case Success_Get_Character_Attributes_For_Second_Character:{
 				CharacterModel model = (CharacterModel)result.getModel();
 				playFrame.refresPanelRightDetailsFromModel(model);
+				break;
+			}
+			case Success_Edit_Character:{
+				EditCharacters editCharactersCard = (EditCharacters) card;
+				editCharactersCard.clearValues();
 				break;
 			}
 			}		

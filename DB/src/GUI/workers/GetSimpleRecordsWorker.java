@@ -5,7 +5,6 @@ import Enums.Tables;
 import GUI.commons.Pair;
 import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.delete.DeleteCard;
-import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
 
 public class GetSimpleRecordsWorker extends GenericWorker {
@@ -13,11 +12,6 @@ public class GetSimpleRecordsWorker extends GenericWorker {
 	
 	public GetSimpleRecordsWorker(Tables table, EditSimpleCard card){
 		super(card);
-		this.table = table;
-	}
-	
-	public GetSimpleRecordsWorker(Tables table, EditCharacters card){
-		super(Action.QUERY, card);
 		this.table = table;
 	}
 	
@@ -29,7 +23,7 @@ public class GetSimpleRecordsWorker extends GenericWorker {
 	@Override
 	protected ResultHolder doInBackground(){
 		//TODO add exceptions
-		Pair[] pairs =  databaseManager.executeQueryAndGetValues(table, 3);
+		Pair[] pairs =  databaseManager.executeQueryAndGetValues(table);
 		SimpleModel model = new SimpleModel(pairs);		
 		ResultHolder result = new ResultHolder(model,ExecutionResult.Success_Simple_Query);
 		return result;

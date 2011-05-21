@@ -10,6 +10,10 @@ public abstract class EditCard extends EditAndDeleteGenericCardPanel{
 		super(table ,isSimpleCard);
 	}
 
+	public EditCard(Tables table, boolean isSimpleCard, boolean generateRecords) {
+		super(table, isSimpleCard, generateRecords);
+	}
+
 	public String getCardAction(){
 		return "edit";
 		

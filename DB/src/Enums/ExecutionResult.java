@@ -5,6 +5,7 @@ public enum ExecutionResult {
 	Success_Simple_Add_Edit_Delete,
 	Success_Add_Character,
 	Success_Add_Character_Attribute,
+	Success_Edit_Character,
 	Success_Simple_Query,
 	Success_Get_Characters_For_First_Character,
 	Success_Get_Characters_For_Second_Character,

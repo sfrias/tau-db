@@ -112,10 +112,10 @@ public class UpdateTab extends JPanel implements PropertyChangeListener{
 	}
 
 	private JPanel createMainProgressPanel(){
-		descDownload = new DescriptionPanel("download dumps file");
-		descExtract = new DescriptionPanel("files extracting");
-		descUpdate = new DescriptionPanel("tables updating");
-		descDelete = new DescriptionPanel("remove temporary files");
+		descDownload = new DescriptionPanel("downloading dumps file");
+		descExtract = new DescriptionPanel("extracting files");
+		descUpdate = new DescriptionPanel("updating tables");
+		descDelete = new DescriptionPanel("removing temporary files");
 
 		FormLayout layout = new FormLayout("5dlu, left:pref","p, 4dlu, p, 4dlu, p, 4dlu, p");
 		PanelBuilder builder = new PanelBuilder(layout);
