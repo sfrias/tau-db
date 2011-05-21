@@ -26,7 +26,7 @@ public class GetCharacterAttributesWorker extends GenericWorker {
 
 	@Override
 	protected ResultHolder doInBackground(){
-		//TODO add exceptions		
+
 		String [] tables = getTablesNames();
 		Pair[][] values = databaseManager.getCharacterAttributes(recordId, tables);
 		ResultHolder result;
@@ -35,7 +35,6 @@ public class GetCharacterAttributesWorker extends GenericWorker {
 			result = new ResultHolder(null, ExecutionResult.Exception);
 		}
 		else{
-			
 			CharacterModel model = convertPairsToModel(values);
 			if (model == null){
 				result = new ResultHolder(null, ExecutionResult.Exception);

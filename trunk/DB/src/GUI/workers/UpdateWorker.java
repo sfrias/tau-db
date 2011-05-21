@@ -40,12 +40,11 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 	private final String CHARSET = "UTF-8";
 	private UpdateTab parent;
 
-
-	/************** progressBar purpose ***************/
+	// ************* progressBar purpose ***************
 	private double ESTIMATE_DOWNLOAD_SIZE = 2800 * 1024;
 	private double ESTIMATE_EXTRACT_SIZE = 11700 * 1024;
 	private double ESTIMATE_N_OF_RECORDS_IN_TAR = 40;
-	/**************************************************/
+	// *************************************************
 
 	public UpdateWorker(UpdateTab parent){
 		super();

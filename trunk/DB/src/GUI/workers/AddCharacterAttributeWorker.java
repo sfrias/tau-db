@@ -2,6 +2,7 @@ package GUI.workers;
 
 import Enums.ExecutionResult;
 import Enums.Tables;
+import GUI.commons.Pair;
 import GUI.model.CharacterModel;
 import GUI.panels.Manage.cards.add.AddCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
@@ -24,15 +25,19 @@ public class AddCharacterAttributeWorker extends GenericWorker {
 	}
 
 	@Override
-	protected ResultHolder doInBackground() throws Exception {
+	protected ResultHolder doInBackground() {
         
 		ExecutionResult exeRes = databaseManager.executeSimpleInsert(table, table.toString()+"_name", value);
         
         if (exeRes.equals(ExecutionResult.Success_Simple_Add_Edit_Delete)){
         	exeRes = ExecutionResult.Success_Add_Character_Attribute;
-    		CharacterModel model = new CharacterModel();
-    		model.setAttributePairs(databaseManager.executeQueryAndGetValues(table), table);
-    		return new ResultHolder(model, exeRes);
+
+        	CharacterModel model = new CharacterModel();
+    		Pair [] values = databaseManager.executeQueryAndGetValues(table);
+    		if (values != null){
+        		model.setAttributePairs(values, table);
+        		return new ResultHolder(model, exeRes);
+    		}
         }
         return new ResultHolder(exeRes);
 	}

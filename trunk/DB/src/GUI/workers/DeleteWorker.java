@@ -11,7 +11,7 @@ public class DeleteWorker extends GenericEditDeleteWorker {
 	}
 
 	protected ResultHolder doInBackground(){
-		//TODO add exceptions
+
 		ExecutionResult exeResult =  databaseManager.executeDelete(table, recordId);
 		ResultHolder result = new ResultHolder(exeResult);
 		
