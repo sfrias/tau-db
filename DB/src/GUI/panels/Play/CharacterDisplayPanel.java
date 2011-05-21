@@ -20,17 +20,11 @@ import com.jgoodies.forms.layout.FormLayout;
 public class CharacterDisplayPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 
-	private DisplayList creator = new DisplayList();
 	private DisplayList disease = new DisplayList();
-	private DisplayList ethnicity = new DisplayList();
-	private DisplayList gender = new DisplayList();
-	private DisplayList rank = new DisplayList();
-	private DisplayList job  = new DisplayList();
 	private DisplayList occupation = new DisplayList();
 	private DisplayList organization  = new DisplayList();
 	private DisplayList power  = new DisplayList();
 	private DisplayList school  = new DisplayList();
-	private DisplayList species = new DisplayList();
 	private DisplayList universe = new DisplayList();
 	
 
@@ -86,18 +80,8 @@ public class CharacterDisplayPanel extends JPanel{
 	}
 	
 	private void populateLists(){
-		listVector.add(new CustomScrollPanel(creator));
-		namesVector.add(Tables.creator.toString());
 		listVector.add(new CustomScrollPanel(disease));
 		namesVector.add(Tables.disease.toString());
-		listVector.add(new CustomScrollPanel(ethnicity));
-		namesVector.add(Tables.ethnicity.toString());
-		listVector.add(new CustomScrollPanel(gender));
-		namesVector.add(Tables.gender.toString());
-		listVector.add(new CustomScrollPanel(job));
-		namesVector.add(Tables.job.toString());
-		listVector.add(new CustomScrollPanel(rank));
-		namesVector.add(Tables.rank.toString());
 		listVector.add(new CustomScrollPanel(occupation));
 		namesVector.add(Tables.occupation.toString());
 		listVector.add(new CustomScrollPanel(organization));
@@ -106,8 +90,6 @@ public class CharacterDisplayPanel extends JPanel{
 		namesVector.add(Tables.power.toString());
 		listVector.add(new CustomScrollPanel(school));
 		namesVector.add(Tables.school.toString());
-		listVector.add(new CustomScrollPanel(species));
-		namesVector.add(Tables.species.toString());
 		listVector.add(new CustomScrollPanel(universe));
 		namesVector.add(Tables.universe.toString());
 	}
@@ -124,17 +106,11 @@ public class CharacterDisplayPanel extends JPanel{
 
 	
 	private void createListsIndex(){
-		listIndex[Tables.creator.getIndex()] = creator;
 		listIndex[Tables.disease.getIndex()] = disease;
-		listIndex[Tables.ethnicity.getIndex()] = ethnicity;
-		listIndex[Tables.gender.getIndex()] = gender;
-		listIndex[Tables.job.getIndex()] = job;
 		listIndex[Tables.occupation.getIndex()] = occupation;
 		listIndex[Tables.organization.getIndex()] = organization;
 		listIndex[Tables.power.getIndex()] = power;
-		listIndex[Tables.rank.getIndex()] = rank;
 		listIndex[Tables.school.getIndex()] = school;
-		listIndex[Tables.species.getIndex()] = species;
 		listIndex[Tables.universe.getIndex()] = universe;
 		
 	}

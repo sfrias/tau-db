@@ -2,44 +2,34 @@ package Enums;
 
 public enum Tables {
 	characters,
-	occupation(5),
-	job(4),
-	characters_and_occupation,
-	power(7),
-	characters_and_power,
-	organization(6),
-	characters_and_organization,
-	school(9),
-	characters_and_school,
-	gender(3),
-	characters_and_gender,
-	species(10),
-	characters_and_species,
-	universe(11),
-	characters_and_universe,
-	creator(0),
-	characters_and_creator,
-	rank(8),
-	characters_and_rank,
-	ethnicity(2),
-	characters_and_ethnicity,
-	disease(1),
+	disease(0, "Disease"),
+	organization(1, "Organization"),
+	occupation(2, "Occupation"),
+	power(3, "Power"),
+	school(4, "School"),
+	universe(5, "Universe"),
+	parent(6, "Parent"),
+	romantic_involvement(7, "Romantic Involvement"),
+	place_of_birth(8, "Place of Birth"),
 	characters_and_disease,
-	parent,
-	sibling,
-	marriage,
-	romantic_involvement,
-	location,
-	place_of_birth;
+	characters_and_occupation,
+	characters_and_organization,
+	characters_and_power,
+	characters_and_school,
+	characters_and_universe;
 	
 	private int index;
+	private String name;
 	
-	Tables(int index){
+	Tables(int index, String name){
 		this.index = index;
+		this.name = name;
 	}
 	
 	Tables(){
 		this.index = -1;
+		this.name = this.name();
+
 	}
 	
 	public int getIndex(){
@@ -47,6 +37,10 @@ public enum Tables {
 	}
 	
 	public static int getMaxIndex(){
-		return 11; 
+		return 8; 
+	}
+	
+	public String toString(){
+		return name;
 	}
 }
