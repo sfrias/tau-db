@@ -352,6 +352,31 @@ public class TableUtilities {
 	}
 
 
+	private static void createIndexes() throws IOException{
+
+		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
+		deleteSqlFile(sqlFile);
+		sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
+		FileWriter fileWriter = new FileWriter(sqlFile, true);
+		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+		bufferedWriter.append("CREATE INDEX chars_and_POB_ix ON characters(character_id, character_place_of_birth_id);\n");
+		bufferedWriter.append("CREATE INDEX chars_and_occ_ix ON characters_and_occupation(characters_and_occupation_character_id, characters_and_occupation_occupation_id);\n");
+		bufferedWriter.append("CREATE INDEX chars_and_pow_ix ON characters_and_power(characters_and_power_character_id, characters_and_power_power_id);\n");
+		bufferedWriter.append("CREATE INDEX chars_and_org_ix ON characters_and_organization(characters_and_organization_character_id, characters_and_organization_organization_id);\n");
+		bufferedWriter.append("CREATE INDEX chars_and_sc_ix ON characters_and_school(characters_and_school_character_id, characters_and_school_school_id);\n");
+		bufferedWriter.append("CREATE INDEX chars_and_uni_ix ON characters_and_universe(characters_and_universe_character_id, characters_and_universe_universe_id);\n");
+		bufferedWriter.append("CREATE INDEX chars_and_dis_ix ON characters_and_disease(characters_and_disease_character_id, characters_and_disease_disease_id);\n");
+		bufferedWriter.append("CREATE INDEX parent_ix ON parent(parent_parent_character_id, parent_child_character_id);\n");
+		bufferedWriter.append("CREATE INDEX romantic_ix ON romantic_involvement(romantic_involvement_character_id1, romantic_involvement_character_id2);\n");
+		bufferedWriter.flush();
+		bufferedWriter.close();
+		fileWriter.close();
+		
+		AntUtils.executeTarget(Targets.POPULATE);
+		
+		System.out.println("finished indexing");
+	}
+
 
 	private static void prepareDB() throws IOException, SQLException {
 		long startTime = System.currentTimeMillis();
@@ -448,8 +473,8 @@ public class TableUtilities {
 	
 	public static void main(String args[]) throws IOException, SQLException {
 
-		prepareDB();
-
+//		prepareDB();
+		createIndexes();
 
 	}
 }
