@@ -11,6 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -19,6 +20,7 @@ import Enums.UpdateResult;
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;
+import GUI.panels.CustomGlassPane;
 import GUI.workers.UpdateWorker;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -37,12 +39,20 @@ public class UpdateTab extends JPanel implements PropertyChangeListener{
 	private JButton cancelButton ;
 	private IconButton startImportButton;
 	private JProgressBar progressBar;
+	
+	private CustomGlassPane updateGlass;
+	private CustomGlassPane generalGlass;
+	
 	private UpdateTab me = this;
 
 	public UpdateTab(){
 		super();
 
 		buildTab();
+		
+		JComponent[] compArr = {cancelButton};
+		updateGlass = new CustomGlassPane(compArr, this);
+		generalGlass = new CustomGlassPane(null, GuiHandler.getCurrentFrame().getContentPane());
 	}
 
 	private void buildTab(){
@@ -52,11 +62,15 @@ public class UpdateTab extends JPanel implements PropertyChangeListener{
 		startImportButton.setAlignmentX(CENTER_ALIGNMENT);
 		startImportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+
+				GuiHandler.setGlassPane(updateGlass);
+				GuiHandler.getCurrentFrame().setGlassPane(updateGlass);
 				startImportButton.setEnabled(false);
 				worker = new UpdateWorker(me);
 				worker.addPropertyChangeListener(me);
 				worker.execute();
 				cancelButton.setEnabled(true);
+
 				progressBar.setString("downloading in progress");
 
 			}
@@ -68,10 +82,12 @@ public class UpdateTab extends JPanel implements PropertyChangeListener{
 		cancelButton.setFont(new Font("Footlight MT Light",Font.BOLD,15));
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				GuiHandler.setGlassPane(generalGlass);
+				GuiHandler.getCurrentFrame().setGlassPane(generalGlass);
 				if (worker != null){
 					worker.cancel(true);
 					worker = null;
-				}				
+				}	
 			}
 		})  ;
 		cancelButton.setAlignmentX(CENTER_ALIGNMENT);
