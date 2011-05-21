@@ -22,10 +22,16 @@ public class GetSimpleRecordsWorker extends GenericWorker {
 	
 	@Override
 	protected ResultHolder doInBackground(){
-		//TODO add exceptions
+
 		Pair[] pairs =  databaseManager.executeQueryAndGetValues(table);
-		SimpleModel model = new SimpleModel(pairs);		
-		ResultHolder result = new ResultHolder(model,ExecutionResult.Success_Simple_Query);
+		ResultHolder result;
+		if (pairs != null){
+			SimpleModel model = new SimpleModel(pairs);		
+			result = new ResultHolder(model,ExecutionResult.Success_Simple_Query);
+		}
+		else{
+			result = new ResultHolder(ExecutionResult.Exception);
+		}
 		return result;
 	}
 }

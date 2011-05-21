@@ -17,7 +17,7 @@ public class EditCharacterWorker extends GenericWorker {
 	}
 
 	@Override
-	protected ResultHolder doInBackground() throws Exception {
+	protected ResultHolder doInBackground() {
 		throw new UnsupportedOperationException();
 
 	}

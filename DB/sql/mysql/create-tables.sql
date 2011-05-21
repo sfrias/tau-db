@@ -104,7 +104,7 @@ CREATE TABLE characters
 	character_place_of_birth_id int(11) NOT NULL DEFAULT 5,
 	KEY ix_character_id (character_id),
 	PRIMARY KEY (character_id),
-	FOREIGN KEY (character_place_of_birth_id) REFERENCES place_of_birth(place_of_birth_id)) DEFAULT CHARSET=utf8 ENGINE=InnoDB;
+	FOREIGN KEY (character_place_of_birth_id) REFERENCES place_of_birth(place_of_birth_id) ON UPDATE RESTRICT ON DELETE RESTRICT) DEFAULT CHARSET=utf8 ENGINE=InnoDB;
 	
 CREATE TABLE characters_and_universe 
 	(characters_and_universe_character_id int(11) NOT NULL,

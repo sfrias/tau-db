@@ -33,8 +33,13 @@ public class GetRecordsByNameWorker extends GenericWorker {
 	}
 
 	protected ResultHolder doInBackground(){
-		//TODO add exceptions
+
 		Pair[] pairs =  databaseManager.getCharacters(queryString);
+		
+		if (pairs == null){
+			return new ResultHolder(ExecutionResult.Exception);
+		}
+		
 		SimpleModel model = new SimpleModel(pairs);		
 		ExecutionResult eResult;
 		if (charNum == 1){
@@ -49,5 +54,4 @@ public class GetRecordsByNameWorker extends GenericWorker {
 		ResultHolder result = new ResultHolder(model,eResult);
 		return result;
 	}
-
 }
