@@ -29,8 +29,4 @@ public class CharacterModel{
 		return attArr[i] != null;
 	}
 	
-	public void resetAttributeCell(int i){
-		attArr[i] = null;
-	}
-
 }

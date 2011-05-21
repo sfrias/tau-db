@@ -147,17 +147,17 @@ public class DatabaseManager {
 		}
 	}
 
-	public Pair[] executeQueryAndGetValues(Tables table, int interestingCol) {
+	public Pair[] executeQueryAndGetValues(Tables table) {
 
 		String tableName = table.toString();
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			String statementString;
 			if (table.equals(Tables.characters)){
-				statementString = "SELECT * FROM characters ORDER BY character_name ASC";
+				statementString = "SELECT character_id, character_name FROM characters ORDER BY character_name ASC";
 			}
 			else{
-				statementString = "SELECT * FROM " + tableName + " ORDER BY " + tableName + "_name ASC";
+				statementString = "SELECT " + tableName + "_id, " + tableName + "_name FROM " + tableName +" ORDER BY " + tableName + "_name ASC";
 			}
 			Statement stmt = conn.createStatement();
 			ResultSet resultSet = stmt.executeQuery(statementString);
@@ -165,7 +165,7 @@ public class DatabaseManager {
 			List<Pair> valuesList = new ArrayList<Pair>();
 
 			while (resultSet.next()) {
-				valuesList.add(new Pair(resultSet.getString(interestingCol), resultSet.getInt(1)));
+				valuesList.add(new Pair(resultSet.getString(2), resultSet.getInt(1)));
 			}
 
 			resultSet.close();

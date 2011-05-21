@@ -11,7 +11,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 import Enums.Tables;
 import GUI.GuiHandler;
@@ -43,23 +42,19 @@ public class CharacterAttributePanel extends JPanel{
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					if (addField.isVisible()){
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-								button.setIcon(GuiUtils.readImageIcon("addIcon.png", 15, 15));
-								String value = addField.getText();
-								if (value.compareTo("")!=0){
-									AddCharacterAttributeWorker worker;
-									if (card instanceof EditCharacters){
-										worker = new AddCharacterAttributeWorker(table, value, (EditCharacters) card);
-									}
-									else{
-										worker = new AddCharacterAttributeWorker(table, value, (AddCharacters) card);
-									}
-									GuiHandler.startStatusFlash();								
-									worker.execute();
-								}
+						button.setIcon(GuiUtils.readImageIcon("addIcon.png", 15, 15));
+						String value = addField.getText();
+						if (value.compareTo("")!=0){
+							AddCharacterAttributeWorker worker;
+							if (card instanceof EditCharacters){
+								worker = new AddCharacterAttributeWorker(table, value, (EditCharacters) card);
 							}
-						});
+							else{
+								worker = new AddCharacterAttributeWorker(table, value, (AddCharacters) card);
+							}
+							GuiHandler.startStatusFlash();								
+							worker.execute();
+						}
 						addField.setVisible(false);
 						revalidate();
 					}

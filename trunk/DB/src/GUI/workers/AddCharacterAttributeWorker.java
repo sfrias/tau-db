@@ -31,7 +31,7 @@ public class AddCharacterAttributeWorker extends GenericWorker {
         if (exeRes.equals(ExecutionResult.Success_Simple_Add_Edit_Delete)){
         	exeRes = ExecutionResult.Success_Add_Character_Attribute;
     		CharacterModel model = new CharacterModel();
-    		model.setAttributePairs(databaseManager.executeQueryAndGetValues(table, 3), table);
+    		model.setAttributePairs(databaseManager.executeQueryAndGetValues(table), table);
     		return new ResultHolder(model, exeRes);
         }
         return new ResultHolder(exeRes);
