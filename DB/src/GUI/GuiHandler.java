@@ -11,13 +11,14 @@ import GUI.commons.GuiUtils;
 import GUI.frames.ManageFrame;
 import GUI.frames.PlayFrame;
 import GUI.frames.WelcomeScreenFrame;
+import GUI.panels.CustomGlassPane;
 import GUI.panels.General.BlinkingStatusPanel;
 
 
 public class GuiHandler {
 
-	private static BlinkingStatusPanel panelStatus = new BlinkingStatusPanel();  
-	//private static CustomGlassPane glassPane = new CustomGlassPane();
+	private static BlinkingStatusPanel panelStatus = new BlinkingStatusPanel(); 
+	private static CustomGlassPane glass ;
 	private static JFrame loadedFrame = null;
 
 	private static void installLookAndFeel() {
@@ -38,15 +39,28 @@ public class GuiHandler {
 		}
 	}
 	
-/*	public static CustomGlassPane getGlassPane(){
-		return glassPane;
-	}*/
+	public static CustomGlassPane getGlassPane(){
+		return glass;
+	}
+	
+	public static void setGlassPane(CustomGlassPane glassPane){
+		glass = glassPane;
+	}
+	
+	public static JFrame getCurrentFrame(){
+		return loadedFrame;
+	}
+	
+	public static void setCurrentFrame(JFrame frame){
+		loadedFrame = frame;
+	}
 
 	public static void main(String[] args) {
 		installLookAndFeel();
 		WelcomeScreenFrame frame = new WelcomeScreenFrame();
-		loadedFrame = frame;
+		setCurrentFrame(frame);
 		frame.setVisible(true);
+
 
 	}
 
@@ -67,7 +81,7 @@ public class GuiHandler {
 			newFrame.setVisible(true);
 			GuiUtils.centerOnScreen(newFrame);
 			loadedFrame.dispose();
-			loadedFrame = newFrame;
+			setCurrentFrame(newFrame);
 		}
 	}
 
@@ -77,11 +91,12 @@ public class GuiHandler {
 
 	public static void startStatusFlash(){
 		panelStatus.flash();
-	//	glassPane.setVisible(true);
+		glass.setVisible(true);
 	}
 
 	public static void stopStatusFlash(){
 		panelStatus.clearFlashing();
+		glass.setVisible(false);
 	}
 	
 	public static boolean isStatusFlashing(){

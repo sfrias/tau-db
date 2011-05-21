@@ -20,6 +20,7 @@ import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.Pair;
 import GUI.model.CharacterModel;
 import GUI.model.SimpleModel;
+import GUI.panels.CustomGlassPane;
 import GUI.panels.Play.CharacterDisplayPanel;
 import GUI.workers.GetCharacterAttributesWorker;
 import GUI.workers.GetRecordsByNameWorker;
@@ -37,9 +38,11 @@ public class PlayFrame extends GenericFrame {
 
 	public PlayFrame(){
 		super();
-
-		//setGlassPane(GuiHandler.getGlassPane());
 		buildFrame();
+		
+		CustomGlassPane glass = new CustomGlassPane(null, getContentPane());
+		GuiHandler.setGlassPane(glass);
+		setGlassPane(glass);
 	}
 
 	private void buildFrame(){

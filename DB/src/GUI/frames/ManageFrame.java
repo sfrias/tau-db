@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 
 import javax.swing.JTabbedPane;
 
+import GUI.GuiHandler;
 import GUI.commons.GuiUtils;
+import GUI.panels.CustomGlassPane;
 import GUI.panels.Manage.Tabs.AddTab;
 import GUI.panels.Manage.Tabs.DeleteTab;
 import GUI.panels.Manage.Tabs.EditTab;
@@ -15,6 +17,11 @@ public class ManageFrame extends GenericFrame {
 
 	public ManageFrame(){
 		super();
+		
+		CustomGlassPane glass = new CustomGlassPane(null, getContentPane());
+		setGlassPane(glass);
+		GuiHandler.setGlassPane(glass);
+		
 		buildFrame();
 	}
 
