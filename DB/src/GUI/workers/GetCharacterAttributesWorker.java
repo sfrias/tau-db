@@ -62,6 +62,7 @@ public class GetCharacterAttributesWorker extends GenericWorker {
 		values[Tables.disease.getIndex()] = Tables.disease.name();
 		values[Tables.occupation.getIndex()] = Tables.occupation.name();
 		values[Tables.organization.getIndex()] = Tables.organization.name();
+		values[Tables.place_of_birth.getIndex()] = Tables.place_of_birth.name();
 		values[Tables.power.getIndex()] = Tables.power.name();
 		values[Tables.school.getIndex()] = Tables.school.name();
 		values[Tables.universe.getIndex()] = Tables.universe.name();
@@ -80,6 +81,7 @@ public class GetCharacterAttributesWorker extends GenericWorker {
 			model.setAttributePairs(pairs[Tables.disease.getIndex()], Tables.disease);
 			model.setAttributePairs(pairs[Tables.occupation.getIndex()], Tables.occupation);
 			model.setAttributePairs(pairs[Tables.organization.getIndex()], Tables.organization);
+			model.setAttributePairs(pairs[Tables.place_of_birth.getIndex()], Tables.place_of_birth);
 			model.setAttributePairs(pairs[Tables.power.getIndex()], Tables.power);
 			model.setAttributePairs(pairs[Tables.school.getIndex()], Tables.school);
 			model.setAttributePairs(pairs[Tables.universe.getIndex()], Tables.universe);

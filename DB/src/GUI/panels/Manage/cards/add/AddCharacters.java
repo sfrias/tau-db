@@ -8,6 +8,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
 import Enums.Tables;
@@ -34,6 +35,8 @@ public class AddCharacters extends AddCard {
 	private DisplayList occupationValues;
 	private DisplayList organization;
 	private DisplayList organizationValues;
+	private DisplayList placeOfBirth;
+	private DisplayList placeOfBirthValues;
 	private DisplayList power;
 	private DisplayList powerValues;
 	private DisplayList school;
@@ -60,96 +63,6 @@ public class AddCharacters extends AddCard {
 
 	public CharacterModel getModel(){
 		return model;
-	}
-
-	private void populateLists(){
-		GetAllAttributesWorker worker = new GetAllAttributesWorker(this);
-		GuiHandler.startStatusFlash();
-		worker.execute();
-	}
-
-	private void populateVectors(){
-		DisplayList [] lists;
-
-		lists = addEntries(Tables.disease);
-		diseaseValues = lists[0];
-		disease = lists[1];
-
-		lists = addEntries(Tables.occupation);
-		occupationValues = lists[0];
-		occupation = lists[1];
-
-		lists = addEntries(Tables.organization);
-		organizationValues = lists[0];
-		organization = lists[1];
-
-		lists = addEntries(Tables.power);
-		powerValues = lists[0];
-		power = lists[1];
-		
-		lists = addEntries(Tables.school);
-		schoolValues = lists[0];
-		school = lists[1];
-		
-		lists = addEntries(Tables.universe);
-		universeValues = lists[0];
-		universe = lists[1];
-	}
-
-	private DisplayList[] addEntries(final Tables table){
-
-		titles.add(table.toString());
-
-		CharacterAttributePanel panel = new CharacterAttributePanel(table, this);
-
-		components.add(panel);
-
-		DisplayList allValuesList = panel.getAllValues();
-		DisplayList selectedValuesList = panel.getSelectedValues();
-
-		DisplayList[] lists = new DisplayList[]{allValuesList,selectedValuesList};
-		return lists;
-
-	}
-
-	private Pair[][] getValues() {
-
-		Pair[][] values = new Pair[Tables.getMaxIndex()+2][];
-
-		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
-		values[Tables.disease.getIndex() + 1] = getPairs(disease);
-		values[Tables.occupation.getIndex() + 1] = getPairs(occupation);
-		values[Tables.organization.getIndex() + 1] = getPairs(organization);
-		values[Tables.power.getIndex() + 1] = getPairs(power);
-		values[Tables.school.getIndex() + 1] = getPairs(school);
-		values[Tables.universe.getIndex() + 1] = getPairs(universe);
-		return values;
-	}
-
-	private Pair[] getPairs(DisplayList list){
-		
-		ListModel model = list.getModel();
-		
-		Pair[] values = new Pair[model.getSize()];
-		for (int i=0; i < model.getSize(); i++) {
-			values[i] = (Pair) model.getElementAt(i);
-		}
-		
-		return values;
-	}
-
-	private String[] getTablesNames() {
-
-		String [] values = new String[Tables.getMaxIndex() + 2];
-		values[0] = "characters";
-		values[2] = Tables.disease.name();
-		values[6] = Tables.occupation.name();
-		values[7] = Tables.organization.name();
-		values[8] = Tables.power.name();
-		values[10] = Tables.school.name();
-		values[12] = Tables.universe.name();
-
-		return values;
 	}
 
 	public ActionListener createActionButtonListener() {
@@ -191,6 +104,7 @@ public class AddCharacters extends AddCard {
 		resetModel(disease);
 		resetModel(occupation);
 		resetModel(organization);
+		resetModel(placeOfBirth);
 		resetModel(power);
 		resetModel(school);
 		resetModel(universe);
@@ -200,7 +114,103 @@ public class AddCharacters extends AddCard {
 		}
 	}
 	
-	
+	private void populateLists(){
+		GetAllAttributesWorker worker = new GetAllAttributesWorker(this);
+		GuiHandler.startStatusFlash();
+		worker.execute();
+	}
+
+	private void populateVectors(){
+		DisplayList [] lists;
+
+		lists = addEntries(Tables.disease);
+		diseaseValues = lists[0];
+		disease = lists[1];
+
+		lists = addEntries(Tables.occupation);
+		occupationValues = lists[0];
+		occupation = lists[1];
+
+		lists = addEntries(Tables.organization);
+		organizationValues = lists[0];
+		organization = lists[1];
+		
+		lists = addEntries(Tables.place_of_birth);
+		placeOfBirthValues = lists[0];
+		placeOfBirth = lists[1];
+		placeOfBirthValues.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		lists = addEntries(Tables.power);
+		powerValues = lists[0];
+		power = lists[1];
+		
+		lists = addEntries(Tables.school);
+		schoolValues = lists[0];
+		school = lists[1];
+		
+		lists = addEntries(Tables.universe);
+		universeValues = lists[0];
+		universe = lists[1];
+	}
+
+	private DisplayList[] addEntries(final Tables table){
+
+		titles.add(table.toString());
+
+		CharacterAttributePanel panel = new CharacterAttributePanel(table, this);
+
+		components.add(panel);
+
+		DisplayList allValuesList = panel.getAllValues();
+		DisplayList selectedValuesList = panel.getSelectedValues();
+
+		DisplayList[] lists = new DisplayList[]{allValuesList,selectedValuesList};
+		return lists;
+
+	}
+
+	private Pair[][] getValues() {
+
+		Pair[][] values = new Pair[Tables.getMaxIndex()+2][];
+
+		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
+		values[Tables.disease.getIndex() + 1] = getPairs(disease);
+		values[Tables.occupation.getIndex() + 1] = getPairs(occupation);
+		values[Tables.organization.getIndex() + 1] = getPairs(organization);
+		values[Tables.place_of_birth.getIndex() + 1] = getPairs(placeOfBirth);
+		values[Tables.power.getIndex() + 1] = getPairs(power);
+		values[Tables.school.getIndex() + 1] = getPairs(school);
+		values[Tables.universe.getIndex() + 1] = getPairs(universe);
+		return values;
+	}
+
+	private Pair[] getPairs(DisplayList list){
+		
+		ListModel model = list.getModel();
+		
+		Pair[] values = new Pair[model.getSize()];
+		for (int i=0; i < model.getSize(); i++) {
+			values[i] = (Pair) model.getElementAt(i);
+		}
+		
+		return values;
+	}
+
+	private String[] getTablesNames() {
+
+		String [] values = new String[Tables.getMaxIndex() + 2];
+		values[0] = "characters";
+		values[Tables.disease.getIndex() + 1] = Tables.disease.name();
+		values[Tables.occupation.getIndex() + 1] = Tables.occupation.name();
+		values[Tables.organization.getIndex() + 1] = Tables.organization.name();
+		values[Tables.place_of_birth.getIndex() + 1] = Tables.place_of_birth.name();
+		values[Tables.power.getIndex() + 1] = Tables.power.name();
+		values[Tables.school.getIndex() + 1] = Tables.school.name();
+		values[Tables.universe.getIndex() + 1] = Tables.universe.name();
+
+		return values;
+	}
+
 	private void resetModel(DisplayList list){
 		
 		DefaultListModel model = new DefaultListModel();
@@ -219,6 +229,7 @@ public class AddCharacters extends AddCard {
 		allValuesIndex[Tables.disease.getIndex()] = diseaseValues;
 		allValuesIndex[Tables.occupation.getIndex()] = occupationValues;
 		allValuesIndex[Tables.organization.getIndex()] = organizationValues;
+		allValuesIndex[Tables.place_of_birth.getIndex()] = placeOfBirthValues;
 		allValuesIndex[Tables.power.getIndex()] = powerValues;
 		allValuesIndex[Tables.school.getIndex()] = schoolValues;
 		allValuesIndex[Tables.universe.getIndex()] = universeValues;

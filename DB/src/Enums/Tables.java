@@ -5,12 +5,13 @@ public enum Tables {
 	disease(0, "Disease"),
 	organization(1, "Organization"),
 	occupation(2, "Occupation"),
-	power(3, "Power"),
-	school(4, "School"),
-	universe(5, "Universe"),
-	parent(6, "Parent"),
-	romantic_involvement(7, "Romantic Involvement"),
-	place_of_birth(8, "Place of Birth"),
+	place_of_birth(3, "Place of Birth"),
+	power(4, "Power"),
+	school(5, "School"),
+	universe(6, "Universe"),
+	parent(7, "Parent"),
+	romantic_involvement(8, "Romantic Involvement"),
+
 	characters_and_disease,
 	characters_and_occupation,
 	characters_and_organization,
@@ -37,7 +38,7 @@ public enum Tables {
 	}
 	
 	public static int getMaxIndex(){
-		return 8; 
+		return 6; 
 	}
 	
 	public String toString(){

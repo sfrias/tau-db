@@ -7,6 +7,7 @@ import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.panels.Manage.cards.edit.EditDisease;
 import GUI.panels.Manage.cards.edit.EditOccupation;
 import GUI.panels.Manage.cards.edit.EditOrganization;
+import GUI.panels.Manage.cards.edit.EditPlaceOfBirth;
 import GUI.panels.Manage.cards.edit.EditPower;
 import GUI.panels.Manage.cards.edit.EditSchool;
 import GUI.panels.Manage.cards.edit.EditUniverse;
@@ -23,6 +24,7 @@ public class EditTab extends GenericTab{
 		cards.add(new EditDisease(), Tables.disease.toString().toUpperCase());
 		cards.add(new EditOccupation(), Tables.occupation.toString().toUpperCase());
 		cards.add(new EditOrganization(), Tables.organization.toString().toUpperCase());
+		cards.add(new EditPlaceOfBirth(), Tables.place_of_birth.toString().toUpperCase());
 		cards.add(new EditPower(), Tables.power.toString().toUpperCase());
 		cards.add(new EditSchool(), Tables.school.toString().toUpperCase());
 		cards.add(new EditUniverse(), Tables.universe.toString().toUpperCase());
