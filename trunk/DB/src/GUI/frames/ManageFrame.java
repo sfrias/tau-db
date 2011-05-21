@@ -33,12 +33,6 @@ public class ManageFrame extends GenericFrame {
 		//setContentPane(mainPanelBuilder());
 	}
 
-	/*	private JPanel mainPanelBuilder(){
-		add(BorderLayout.CENTER, tabPanelBuilder());
-
-		return panel;
-	}*/
-
 	private JTabbedPane tabPanelBuilder(){
 
 		JTabbedPane tabbedPanel = new JTabbedPane();

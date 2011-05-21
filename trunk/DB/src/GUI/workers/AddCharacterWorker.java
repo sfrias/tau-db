@@ -16,9 +16,8 @@ public class AddCharacterWorker extends GenericWorker {
 		
 	}
 
-	protected ResultHolder doInBackground() throws Exception {
-            //TODO Hila: need to make sure we send (maybe if success already query the new and updated list)
-            
+	protected ResultHolder doInBackground(){
+		
             ExecutionResult exeRes = databaseManager.executeInsertCharacter(tables, values);  
             ResultHolder result = new ResultHolder(exeRes);
             return result;

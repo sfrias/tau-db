@@ -24,6 +24,7 @@ public class CharacterDisplayPanel extends JPanel{
 	private DisplayList occupation = new DisplayList();
 	private DisplayList organization  = new DisplayList();
 	private DisplayList power  = new DisplayList();
+	private DisplayList placeOfBirth  = new DisplayList();
 	private DisplayList school  = new DisplayList();
 	private DisplayList universe = new DisplayList();
 	
@@ -88,6 +89,8 @@ public class CharacterDisplayPanel extends JPanel{
 		namesVector.add(Tables.organization.toString());
 		listVector.add(new CustomScrollPanel(power));
 		namesVector.add(Tables.power.toString());
+		listVector.add(new CustomScrollPanel(placeOfBirth));
+		namesVector.add(Tables.place_of_birth.toString());
 		listVector.add(new CustomScrollPanel(school));
 		namesVector.add(Tables.school.toString());
 		listVector.add(new CustomScrollPanel(universe));
@@ -110,6 +113,7 @@ public class CharacterDisplayPanel extends JPanel{
 		listIndex[Tables.occupation.getIndex()] = occupation;
 		listIndex[Tables.organization.getIndex()] = organization;
 		listIndex[Tables.power.getIndex()] = power;
+		listIndex[Tables.place_of_birth.getIndex()] = placeOfBirth;
 		listIndex[Tables.school.getIndex()] = school;
 		listIndex[Tables.universe.getIndex()] = universe;
 		

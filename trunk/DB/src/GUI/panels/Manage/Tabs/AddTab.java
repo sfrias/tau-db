@@ -7,6 +7,7 @@ import GUI.panels.Manage.cards.add.AddCharacters;
 import GUI.panels.Manage.cards.add.AddDisease;
 import GUI.panels.Manage.cards.add.AddOccupation;
 import GUI.panels.Manage.cards.add.AddOrganization;
+import GUI.panels.Manage.cards.add.AddPlaceOfBirth;
 import GUI.panels.Manage.cards.add.AddPower;
 import GUI.panels.Manage.cards.add.AddSchool;
 import GUI.panels.Manage.cards.add.AddUniverse;
@@ -29,6 +30,7 @@ public class AddTab extends GenericTab {
 		cards.add(new AddDisease(), Tables.disease.toString().toUpperCase());
 		cards.add(new AddOccupation(), Tables.occupation.toString().toUpperCase());
 		cards.add(new AddOrganization(), Tables.organization.toString().toUpperCase());
+		cards.add(new AddPlaceOfBirth(), Tables.place_of_birth.toString().toUpperCase());
 		cards.add(new AddPower(), Tables.power.toString().toUpperCase());
 		cards.add(new AddSchool(), Tables.school.toString().toUpperCase());
 		cards.add(new AddUniverse(), Tables.universe.toString().toUpperCase());

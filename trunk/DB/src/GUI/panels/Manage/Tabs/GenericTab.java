@@ -34,7 +34,7 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		//String[] categories = createAllTablesArray();
 		String[] categories = {Tables.characters.toString().toUpperCase(), Tables.disease.toString().toUpperCase(),
 				Tables.occupation.toString().toUpperCase(), Tables.organization.toString().toUpperCase(), 
-				Tables.power.toString().toUpperCase(),  Tables.school.toString().toUpperCase() ,Tables.universe.toString().toUpperCase() };
+				Tables.power.toString().toUpperCase(), Tables.place_of_birth.toString().toUpperCase(), Tables.school.toString().toUpperCase() ,Tables.universe.toString().toUpperCase() };
 
 		AutoCompleteComboBox comboCategory = new AutoCompleteComboBox(categories);
 		comboCategory.setPreferredSize(new Dimension(200,20));

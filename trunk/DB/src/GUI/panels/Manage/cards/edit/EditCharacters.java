@@ -7,6 +7,7 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 
 import Enums.Tables;
 import GUI.GuiHandler;
@@ -35,6 +36,8 @@ public class EditCharacters extends EditCard{
 	private DisplayList occupationValues;
 	private DisplayList organizationCharacterValues;
 	private DisplayList organizationValues;
+	private DisplayList placeOfBirthCharacterValues;
+	private DisplayList placeOfBirthValues;
 	private DisplayList powerCharacterValues;
 	private DisplayList powerValues;
 	private DisplayList schoolCharacterValues;
@@ -112,6 +115,7 @@ public class EditCharacters extends EditCard{
 		resetModel(diseaseCharacterValues);
 		resetModel(occupationCharacterValues);
 		resetModel(organizationCharacterValues);
+		resetModel(placeOfBirthCharacterValues);
 		resetModel(powerCharacterValues);
 		resetModel(schoolCharacterValues);
 		resetModel(universeCharacterValues);
@@ -176,6 +180,11 @@ public class EditCharacters extends EditCard{
 		lists = addEntries(Tables.organization);
 		organizationValues = lists[0];
 		organizationCharacterValues = lists[1];
+		
+		lists = addEntries(Tables.place_of_birth);
+		placeOfBirthValues = lists[0];
+		placeOfBirthCharacterValues = lists[1];
+		placeOfBirthValues.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		lists = addEntries(Tables.power);
 		powerValues = lists[0];
@@ -208,15 +217,16 @@ public class EditCharacters extends EditCard{
 
 	private Pair[][] getValues() {
 
-		Pair[][] values = new Pair[13][];
+		Pair[][] values = new Pair[Tables.getMaxIndex() + 2][];
 
 		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
-		values[2] = getPairs(diseaseCharacterValues);
-		values[6] = getPairs(occupationCharacterValues);
-		values[7] = getPairs(organizationCharacterValues);
-		values[8] = getPairs(powerCharacterValues);
-		values[10] = getPairs(schoolCharacterValues);
-		values[12] = getPairs(universeCharacterValues);
+		values[Tables.disease.getIndex() + 1] = getPairs(diseaseCharacterValues);
+		values[Tables.occupation.getIndex() + 1] = getPairs(occupationCharacterValues);
+		values[Tables.organization.getIndex() + 1] = getPairs(organizationCharacterValues);
+		values[Tables.place_of_birth.getIndex() + 1] = getPairs(placeOfBirthCharacterValues);
+		values[Tables.power.getIndex() + 1] = getPairs(powerCharacterValues);
+		values[Tables.school.getIndex() + 1] = getPairs(schoolCharacterValues);
+		values[Tables.universe.getIndex() + 1] = getPairs(universeCharacterValues);
 		
 		return values;
 	}
@@ -266,6 +276,7 @@ public class EditCharacters extends EditCard{
 		characterValuesIndex[Tables.disease.getIndex()] = diseaseCharacterValues;
 		characterValuesIndex[Tables.occupation.getIndex()] = occupationCharacterValues;
 		characterValuesIndex[Tables.organization.getIndex()] = organizationCharacterValues;
+		characterValuesIndex[Tables.place_of_birth.getIndex()] = placeOfBirthCharacterValues;
 		characterValuesIndex[Tables.power.getIndex()] = powerCharacterValues;
 		characterValuesIndex[Tables.school.getIndex()] = schoolCharacterValues;
 		characterValuesIndex[Tables.universe.getIndex()] = universeCharacterValues;
@@ -276,6 +287,7 @@ public class EditCharacters extends EditCard{
 		allValuesIndex[Tables.disease.getIndex()] = diseaseValues;
 		allValuesIndex[Tables.occupation.getIndex()] = occupationValues;
 		allValuesIndex[Tables.organization.getIndex()] = organizationValues;
+		allValuesIndex[Tables.place_of_birth.getIndex()] = placeOfBirthValues;
 		allValuesIndex[Tables.power.getIndex()] = powerValues;
 		allValuesIndex[Tables.school.getIndex()] = schoolValues;
 		allValuesIndex[Tables.universe.getIndex()] = universeValues;

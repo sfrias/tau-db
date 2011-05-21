@@ -81,7 +81,9 @@ public class CharacterAttributePanel extends JPanel{
 
 			final JButton removeValueFromListButton = new JButton(GuiUtils.readImageIcon("blueArrowLeft.png", 15, 15));
 			removeValueFromListButton.addActionListener(new ActionListener() {
+
 				public void actionPerformed(ActionEvent arg0) {
+
 					Object[] values = selectedValues.getSelectedValues();
 					DefaultListModel model = (DefaultListModel) selectedValues.getModel();
 					for (int i=0; i<values.length; i++){
@@ -96,35 +98,41 @@ public class CharacterAttributePanel extends JPanel{
 			final JButton addValueToListButton = new JButton(GuiUtils.readImageIcon("blueArrowRight.png", 15, 15));
 			addValueToListButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					Object[] values = allValues.getSelectedValues();
 					DefaultListModel model = (DefaultListModel) selectedValues.getModel();
-					for (int i=0; i<values.length; i++){
-						model.addElement(values[i]);
+
+					if (table.equals(Tables.place_of_birth) && model.size() >= 1){
+						GuiHandler.showCantHaveMoreThanOnePlaceOfBirthDialog();
 					}
-					selectedValues.setModel(model);
-					allValues.clearSelection();
+					else{
+						Object[] values = allValues.getSelectedValues();
+						for (int i=0; i<values.length; i++){
+							model.addElement(values[i]);
+						}
+						selectedValues.setModel(model);
+						allValues.clearSelection();
+					}
 				}
 			});
 
-			JPanel panelAddRemoveValuesButtons = new JPanel();
-			panelAddRemoveValuesButtons.setLayout(new BoxLayout(panelAddRemoveValuesButtons, BoxLayout.PAGE_AXIS));
-			panelAddRemoveValuesButtons.add(addValueToListButton);
-			panelAddRemoveValuesButtons.add(removeValueFromListButton);
+					JPanel panelAddRemoveValuesButtons = new JPanel();
+					panelAddRemoveValuesButtons.setLayout(new BoxLayout(panelAddRemoveValuesButtons, BoxLayout.PAGE_AXIS));
+					panelAddRemoveValuesButtons.add(addValueToListButton);
+					panelAddRemoveValuesButtons.add(removeValueFromListButton);
 
-			selectedValues = new DisplayList();
-			DefaultListModel model = new DefaultListModel();
-			selectedValues.setModel(model);
-			CustomScrollPanel selectedValuesScrollPane = new CustomScrollPanel(selectedValues, 200, 80);
+					selectedValues = new DisplayList();
+					DefaultListModel model = new DefaultListModel();
+					selectedValues.setModel(model);
+					CustomScrollPanel selectedValuesScrollPane = new CustomScrollPanel(selectedValues, 200, 80);
 
-			JPanel panelCenter = new JPanel();
-			panelCenter.setLayout(new BoxLayout(panelCenter, BoxLayout.LINE_AXIS));
-			panelCenter.add(allValuesScrollPane);
-			panelCenter.add(Box.createRigidArea(new Dimension(5,0)));
-			panelCenter.add(panelAddRemoveValuesButtons);
-			panelCenter.add(Box.createRigidArea(new Dimension(5,0)));
-			panelCenter.add(selectedValuesScrollPane);
+					JPanel panelCenter = new JPanel();
+					panelCenter.setLayout(new BoxLayout(panelCenter, BoxLayout.LINE_AXIS));
+					panelCenter.add(allValuesScrollPane);
+					panelCenter.add(Box.createRigidArea(new Dimension(5,0)));
+					panelCenter.add(panelAddRemoveValuesButtons);
+					panelCenter.add(Box.createRigidArea(new Dimension(5,0)));
+					panelCenter.add(selectedValuesScrollPane);
 
-			add(panelCenter,BorderLayout.CENTER);
+					add(panelCenter,BorderLayout.CENTER);
 		}
 	}
 

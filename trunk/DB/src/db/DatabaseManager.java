@@ -149,7 +149,13 @@ public class DatabaseManager {
 
 	public Pair[] executeQueryAndGetValues(Tables table) {
 
-		String tableName = table.toString();
+		String tableName;
+		if (table.equals(Tables.place_of_birth)){
+			tableName = "place_of_birth";
+		}
+		else{
+			tableName = table.toString();
+		}
 		try {
 			JDCConnection conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			String statementString;
@@ -293,22 +299,28 @@ public class DatabaseManager {
 
 		try {
 			Pair [][] values = new Pair[tables.length][];
-			                                         
+
 			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			stmt = conn.createStatement();
 			for (int i=0; i < tables.length; i++){
 				List<Pair> currentAttr = new ArrayList<Pair>();
 				String currentTable = tables[i];
-				resultSet = stmt.executeQuery("SELECT " + currentTable+"_id, " + currentTable + "_name FROM characters_and_" 
-						+ currentTable + ", " + currentTable + " WHERE characters_and_" + currentTable + "_" + currentTable 
-						+ "_id = " + currentTable + "_id AND characters_and_" + currentTable + "_character_id = " + recordId);
+				if (currentTable.equals(Tables.place_of_birth.name())){
+					resultSet = stmt.executeQuery("SELECT place_of_birth_id, place_of_birth_name FROM place_of_birth, characters "
+							+ "WHERE character_place_of_birth_id = place_of_birth_id AND character_id = " + recordId);
+				}
+				else{
+					resultSet = stmt.executeQuery("SELECT " + currentTable+"_id, " + currentTable + "_name FROM characters_and_" 
+							+ currentTable + ", " + currentTable + " WHERE characters_and_" + currentTable + "_" + currentTable 
+							+ "_id = " + currentTable + "_id AND characters_and_" + currentTable + "_character_id = " + recordId);	
+				}
 				while (resultSet.next()){
 					int id = resultSet.getInt(1);
 					String name = resultSet.getString(2);
 					Pair pair = new Pair(name, id);
 					currentAttr.add(pair);
 				}
-				
+
 				resultSet.close();
 				values[i] = currentAttr.toArray(new Pair[currentAttr.size()]);				
 			}
@@ -385,8 +397,9 @@ public class DatabaseManager {
 			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			conn.setAutoCommit(false);
 			stmt = conn.createStatement();
-			Pair pair = values[0][0];
-			stmt.execute("INSERT IGNORE INTO characters (character_name) values (\'"+pair.getName()+"\')", Statement.RETURN_GENERATED_KEYS);
+			Pair name = values[0][0];
+			Pair placeOfBirth = values[Tables.place_of_birth.getIndex() + 1][0];
+			stmt.execute("INSERT IGNORE INTO characters (character_name, character_place_of_birth_id) values (\'"+name.getName()+"\', " + placeOfBirth.getId() + ")", Statement.RETURN_GENERATED_KEYS);
 			ResultSet generatedKey = stmt.getGeneratedKeys();
 			int key = 0;
 			while(generatedKey.next()){
@@ -395,12 +408,15 @@ public class DatabaseManager {
 			generatedKey.close();
 			stmt2 = conn.createStatement();
 			for (int i=1; i < tables.length; i++){
-
 				for (int j=0; j < values[i].length; j++){
-					String tableName = "characters_and_"+tables[i];
 					Pair currentPair = values[i][j];
 					int currentAttrId = currentPair.getId();
-					stmt2.addBatch("INSERT IGNORE INTO " + tableName + " values(" + key + ", " + currentAttrId + ")");				}
+					if (tables[i].equals(Tables.place_of_birth.name())){
+						continue;
+					}
+					String tableName = "characters_and_"+tables[i];
+					stmt2.addBatch("INSERT IGNORE INTO " + tableName + " values(" + key + ", " + currentAttrId + ")");	
+				}
 			}
 			stmt2.executeBatch();
 

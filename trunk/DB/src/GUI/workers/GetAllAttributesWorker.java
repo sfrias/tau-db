@@ -24,6 +24,7 @@ public class GetAllAttributesWorker extends GenericWorker{
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.disease), Tables.disease);
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.occupation),Tables.occupation);
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.organization),Tables.organization);
+		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.place_of_birth),Tables.place_of_birth);
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.power),Tables.power);
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.school),Tables.school);
 		model.setAttributePairs(databaseManager.executeQueryAndGetValues(Tables.universe),Tables.universe);
