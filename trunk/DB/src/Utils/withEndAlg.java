@@ -31,7 +31,7 @@ public class withEndAlg{
 	int skips=0;
 	int end_id;
 	
-	TreeMap<String, Short> tablesMap = new TreeMap<String, Short>();
+	static TreeMap<String, Short> tablesMap = new TreeMap<String, Short>();
 	static TreeMap<Short, String> reverseTablesMap = new TreeMap<Short, String>();
 	static HashSet<Integer> foundCharactersIDs = new HashSet<Integer>();
 	List<charElement> currentPhase = new ArrayList<charElement>();
@@ -150,7 +150,7 @@ public class withEndAlg{
 				currentidField2 = charsWithAtrRS.getInt(2);
 				if (currentidField1 == start_element.characterId){
 					currentid = currentidField2;
-					if (currentAtr.equals(Tables.parent.toString())){ //that means that the currentid is the child of start_element
+					if (currentAtr.equals(Tables.parent.name())){ //that means that the currentid is the child of start_element
 						atr = "child";
 					}
 				}
@@ -230,10 +230,10 @@ public class withEndAlg{
 		String child = "child_character_id";
 		String charactersWithAtr;
 		
-		if (currentAtr.equals(Tables.parent.toString()) && directToEnd) { //only table that has meaning to each column
+		if (currentAtr.equals(Tables.parent.name()) && directToEnd) { //only table that has meaning to each column
 			charactersWithAtr = algorithmUtils.relationsQuery(parent, child, currentAtr,"=", start_id, end_id);
 		}
-		else if (currentAtr.equals(Tables.parent.toString())){
+		else if (currentAtr.equals(Tables.parent.name())){
 			charactersWithAtr = algorithmUtils.relationsQuery(parent, child, currentAtr, "!=",start_id, unspecifiedIdOfCharacter);
 		}
 		else if (directToEnd){
@@ -248,7 +248,7 @@ public class withEndAlg{
 	
 	
 	private String directConnetionPlaceOfBirth(int start_id, int unspecifiedIdOfCharacter,int[] atrVal, boolean directToEnd){
-		String currentAtr = Tables.place_of_birth.toString();
+		String currentAtr = Tables.place_of_birth.name();
 		int placeOfBirth = 0; 
 		String selectAtrValues = 	algorithmUtils.simpleQuery("character_" + currentAtr+ "_id" ,"characters","character_id =" + start_id);
 		String charactersWithAtr;
@@ -309,15 +309,15 @@ public class withEndAlg{
 			
 			else if (	//tablesArr[atr].equals(Tables.sibling.toString()) || 
 						//tablesArr[atr].equals(Tables.marriage.toString()) ||
-						tablesArr[atr].equals(Tables.romantic_involvement.toString()) ||
-						tablesArr[atr].equals(Tables.parent.toString())){
+						tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
+						tablesArr[atr].equals(Tables.parent.name())){
 				
 				charactersWithAtr = directConnectionRealtions(currentAtr, start_id, unspecifiedIdOfCharacter, false);
 				charToAny = charWithAtrStmt.executeQuery(charactersWithAtr);
 				helperForDirectConnectionToAnyInRealtions(charToAny, start_element, currentAtr, result);
 			}
 			
-			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
+			else if (tablesArr[atr].equals(Tables.place_of_birth.name())){
 				charactersWithAtr = directConnetionPlaceOfBirth(start_id, unspecifiedIdOfCharacter,valPlaceOfBirth, false);
 				if (charactersWithAtr!=null){ //place of birth of character is not unspecified
 					charToAny = charWithAtrStmt.executeQuery(charactersWithAtr); 
@@ -366,8 +366,8 @@ public class withEndAlg{
 			
 			else if (	//tablesArr[atr].equals(Tables.sibling.toString()) || 
 						//tablesArr[atr].equals(Tables.marriage.toString()) ||
-						tablesArr[atr].equals(Tables.romantic_involvement.toString()) ||
-						tablesArr[atr].equals(Tables.parent.toString())){
+						tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
+						tablesArr[atr].equals(Tables.parent.name())){
 				
 				charactersWithAtr = directConnectionRealtions(currentAtr, start_id, -1, true);
 				charsWithAtrRS= charAtrStmt.executeQuery(charactersWithAtr);
@@ -380,7 +380,7 @@ public class withEndAlg{
 				currentAtrVal =-2;
 			}	
 			
-			else if (tablesArr[atr].equals(Tables.place_of_birth.toString())){
+			else if (tablesArr[atr].equals(Tables.place_of_birth.name())){
 				charactersWithAtr = directConnetionPlaceOfBirth(start_id, -1,valPlaceOfBirth, true);
 				if (charactersWithAtr!= null){
 					charsWithAtrRS= charAtrStmt.executeQuery(charactersWithAtr);
@@ -501,7 +501,7 @@ public class withEndAlg{
 
 				if (	// attributeString.equals(Tables.sibling.toString()) || 
 						//attributeString.equals(Tables.marriage.toString()) ||
-						attributeString.equals(Tables.romantic_involvement.toString()) ) {
+						attributeString.equals(Tables.romantic_involvement.name()) ) {
 						toPrint = startName + " has a " + attributeString + " relationship with " + endName;
 					}
 					else if ( attributeString.equals("child")) {
@@ -533,22 +533,16 @@ public class withEndAlg{
 	
 	
 	public static void main(String[] args) throws SQLException, IOException{
-		withEndAlg a = new withEndAlg();
-		algorithmUtils.prepareTablesAndHashMaps(a);
+		//withEndAlg a = new withEndAlg();
+		//algorithmUtils.prepareTablesAndHashMaps(a);
 		//System.out.println(a.indexOfJumps);
 	/*	for (int i=0;i<table.length;i++){
 			System.out.println(i+ ": " + table[i]);
 		}*/
 		
 	//a.fillTables();
-
-	long start = System.currentTimeMillis();
-	a.lookForConnection (7,8);
-	long finish = System.currentTimeMillis();
-	long total = start-finish;
-	String time = String.format("%d min, %d sec",      TimeUnit.MILLISECONDS.toMinutes(total),     TimeUnit.MILLISECONDS.toSeconds(total) -      TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(total)));
-	System.out.println("operation took total time of " + total +"\n" + time);
-	System.out.println(a.getGlobalNumOfConnections());
+		Tester.tester();
+//	System.out.println(a.getGlobalNumOfConnections());
 	//System.out.println(a.skips);
 	//System.out.println(foundCharactersIDs.size());
 	
@@ -556,7 +550,7 @@ public class withEndAlg{
 		//a.topSerches();
 	
 
-//		Tester.tester();
+		Tester.tester();
 		
 	}
 

@@ -70,7 +70,7 @@ public class algorithmUtils {
 				valueArr = connections[i].split(",");
 				startName =getNameFromId(Integer.parseInt(valueArr[0]), conn);
 				endName = getNameFromId(Integer.parseInt(valueArr[1]), conn);
-				if ( valueArr[2].equals(Tables.romantic_involvement.toString()) ) {
+				if ( valueArr[2].equals(Tables.romantic_involvement.name()) ) {
 					toPrint = startName + " has a " + valueArr[2] + " relationship with " + endName;
 				}
 				else if ( valueArr[2].equals("child")) {
@@ -139,7 +139,7 @@ public class algorithmUtils {
 		ResultSet rs;
 		int unspecifiedID = 0;
 		String field = "";
-		if (table.equals(Tables.characters.toString())){
+		if (table.equals(Tables.characters.name())){
 			field = "character";
 		}
 		else {
@@ -486,7 +486,7 @@ public class algorithmUtils {
 	}
 
 
-	public static void prepareTablesAndHashMaps(noEndAlg alg){
+	public static void prepareTablesAndHashMaps(withEndAlg alg){
 		TreeMap<String, String> joinedAttributesMap = new TreeMap<String,String>();
 		int numOfTables = alg.tbs.length;
 		int unspec=0;
@@ -496,10 +496,10 @@ public class algorithmUtils {
 
 		int indexOfAttr=0, indexOfResult=0;
 		for (int i=0; i< numOfTables; i++){
-			currentTable = alg.tbs[i].toString();
-			if (currentTable.equals(Tables.characters.toString())){
+			currentTable = alg.tbs[i].name();
+			if (currentTable.equals(Tables.characters.name())){
 				unspec = algorithmUtils.getUnspecifiedId(currentTable, alg.conn);
-				alg.unspecifiedIdOfTables.put(Tables.characters.toString(), unspec);
+				alg.unspecifiedIdOfTables.put(Tables.characters.name(), unspec);
 			}
 			else if (!currentTable.contains("and")){
 				attributes[indexOfAttr]=currentTable;
@@ -513,8 +513,8 @@ public class algorithmUtils {
 
 		for (int i=0; i<indexOfAttr;i++){ 		//first loop- looking for joinedTables
 			putCouples = joinedAttributesMap.get(attributes[i]);
-			if (!attributes[i].equals(Tables.parent.toString()) &&
-					!attributes[i].equals(Tables.romantic_involvement.toString())){
+			if (!attributes[i].equals(Tables.parent.name()) &&
+					!attributes[i].equals(Tables.romantic_involvement.name())){
 				unspec = algorithmUtils.getUnspecifiedId(attributes[i], alg.conn);
 				alg.unspecifiedIdOfTables.put(attributes[i], unspec);
 			}
@@ -542,12 +542,12 @@ public class algorithmUtils {
 
 		//adding all tables and their internal identifier to hash maps
 		for (short i=0; i<alg.tablesArr.length;i++){
-			noEndAlg.tablesMap.put(alg.tablesArr[i],i);
-			noEndAlg.reverseTablesMap.put((short)i, alg.tablesArr[i]);
+			withEndAlg.tablesMap.put(alg.tablesArr[i],i);
+			withEndAlg.reverseTablesMap.put((short)i, alg.tablesArr[i]);
 		}
 
-		noEndAlg.tablesMap.put("child", (short)alg.tablesArr.length);
-		noEndAlg.reverseTablesMap.put((short)alg.tablesArr.length, "child");
+		withEndAlg.tablesMap.put("child", (short)alg.tablesArr.length);
+		withEndAlg.reverseTablesMap.put((short)alg.tablesArr.length, "child");
 	}
 
 }
