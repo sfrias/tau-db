@@ -15,7 +15,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
-import tempenums.Tables;
+import enums.Tables;
+
 
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;

@@ -7,9 +7,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TreeMap;
 
-import tempenums.Tables;
 
-import connections.JDCConnection;
+import connection.JDCConnection;
+import enums.Tables;
 
 
 public class algorithmUtils {

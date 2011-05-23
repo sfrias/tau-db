@@ -1,4 +1,4 @@
-package tempenums;
+package enums;
 
 public enum UpdateResult {
 	finish_download,

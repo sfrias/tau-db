@@ -1,6 +1,6 @@
 package core;
 
-import tempenums.ConnectionResult;
+import enums.ConnectionResult;
 
 public class ReturnElement {
 	

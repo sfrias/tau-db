@@ -1,4 +1,4 @@
-package connections;
+package connection;
 
 import java.sql.Array;
 import java.sql.Blob;

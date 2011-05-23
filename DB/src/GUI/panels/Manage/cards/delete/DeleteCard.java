@@ -6,7 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 
-import tempenums.Tables;
+import enums.Tables;
+
 
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;

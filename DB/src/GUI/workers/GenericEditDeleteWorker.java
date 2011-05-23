@@ -1,6 +1,6 @@
 package GUI.workers;
 
-import tempenums.Tables;
+import enums.Tables;
 import GUI.panels.Manage.cards.delete.DeleteCard;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
 

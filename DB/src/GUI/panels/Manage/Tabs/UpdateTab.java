@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
-import tempenums.UpdateResult;
 
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
@@ -27,6 +26,8 @@ import GUI.workers.UpdateWorker;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import enums.UpdateResult;
 
 public class UpdateTab extends JPanel implements PropertyChangeListener{
 	private static final long serialVersionUID = 1L;

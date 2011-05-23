@@ -6,7 +6,8 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import tempenums.Frames;
+import enums.Frames;
+
 
 import GUI.commons.GuiUtils;
 import GUI.frames.ManageFrame;

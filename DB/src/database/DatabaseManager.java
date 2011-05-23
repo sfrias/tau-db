@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import tempenums.ExecutionResult;
-import tempenums.Tables;
 
 import GUI.commons.Pair;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
-import connections.JDCConnection;
-import connections.JDCConnectionDriver;
+import connection.JDCConnection;
+import connection.JDCConnectionDriver;
+import enums.ExecutionResult;
+import enums.Tables;
 
 public class DatabaseManager {
 

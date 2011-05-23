@@ -1,7 +1,7 @@
 package GUI.workers;
 
-import tempenums.ExecutionResult;
-import tempenums.Tables;
+import enums.ExecutionResult;
+import enums.Tables;
 import GUI.model.CharacterModel;
 import GUI.panels.Manage.cards.add.AddCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;

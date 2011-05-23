@@ -10,12 +10,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
-import tempenums.ConnectionResult;
-import tempenums.Tables;
 
-import connections.JDCConnection;
+import connection.JDCConnection;
 
 import database.DatabaseManager;
+import enums.ConnectionResult;
+import enums.Tables;
 
 
 

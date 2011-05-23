@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
-import tempenums.Tables;
 
-import connections.JDCConnection;
+import connection.JDCConnection;
 
 import database.DatabaseManager;
+import enums.Tables;
 
 
 
