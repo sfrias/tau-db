@@ -1,4 +1,4 @@
-package Utils;
+package core;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -20,11 +20,12 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
-import Connection.JDCConnection;
+import connections.JDCConnection;
+
 import Enums.Tables;
-import db.AntUtils;
-import db.DatabaseManager;
-import db.AntUtils.Targets;
+import database.AntUtils;
+import database.DatabaseManager;
+import database.AntUtils.Targets;
 
 public class TableUtilities {
 

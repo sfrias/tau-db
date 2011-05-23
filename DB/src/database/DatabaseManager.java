@@ -1,4 +1,4 @@
-package db;
+package database;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import Connection.JDCConnection;
-import Connection.JDCConnectionDriver;
 import Enums.ExecutionResult;
 import Enums.Tables;
 import GUI.commons.Pair;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
+import connections.JDCConnection;
+import connections.JDCConnectionDriver;
 
 public class DatabaseManager {
 
@@ -550,6 +551,11 @@ public class DatabaseManager {
 		}
 	}
 
+	public ExecutionResult executeEditCharacters(String[] tables, Pair[][] addedValues, Pair[][] removedValues) {
+
+		return ExecutionResult.Success_Edit_Character;
+	}
+	
 	public ExecutionResult executeDelete(Tables table, int id) {
 
 		String tableName = table.toString();

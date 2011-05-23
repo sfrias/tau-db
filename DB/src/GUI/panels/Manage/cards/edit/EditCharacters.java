@@ -2,11 +2,12 @@ package GUI.panels.Manage.cards.edit;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 
 import Enums.Tables;
@@ -29,6 +30,7 @@ public class EditCharacters extends EditCard{
 	private SimpleModel simpleModel;
 	private DisplayList[] allValuesIndex = new DisplayList[Tables.getMaxIndex()+1];
 	private DisplayList[] characterValuesIndex = new DisplayList[Tables.getMaxIndex()+1];
+	private DisplayList[] originalCharacterValuesIndex = new DisplayList[Tables.getMaxIndex()+1];
 
 	private DisplayList diseaseCharacterValues;
 	private DisplayList diseaseValues;
@@ -89,6 +91,7 @@ public class EditCharacters extends EditCard{
 		for (int i=0; i < characterValuesIndex.length; i++){
 			if (charModel.isAtrributeModified(i)){
 				populateList(characterValuesIndex[i], charModel.getAttributePairs(i));
+				populateList(originalCharacterValuesIndex[i], charModel.getAttributePairs(i));
 			}
 		}
 
@@ -151,8 +154,9 @@ public class EditCharacters extends EditCard{
 
 			public void actionPerformed(ActionEvent event) {
 				String[] tables = getTablesNames();
-				Pair[][] values = getValues();
-				EditCharacterWorker worker = new EditCharacterWorker(tables, values, me);
+				Pair[][] addedValues = getAddedValues();
+				Pair[][] removedValues = getRemovedValues();
+				EditCharacterWorker worker = new EditCharacterWorker(tables, addedValues, removedValues,  me);
 				GuiHandler.startStatusFlash();
 				worker.execute();
 
@@ -215,34 +219,68 @@ public class EditCharacters extends EditCard{
 
 	}
 
-	private Pair[][] getValues() {
+	private Pair[][] getAddedValues() {
 
 		Pair[][] values = new Pair[Tables.getMaxIndex() + 2][];
 
 		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
-		values[Tables.disease.getIndex() + 1] = getPairs(diseaseCharacterValues);
-		values[Tables.occupation.getIndex() + 1] = getPairs(occupationCharacterValues);
-		values[Tables.organization.getIndex() + 1] = getPairs(organizationCharacterValues);
-		values[Tables.place_of_birth.getIndex() + 1] = getPairs(placeOfBirthCharacterValues);
-		values[Tables.power.getIndex() + 1] = getPairs(powerCharacterValues);
-		values[Tables.school.getIndex() + 1] = getPairs(schoolCharacterValues);
-		values[Tables.universe.getIndex() + 1] = getPairs(universeCharacterValues);
+		values[Tables.disease.getIndex() + 1] = getAddedPairs(diseaseCharacterValues, originalCharacterValuesIndex[Tables.disease.getIndex()]);
+		values[Tables.occupation.getIndex() + 1] = getAddedPairs(occupationCharacterValues, originalCharacterValuesIndex[Tables.occupation.getIndex()]);
+		values[Tables.organization.getIndex() + 1] = getAddedPairs(organizationCharacterValues, originalCharacterValuesIndex[Tables.organization.getIndex()]);
+		values[Tables.place_of_birth.getIndex() + 1] = getAddedPairs(placeOfBirthCharacterValues, originalCharacterValuesIndex[Tables.place_of_birth.getIndex()]);
+		values[Tables.power.getIndex() + 1] = getAddedPairs(powerCharacterValues, originalCharacterValuesIndex[Tables.power.getIndex()]);
+		values[Tables.school.getIndex() + 1] = getAddedPairs(schoolCharacterValues, originalCharacterValuesIndex[Tables.school.getIndex()]);
+		values[Tables.universe.getIndex() + 1] = getAddedPairs(universeCharacterValues, originalCharacterValuesIndex[Tables.universe.getIndex()]);
+		
+		return values;
+	}
+	
+	private Pair[][] getRemovedValues() {
+
+		Pair[][] values = new Pair[Tables.getMaxIndex() + 2][];
+
+		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
+		values[Tables.disease.getIndex() + 1] = getRemovedPairs(diseaseCharacterValues, originalCharacterValuesIndex[Tables.disease.getIndex()]);
+		values[Tables.occupation.getIndex() + 1] = getRemovedPairs(occupationCharacterValues, originalCharacterValuesIndex[Tables.occupation.getIndex()]);
+		values[Tables.organization.getIndex() + 1] = getRemovedPairs(organizationCharacterValues, originalCharacterValuesIndex[Tables.organization.getIndex()]);
+		values[Tables.place_of_birth.getIndex() + 1] = getRemovedPairs(placeOfBirthCharacterValues, originalCharacterValuesIndex[Tables.place_of_birth.getIndex()]);
+		values[Tables.power.getIndex() + 1] = getRemovedPairs(powerCharacterValues, originalCharacterValuesIndex[Tables.power.getIndex()]);
+		values[Tables.school.getIndex() + 1] = getRemovedPairs(schoolCharacterValues, originalCharacterValuesIndex[Tables.school.getIndex()]);
+		values[Tables.universe.getIndex() + 1] = getRemovedPairs(universeCharacterValues, originalCharacterValuesIndex[Tables.universe.getIndex()]);
 		
 		return values;
 	}
 
-	private Pair[] getPairs(DisplayList list){
+	private Pair[] getAddedPairs(DisplayList list, DisplayList originalList){
 
-		ListModel model = list.getModel();
+		DefaultListModel model = (DefaultListModel) list.getModel();
+		DefaultListModel originalModel = (DefaultListModel) originalList.getModel();
 
-		Pair[] values = new Pair[model.getSize()];
-		for (int i=0; i < model.getSize(); i++) {
-			values[i] = (Pair) model.getElementAt(i);
+		List<Pair> values = new ArrayList<Pair>();
+		for (int i=0; i < originalModel.getSize(); i++) {
+			Object currentPair = originalModel.getElementAt(i);
+			if (!model.contains(currentPair)){
+				values.add((Pair) currentPair);
+			}
 		}
-
-		return values;
+		return values.toArray(new Pair[values.size()]);
 	}
+	
+	private Pair[] getRemovedPairs(DisplayList list, DisplayList originalList){
 
+		DefaultListModel model = (DefaultListModel) list.getModel();
+		DefaultListModel originalModel = (DefaultListModel) originalList.getModel();
+
+		List<Pair> values = new ArrayList<Pair>();
+		for (int i=0; i < model.getSize(); i++) {
+			Object currentPair = model.getElementAt(i);
+			if (!originalModel.contains(currentPair)){
+				values.add((Pair) currentPair);
+			}
+		}
+		return values.toArray(new Pair[values.size()]);
+	}
+	
 	private String[] getTablesNames() {
 
 		String [] values = new String[Tables.getMaxIndex() + 2];

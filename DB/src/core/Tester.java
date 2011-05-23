@@ -1,11 +1,12 @@
-package Utils;
+package core;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.TimeUnit;
 
-import Connection.JDCConnection;
+import connections.JDCConnection;
+
 import Enums.ConnectionResult;
 
 public class Tester {
