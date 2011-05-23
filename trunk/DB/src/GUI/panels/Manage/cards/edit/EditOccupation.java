@@ -1,6 +1,6 @@
 package GUI.panels.Manage.cards.edit;
 
-import Enums.Tables;
+import tempenums.Tables;
 
 public class EditOccupation extends EditSimpleCard {
 	private static final long serialVersionUID = 1L;

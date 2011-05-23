@@ -24,10 +24,11 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
+import tempenums.Tables;
+import tempenums.UpdateResult;
+
 import connections.JDCConnection;
 
-import Enums.Tables;
-import Enums.UpdateResult;
 import GUI.GuiHandler;
 import GUI.panels.Manage.Tabs.UpdateTab;
 import database.AntUtils;

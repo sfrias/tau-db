@@ -1,6 +1,6 @@
 package GUI.model;
 
-import Enums.Tables;
+import tempenums.Tables;
 import GUI.commons.Pair;
 
 public class CharacterModel{

@@ -1,7 +1,7 @@
 package GUI.workers;
 
-import Enums.ExecutionResult;
-import Enums.Tables;
+import tempenums.ExecutionResult;
+import tempenums.Tables;
 import GUI.commons.Pair;
 import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.delete.DeleteCard;

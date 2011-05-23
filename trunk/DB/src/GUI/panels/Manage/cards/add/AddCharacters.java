@@ -11,7 +11,8 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
-import Enums.Tables;
+import tempenums.Tables;
+
 import GUI.GuiHandler;
 import GUI.commons.GuiUtils;
 import GUI.commons.Pair;

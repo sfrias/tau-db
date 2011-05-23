@@ -1,6 +1,6 @@
 package GUI.workers;
 
-import Enums.ExecutionResult;
+import tempenums.ExecutionResult;
 import GUI.commons.Pair;
 import GUI.panels.Manage.cards.add.AddCharacters;
 

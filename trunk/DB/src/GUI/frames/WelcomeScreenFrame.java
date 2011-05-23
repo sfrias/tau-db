@@ -14,7 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import Enums.Frames;
+import tempenums.Frames;
+
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;

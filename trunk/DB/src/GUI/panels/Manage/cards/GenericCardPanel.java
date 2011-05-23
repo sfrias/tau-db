@@ -10,7 +10,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import Enums.Tables;
+import tempenums.Tables;
+
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.buttons.IconButton;
 

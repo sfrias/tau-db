@@ -1,7 +1,7 @@
 package GUI.workers;
 
-import Enums.ExecutionResult;
-import Enums.Tables;
+import tempenums.ExecutionResult;
+import tempenums.Tables;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
 
 public class EditSimpleWorker extends GenericEditDeleteWorker {

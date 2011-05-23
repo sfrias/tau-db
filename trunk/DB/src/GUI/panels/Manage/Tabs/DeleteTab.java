@@ -2,7 +2,8 @@ package GUI.panels.Manage.Tabs;
 
 import javax.swing.JPanel;
 
-import Enums.Tables;
+import tempenums.Tables;
+
 import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.delete.DeleteDisease;
 import GUI.panels.Manage.cards.delete.DeleteOccupation;

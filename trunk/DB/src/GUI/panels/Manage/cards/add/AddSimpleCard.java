@@ -3,7 +3,8 @@ package GUI.panels.Manage.cards.add;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import Enums.Tables;
+import tempenums.Tables;
+
 import GUI.GuiHandler;
 import GUI.workers.AddSimpleWorker;
 

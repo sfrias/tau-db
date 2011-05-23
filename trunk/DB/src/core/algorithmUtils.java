@@ -7,9 +7,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TreeMap;
 
+import tempenums.Tables;
+
 import connections.JDCConnection;
 
-import Enums.Tables;
 
 public class algorithmUtils {
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";

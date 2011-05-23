@@ -1,4 +1,4 @@
-package Enums;
+package tempenums;
 
 public enum Frames{
 	WelcomeScreenFrame,
