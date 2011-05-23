@@ -1,7 +1,7 @@
 package GUI.workers;
 
-import Enums.ExecutionResult;
-import Enums.Tables;
+import tempenums.ExecutionResult;
+import tempenums.Tables;
 import GUI.panels.Manage.cards.add.AddSimpleCard;
 
 public class AddSimpleWorker extends GenericWorker{

@@ -1,6 +1,6 @@
 package GUI.panels.Manage.cards.add;
 
-import Enums.Tables;
+import tempenums.Tables;
 import GUI.panels.Manage.cards.GenericCardPanel;
 
 public abstract class AddCard extends GenericCardPanel{

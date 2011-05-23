@@ -14,7 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import Enums.Tables;
+import tempenums.Tables;
+
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.layouts.RXCardLayout;
 

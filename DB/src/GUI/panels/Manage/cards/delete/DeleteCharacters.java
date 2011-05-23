@@ -1,6 +1,6 @@
 package GUI.panels.Manage.cards.delete;
 
-import Enums.Tables;
+import tempenums.Tables;
 
 public class DeleteCharacters extends DeleteCard{
 

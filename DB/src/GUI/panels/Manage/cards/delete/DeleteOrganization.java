@@ -1,6 +1,6 @@
 package GUI.panels.Manage.cards.delete;
 
-import Enums.Tables;
+import tempenums.Tables;
 
 public class DeleteOrganization extends DeleteCard {
 	private static final long serialVersionUID = 1L;

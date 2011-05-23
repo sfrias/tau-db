@@ -1,6 +1,6 @@
 package GUI.workers;
 
-import Enums.ExecutionResult;
+import tempenums.ExecutionResult;
 
 public class ResultHolder {
 	private Object model ;

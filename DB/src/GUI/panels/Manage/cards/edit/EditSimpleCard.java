@@ -3,7 +3,8 @@ package GUI.panels.Manage.cards.edit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import Enums.Tables;
+import tempenums.Tables;
+
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.Pair;

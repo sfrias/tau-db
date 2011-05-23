@@ -2,7 +2,8 @@ package GUI.panels.Manage.Tabs;
 
 import javax.swing.JPanel;
 
-import Enums.Tables;
+import tempenums.Tables;
+
 import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.panels.Manage.cards.edit.EditDisease;
 import GUI.panels.Manage.cards.edit.EditOccupation;

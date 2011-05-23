@@ -7,7 +7,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import Enums.Tables;
+import tempenums.Tables;
+
 import GUI.commons.GuiUtils;
 import GUI.list.DisplayList;
 import GUI.model.CharacterModel;

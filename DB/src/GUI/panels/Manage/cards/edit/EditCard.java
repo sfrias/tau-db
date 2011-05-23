@@ -1,6 +1,6 @@
 package GUI.panels.Manage.cards.edit;
 
-import Enums.Tables;
+import tempenums.Tables;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 
 public abstract class EditCard extends EditAndDeleteGenericCardPanel{

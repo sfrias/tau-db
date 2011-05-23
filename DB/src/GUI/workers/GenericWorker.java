@@ -4,7 +4,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
-import Enums.ExecutionResult;
+import tempenums.ExecutionResult;
+
 import GUI.GuiHandler;
 import GUI.frames.PlayFrame;
 import GUI.model.CharacterModel;

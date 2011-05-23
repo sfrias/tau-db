@@ -9,8 +9,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import Enums.ExecutionResult;
-import Enums.Tables;
+import tempenums.ExecutionResult;
+import tempenums.Tables;
+
 import GUI.commons.Pair;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;

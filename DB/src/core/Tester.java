@@ -5,9 +5,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.TimeUnit;
 
+import tempenums.ConnectionResult;
+
 import connections.JDCConnection;
 
-import Enums.ConnectionResult;
 
 public class Tester {
 

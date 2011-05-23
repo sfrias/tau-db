@@ -10,7 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import Enums.Frames;
+import tempenums.Frames;
+
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;

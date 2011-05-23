@@ -12,7 +12,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import Enums.Tables;
+import tempenums.Tables;
+
 import GUI.GuiHandler;
 import GUI.commons.GuiUtils;
 import GUI.list.DisplayList;

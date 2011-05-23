@@ -20,9 +20,10 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
+import tempenums.Tables;
+
 import connections.JDCConnection;
 
-import Enums.Tables;
 import database.AntUtils;
 import database.DatabaseManager;
 import database.AntUtils.Targets;
