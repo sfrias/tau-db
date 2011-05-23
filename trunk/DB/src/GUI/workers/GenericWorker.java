@@ -16,7 +16,7 @@ import GUI.panels.Manage.cards.delete.DeleteCard;
 import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
-import db.DatabaseManager;
+import database.DatabaseManager;
 
 public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 

@@ -1,4 +1,4 @@
-package Utils;
+package core;
 
 import Enums.ConnectionResult;
 

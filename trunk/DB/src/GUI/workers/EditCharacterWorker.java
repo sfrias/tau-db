@@ -5,21 +5,21 @@ import GUI.panels.Manage.cards.edit.EditCharacters;
 
 public class EditCharacterWorker extends GenericWorker {
 
-	protected Pair[][] values;
-	protected String [] tables ;
+	private Pair[][] addedValues;
+	private Pair[][] removedValues;
+	private String [] tables ;
 	
 	
-	public EditCharacterWorker(String[] tables, Pair[][] values, EditCharacters card) {
+	public EditCharacterWorker(String[] tables, Pair[][] addedValues, Pair[][] removedValues, EditCharacters card) {
 		super(Action.EDIT, card);
 		this.tables = tables;
-		this.values = values;
-
+		this.addedValues = addedValues;
+		this.removedValues = removedValues;
 	}
 
 	@Override
 	protected ResultHolder doInBackground() {
 		throw new UnsupportedOperationException();
-
 	}
 
 }

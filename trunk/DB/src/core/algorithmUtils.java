@@ -1,4 +1,4 @@
-package Utils;
+package core;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,7 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TreeMap;
 
-import Connection.JDCConnection;
+import connections.JDCConnection;
+
 import Enums.Tables;
 
 public class algorithmUtils {
