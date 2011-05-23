@@ -10,7 +10,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import tempenums.Tables;
 
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.buttons.IconButton;
@@ -18,6 +17,8 @@ import GUI.buttons.IconButton;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import enums.Tables;
 
 public abstract class GenericCardPanel extends JPanel implements GenericCardInerface{
 

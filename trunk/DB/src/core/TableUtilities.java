@@ -20,13 +20,13 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
-import tempenums.Tables;
 
-import connections.JDCConnection;
+import connection.JDCConnection;
 
 import database.AntUtils;
 import database.DatabaseManager;
 import database.AntUtils.Targets;
+import enums.Tables;
 
 public class TableUtilities {
 

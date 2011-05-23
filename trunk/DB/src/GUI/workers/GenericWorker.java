@@ -4,7 +4,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
-import tempenums.ExecutionResult;
 
 import GUI.GuiHandler;
 import GUI.frames.PlayFrame;
@@ -18,6 +17,7 @@ import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
 import database.DatabaseManager;
+import enums.ExecutionResult;
 
 public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 

@@ -1,6 +1,6 @@
 package GUI.panels.Manage.cards.delete;
 
-import tempenums.Tables;
+import enums.Tables;
 
 public class DeletePlaceOfBirth extends DeleteCard{
 

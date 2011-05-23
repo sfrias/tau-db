@@ -10,7 +10,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.ListSelectionModel;
 
-import tempenums.Tables;
+import enums.Tables;
+
 
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;

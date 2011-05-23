@@ -24,16 +24,16 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
-import tempenums.Tables;
-import tempenums.UpdateResult;
 
-import connections.JDCConnection;
+import connection.JDCConnection;
 
 import GUI.GuiHandler;
 import GUI.panels.Manage.Tabs.UpdateTab;
 import database.AntUtils;
 import database.DatabaseManager;
 import database.AntUtils.Targets;
+import enums.Tables;
+import enums.UpdateResult;
 
 public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 	private File pathDir, sqlFile, extractDir, fictUniverseDir;

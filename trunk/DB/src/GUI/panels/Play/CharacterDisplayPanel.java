@@ -7,7 +7,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import tempenums.Tables;
 
 import GUI.commons.GuiUtils;
 import GUI.list.DisplayList;
@@ -17,6 +16,8 @@ import GUI.panels.CustomScrollPanel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import enums.Tables;
 
 public class CharacterDisplayPanel extends JPanel{
 	private static final long serialVersionUID = 1L;

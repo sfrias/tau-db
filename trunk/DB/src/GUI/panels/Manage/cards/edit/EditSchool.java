@@ -1,6 +1,6 @@
 package GUI.panels.Manage.cards.edit;
 
-import tempenums.Tables;
+import enums.Tables;
 
 public class EditSchool extends EditSimpleCard{
 
