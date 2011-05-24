@@ -33,7 +33,7 @@ CREATE TABLE occupation
 	occupation_fb_id varchar(40) NOT NULL DEFAULT '',
 	occupation_name varchar(80) NOT NULL,
 	KEY ix_occupation_id (occupation_id),
-	UNIQUE (occupation_fb_id)
+	UNIQUE (occupation_fb_id),
 	PRIMARY KEY (occupation_id)) ENGINE=InnoDB;
 	
 CREATE TABLE power 
@@ -41,7 +41,7 @@ CREATE TABLE power
 	power_fb_id varchar(40) NOT NULL DEFAULT '',
 	power_name varchar(140) NOT NULL,
 	KEY ix_power_id (power_id),
-	UNIQUE (power_fb_id)
+	UNIQUE (power_fb_id),
 	PRIMARY KEY (power_id)) ENGINE=InnoDB;
 	
 CREATE TABLE disease
@@ -49,7 +49,7 @@ CREATE TABLE disease
 	disease_fb_id varchar(40) NOT NULL DEFAULT '',
 	disease_name varchar(80) NOT NULL,
 	KEY ix_disease_id (disease_id),
-	UNIQUE (disease_fb_id)
+	UNIQUE (disease_fb_id),
 	PRIMARY KEY (disease_id)) ENGINE=InnoDB;
 	
 CREATE TABLE characters
