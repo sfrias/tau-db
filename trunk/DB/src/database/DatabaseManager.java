@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
 
-
 import GUI.commons.Pair;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -75,7 +74,7 @@ public class DatabaseManager {
 		JDCConnection conn = null;
 		Statement stmt = null;
 		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn = getConnection();
 			stmt = conn.createStatement();
 			boolean ok = stmt.execute(statement);
 			return ok;
@@ -108,7 +107,7 @@ public class DatabaseManager {
 		ResultSet resultSet = null;
 
 		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn = getConnection();
 			stmt = conn.createStatement();
 			resultSet = stmt.executeQuery(query);
 			return resultSet;
@@ -150,14 +149,14 @@ public class DatabaseManager {
 			tableName = Tables.place_of_birth.name();
 		}
 		else{
-			tableName = table.toString();
+			tableName = table.name();
 		}
 
 		JDCConnection conn = null;
 		Statement stmt = null;
 		ResultSet resultSet = null;
 		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn = getConnection();
 			String statementString;
 			if (table.equals(Tables.characters)){
 				statementString = "SELECT character_id, character_name FROM characters ORDER BY character_name ASC";
@@ -215,7 +214,7 @@ public class DatabaseManager {
 		ResultSet resultSet = null;
 
 		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn = getConnection();
 			stmt = conn.createStatement();
 			resultSet = stmt.executeQuery(query);
 
@@ -264,7 +263,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet resultSet = null;
 		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn = getConnection();
 			stmt = conn.createStatement();
 			resultSet = stmt.executeQuery("SELECT character_id, character_name FROM characters WHERE character_name REGEXP '^" + recordName + "\' ORDER BY character_name");
 			List<Pair> valuesList = new ArrayList<Pair>() ;
@@ -313,7 +312,7 @@ public class DatabaseManager {
 		try {
 			Pair [][] values = new Pair[tables.length][];
 
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn = getConnection();
 			stmt = conn.createStatement();
 			for (int i=0; i < tables.length; i++){
 				List<Pair> currentAttr = new ArrayList<Pair>();
@@ -370,15 +369,17 @@ public class DatabaseManager {
 
 	public ExecutionResult executeSimpleInsert(Tables table, String fieldName, String value) {
 
-		String tableName = table.toString();
+		String tableName = table.name();
 		JDCConnection conn = null;
 		Statement stmt1 = null;
 		Statement stmt2 = null;
 		ResultSet resultSet = null;
+		ResultSet generatedKeys = null;
 
 		try {
+			conn = getConnection();
+			conn.setAutoCommit(false);
 
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			stmt1 = conn.createStatement();
 			resultSet = stmt1.executeQuery("SELECT " + tableName+"_id FROM " + tableName + " WHERE " + tableName+ "_name LIKE \'" + value + "\'");
 			boolean alreadyAdded = resultSet.next();
@@ -386,19 +387,38 @@ public class DatabaseManager {
 			if (alreadyAdded){
 				return ExecutionResult.Success_Simple_Add_Edit_Delete;	
 			}
-
+			
 			stmt2 = conn.createStatement();
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append("INSERT IGNORE INTO " + tableName + " (" + fieldName + ") values(\'" + value + "\')");
-			stmt2.executeUpdate(stringBuilder.toString());
+			stmt2.executeUpdate("INSERT IGNORE INTO " + tableName + " (" + fieldName + ") values(\'" + value + "\')", Statement.RETURN_GENERATED_KEYS);
+			
+			generatedKeys = stmt2.getGeneratedKeys();
+			generatedKeys.first();
+			int key = generatedKeys.getInt(1);
 
+			if (!table.equals(Tables.place_of_birth)){
+				stmt2.executeUpdate("UPDATE " + tableName + " SET " + tableName + "_fb_id = \'" + key + "\' WHERE " + tableName + "_id = " + key);
+			}
+			conn.commit();
 			return ExecutionResult.Success_Simple_Add_Edit_Delete;
 
-		} catch (SQLException e) {
-			System.err.println("An SQLException was thrown at executeUpdate("+ tableName + ")");
+		} 
+		catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			System.err.println("An SQLException was thrown at executeSimpleInsert("+ tableName + ")");
 			return ExecutionResult.Exception;
 		}
 		finally{
+			if (generatedKeys!= null){
+				try {
+					generatedKeys.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 			if (resultSet!= null){
 				try {
 					resultSet.close();
@@ -422,6 +442,7 @@ public class DatabaseManager {
 			}
 			if (conn!= null){
 				try {
+					conn.setAutoCommit(true);
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -435,19 +456,30 @@ public class DatabaseManager {
 		JDCConnection conn = null;
 		Statement stmt = null;		
 		Statement stmt2 = null;
-		ResultSet generatedKey = null;
+		ResultSet generatedKeys = null;
+		
 		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn = getConnection();
 			conn.setAutoCommit(false);
 			stmt = conn.createStatement();
 			Pair name = values[0][0];
-			Pair placeOfBirth = values[Tables.place_of_birth.getIndex() + 1][0];
-			stmt.execute("INSERT IGNORE INTO characters (character_name, character_place_of_birth_id) values (\'"+name.getName()+"\', " + placeOfBirth.getId() + ")", Statement.RETURN_GENERATED_KEYS);
-			generatedKey = stmt.getGeneratedKeys();
-			int key = 0;
-			while(generatedKey.next()){
-				key = generatedKey.getInt(1);
+			Pair[] placeOfBirthArray = values[Tables.place_of_birth.getIndex() + 1];
+			int placeOfBirthId;
+			if (placeOfBirthArray != null && placeOfBirthArray.length > 0){
+				placeOfBirthId = placeOfBirthArray[0].getId();
 			}
+			else{
+				
+				ResultSet rs = stmt.executeQuery("SELECT place_of_birth_id FROM place_of_birth WHERE place_of_birth_name LIKE \'Unspecified\'");
+				rs.first();
+				placeOfBirthId = rs.getInt(1);
+			}
+			
+			stmt.execute("INSERT IGNORE INTO characters (character_name, character_place_of_birth_id) values (\'"+name.getName()+"\', " + placeOfBirthId + ")", Statement.RETURN_GENERATED_KEYS);
+			generatedKeys = stmt.getGeneratedKeys();
+			generatedKeys.first();
+			int key = generatedKeys.getInt(1);
+			stmt.executeUpdate("UPDATE characters SET character_fb_id  = \'" + key + "\' WHERE character_id = " + key);
 
 			stmt2 = conn.createStatement();
 			for (int i=1; i < tables.length; i++){
@@ -476,9 +508,9 @@ public class DatabaseManager {
 			return ExecutionResult.Exception;
 		}
 		finally {
-			if (generatedKey!= null){
+			if (generatedKeys != null){
 				try {
-					generatedKey.close();
+					generatedKeys.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -510,11 +542,11 @@ public class DatabaseManager {
 
 	public ExecutionResult executeUpdate(Tables table, String[] fieldNames, String[] values, int id) {
 
-		String tableName = table.toString();
+		String tableName = table.name();
 		JDCConnection conn = null;
 		Statement stmt = null;
 		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn = getConnection();
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder.append("UPDATE " + tableName + " SET ");
 			int length = fieldNames.length;
@@ -556,14 +588,14 @@ public class DatabaseManager {
 
 		return ExecutionResult.Success_Edit_Character;
 	}
-	
+
 	public ExecutionResult executeDelete(Tables table, int id) {
 
-		String tableName = table.toString();
+		String tableName = table.name();
 		JDCConnection conn = null;
 		Statement stmt = null;
 		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn = getConnection();
 			stmt = conn.createStatement();
 			if (table.equals(Tables.characters)){
 				stmt.executeUpdate("DELETE FROM characters WHERE character_id = " + id);		
@@ -599,4 +631,159 @@ public class DatabaseManager {
 			}
 		}
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+	/* 
+	 * gets the character's name by his/her id 
+	 */
+	public String getNameFromId(int id){
+		System.out.println("3");
+
+		JDCConnection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			stmt = conn.createStatement();
+
+			rs = stmt.executeQuery("SELECT character_name FROM characters WHERE character_id=" +id +"");
+			rs.first();
+			String name = rs.getString("character_name");
+			return name;
+
+		} catch (SQLException e) {
+			e.printStackTrace();	
+			return null;
+		} 
+		finally {
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	/* 
+	 * gets the attribute's name by its id
+	 */
+	public String getAttributeNameFromID(String table, int id){
+
+		System.out.println("2");
+
+		JDCConnection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT " +table+"_name FROM " + table+ " WHERE " + table+"_id=" + id);
+			rs.first();
+			String name = rs.getString(1);
+			return name;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		finally {
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	/*
+	 * gets unspecifiedId of a specific attribute
+	 */
+
+	public int getUnspecifiedId(String table) {
+
+		System.out.println("1");
+		JDCConnection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		int unspecifiedID = 0;
+
+		String field;
+		if (table.equals(Tables.characters.name())){
+			field = "character";
+		}
+		else {
+			field = table;
+		}
+
+		try {
+			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
+			rs.first();
+			unspecifiedID = rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return unspecifiedID;
+	}
+
 }

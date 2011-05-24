@@ -1,11 +1,11 @@
 package GUI.workers;
 
-import enums.ExecutionResult;
-import enums.Tables;
 import GUI.commons.Pair;
 import GUI.model.CharacterModel;
 import GUI.panels.Manage.cards.add.AddCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
+import enums.ExecutionResult;
+import enums.Tables;
 
 public class AddCharacterAttributeWorker extends GenericWorker {
 	
@@ -27,7 +27,7 @@ public class AddCharacterAttributeWorker extends GenericWorker {
 	@Override
 	protected ResultHolder doInBackground() {
         
-		ExecutionResult exeRes = databaseManager.executeSimpleInsert(table, table.toString()+"_name", value);
+		ExecutionResult exeRes = databaseManager.executeSimpleInsert(table, table.name()+"_name", value);
         
         if (exeRes.equals(ExecutionResult.Success_Simple_Add_Edit_Delete)){
         	exeRes = ExecutionResult.Success_Add_Character_Attribute;

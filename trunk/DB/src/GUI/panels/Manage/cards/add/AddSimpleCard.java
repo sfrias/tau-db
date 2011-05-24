@@ -3,11 +3,9 @@ package GUI.panels.Manage.cards.add;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import enums.Tables;
-
-
 import GUI.GuiHandler;
 import GUI.workers.AddSimpleWorker;
+import enums.Tables;
 
 public class AddSimpleCard extends AddCard {
 
@@ -22,7 +20,7 @@ public class AddSimpleCard extends AddCard {
 
 			public void actionPerformed(ActionEvent event) {
 
-				String fieldName = table.toString()+"_name";
+				String fieldName = table.name()+"_name";
 				String value = textName.getText();
 				AddSimpleWorker worker = new AddSimpleWorker(table, fieldName, value, me);
 				GuiHandler.startStatusFlash();

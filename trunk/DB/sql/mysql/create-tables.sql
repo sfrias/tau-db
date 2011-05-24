@@ -1,14 +1,15 @@
 CREATE TABLE place_of_birth
-		(place_of_birth_id int(11) NOT NULL AUTO_INCREMENT,
-		place_of_birth_name varchar(80) NOT NULL,
-		KEY ix_place_of_birth_id (place_of_birth_id),
-		PRIMARY KEY (place_of_birth_id),UNIQUE (place_of_birth_name)) ENGINE=InnoDB;
+	(place_of_birth_id int(11) NOT NULL AUTO_INCREMENT,
+	place_of_birth_name varchar(80) NOT NULL,
+	KEY ix_place_of_birth_id (place_of_birth_id),
+	PRIMARY KEY (place_of_birth_id),UNIQUE (place_of_birth_name)) ENGINE=InnoDB;
 	
 CREATE TABLE organization
 	(organization_id int(11) NOT NULL AUTO_INCREMENT,
 	organization_fb_id varchar(40) NOT NULL DEFAULT '',
 	organization_name varchar(80) NOT NULL,
 	KEY ix_organization_id (organization_id),
+	UNIQUE (organization_fb_id),
 	PRIMARY KEY (organization_id)) ENGINE=InnoDB;
 	
 CREATE TABLE universe
@@ -16,6 +17,7 @@ CREATE TABLE universe
 	universe_fb_id varchar(40) NOT NULL DEFAULT '',
 	universe_name varchar(80) NOT NULL,
 	KEY ix_universe_id (universe_id),
+	UNIQUE (universe_fb_id),
 	PRIMARY KEY (universe_id)) ENGINE=InnoDB;
 	
 CREATE TABLE school
@@ -23,6 +25,7 @@ CREATE TABLE school
 	school_fb_id varchar(40) NOT NULL DEFAULT '',
 	school_name varchar(80) NOT NULL,
 	KEY ix_school_id (school_id),
+	UNIQUE (school_fb_id),
 	PRIMARY KEY (school_id)) ENGINE=InnoDB;
 	
 CREATE TABLE occupation 
@@ -30,6 +33,7 @@ CREATE TABLE occupation
 	occupation_fb_id varchar(40) NOT NULL DEFAULT '',
 	occupation_name varchar(80) NOT NULL,
 	KEY ix_occupation_id (occupation_id),
+	UNIQUE (occupation_fb_id)
 	PRIMARY KEY (occupation_id)) ENGINE=InnoDB;
 	
 CREATE TABLE power 
@@ -37,6 +41,7 @@ CREATE TABLE power
 	power_fb_id varchar(40) NOT NULL DEFAULT '',
 	power_name varchar(140) NOT NULL,
 	KEY ix_power_id (power_id),
+	UNIQUE (power_fb_id)
 	PRIMARY KEY (power_id)) ENGINE=InnoDB;
 	
 CREATE TABLE disease
@@ -44,6 +49,7 @@ CREATE TABLE disease
 	disease_fb_id varchar(40) NOT NULL DEFAULT '',
 	disease_name varchar(80) NOT NULL,
 	KEY ix_disease_id (disease_id),
+	UNIQUE (disease_fb_id)
 	PRIMARY KEY (disease_id)) ENGINE=InnoDB;
 	
 CREATE TABLE characters
@@ -53,6 +59,7 @@ CREATE TABLE characters
 	character_place_of_birth_id int(11) NOT NULL DEFAULT 5,
 	KEY ix_character_id (character_id),
 	KEY ix_character_and_pob (character_id,character_place_of_birth_id),
+	UNIQUE (character_fb_id),
 	PRIMARY KEY (character_id),
 	FOREIGN KEY (character_place_of_birth_id) REFERENCES place_of_birth(place_of_birth_id) ON UPDATE RESTRICT ON DELETE RESTRICT) DEFAULT CHARSET=utf8 ENGINE=InnoDB;
 	
