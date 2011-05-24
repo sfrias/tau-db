@@ -10,9 +10,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.ListSelectionModel;
 
-import enums.Tables;
-
-
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.Pair;
@@ -23,6 +20,7 @@ import GUI.panels.CharacterAttributePanel;
 import GUI.workers.EditCharacterWorker;
 import GUI.workers.GetAllAttributesWorker;
 import GUI.workers.GetCharacterAttributesWorker;
+import enums.Tables;
 
 public class EditCharacters extends EditCard{
 	
@@ -60,6 +58,7 @@ public class EditCharacters extends EditCard{
 		populateLists();
 		createAllAttributesListIndex();
 		createCharacterAttributesListIndex();
+		createOriginalCharacterAttributesListIndex();
 		addFields(titles, components);
 
 	}
@@ -322,6 +321,17 @@ public class EditCharacters extends EditCard{
 		characterValuesIndex[Tables.universe.getIndex()] = universeCharacterValues;
 	}
 
+	private void createOriginalCharacterAttributesListIndex(){
+		
+		originalCharacterValuesIndex[Tables.disease.getIndex()] = diseaseCharacterValues;
+		originalCharacterValuesIndex[Tables.occupation.getIndex()] = occupationCharacterValues;
+		originalCharacterValuesIndex[Tables.organization.getIndex()] = organizationCharacterValues;
+		originalCharacterValuesIndex[Tables.place_of_birth.getIndex()] = placeOfBirthCharacterValues;
+		originalCharacterValuesIndex[Tables.power.getIndex()] = powerCharacterValues;
+		originalCharacterValuesIndex[Tables.school.getIndex()] = schoolCharacterValues;
+		originalCharacterValuesIndex[Tables.universe.getIndex()] = universeCharacterValues;
+	}
+	
 	private void createAllAttributesListIndex(){
 		
 		allValuesIndex[Tables.disease.getIndex()] = diseaseValues;

@@ -15,5 +15,8 @@ public enum ExecutionResult {
 	Success_Get_Character_Attributes_For_Second_Character,
 	Success_Characters_Query,
 	IntegrityConstraintViolationException,
-	Exception;
+	Exception, 
+	Success_Populating_Joined_Table,
+	Success_Populating_Simple_Table;
+
 }

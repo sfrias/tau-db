@@ -4,7 +4,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
-
 import GUI.GuiHandler;
 import GUI.frames.PlayFrame;
 import GUI.model.CharacterModel;
@@ -193,6 +192,8 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				editCharactersCard.clearValues();
 				break;
 			}
+			default:
+				break;
 			}		
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

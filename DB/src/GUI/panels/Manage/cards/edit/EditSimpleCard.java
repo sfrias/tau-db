@@ -3,14 +3,12 @@ package GUI.panels.Manage.cards.edit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import enums.Tables;
-
-
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.Pair;
 import GUI.model.SimpleModel;
 import GUI.workers.EditSimpleWorker;
+import enums.Tables;
 
 public class EditSimpleCard extends EditCard{
 	
@@ -48,7 +46,7 @@ public class EditSimpleCard extends EditCard{
 			public void actionPerformed(ActionEvent event) {
 				Pair selectedPair = (Pair) cb.getSelectedItem();
 				int recordId = selectedPair.getId();
-				String [] fieldNames = new String[]{table.toString()+"_name"};
+				String [] fieldNames = new String[]{table.name()+"_name"};
 				String [] fieldValues = new String[]{textName.getText()};
 				EditSimpleWorker worker = new EditSimpleWorker(table, fieldNames, fieldValues, recordId,thisCard);
 				GuiHandler.startStatusFlash();
