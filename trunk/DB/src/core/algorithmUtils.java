@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TreeMap;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
+
 
 import connection.JDCConnection;
 import database.DatabaseManager;
@@ -69,11 +71,20 @@ public class algorithmUtils {
 	 */
 
 	public static String getAttributeNameFromID(String table, int id){
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		JDCConnection conn = dbManager.getConnection();
+
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
+		
+		if (table.equals(Tables.romantic_involvement.name()) ||
+				table.equals(Tables.parent.name()) ||
+				table.equals("child")) {
+			
+			return "none";
+		}
+		
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		JDCConnection conn = dbManager.getConnection();
 		try {
 			stmt = conn.createStatement();
 
@@ -115,31 +126,21 @@ public class algorithmUtils {
 	/*
 	 *prints connections in case found in history 	
 	 */
-	static void getNameAndPrintConnections(String connArr){
+	static void prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
 		String startName="", endName="";
 		String[] valueArr = new String[4];
-		String toPrint;
+		//String toPrint;
 		String connections[] = connArr.split("\t");
+		String atrName = null;
 		for (int i=0; i<connections.length; i++){
 			if (connections[i] != ""){ 
 				valueArr = connections[i].split(",");
 				startName =getNameFromId(Integer.parseInt(valueArr[0]));
 				endName = getNameFromId(Integer.parseInt(valueArr[1]));
-				if ( valueArr[2].equals(Tables.romantic_involvement.name()) ) {
-					toPrint = startName + " has a " + valueArr[2] + " relationship with " + endName;
-				}
-				else if ( valueArr[2].equals("child")) {
-					toPrint = startName + " is " + endName +"'s child";
-				}
-				else if (valueArr[2].equals("parent")) {
-					toPrint = startName + " is " + endName +"'s parent";
-				}
-				else {
-					int temp = Integer.parseInt(valueArr[3]);
-					String atrName = getAttributeNameFromID(valueArr[2], temp);
-					toPrint = startName + " has the same "+ valueArr[2] + " as " + endName + " - " + atrName;
-				}
-				System.out.println(toPrint);
+				int temp = Integer.parseInt(valueArr[3]);
+				atrName = getAttributeNameFromID(valueArr[2], temp);
+				connectionArray[i] = new connectionElement(startName, endName, valueArr[2], atrName);
+				atrName = null;
 			}
 		}
 	}
@@ -164,6 +165,7 @@ public class algorithmUtils {
 		JDCConnection conn = dbManager.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
+		connectionElement[] connectionArray = new connectionElement[3];
 
 		try {
 			stmt = conn.createStatement();
@@ -173,7 +175,7 @@ public class algorithmUtils {
 				String endName = getNameFromId(rs.getInt(2));
 				System.out.println("this is a connection between " + startName + " and " + endName);
 				System.out.println("this connection was found in " + rs.getDate(3));
-				getNameAndPrintConnections(rs.getString(4));
+				prepareConnectionsFromHistory(rs.getString(4),connectionArray);
 				System.out.println();
 			}
 
@@ -469,7 +471,7 @@ public class algorithmUtils {
 	 * Searching for the connection in the history table. 
 	 * If exists - prints the connection to console.
 	 */
-	public static boolean lookForConnectionInHistory(String start_name, String end_name, int start_id, int end_id){
+	public static boolean lookForConnectionInHistory(String start_name, String end_name, int start_id, int end_id, connectionElement[] conenctionArray){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
 		JDCConnection conn = dbManager.getConnection();
 		Statement stmt = null;
@@ -507,7 +509,7 @@ public class algorithmUtils {
 					start_name = end_name;
 				}
 			
-				algorithmUtils.getNameAndPrintConnections(getConnectionOfCharacters);
+				algorithmUtils.prepareConnectionsFromHistory(getConnectionOfCharacters, conenctionArray);
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -724,5 +726,60 @@ public class algorithmUtils {
 		noEndAlg.tablesMap.put("child", (short)alg.tablesArr.length);
 		noEndAlg.reverseTablesMap.put((short)alg.tablesArr.length, "child");
 	}
+	
+	
+	public static String helperForGUI(connectionElement connElement){
+		String theConnection;
+		String attribute = connElement.getAttribute();
+		String startName = connElement.getStartName();
+		String endName = connElement.getEndName();
+		if (attribute.equals(Tables.romantic_involvement.name()) ) {
+			theConnection = startName + " has a " + attribute + " relationship with " + endName;
+		}
+		else if( attribute.equals("child")) {
+			theConnection = startName + " is " + endName +"'s child";
+		}
+		
+		else if (attribute.equals(Tables.parent.name())) {
+			theConnection = startName + " is " + endName +"'s parent";
+		}
+		else {
+			theConnection = startName + " has the same "+ attribute + " as " + endName + " - " + connElement.getAttributeValue();
+		}
+		return theConnection;
+			
+	}
+		
+	public static String prepareConnectionsForGUI(charElement[] connection, connectionElement[] connectionArray){
+		
+		String startName="", endName="";
+		String toHisory="";
+		String atrName = null;
+		short attribute; 
+		int attributeVal;
+		String attributeString;
+		charElement conLast = connection[0], conPrev;
+		int i=0;
+		while (conLast.prevElement != null){
+			conPrev = conLast.prevElement;
+			attribute = conLast.connectedAttribute;
+			attributeVal = conLast.attributeValue;
+			attributeString = noEndAlg.reverseTablesMap.get(attribute);
 
+			startName =algorithmUtils.getNameFromId(conLast.characterId);
+			endName = algorithmUtils.getNameFromId(conPrev.characterId);
+
+			atrName = algorithmUtils.getAttributeNameFromID(attributeString, attributeVal);
+
+			toHisory+= conLast.characterId +","+conPrev.characterId +"," +attributeString + "," + atrName;
+			if (conPrev.prevElement != null){
+				toHisory+= "\t";
+			}
+			connectionArray[i] = new connectionElement(startName, endName, attributeString, atrName);
+			i++;
+			conLast = conPrev;
+		}
+		return toHisory;
+		
+	}
 }
