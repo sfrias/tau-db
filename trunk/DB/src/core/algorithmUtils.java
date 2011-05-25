@@ -708,8 +708,7 @@ public class algorithmUtils {
 		else {
 			theConnection = startName + " has the same "+ attribute + " as " + endName + " - " + connElement.getAttributeValue();
 		}
-		return theConnection;
-			
+		return theConnection;		
 	}
 	
 	/*
@@ -734,7 +733,6 @@ public class algorithmUtils {
 
 			startName =algorithmUtils.getNameFromId(conLast.characterId);
 			endName = algorithmUtils.getNameFromId(conPrev.characterId);
-
 			atrName = algorithmUtils.getAttributeNameFromID(attributeString, attributeVal);
 
 			toHisory+= conLast.characterId +","+conPrev.characterId +"," +attributeString + "," + atrName;
