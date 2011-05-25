@@ -605,8 +605,8 @@ public class noEndAlg{
 
 		boolean alreadyExists = false;
 		this.end_id = end_id;
-		String start_name=algorithmUtils.getNameFromId(start_id,conn);
-		String end_name=algorithmUtils.getNameFromId(end_id,conn);
+		String start_name=algorithmUtils.getNameFromId(start_id);
+		String end_name=algorithmUtils.getNameFromId(end_id);
 		
 		// checks if the connection between these 2 characters already in history table
 		//alreadyExists = algorithmUtils.lookForConnectionInHistory(start_name, end_name, start_id, end_id,conn);
@@ -676,8 +676,8 @@ public class noEndAlg{
 				attributeVal = conLast.attributeValue;
 				attributeString = reverseTablesMap.get(attribute);
 				
-				startName =algorithmUtils.getNameFromId(conLast.characterId, conn);
-				endName = algorithmUtils.getNameFromId(conPrev.characterId, conn);
+				startName =algorithmUtils.getNameFromId(conLast.characterId);
+				endName = algorithmUtils.getNameFromId(conPrev.characterId);
 
 				if (	// attributeString.equals(Tables.sibling.) || 
 						//attributeString.equals(Tables.marriage.) ||
@@ -691,7 +691,7 @@ public class noEndAlg{
 							toPrint = startName + " is " + endName +"'s parent";
 					}
 					else {
-						atrName = algorithmUtils.getAttributeNameFromID(attributeString, attributeVal, conn);
+						atrName = algorithmUtils.getAttributeNameFromID(attributeString, attributeVal);
 						toPrint = startName + " has the same "+ attributeString + " as " + endName + " - " + atrName;
 					}
 					System.out.println(toPrint);

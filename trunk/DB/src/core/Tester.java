@@ -49,11 +49,11 @@ public class Tester {
 			    System.out.println("the search between " + i + " and " + j + " took total time of " + total +"\n" + time + "\n");
 			        if (result.getResult()== ConnectionResult.Found_Connection) {
 			        	success++;
-			        	algorithmUtils.insertIntoStatisticTable(i, j, a.getGlobalNumOfConnections() , searchTimeInSeconds, conn);
+			        	algorithmUtils.insertIntoStatisticTable(i, j, a.getGlobalNumOfConnections() , searchTimeInSeconds);
 			        }
 			        else {
 			        	failure++;
-			        	algorithmUtils.insertIntoStatisticTable(i, j, -1 , searchTimeInSeconds, conn);
+			        	algorithmUtils.insertIntoStatisticTable(i, j, -1 , searchTimeInSeconds);
 			        }
 			}
 		}
