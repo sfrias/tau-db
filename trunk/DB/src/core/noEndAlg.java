@@ -70,19 +70,17 @@ public class noEndAlg{
 			while (iterator.hasNext() ){
 				currentElement = iterator.next();
 				resultFlag = DirectConnectionToEnd(currentElement, result);
-				if (getR() != ConnectionResult.Ok){
-					return false;
-				}
-			
-				if (resultFlag){
-					return true;
+				if (getR() != ConnectionResult.Ok || resultFlag){
+					break;
 				}
 			}
-			
-			return false;
+			previousPhase = currentPhase;
+			currentPhase = new ArrayList<charElement>();
+			return resultFlag;
 		}
 		
 		iterator = previousPhase.iterator();
+		
 		while (iterator.hasNext()){
 			currentElement = iterator.next();
 			resultFlag = directConnectionToAny(currentElement, result);
@@ -246,11 +244,6 @@ public class noEndAlg{
 					isEmptyQuery = false;
 					charactersWithAtr +=  joinedAtr + "_" + currentAtr + "_id =" + currentAtrVal;
 				}
-				
-				//if (atrValRS != null) atrValRS.close();
-				//if (atrStmt != null) atrStmt.close();
-				//atrStmt = null;
-				//atrValRS = null;
 			
 		} catch (SQLException e) {
 				e.printStackTrace();
@@ -327,10 +320,6 @@ public class noEndAlg{
 			if (placeOfBirth == unspecifiedIdOfTables.get(currentAtr)){
 				return null;
 			}
-			//if (atrValRS != null) atrValRS.close();
-			//if (atrStmt != null) atrStmt.close();
-			//atrValRS = null;
-			//atrStmt = null;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			setR (ConnectionResult.Exception);
@@ -401,9 +390,7 @@ public class noEndAlg{
 				atr = atr+1;
 			} 
 			
-			else if (	//tablesArr[atr].equals(Tables.sibling.) || 
-						//tablesArr[atr].equals(Tables.marriage.) ||
-						tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
+			else if (	tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
 						tablesArr[atr].equals(Tables.parent.name())){
 				
 				charactersWithAtr = directConnectionRealtions(currentAtr, start_id, unspecifiedIdOfCharacter, false);
@@ -452,11 +439,6 @@ public class noEndAlg{
 			}
 		}
 			
-			//if (charToAny != null) charToAny.close();
-			//if (charWithAtrStmt != null) charWithAtrStmt.close();
-			//charToAny=null;
-			//charWithAtrStmt=null;
-			
 			if (foundMatch){ //found a match between start_id and end_id
 				break;
 			}
@@ -503,9 +485,7 @@ public class noEndAlg{
 				atr=atr+1;
 			} //end of while loop
 			
-			else if (	//tablesArr[atr].equals(Tables.sibling.) || 
-						//tablesArr[atr].equals(Tables.marriage.) ||
-						tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
+			else if (	tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
 						tablesArr[atr].equals(Tables.parent.name())){
 				
 				charactersWithAtr = directConnectionRealtions(currentAtr, start_id, -1, true);
@@ -556,11 +536,6 @@ public class noEndAlg{
 				}
 			}
 		}
-			
-			//if (charAtrStmt!= null) charAtrStmt.close();
-			//if (charsWithAtrRS!= null) charsWithAtrRS.close();
-			//charAtrStmt=null;
-			//charsWithAtrRS=null;
 			
 			if (foundMatch){
 				break;
@@ -662,8 +637,6 @@ public class noEndAlg{
 	}
 	
 	
-
-
 	
 	public int getGlobalNumOfConnections(){
 		return globalNumOfConnections;

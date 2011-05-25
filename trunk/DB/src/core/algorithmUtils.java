@@ -129,7 +129,6 @@ public class algorithmUtils {
 	static void prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
 		String startName="", endName="";
 		String[] valueArr = new String[4];
-		//String toPrint;
 		String connections[] = connArr.split("\t");
 		String atrName = null;
 		for (int i=0; i<connections.length; i++){
@@ -553,47 +552,6 @@ public class algorithmUtils {
 		" FROM " + joinedAtr + 
 		" WHERE " +joinedAtr + "_character_id = " + charid;
 	}
-
-	public static String specificAttributeValuesQueryAny(String joinedAtr, String currentAtr, int charid, int unspecifiedidofCharacter, int unspecifiedIdOfAtr){
-		return 	
-		"SELECT DISTINCT x." + joinedAtr + "_character_id , x." + joinedAtr + "_" + currentAtr + "_id " +
-		" FROM " + joinedAtr + " AS x, " + joinedAtr + " AS y " +
-		" WHERE x." +joinedAtr + "_" + currentAtr+ "_id = y."+joinedAtr + "_" + currentAtr+ "_id" +
-		" AND y."  + joinedAtr +  "_character_id =" + charid +
-		" AND x." + joinedAtr +  "_character_id !=" + unspecifiedidofCharacter +
-		" AND y."+joinedAtr + "_" + currentAtr+ "_id !=" +unspecifiedIdOfAtr;
-	}
-	
-	public static String specificAttributeValuesQueryEnd(String joinedAtr, String currentAtr, int charid, int end_id, int unSpecAtr){
-		return 	
-		"SELECT DISTINCT x." + joinedAtr + "_character_id , x." + joinedAtr + "_" + currentAtr + "_id " +
-		" FROM " + joinedAtr + " AS x, " + joinedAtr + " AS y " +
-		" WHERE x." +joinedAtr + "_" + currentAtr+ "_id = y."+joinedAtr + "_" + currentAtr+"_id" +
-		" AND y."  + joinedAtr +  "_character_id =" + charid +
-		" AND x." + joinedAtr +  "_character_id =" + end_id +
-		" AND y."+joinedAtr + "_" + currentAtr+"_id !=" +unSpecAtr;
-	}
-
-	public static String placeOfBirthQueryAny(String currentAtr, int charid, int unSpecChar, int unSpecPlace){
-		return 	
-		"SELECT DISTINCT x.character_id, x.character_" + currentAtr+ "_id "+  
-		" FROM characters AS x, characters AS y " +
-		" WHERE x.character_" + currentAtr+ "_id  = y.character_" + currentAtr+ "_id " +
-		" AND y.character_id = " + charid + 
-		" AND y.character_" + currentAtr+ "_id != " + unSpecChar +
-		" AND y.character_" + currentAtr+ "_id !=" + unSpecPlace;
-	}
-	
-	public static String placeOfBirthQueryEnd(String currentAtr, int charid, int end_id, int unspecifiedIdPlaceOfBirth){
-		return 	
-		"SELECT DISTINCT x.character_" + currentAtr+ "_id "+  
-		" FROM characters AS x, characters AS y " +
-		" WHERE x.character_" + currentAtr+ "_id  = y.character_" + currentAtr+ "_id " +
-		" AND y.character_id = " + charid + 
-		" AND x.character_id = " + end_id +
-		" AND y.character_" + currentAtr+ "_id !=" + unspecifiedIdPlaceOfBirth;
-	}
-	
 	
 
 	/*
@@ -728,6 +686,10 @@ public class algorithmUtils {
 	}
 	
 	
+	
+	/*
+	 * get the connection from connection element
+	 */
 	public static String helperForGUI(connectionElement connElement){
 		String theConnection;
 		String attribute = connElement.getAttribute();
@@ -749,6 +711,10 @@ public class algorithmUtils {
 		return theConnection;
 			
 	}
+	
+	/*
+	 * prepare the connections' array from the charElement
+	 */
 		
 	public static String prepareConnectionsForGUI(charElement[] connection, connectionElement[] connectionArray){
 		
