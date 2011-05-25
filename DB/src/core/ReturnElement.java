@@ -4,8 +4,8 @@ import enums.ConnectionResult;
 
 public class ReturnElement {
 	
-	ConnectionResult result;
-	connectionElement[] connectionArray;
+	private ConnectionResult result;
+	private connectionElement[] connectionArray;
 	
 	
 	public ReturnElement(ConnectionResult cr,connectionElement[] connectionArr) {
