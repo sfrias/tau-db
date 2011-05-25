@@ -599,34 +599,39 @@ public class noEndAlg{
 		
 		if (start_id == end_id){
 			System.out.println("match of length 0");
-			result = new ReturnElement(ConnectionResult.Found_Connection_Of_Length_0, null);
+			result = new ReturnElement(ConnectionResult.Found_Connection_Of_Length_0,null);
 			return result;
 		}
 
+		maxConnection=3;
+		connectionElement[] connectionArray = new connectionElement[maxConnection];
+		
 		boolean alreadyExists = false;
 		this.end_id = end_id;
 		String start_name=algorithmUtils.getNameFromId(start_id);
 		String end_name=algorithmUtils.getNameFromId(end_id);
 		
 		// checks if the connection between these 2 characters already in history table
-		//alreadyExists = algorithmUtils.lookForConnectionInHistory(start_name, end_name, start_id, end_id,conn);
+		alreadyExists = algorithmUtils.lookForConnectionInHistory(start_name, end_name, start_id, end_id, connectionArray);
 		
 		//found a connection
-		//if (alreadyExists){
-		//	return true;
-		//}
-		//alreadyExists = algorithmUtils.lookForConnectionInFailedSearchesTable(start_name, end_name, start_id, end_id, conn);
-		//if (alreadyExists){
-			//return false;
-		//}
-		//couldn't find the connection in the history table, executing a search
+		if (alreadyExists){
+			result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
+			return result;
+		}
 		
+		alreadyExists = algorithmUtils.lookForConnectionInFailedSearchesTable(start_name, end_name, start_id, end_id);
+		if (alreadyExists){
+			result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
+			return result;
+		}
+		
+		//couldn't find the connection in the history table, executing a search
 		boolean matchFound = false;
 		charElement[] theConnection = new charElement[1];
 		charElement startElement = new charElement(start_id, null);
 		previousPhase.add(startElement);
-		
-		maxConnection=3;
+
 		for (int level = 1; level<maxConnection+1; level++) {
 			globalNumOfConnections = level;
 			matchFound = findConnection(theConnection);
@@ -637,10 +642,10 @@ public class noEndAlg{
 			
 			if (matchFound) {
 				System.out.println("Match found between "+ start_name +" and "+ end_name);
-				String connectionString = getNameAndPrintConnections(theConnection,conn);
-				//algorithmUtils.insertIntoHistory(connectionString, start_id, end_id,conn);
+				String connectionString = algorithmUtils.prepareConnectionsForGUI(theConnection,connectionArray);
+				algorithmUtils.insertIntoHistory(connectionString, start_id, end_id);
+				result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
 				clearAll();
-				result = new ReturnElement(ConnectionResult.Found_Connection, theConnection[0]);
 				return result;
 			}
 			else {
@@ -648,63 +653,16 @@ public class noEndAlg{
 			}
 		}
 		
-	//	System.out.println(previousPhase.size());
-		System.out.println(currentPhase.size());
 		clearAll();
 		System.out.println("couldn't find a connection");
-		//algorithmUtils.insertIntoFailedSearchesTable(start_id, end_id, conn);
-		result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection, null);
+		algorithmUtils.insertIntoFailedSearchesTable(start_id, end_id);
+		result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
 		return result;
 
 	}
 	
 	
-	public static String getNameAndPrintConnections(charElement[] connection, JDCConnection conn){
-			
-			String startName="", endName="";
-			String toPrint;
-			String toHisory="";
-			String atrName = "none";
-			short attribute; 
-			int attributeVal;
-			String attributeString;
-			charElement conLast = connection[0], conPrev;
 
-			while (conLast.prevElement != null){
-				conPrev = conLast.prevElement;
-				attribute = conLast.connectedAttribute;
-				attributeVal = conLast.attributeValue;
-				attributeString = reverseTablesMap.get(attribute);
-				
-				startName =algorithmUtils.getNameFromId(conLast.characterId);
-				endName = algorithmUtils.getNameFromId(conPrev.characterId);
-
-				if (	// attributeString.equals(Tables.sibling.) || 
-						//attributeString.equals(Tables.marriage.) ||
-						attributeString.equals(Tables.romantic_involvement.name()) ) {
-						toPrint = startName + " has a " + attributeString + " relationship with " + endName;
-					}
-					else if ( attributeString.equals("child")) {
-							toPrint = startName + " is " + endName +"'s child";
-					}
-					else if (attributeString.equals("parent")) {
-							toPrint = startName + " is " + endName +"'s parent";
-					}
-					else {
-						atrName = algorithmUtils.getAttributeNameFromID(attributeString, attributeVal);
-						toPrint = startName + " has the same "+ attributeString + " as " + endName + " - " + atrName;
-					}
-					System.out.println(toPrint);
-					toHisory+= conLast.characterId +","+conPrev.characterId +"," +attributeString + "," + atrName;
-					if (conPrev.prevElement != null){
-						toHisory+= "\t";
-					}
-
-					conLast = conPrev;
-				}
-			return toHisory;
-			
-		}
 
 	
 	public int getGlobalNumOfConnections(){

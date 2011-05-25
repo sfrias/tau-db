@@ -5,19 +5,20 @@ import enums.ConnectionResult;
 public class ReturnElement {
 	
 	ConnectionResult result;
-	charElement connection;
+	connectionElement[] connectionArray;
 	
-	public ReturnElement(ConnectionResult cr, charElement ce) {
+	
+	public ReturnElement(ConnectionResult cr,connectionElement[] connectionArr) {
 		result = cr;
-		connection = ce;
+		connectionArray = connectionArr;
 	}
 	
 	public ConnectionResult getResult (){
 		return result;
 	}
 	
-	public charElement returnConnection(){
-		return connection;
+	public connectionElement[] getConnectionArray(){
+		return connectionArray;
 	}
 	
 	
