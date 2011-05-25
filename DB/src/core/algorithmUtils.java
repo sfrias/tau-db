@@ -9,6 +9,7 @@ import java.util.TreeMap;
 
 
 import connection.JDCConnection;
+import database.DatabaseManager;
 import enums.Tables;
 
 
@@ -18,7 +19,9 @@ public class algorithmUtils {
 	/* 
 	 * gets the character's name by his/her id 
 	 */
-	public static String getNameFromId(int id, JDCConnection conn){
+	public static String getNameFromId(int id){
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		JDCConnection conn = dbManager.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
@@ -48,6 +51,14 @@ public class algorithmUtils {
 					e.printStackTrace();
 				}
 			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
 		}
 		return Name;	
 	}
@@ -57,7 +68,9 @@ public class algorithmUtils {
 	 * gets the attribute's name by its id
 	 */
 
-	public static String getAttributeNameFromID(String table, int id, JDCConnection conn){
+	public static String getAttributeNameFromID(String table, int id){
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		JDCConnection conn = dbManager.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
@@ -87,6 +100,13 @@ public class algorithmUtils {
 					e.printStackTrace();
 				}
 			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return Name;
 	}
@@ -95,8 +115,7 @@ public class algorithmUtils {
 	/*
 	 *prints connections in case found in history 	
 	 */
-	static void getNameAndPrintConnections(String connArr, JDCConnection conn){
-
+	static void getNameAndPrintConnections(String connArr){
 		String startName="", endName="";
 		String[] valueArr = new String[4];
 		String toPrint;
@@ -104,8 +123,8 @@ public class algorithmUtils {
 		for (int i=0; i<connections.length; i++){
 			if (connections[i] != ""){ 
 				valueArr = connections[i].split(",");
-				startName =getNameFromId(Integer.parseInt(valueArr[0]), conn);
-				endName = getNameFromId(Integer.parseInt(valueArr[1]), conn);
+				startName =getNameFromId(Integer.parseInt(valueArr[0]));
+				endName = getNameFromId(Integer.parseInt(valueArr[1]));
 				if ( valueArr[2].equals(Tables.romantic_involvement.name()) ) {
 					toPrint = startName + " has a " + valueArr[2] + " relationship with " + endName;
 				}
@@ -117,7 +136,7 @@ public class algorithmUtils {
 				}
 				else {
 					int temp = Integer.parseInt(valueArr[3]);
-					String atrName = getAttributeNameFromID(valueArr[2], temp, conn);
+					String atrName = getAttributeNameFromID(valueArr[2], temp);
 					toPrint = startName + " has the same "+ valueArr[2] + " as " + endName + " - " + atrName;
 				}
 				System.out.println(toPrint);
@@ -140,8 +159,9 @@ public class algorithmUtils {
 	/* 
 	 * this function presents the 5 popular 
 	 */
-	public static void topSerches (JDCConnection conn) {
-
+	public static void topSerches () {
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		JDCConnection conn = dbManager.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 
@@ -149,11 +169,11 @@ public class algorithmUtils {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT * FROM history ORDER BY count DESC LIMIT 5");
 			while (rs.next()) {
-				String startName = getNameFromId(rs.getInt(1), conn);
-				String endName = getNameFromId(rs.getInt(2),conn);
+				String startName = getNameFromId(rs.getInt(1));
+				String endName = getNameFromId(rs.getInt(2));
 				System.out.println("this is a connection between " + startName + " and " + endName);
 				System.out.println("this connection was found in " + rs.getDate(3));
-				getNameAndPrintConnections(rs.getString(4),conn);
+				getNameAndPrintConnections(rs.getString(4));
 				System.out.println();
 			}
 
@@ -175,6 +195,13 @@ public class algorithmUtils {
 					e.printStackTrace();
 				}
 			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 
@@ -184,8 +211,9 @@ public class algorithmUtils {
 	 * gets unspecifiedId of a specific attribute
 	 */
 
-	public static int getUnspecifiedId(String table, JDCConnection conn) {
-
+	public static int getUnspecifiedId(String table) {
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		JDCConnection conn = dbManager.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		int unspecifiedID = 0;
@@ -220,6 +248,13 @@ public class algorithmUtils {
 					e.printStackTrace();
 				}
 			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 		return unspecifiedID;
@@ -231,8 +266,9 @@ public class algorithmUtils {
 	 * inserts connection found
 	 */
 
-	public static void insertIntoHistory (String connections, int start_id, int end_id, JDCConnection conn) {
-
+	public static void insertIntoHistory (String connections, int start_id, int end_id) {
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		JDCConnection conn = dbManager.getConnection();
 		Statement stmt = null;
 		String toQuery;
 		String date;
@@ -289,12 +325,20 @@ public class algorithmUtils {
 					e.printStackTrace();
 				}
 			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
 
-	public static void insertIntoFailedSearchesTable (int start_id, int end_id, JDCConnection conn) {
-
+	public static void insertIntoFailedSearchesTable (int start_id, int end_id) {
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		JDCConnection conn = dbManager.getConnection();
 		Statement stmt = null;
 		String toQuery;
 		String date;
@@ -317,12 +361,20 @@ public class algorithmUtils {
 					e.printStackTrace();
 				}
 			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
 
-	public static void insertIntoStatisticTable (int start_id, int end_id, int num , long time, JDCConnection conn) {
-
+	public static void insertIntoStatisticTable (int start_id, int end_id, int num , long time) {
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		JDCConnection conn = dbManager.getConnection();
 		Statement stmt = null;
 		String toQuery;
 
@@ -343,14 +395,22 @@ public class algorithmUtils {
 					e.printStackTrace();
 				}
 			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
 	/*
 	 * Searching for the couple in the failed_searches table. 
 	 */
-	public static boolean lookForConnectionInFailedSearchesTable (String start_name, String end_name, int start_id, int end_id, JDCConnection conn){
-
+	public static boolean lookForConnectionInFailedSearchesTable (String start_name, String end_name, int start_id, int end_id){
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		JDCConnection conn = dbManager.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		boolean result = false;
@@ -391,6 +451,14 @@ public class algorithmUtils {
 					e.printStackTrace();
 				}
 			}
+			
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	
 		return result;
@@ -401,7 +469,9 @@ public class algorithmUtils {
 	 * Searching for the connection in the history table. 
 	 * If exists - prints the connection to console.
 	 */
-	public static boolean lookForConnectionInHistory(String start_name, String end_name, int start_id, int end_id, JDCConnection conn){
+	public static boolean lookForConnectionInHistory(String start_name, String end_name, int start_id, int end_id){
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		JDCConnection conn = dbManager.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		boolean result = false, opposite = false;
@@ -437,7 +507,7 @@ public class algorithmUtils {
 					start_name = end_name;
 				}
 			
-				algorithmUtils.getNameAndPrintConnections(getConnectionOfCharacters, conn);
+				algorithmUtils.getNameAndPrintConnections(getConnectionOfCharacters);
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -453,6 +523,13 @@ public class algorithmUtils {
 			if (rs!= null){
 				try {
 					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -596,7 +673,7 @@ public class algorithmUtils {
 		for (int i=0; i< numOfTables; i++){
 			currentTable = alg.tbs[i].name();
 			if (currentTable.equals(Tables.characters.name())){
-				unspec = algorithmUtils.getUnspecifiedId(currentTable, alg.conn);
+				unspec = algorithmUtils.getUnspecifiedId(currentTable);
 				alg.unspecifiedIdOfTables.put(Tables.characters.name(), unspec);
 			}
 			else if (!currentTable.contains("and")){
@@ -613,7 +690,7 @@ public class algorithmUtils {
 			putCouples = joinedAttributesMap.get(attributes[i]);
 			if (!attributes[i].equals(Tables.parent.name()) &&
 					!attributes[i].equals(Tables.romantic_involvement.name())){
-				unspec = algorithmUtils.getUnspecifiedId(attributes[i], alg.conn);
+				unspec = algorithmUtils.getUnspecifiedId(attributes[i]);
 				alg.unspecifiedIdOfTables.put(attributes[i], unspec);
 			}
 
