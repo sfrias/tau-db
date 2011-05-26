@@ -7,6 +7,7 @@ public enum ConnectionResult {
 	Found_Connection_Of_Length_0,
 	Did_Not_Find_Connection,
 	Close_Exception,
-	Exception;
+	Exception,
+	Exception_In_Success_Rate;
 
 }
