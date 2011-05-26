@@ -334,6 +334,12 @@ public class TableUtilities {
 
 						}
 					}
+					else{		
+						bufferedWriter.append(insertStatement);		
+						bufferedWriter.append("'" + interstingMainValuesMap.get(strarr[1]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");		
+						bufferedWriter.flush();		
+						alreadySet = true;		
+					}
 				}
 
 				if (!alreadySet){
@@ -524,8 +530,8 @@ public class TableUtilities {
 		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
 		deleteSqlFile(sqlFile);
 
-		createSimpleTables();
-		AntUtils.executeTarget(Targets.SETUP);
+		//		createSimpleTables();
+		//		AntUtils.executeTarget(Targets.SETUP);
 
 		deleteSqlFile(sqlFile);
 
@@ -539,7 +545,7 @@ public class TableUtilities {
 	}
 
 	private static void createSimpleTables() {
-		
+
 		populateSimpleTableUsingBatchFile("", "INSERT INTO disease (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2);
 		System.out.println("Finished disease");
 
