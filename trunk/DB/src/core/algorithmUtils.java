@@ -26,6 +26,7 @@ public class algorithmUtils {
 	 */
 	public static void prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
+		noEndAlg noEnd = noEndAlg.getInstance();
 		String startName="", endName="";
 		String[] valueArr = new String[4];
 		String connections[] = connArr.split("\t");
@@ -35,7 +36,7 @@ public class algorithmUtils {
 				valueArr = connections[i].split(",");
 				startName =dbManager.getNameFromId(Integer.parseInt(valueArr[0]));
 				endName = dbManager.getNameFromId(Integer.parseInt(valueArr[1]));
-				if (noEndAlg.getR()!= ConnectionResult.Ok){
+				if (noEnd.getR()!= ConnectionResult.Ok){
 					break;
 				}
 				int temp = Integer.parseInt(valueArr[3]);
@@ -175,12 +176,37 @@ public class algorithmUtils {
 		" WHERE " + joinedAtr +  "_character_id =" + end_id + " AND (" ;
 		return charactersWithAtr;
 	}
+	
+	
+	static String directConnectionRealtions(String currentAtr, int start_id,int unspecifiedIdOfCharacter, int end_id, boolean directToEnd){
+		String first = "character_id1";
+		String second = "character_id2";
+		String parent = "parent_character_id";
+		String child = "child_character_id";
+		String charactersWithAtr;
+
+		if (currentAtr.equals(Tables.parent.name()) && directToEnd) { //only table that has meaning to each column
+			charactersWithAtr = algorithmUtils.relationsQuery(parent, child, currentAtr,"=", start_id, end_id);
+		}
+		else if (currentAtr.equals(Tables.parent.name())){
+			charactersWithAtr = algorithmUtils.relationsQuery(parent, child, currentAtr,"!=", start_id, unspecifiedIdOfCharacter);
+		}
+		else if (directToEnd){
+			charactersWithAtr = algorithmUtils.relationsQuery(first, second, currentAtr,"=", start_id, end_id);			
+		}
+		else {
+			charactersWithAtr = algorithmUtils.relationsQuery(first, second, currentAtr,"!=", start_id, unspecifiedIdOfCharacter);
+		}
+		return charactersWithAtr;
+	}
 
 
-	public static void prepareTablesAndHashMaps(noEndAlg alg){
+
+	public static void prepareTablesAndHashMaps(){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
+		noEndAlg noEnd = noEndAlg.getInstance();
 		TreeMap<String, String> joinedAttributesMap = new TreeMap<String,String>();
-		int numOfTables = alg.tbs.length;
+		int numOfTables = noEndAlg.getTables().length;
 		int unspec=0;
 		String atrTable, currentTable, putCouples;
 		String[] attributes = new String[numOfTables-1]; 
@@ -188,17 +214,18 @@ public class algorithmUtils {
 
 		int indexOfAttr=0, indexOfResult=0;
 		for (int i=0; i< numOfTables; i++){
-			currentTable = alg.tbs[i].name();
+			currentTable = noEndAlg.getTables()[i].name();
 			if (currentTable.equals(Tables.characters.name())){
 				unspec = dbManager.getUnspecifiedId(currentTable);
-				if (noEndAlg.getR()!= ConnectionResult.Ok){
+				if (noEnd.getR()!= ConnectionResult.Ok){
 					return;
 				}
-				alg.unspecifiedIdOfTables.put(Tables.characters.name(), unspec);
+				noEndAlg.putInUnspecified(Tables.characters.name(), unspec);
 			}
 			else if (!currentTable.contains("and")){
 				attributes[indexOfAttr]=currentTable;
 				indexOfAttr++;
+				noEndAlg.putInPrintRepresentation(currentTable,  noEndAlg.getTables()[i].toString());
 			}
 			else {
 				atrTable = currentTable.substring(15);
@@ -211,10 +238,10 @@ public class algorithmUtils {
 			if (!attributes[i].equals(Tables.parent.name()) &&
 					!attributes[i].equals(Tables.romantic_involvement.name())){
 				unspec = dbManager.getUnspecifiedId(attributes[i]);
-				if (noEndAlg.getR()!= ConnectionResult.Ok){
+				if (noEnd.getR()!= ConnectionResult.Ok){
 					return;
 				}
-				alg.unspecifiedIdOfTables.put(attributes[i], unspec);
+				noEndAlg.putInUnspecified(attributes[i], unspec);
 			}
 
 			if (putCouples != null){
@@ -224,8 +251,7 @@ public class algorithmUtils {
 				attributes[i]="ok";
 			}
 		}
-
-		alg.indexOfJumps=indexOfResult; //this index is used in connectionFinder
+		noEndAlg.setIndexOfJumps(indexOfResult);
 
 		//adding all other tables;
 		for (int i=0; i<indexOfAttr;i++){
@@ -236,16 +262,17 @@ public class algorithmUtils {
 		}
 
 		joinedAttributesMap.clear();
-		alg.tablesArr = result;
+		noEndAlg.setTablesArr(result);
 
 		//adding all tables and their internal identifier to hash maps
-		for (short i=0; i<alg.tablesArr.length;i++){
-			noEndAlg.tablesMap.put(alg.tablesArr[i],i);
-			noEndAlg.reverseTablesMap.put((short)i, alg.tablesArr[i]);
+		for (short i=0; i<result.length;i++){
+			noEndAlg.putInTabelsMap(result[i],i);
+			noEndAlg.putInReversedTabelsMap((short)i, result[i]);
 		}
 
-		noEndAlg.tablesMap.put("child", (short)alg.tablesArr.length);
-		noEndAlg.reverseTablesMap.put((short)alg.tablesArr.length, "child");
+		noEndAlg.putInTabelsMap("child",(short) result.length);
+		noEndAlg.putInReversedTabelsMap((short) result.length, "child");
+
 		return;
 	}
 	
@@ -259,14 +286,14 @@ public class algorithmUtils {
 		String attribute = connElement.getAttribute();
 		String startName = connElement.getStartName();
 		String endName = connElement.getEndName();
-		if (attribute.equals(Tables.romantic_involvement.name()) ) {
+		if (attribute.equals(Tables.romantic_involvement.toString()) ) {
 			theConnection = startName + " has a " + attribute + " relationship with " + endName;
 		}
 		else if( attribute.equals("child")) {
 			theConnection = startName + " is " + endName +"'s child";
 		}
 		
-		else if (attribute.equals(Tables.parent.name())) {
+		else if (attribute.equals(Tables.parent.toString())) {
 			theConnection = startName + " is " + endName +"'s parent";
 		}
 		else {
@@ -287,7 +314,7 @@ public class algorithmUtils {
 				connectionInStrings[i] = readOneConnectionElement(connElementArray[i]);
 			}
 			else {
-				break;
+				connectionInStrings[i]=null;
 			}
 
 		}
@@ -299,8 +326,10 @@ public class algorithmUtils {
 	 * prepare the connections' array from the charElement
 	 */
 		
+	
 	public static String prepareConnectionsForGUI(charElement[] connection, connectionElement[] connectionArray){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
+		noEndAlg noEnd = noEndAlg.getInstance();
 		String startName="", endName="";
 		String toHisory="";
 		String atrName = null;
@@ -313,20 +342,20 @@ public class algorithmUtils {
 			conPrev = conLast.prevElement;
 			attribute = conLast.connectedAttribute;
 			attributeVal = conLast.attributeValue;
-			attributeString = noEndAlg.reverseTablesMap.get(attribute);
+			attributeString = noEndAlg.getValueFromReversedTableMap(attribute);
 
 			startName =dbManager.getNameFromId(conLast.characterId);
 			endName = dbManager.getNameFromId(conPrev.characterId);
 			atrName = dbManager.getAttributeNameFromID(attributeString, attributeVal);
 
-			if (noEndAlg.getR()!= ConnectionResult.Ok){
+			if (noEnd.getR()!= ConnectionResult.Ok){
 				return null;
 			}
 			toHisory+= conLast.characterId +","+conPrev.characterId +"," +attributeString + "," + atrName;
 			if (conPrev.prevElement != null){
 				toHisory+= "\t";
 			}
-			connectionArray[i] = new connectionElement(startName, endName, attributeString, atrName);
+			connectionArray[i] = new connectionElement(startName, endName, noEndAlg.getFromPrintRepresentation(attributeString), atrName);
 			i++;
 			conLast = conPrev;
 		}
