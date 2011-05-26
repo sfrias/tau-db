@@ -494,6 +494,39 @@ public class TableUtilities {
 		}
 	}
 
+	public static ExecutionResult createStatisticsTables(){
+		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
+
+		FileWriter fileWriter = null;
+		BufferedWriter bufferedWriter = null;
+		try{
+			fileWriter = new FileWriter(sqlFile, true);
+			bufferedWriter = new BufferedWriter(fileWriter);
+			bufferedWriter.append("INSERT INTO success_rate(success_rate_searches,success_rate_successful_searches,success_rate_unsuccessful_searches)values(0,0,0);\n");
+			bufferedWriter.flush();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return ExecutionResult.Exception;
+		}
+		finally{
+			if (bufferedWriter != null){
+				try {
+					bufferedWriter.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (fileWriter != null){
+				try {
+					fileWriter.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return ExecutionResult.Success_Simple_Add_Edit_Delete;
+	}
 	/*
 	private static void createIndexes() throws IOException{
 
@@ -536,6 +569,7 @@ public class TableUtilities {
 		deleteSqlFile(sqlFile);
 
 		createComplexTables();
+		createStatisticsTables();
 		AntUtils.executeTarget(Targets.POPULATE);
 
 		long finishTime = System.currentTimeMillis();
