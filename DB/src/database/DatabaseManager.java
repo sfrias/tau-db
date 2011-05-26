@@ -16,9 +16,9 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 import connection.JDCConnection;
 import connection.JDCConnectionDriver;
-import core.algorithmUtils;
+import core.Algorithm;
+import core.AlgorithmUtilities;
 import core.connectionElement;
-import core.noEndAlg;
 import enums.ConnectionResult;
 import enums.ExecutionResult;
 import enums.Tables;
@@ -27,7 +27,7 @@ public class DatabaseManager {
 
 	//TODO add finally statements to all methods and check null!!!
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "armiN203";
+	private final static String PASSWORD = "mapo00";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
@@ -764,7 +764,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
-		noEndAlg noEnd = noEndAlg.getInstance();
+		Algorithm noEnd = Algorithm.getInstance();
 		try {
 			conn =  getConnection();
 			stmt = conn.createStatement();
@@ -817,7 +817,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
-		noEndAlg noEnd = noEndAlg.getInstance();
+		Algorithm noEnd = Algorithm.getInstance();
 		if (table.equals(Tables.romantic_involvement.name()) ||
 				table.equals(Tables.parent.name()) ||
 				table.equals("child")) {
@@ -876,7 +876,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		connectionElement[] connectionArray = new connectionElement[3];
-		noEndAlg noEnd = noEndAlg.getInstance();
+		Algorithm noEnd = Algorithm.getInstance();
 		try {
 			conn = getConnection();
 			stmt = conn.createStatement();
@@ -886,7 +886,7 @@ public class DatabaseManager {
 				String endName = getNameFromId(rs.getInt(2));
 				System.out.println("this is a connection between " + startName + " and " + endName);
 				System.out.println("this connection was found in " + rs.getDate(3));
-				algorithmUtils.prepareConnectionsFromHistory(rs.getString(4),connectionArray);
+				AlgorithmUtilities.prepareConnectionsFromHistory(rs.getString(4),connectionArray);
 				//System.out.println();
 			}
 
@@ -935,7 +935,7 @@ public class DatabaseManager {
 		ResultSet rs = null;
 		int unspecifiedID = 0;
 		String field = "";
-		noEndAlg noEnd = noEndAlg.getInstance();
+		Algorithm noEnd = Algorithm.getInstance();
 		if (table.equals(Tables.characters.name())){
 			field = "character";
 		}
@@ -1001,11 +1001,11 @@ public class DatabaseManager {
 		String[] arr;
 		int length = connectionsSplit.length;
 		int first, second;
-		noEndAlg noEnd = noEndAlg.getInstance();
+		Algorithm noEnd = Algorithm.getInstance();
 		try {
 			conn = getConnection();
 			stmt = conn.createStatement();
-			date = algorithmUtils.getCurrentDate();
+			date = AlgorithmUtilities.getCurrentDate();
 			String information = "";
 
 			for (int i=0; i<length; i++) {
@@ -1069,12 +1069,12 @@ public class DatabaseManager {
 		Statement stmt = null;
 		String toQuery;
 		String date;
-		noEndAlg noEnd = noEndAlg.getInstance();
+		Algorithm noEnd = Algorithm.getInstance();
 
 		try {
 			conn = getConnection();
 			stmt = conn.createStatement();
-			date = algorithmUtils.getCurrentDate();
+			date = AlgorithmUtilities.getCurrentDate();
 
 			toQuery = "INSERT IGNORE INTO failed_searches (character_id1, character_id2, date) values (" + start_id + "," + end_id + ",'" + date + "');";
 			stmt.executeUpdate(toQuery);
@@ -1113,7 +1113,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		boolean result = false;
-		noEndAlg noEnd = noEndAlg.getInstance();
+		Algorithm noEnd = Algorithm.getInstance();
 		// checks if the couple is in failed_searches table
 		try {
 			conn = getConnection();
@@ -1179,7 +1179,7 @@ public class DatabaseManager {
 		ResultSet rs = null;
 		boolean result = false, opposite = false;
 		int count;
-		noEndAlg noEnd = noEndAlg.getInstance();
+		Algorithm noEnd = Algorithm.getInstance();
 		// checks if the connection between these 2 characters already in history table
 		try {
 			conn = getConnection();
@@ -1211,7 +1211,7 @@ public class DatabaseManager {
 					start_name = end_name;
 				}
 			
-				algorithmUtils.prepareConnectionsFromHistory(getConnectionOfCharacters, conenctionArray);
+				AlgorithmUtilities.prepareConnectionsFromHistory(getConnectionOfCharacters, conenctionArray);
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -1252,7 +1252,7 @@ public class DatabaseManager {
 		JDCConnection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
-		noEndAlg noEnd = noEndAlg.getInstance();
+		Algorithm noEnd = Algorithm.getInstance();
 		int total=0;
 		int success=0;
 

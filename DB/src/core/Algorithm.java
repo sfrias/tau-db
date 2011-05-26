@@ -17,12 +17,12 @@ import enums.Tables;
 
 
 
-public class noEndAlg{
+public class Algorithm{
 
 	//mutual fields for all instances
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
 	//private static JDCConnection conn=null;
-	private static noEndAlg instance = null;
+	private static Algorithm instance = null;
 	private static Tables[] tbs;
 	private static String[] tablesArr;
 	private static int indexOfJumps;
@@ -44,21 +44,21 @@ public class noEndAlg{
 	private String start_name = null;
 	private String end_name = null;
 	private int globalNumOfConnections;	
-	public noEndAlg(){
+	public Algorithm(){
 		
 		tbs = Tables.values();
 	}
 	
 	public void initialization(){
 		if (!init){
-			algorithmUtils.prepareTablesAndHashMaps();
+			AlgorithmUtilities.prepareTablesAndHashMaps();
 		}
 	}
 	
 	
-	public static noEndAlg getInstance(){
+	public static Algorithm getInstance(){
 		if (instance==null){
-			instance = new noEndAlg();	
+			instance = new Algorithm();	
 		}
 		return instance;
 	}
@@ -319,15 +319,15 @@ public class noEndAlg{
 		try {
 			conn = dbManager.getConnection() ;
 			atrStmt = conn.createStatement();			
-			atrValRS = atrStmt.executeQuery(algorithmUtils.specificAttributeValuesQuery(joinedAtr, currentAtr, start_id));
+			atrValRS = atrStmt.executeQuery(AlgorithmUtilities.specificAttributeValuesQuery(joinedAtr, currentAtr, start_id));
 			int unspecifiedId = unspecifiedIdOfTables.get(currentAtr);
 			int currentAtrVal=-1;
 
 			if (directToEndID){
-				charactersWithAtr = algorithmUtils.getDirectConnectionString(joinedAtr, currentAtr, end_id);
+				charactersWithAtr = AlgorithmUtilities.getDirectConnectionString(joinedAtr, currentAtr, end_id);
 			}
 			else{
-				charactersWithAtr =algorithmUtils.getAllValuesOfASpecificAttribute(joinedAtr, currentAtr, start_id, unspecifiedIdOfCharacter);
+				charactersWithAtr =AlgorithmUtilities.getAllValuesOfASpecificAttribute(joinedAtr, currentAtr, start_id, unspecifiedIdOfCharacter);
 			}
 
 			while (atrValRS.next()){ //all attributes
@@ -386,7 +386,7 @@ public class noEndAlg{
 	private String directConnetionPlaceOfBirth(int start_id, int unspecifiedIdOfCharacter,int[] atrVal, boolean directToEnd){
 		String currentAtr = Tables.place_of_birth.name();
 		int placeOfBirth = 0; 
-		String selectAtrValues = 	algorithmUtils.simpleQuery("character_" + currentAtr+ "_id" ,"characters","character_id =" + start_id);
+		String selectAtrValues = 	AlgorithmUtilities.simpleQuery("character_" + currentAtr+ "_id" ,"characters","character_id =" + start_id);
 		String charactersWithAtr;
 		ResultSet atrValRS =null;
 		Statement atrStmt = null;
@@ -426,10 +426,10 @@ public class noEndAlg{
 
 		atrVal[0]=placeOfBirth;
 		if (directToEnd){
-			charactersWithAtr = algorithmUtils.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + currentAtr+ "_id =" + placeOfBirth ,  "character_id = " + end_id,null, true);
+			charactersWithAtr = AlgorithmUtilities.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + currentAtr+ "_id =" + placeOfBirth ,  "character_id = " + end_id,null, true);
 		}
 		else {
-			charactersWithAtr = algorithmUtils.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + currentAtr+ "_id =" + placeOfBirth ,  "character_id != " + unspecifiedIdOfCharacter,"character_" + currentAtr+ "_id !=" +unspecifiedIdOfTables.get(currentAtr), false);
+			charactersWithAtr = AlgorithmUtilities.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + currentAtr+ "_id =" + placeOfBirth ,  "character_id != " + unspecifiedIdOfCharacter,"character_" + currentAtr+ "_id !=" +unspecifiedIdOfTables.get(currentAtr), false);
 		}
 		return charactersWithAtr;
 
@@ -483,7 +483,7 @@ public class noEndAlg{
 				else if (	tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
 						tablesArr[atr].equals(Tables.parent.name())){
 
-					charactersWithAtr = algorithmUtils.directConnectionRealtions(currentAtr, start_id, unspecifiedIdOfCharacter,end_id, false);
+					charactersWithAtr = AlgorithmUtilities.directConnectionRealtions(currentAtr, start_id, unspecifiedIdOfCharacter,end_id, false);
 					charToAny = charWithAtrStmt.executeQuery(charactersWithAtr);
 					foundMatch = helperForDirectConnectionToAnyInRealtions(charToAny, start_element, currentAtr, result);
 					if (getR() != ConnectionResult.Ok){
@@ -585,7 +585,7 @@ public class noEndAlg{
 				else if (	tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
 						tablesArr[atr].equals(Tables.parent.name())){
 
-					charactersWithAtr = algorithmUtils.directConnectionRealtions(currentAtr, start_id, -1,end_id, true);
+					charactersWithAtr = AlgorithmUtilities.directConnectionRealtions(currentAtr, start_id, -1,end_id, true);
 					charsWithAtrRS= charAtrStmt.executeQuery(charactersWithAtr);
 					if (charsWithAtrRS.next()){
 						if (charsWithAtrRS.getInt(1) == start_id){
@@ -675,7 +675,7 @@ public class noEndAlg{
 		}
 
 		setMaxNumOfConnection(3);
-		algorithmUtils.setMaxNumber(maxConnection);
+		AlgorithmUtilities.setMaxNumber(maxConnection);
 		connectionElement[] connectionArray = new connectionElement[maxConnection];
 
 		boolean alreadyExists = false;
@@ -723,7 +723,7 @@ public class noEndAlg{
 
 			if (matchFound) {
 				System.out.println("Match found between "+ start_name +" and "+ end_name);
-				String connectionString = algorithmUtils.prepareConnectionsForGUI(theConnection,connectionArray);
+				String connectionString = AlgorithmUtilities.prepareConnectionsForGUI(theConnection,connectionArray);
 				if (connectionString==null){ //an error has occurred
 					break;
 				}
@@ -759,7 +759,7 @@ public class noEndAlg{
 
 	public static void main(String[] args) throws IOException{
 		//noEndAlg a = new noEndAlg();
-		//algorithmUtils.prepareTablesAndHashMaps(a);
+		//AlgorithmUtilities.prepareTablesAndHashMaps(a);
 
 		//while (true){
 		//a.lookForConnection(1, 6);
@@ -790,7 +790,7 @@ public class noEndAlg{
 			e.printStackTrace();
 		}
 	*/	
-		noEndAlg alg = noEndAlg.getInstance();
+		Algorithm alg = Algorithm.getInstance();
 		alg.initialization();
 		ReturnElement returnElem = alg.lookForConnection(1, 6);
 		returnElem.getResult();
@@ -815,7 +815,7 @@ public class noEndAlg{
 			//TODO AND
 			alg.getEndName();
 			//USE THIS LOOP TO PRINT THE DESCRIPTION OF THE CONNECTION CHAIN
-			String[] connectionChain = algorithmUtils.readConnectionChain(returnElem.getConnectionArray());
+			String[] connectionChain = AlgorithmUtilities.readConnectionChain(returnElem.getConnectionArray());
 			for (int i=0; i< connectionChain.length; i++){
 				if (connectionChain[i]!=null){
 					//TODO PRINT TO THE SCREEN THE CONNECTION 

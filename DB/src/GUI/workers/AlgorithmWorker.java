@@ -3,8 +3,8 @@ package GUI.workers;
 import GUI.frames.PlayFrame;
 import GUI.model.AlgorithmModel;
 import core.ReturnElement;
-import core.algorithmUtils;
-import core.noEndAlg;
+import core.AlgorithmUtilities;
+import core.Algorithm;
 import enums.ConnectionResult;
 import enums.ExecutionResult;
 
@@ -22,7 +22,7 @@ public class AlgorithmWorker extends GenericWorker{
 	@Override
 	protected ResultHolder doInBackground() {
 
-		noEndAlg alg = noEndAlg.getInstance();
+		Algorithm alg = Algorithm.getInstance();
 		ReturnElement returnElem = alg.lookForConnection(firstCharId, secondCharId);
 		String firstCharName = alg.getStartName();
 		String secondCharName = alg.getEndName();
@@ -41,7 +41,7 @@ public class AlgorithmWorker extends GenericWorker{
 		}
 
 		else{
-			String[] connectionChain = algorithmUtils.readConnectionChain(returnElem.getConnectionArray());
+			String[] connectionChain = AlgorithmUtilities.readConnectionChain(returnElem.getConnectionArray());
 			StringBuilder stringBuilder = new StringBuilder();
 			for (int i=0; i< connectionChain.length; i++){
 				if (connectionChain[i]!=null){
