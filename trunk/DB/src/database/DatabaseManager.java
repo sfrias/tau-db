@@ -15,6 +15,10 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 import connection.JDCConnection;
 import connection.JDCConnectionDriver;
+import core.algorithmUtils;
+import core.connectionElement;
+import core.noEndAlg;
+import enums.ConnectionResult;
 import enums.ExecutionResult;
 import enums.Tables;
 
@@ -22,7 +26,7 @@ public class DatabaseManager {
 
 	//TODO add finally statements to all methods and check null!!!
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "mapo00";
+	private final static String PASSWORD = "armiN203";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
@@ -631,45 +635,42 @@ public class DatabaseManager {
 			}
 		}
 	}
-
+	//FUNCTIONS THAT WERE ADDED FROM THR ALGORITHM UTILS
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 	/* 
 	 * gets the character's name by his/her id 
 	 */
 	public String getNameFromId(int id){
-		System.out.println("3");
-
-		JDCConnection conn = null;
+		JDCConnection conn =null;
 		Statement stmt = null;
 		ResultSet rs = null;
+		String Name = null;
 		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn =  getConnection();
 			stmt = conn.createStatement();
-
 			rs = stmt.executeQuery("SELECT character_name FROM characters WHERE character_id=" +id +"");
 			rs.first();
-			String name = rs.getString("character_name");
-			return name;
-
+			Name = rs.getString("character_name");
 		} catch (SQLException e) {
-			e.printStackTrace();	
-			return null;
+			e.printStackTrace();
+			noEndAlg.setR(ConnectionResult.Exception);
 		} 
 		finally {
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 			if (stmt != null){
 				try {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -677,47 +678,61 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
 				}
 			}
+			
 		}
+		return Name;	
 	}
+	
+	
+	
 
 	/* 
 	 * gets the attribute's name by its id
 	 */
+
 	public String getAttributeNameFromID(String table, int id){
 
-		System.out.println("2");
-
-		JDCConnection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
+		String Name = null;
+		
+		if (table.equals(Tables.romantic_involvement.name()) ||
+				table.equals(Tables.parent.name()) ||
+				table.equals("child")) {
+			
+			return "none";
+		}
+		
 
+		JDCConnection conn = null;
 		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn = 	getConnection();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT " +table+"_name FROM " + table+ " WHERE " + table+"_id=" + id);
 			rs.first();
-			String name = rs.getString(1);
-			return name;
-
+			Name = rs.getString(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return null;
+			noEndAlg.setR(ConnectionResult.Exception);
 		}
 		finally {
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 			if (stmt != null){
 				try {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -725,24 +740,81 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
+		return Name;
 	}
+
+	
+	
+	
+	public void topSerches () {
+
+		JDCConnection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		connectionElement[] connectionArray = new connectionElement[3];
+
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM history ORDER BY count DESC LIMIT 5");
+			while (rs.next()) {
+				String startName = getNameFromId(rs.getInt(1));
+				String endName = getNameFromId(rs.getInt(2));
+				System.out.println("this is a connection between " + startName + " and " + endName);
+				System.out.println("this connection was found in " + rs.getDate(3));
+				algorithmUtils.prepareConnectionsFromHistory(rs.getString(4),connectionArray);
+				//System.out.println();
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			noEndAlg.setR(ConnectionResult.Exception);
+		}
+		finally {
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+		}
+
+
+	}
+
 
 	/*
 	 * gets unspecifiedId of a specific attribute
 	 */
 
 	public int getUnspecifiedId(String table) {
-
-		System.out.println("1");
 		JDCConnection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		int unspecifiedID = 0;
-
-		String field;
+		String field = "";
 		if (table.equals(Tables.characters.name())){
 			field = "character";
 		}
@@ -751,27 +823,30 @@ public class DatabaseManager {
 		}
 
 		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			conn = getConnection();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
 			rs.first();
-			unspecifiedID = rs.getInt(1);
+			unspecifiedID= rs.getInt(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			noEndAlg.setR(ConnectionResult.Exception);
 		}
 		finally {
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 			if (stmt != null){
 				try {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -779,11 +854,281 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
 
 		return unspecifiedID;
+
+
 	}
+	
+	
+
+	/*
+	 * inserts connection found
+	 */
+
+	public void insertIntoHistory (String connections, int start_id, int end_id) {
+		JDCConnection conn = null;
+		Statement stmt = null;
+		String toQuery;
+		String date;
+		String[] connectionsSplit = connections.split("\t");
+		String[] values;
+		String[] arr;
+		int length = connectionsSplit.length;
+		int first, second;
+
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			date = algorithmUtils.getCurrentDate();
+			String information = "";
+
+			for (int i=0; i<length; i++) {
+				arr = connectionsSplit[i].split(","); 
+				first = Integer.parseInt(arr[0]);
+
+				for (int j=i; j<length; j++) {
+					values = connectionsSplit[j].split(","); 
+					second = Integer.parseInt(values[1]);
+					information = "";
+					for (int k=i; k<j; k++) { 
+						if (connectionsSplit[k]!=null){
+							if (connectionsSplit[k+1]!=null){
+								information += connectionsSplit[k]+ "\t";
+							}
+							else {
+								information += connectionsSplit[k];
+								break;
+							}
+						}
+						else
+							break;
+					}
+
+					if (connectionsSplit[j]!= null){
+						information += connectionsSplit[j];
+					}
+					toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
+					stmt.executeUpdate(toQuery);
+				}
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			noEndAlg.setR(ConnectionResult.Exception);
+		}
+		finally {
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+		}
+	}
+
+
+	public void insertIntoFailedSearchesTable (int start_id, int end_id) {
+		JDCConnection conn = null;
+		Statement stmt = null;
+		String toQuery;
+		String date;
+
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			date = algorithmUtils.getCurrentDate();
+
+			toQuery = "INSERT IGNORE INTO failed_searches (character_id1, character_id2, date) values (" + start_id + "," + end_id + ",'" + date + "');";
+			stmt.executeUpdate(toQuery);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			noEndAlg.setR(ConnectionResult.Exception);
+		}
+		finally {
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+		}
+	}
+	
+	
+	
+	/*
+	 * Searching for the couple in the failed_searches table. 
+	 */
+	public  boolean lookForConnectionInFailedSearchesTable (String start_name, String end_name, int start_id, int end_id){
+		JDCConnection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		boolean result = false;
+
+		// checks if the couple is in failed_searches table
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			
+			rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
+			if (rs.next()) {
+				result = true;	
+			}
+			else {
+				rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
+				if (rs.next()){
+					result = true;
+				}
+			}
+			if (result) { //found the couple in the failed_searches table
+				System.out.println("couldn't find a connection between "+ start_name +" and "+ end_name);
+			}
+			
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			noEndAlg.setR(ConnectionResult.Exception);
+		}
+		finally {
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+		}
+	
+		return result;
+	}
+
+
+	/*
+	 * Searching for the connection in the history table. 
+	 * If exists - prints the connection to console.
+	 */
+	public boolean lookForConnectionInHistory(String start_name, String end_name, int start_id, int end_id, connectionElement[] conenctionArray){
+		JDCConnection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		boolean result = false, opposite = false;
+		int count;
+
+		// checks if the connection between these 2 characters already in history table
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			
+			rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
+			if (rs.next()) {
+				result = true;	
+			}
+			else {
+				rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
+				if (rs.next()){
+					result = true;
+					opposite = true;
+				}
+			}
+
+			if (result) { //found the connection in the history table
+				count = rs.getInt("count");
+				count++;
+				int id1 = rs.getInt(1);
+				int id2 = rs.getInt(2);
+				System.out.println("this connection was found in " + rs.getDate(3));
+				String getConnectionOfCharacters = rs.getString(4);
+				System.out.println("Match found between "+ start_name +" and "+ end_name);
+				stmt.executeUpdate("UPDATE history SET count = " + count + " WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
+
+				if (opposite) {
+					start_name = end_name;
+				}
+			
+				algorithmUtils.prepareConnectionsFromHistory(getConnectionOfCharacters, conenctionArray);
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			noEndAlg.setR(ConnectionResult.Exception);
+		}
+		finally {
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEndAlg.setR(ConnectionResult.Close_Exception);
+				}
+			}
+		}
+		
+		return result;
+
+	}
+
+
+
+	
+	
 
 }
