@@ -58,7 +58,6 @@ CREATE TABLE characters
 	character_name varchar(80) NOT NULL,
 	character_place_of_birth_id int(11) NOT NULL DEFAULT 5,
 	KEY ix_character_id (character_id),
-	KEY ix_character_and_pob (character_id,character_place_of_birth_id),
 	UNIQUE (character_fb_id),
 	PRIMARY KEY (character_id),
 	FOREIGN KEY (character_place_of_birth_id) REFERENCES place_of_birth(place_of_birth_id) ON UPDATE RESTRICT ON DELETE RESTRICT) DEFAULT CHARSET=utf8 ENGINE=InnoDB;
@@ -66,7 +65,6 @@ CREATE TABLE characters
 CREATE TABLE characters_and_universe 
 	(characters_and_universe_character_id int(11) NOT NULL,
 	characters_and_universe_universe_id int(11) NOT NULL,
-	KEY ix_characters_and_universe (characters_and_universe_character_id, characters_and_universe_universe_id),
 	PRIMARY KEY (characters_and_universe_character_id,characters_and_universe_universe_id),
 	FOREIGN KEY (characters_and_universe_character_id) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (characters_and_universe_universe_id) REFERENCES universe(universe_id) ON UPDATE RESTRICT ON DELETE RESTRICT) ENGINE=InnoDB;
@@ -75,7 +73,6 @@ CREATE TABLE characters_and_universe
 CREATE TABLE characters_and_organization 
 	(characters_and_organization_character_id int(11) NOT NULL,
 	characters_and_organization_organization_id int(11) NOT NULL,
-	KEY ix_characters_and_organization (characters_and_organization_character_id, characters_and_organization_organization_id),	
 	PRIMARY KEY (characters_and_organization_character_id,characters_and_organization_organization_id),
 	FOREIGN KEY (characters_and_organization_character_id) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (characters_and_organization_organization_id) REFERENCES organization(organization_id) ON UPDATE RESTRICT ON DELETE RESTRICT) ENGINE=InnoDB;
@@ -83,7 +80,6 @@ CREATE TABLE characters_and_organization
 CREATE TABLE characters_and_school 
 	(characters_and_school_character_id int(11) NOT NULL,
 	characters_and_school_school_id int(11) NOT NULL,
-	KEY ix_characters_and_school (characters_and_school_character_id, characters_and_school_school_id),	
 	PRIMARY KEY (characters_and_school_character_id,characters_and_school_school_id),
 	FOREIGN KEY (characters_and_school_character_id) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (characters_and_school_school_id) REFERENCES school(school_id) ON UPDATE RESTRICT ON DELETE RESTRICT) ENGINE=InnoDB;
@@ -91,7 +87,6 @@ CREATE TABLE characters_and_school
 CREATE TABLE characters_and_occupation 
 	(characters_and_occupation_character_id int(11) NOT NULL,
 	characters_and_occupation_occupation_id int(11) NOT NULL,
-	KEY ix_characters_and_organization (characters_and_occupation_character_id, characters_and_occupation_occupation_id),	
 	PRIMARY KEY (characters_and_occupation_character_id,characters_and_occupation_occupation_id),
 	FOREIGN KEY (characters_and_occupation_character_id) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (characters_and_occupation_occupation_id) REFERENCES occupation(occupation_id) ON UPDATE RESTRICT ON DELETE RESTRICT) ENGINE=InnoDB;
@@ -99,7 +94,6 @@ CREATE TABLE characters_and_occupation
 CREATE TABLE characters_and_power 
 	(characters_and_power_character_id int(11) NOT NULL,
 	characters_and_power_power_id int(11) NOT NULL,
-	KEY ix_characters_and_organization (characters_and_power_character_id, characters_and_power_power_id),	
 	PRIMARY KEY (characters_and_power_character_id,characters_and_power_power_id),
 	FOREIGN KEY (characters_and_power_character_id) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (characters_and_power_power_id) REFERENCES power (power_id) ON UPDATE RESTRICT ON DELETE RESTRICT) ENGINE=InnoDB;
@@ -107,7 +101,6 @@ CREATE TABLE characters_and_power
 CREATE TABLE characters_and_disease 
 	(characters_and_disease_character_id int(11) NOT NULL,
 	characters_and_disease_disease_id int(11) NOT NULL,
-	KEY ix_characters_and_disease (characters_and_disease_character_id, characters_and_disease_disease_id),	
 	PRIMARY KEY (characters_and_disease_character_id,characters_and_disease_disease_id),
 	FOREIGN KEY (characters_and_disease_character_id) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (characters_and_disease_disease_id) REFERENCES disease(disease_id) ON UPDATE RESTRICT ON DELETE RESTRICT) ENGINE=InnoDB;
@@ -116,7 +109,6 @@ CREATE TABLE characters_and_disease
 CREATE TABLE romantic_involvement
 	(romantic_involvement_character_id1 int(11) NOT NULL,
 	romantic_involvement_character_id2 int(11) NOT NULL,
-	KEY ix_romantic_involvement (romantic_involvement_character_id1, romantic_involvement_character_id2),	
 	PRIMARY KEY (romantic_involvement_character_id1,romantic_involvement_character_id2),
 	FOREIGN KEY (romantic_involvement_character_id1) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (romantic_involvement_character_id2) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE) ENGINE=InnoDB;
@@ -124,7 +116,6 @@ CREATE TABLE romantic_involvement
 CREATE TABLE parent
 	(parent_child_character_id int(11) NOT NULL,
 	parent_parent_character_id int(11) NOT NULL,
-	KEY ix_romantic_involvement (parent_parent_character_id, parent_child_character_id),	
 	PRIMARY KEY (parent_child_character_id,parent_parent_character_id),
 	FOREIGN KEY (parent_child_character_id) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (parent_parent_character_id) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE) ENGINE=InnoDB;
@@ -135,7 +126,6 @@ CREATE TABLE history
 	date date DEFAULT NULL,
 	information varchar(200),
 	count int(11) DEFAULT 1,
-	KEY ix_history (character_id1, character_id2),	
 	PRIMARY KEY (character_id1,character_id2),
 	FOREIGN KEY (character_id1) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (character_id2) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE) ENGINE=InnoDB;
@@ -143,8 +133,7 @@ CREATE TABLE history
 CREATE TABLE failed_searches
 	(character_id1 int(11) NOT NULL,
 	character_id2 int(11) NOT NULL,
-	date date DEFAULT NULL,
-	KEY ix_failed (character_id1, character_id2),	
+	date date DEFAULT NULL,	
 	PRIMARY KEY (character_id1,character_id2),
 	FOREIGN KEY (character_id1) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (character_id2) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE) ENGINE=InnoDB;
