@@ -123,7 +123,9 @@ public class EditCharacters extends EditCard{
 		resetModel(powerCharacterValues);
 		resetModel(schoolCharacterValues);
 		resetModel(universeCharacterValues);
-
+		
+		comboRecord.setSelectedItem(null);
+		
 		if (GuiHandler.isStatusFlashing()){
 			GuiHandler.stopStatusFlash();
 		}
@@ -157,7 +159,12 @@ public class EditCharacters extends EditCard{
 				String[] tables = getTablesNames();
 				Pair[][] addedValues = getAddedValues();
 				Pair[][] removedValues = getRemovedValues();
-				EditCharacterWorker worker = new EditCharacterWorker(tables, addedValues, removedValues,  me);
+				Pair characerPair = (Pair) comboRecord.getSelectedItem();
+				characerPair.setName(textName.getText());
+				DefaultListModel listModel = (DefaultListModel) placeOfBirthCharacterValues.getModel();
+				Pair placeOfBirthPair = (Pair) listModel.get(0);
+				int placeOfBirthId = placeOfBirthPair.getId();
+				EditCharacterWorker worker = new EditCharacterWorker(tables, addedValues, removedValues, characerPair, placeOfBirthId, me);
 				GuiHandler.startStatusFlash();
 				worker.execute();
 
@@ -222,52 +229,33 @@ public class EditCharacters extends EditCard{
 
 	private Pair[][] getAddedValues() {
 
-		Pair[][] values = new Pair[Tables.getMaxIndex() + 2][];
+		Pair[][] values = new Pair[6][];
 
-		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
-		values[Tables.disease.getIndex() + 1] = getAddedPairs(diseaseCharacterValues, originalCharacterValuesIndex[Tables.disease.getIndex()]);
-		values[Tables.occupation.getIndex() + 1] = getAddedPairs(occupationCharacterValues, originalCharacterValuesIndex[Tables.occupation.getIndex()]);
-		values[Tables.organization.getIndex() + 1] = getAddedPairs(organizationCharacterValues, originalCharacterValuesIndex[Tables.organization.getIndex()]);
-		values[Tables.place_of_birth.getIndex() + 1] = getAddedPairs(placeOfBirthCharacterValues, originalCharacterValuesIndex[Tables.place_of_birth.getIndex()]);
-		values[Tables.power.getIndex() + 1] = getAddedPairs(powerCharacterValues, originalCharacterValuesIndex[Tables.power.getIndex()]);
-		values[Tables.school.getIndex() + 1] = getAddedPairs(schoolCharacterValues, originalCharacterValuesIndex[Tables.school.getIndex()]);
-		values[Tables.universe.getIndex() + 1] = getAddedPairs(universeCharacterValues, originalCharacterValuesIndex[Tables.universe.getIndex()]);
+		values[Tables.disease.getIndex()] = getAddedPairs(diseaseCharacterValues, originalCharacterValuesIndex[Tables.disease.getIndex()]);
+		values[Tables.occupation.getIndex()] = getAddedPairs(occupationCharacterValues, originalCharacterValuesIndex[Tables.occupation.getIndex()]);
+		values[Tables.organization.getIndex()] = getAddedPairs(organizationCharacterValues, originalCharacterValuesIndex[Tables.organization.getIndex()]);
+		values[Tables.power.getIndex()] = getAddedPairs(powerCharacterValues, originalCharacterValuesIndex[Tables.power.getIndex()]);
+		values[Tables.school.getIndex()] = getAddedPairs(schoolCharacterValues, originalCharacterValuesIndex[Tables.school.getIndex()]);
+		values[Tables.universe.getIndex()] = getAddedPairs(universeCharacterValues, originalCharacterValuesIndex[Tables.universe.getIndex()]);
 		
 		return values;
 	}
 	
 	private Pair[][] getRemovedValues() {
 
-		Pair[][] values = new Pair[Tables.getMaxIndex() + 2][];
+		Pair[][] values = new Pair[6][];
 
-		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
-		values[Tables.disease.getIndex() + 1] = getRemovedPairs(diseaseCharacterValues, originalCharacterValuesIndex[Tables.disease.getIndex()]);
-		values[Tables.occupation.getIndex() + 1] = getRemovedPairs(occupationCharacterValues, originalCharacterValuesIndex[Tables.occupation.getIndex()]);
-		values[Tables.organization.getIndex() + 1] = getRemovedPairs(organizationCharacterValues, originalCharacterValuesIndex[Tables.organization.getIndex()]);
-		values[Tables.place_of_birth.getIndex() + 1] = getRemovedPairs(placeOfBirthCharacterValues, originalCharacterValuesIndex[Tables.place_of_birth.getIndex()]);
-		values[Tables.power.getIndex() + 1] = getRemovedPairs(powerCharacterValues, originalCharacterValuesIndex[Tables.power.getIndex()]);
-		values[Tables.school.getIndex() + 1] = getRemovedPairs(schoolCharacterValues, originalCharacterValuesIndex[Tables.school.getIndex()]);
-		values[Tables.universe.getIndex() + 1] = getRemovedPairs(universeCharacterValues, originalCharacterValuesIndex[Tables.universe.getIndex()]);
+		values[Tables.disease.getIndex()] = getRemovedPairs(diseaseCharacterValues, originalCharacterValuesIndex[Tables.disease.getIndex()]);
+		values[Tables.occupation.getIndex()] = getRemovedPairs(occupationCharacterValues, originalCharacterValuesIndex[Tables.occupation.getIndex()]);
+		values[Tables.organization.getIndex()] = getRemovedPairs(organizationCharacterValues, originalCharacterValuesIndex[Tables.organization.getIndex()]);
+		values[Tables.power.getIndex()] = getRemovedPairs(powerCharacterValues, originalCharacterValuesIndex[Tables.power.getIndex()]);
+		values[Tables.school.getIndex()] = getRemovedPairs(schoolCharacterValues, originalCharacterValuesIndex[Tables.school.getIndex()]);
+		values[Tables.universe.getIndex()] = getRemovedPairs(universeCharacterValues, originalCharacterValuesIndex[Tables.universe.getIndex()]);
 		
 		return values;
 	}
 
 	private Pair[] getAddedPairs(DisplayList list, DisplayList originalList){
-
-		DefaultListModel model = (DefaultListModel) list.getModel();
-		DefaultListModel originalModel = (DefaultListModel) originalList.getModel();
-
-		List<Pair> values = new ArrayList<Pair>();
-		for (int i=0; i < originalModel.getSize(); i++) {
-			Object currentPair = originalModel.getElementAt(i);
-			if (!model.contains(currentPair)){
-				values.add((Pair) currentPair);
-			}
-		}
-		return values.toArray(new Pair[values.size()]);
-	}
-	
-	private Pair[] getRemovedPairs(DisplayList list, DisplayList originalList){
 
 		DefaultListModel model = (DefaultListModel) list.getModel();
 		DefaultListModel originalModel = (DefaultListModel) originalList.getModel();
@@ -282,11 +270,25 @@ public class EditCharacters extends EditCard{
 		return values.toArray(new Pair[values.size()]);
 	}
 	
+	private Pair[] getRemovedPairs(DisplayList list, DisplayList originalList){
+
+		DefaultListModel model = (DefaultListModel) list.getModel();
+		DefaultListModel originalModel = (DefaultListModel) originalList.getModel();
+
+		List<Pair> values = new ArrayList<Pair>();
+		for (int i=0; i < originalModel.getSize(); i++) {
+			Object currentPair = originalModel.getElementAt(i);
+			if (!model.contains(currentPair)){
+				values.add((Pair) currentPair);
+			}
+		}
+		return values.toArray(new Pair[values.size()]);
+	}
+	
 	private String[] getTablesNames() {
 
-		String [] values = new String[Tables.getMaxIndex() + 2];
-		values[0] = "characters";
-		values[Tables.disease.getIndex() + 1] = Tables.disease.name();
+		String [] values = new String[6];
+		values[Tables.disease.getIndex()] = Tables.disease.name();
 		values[Tables.occupation.getIndex()] = Tables.occupation.name();
 		values[Tables.organization.getIndex()] = Tables.organization.name();
 		values[Tables.power.getIndex()] = Tables.power.name();
@@ -323,13 +325,13 @@ public class EditCharacters extends EditCard{
 
 	private void createOriginalCharacterAttributesListIndex(){
 		
-		originalCharacterValuesIndex[Tables.disease.getIndex()] = diseaseCharacterValues;
-		originalCharacterValuesIndex[Tables.occupation.getIndex()] = occupationCharacterValues;
-		originalCharacterValuesIndex[Tables.organization.getIndex()] = organizationCharacterValues;
-		originalCharacterValuesIndex[Tables.place_of_birth.getIndex()] = placeOfBirthCharacterValues;
-		originalCharacterValuesIndex[Tables.power.getIndex()] = powerCharacterValues;
-		originalCharacterValuesIndex[Tables.school.getIndex()] = schoolCharacterValues;
-		originalCharacterValuesIndex[Tables.universe.getIndex()] = universeCharacterValues;
+		originalCharacterValuesIndex[Tables.disease.getIndex()] = new DisplayList();
+		originalCharacterValuesIndex[Tables.occupation.getIndex()] = new DisplayList();
+		originalCharacterValuesIndex[Tables.organization.getIndex()] = new DisplayList();
+		originalCharacterValuesIndex[Tables.place_of_birth.getIndex()] = new DisplayList();
+		originalCharacterValuesIndex[Tables.power.getIndex()] = new DisplayList();
+		originalCharacterValuesIndex[Tables.school.getIndex()] = new DisplayList();
+		originalCharacterValuesIndex[Tables.universe.getIndex()] = new DisplayList();
 	}
 	
 	private void createAllAttributesListIndex(){

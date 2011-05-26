@@ -189,6 +189,7 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 			}
 			case Success_Edit_Character:{
 				EditCharacters editCharactersCard = (EditCharacters) card;
+				GuiHandler.showResultSuccessDialog(action.toString());
 				editCharactersCard.clearValues();
 				break;
 			}
@@ -203,6 +204,4 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 			e.printStackTrace();
 		}
 	}
-
-
 }
