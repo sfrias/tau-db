@@ -6,15 +6,13 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import enums.Frames;
-
-
 import GUI.commons.GuiUtils;
 import GUI.frames.ManageFrame;
 import GUI.frames.PlayFrame;
 import GUI.frames.WelcomeScreenFrame;
 import GUI.panels.CustomGlassPane;
 import GUI.panels.General.BlinkingStatusPanel;
+import enums.Frames;
 
 
 public class GuiHandler {
@@ -165,6 +163,16 @@ public class GuiHandler {
 		JOptionPane.showMessageDialog(loadedFrame, msg, title, JOptionPane.OK_OPTION, icon);       	    		
 	}
 	
+	public static void showAlgrithmResultDialog(boolean success, String title, String msg){
+		ImageIcon icon;
+		if (success){
+			icon = GuiUtils.readImageIcon("thumbUp.png");
+		}
+		else{
+			icon = GuiUtils.readImageIcon("thumbDown.png");
+		}
+		showResultDialog(msg, title, icon);
+	}
 
 	private static void quit() {
 		loadedFrame.dispose();

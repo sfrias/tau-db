@@ -22,6 +22,7 @@ import GUI.model.CharacterModel;
 import GUI.model.SimpleModel;
 import GUI.panels.CustomGlassPane;
 import GUI.panels.Play.CharacterDisplayPanel;
+import GUI.workers.AlgorithmWorker;
 import GUI.workers.GetCharacterAttributesWorker;
 import GUI.workers.GetRecordsByNameWorker;
 
@@ -121,10 +122,15 @@ public class PlayFrame extends GenericFrame {
 		panelRightHead.add(panelCombo2);
 		panelRightHead.add(charIISearchButton);
 
-		JButton buttonCompare = new JButton("Compare");
+		JButton buttonCompare = new JButton("Look for connection!");
 		buttonCompare.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-
+				int firstCharId = ((Pair) comboCharI.getSelectedItem()).getId();
+				int secondCharId = ((Pair) comboCharII.getSelectedItem()).getId();
+				System.out.println("first " + firstCharId + " second " + secondCharId);
+				AlgorithmWorker worker = new AlgorithmWorker(firstCharId, secondCharId, playFrame);
+				GuiHandler.startStatusFlash();
+				worker.execute();
 			}
 		});
 
