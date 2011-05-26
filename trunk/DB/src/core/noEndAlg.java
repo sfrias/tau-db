@@ -10,9 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
-
 import connection.JDCConnection;
-
 import database.DatabaseManager;
 import enums.ConnectionResult;
 import enums.Tables;
@@ -724,6 +722,7 @@ public class noEndAlg{
 				dbManager.insertIntoHistory(connectionString, start_id, end_id); // if an error occurred here we do not want to throw an exception
 				result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
 				clearAll();
+			//	dbManager.executeUpdateInSuccesRate(true);
 				return result;
 			}
 			else {
@@ -736,6 +735,7 @@ public class noEndAlg{
 		if (getR() == ConnectionResult.Ok){ //if an error has occurred that doesn't mean there isn't a connection 
 			dbManager.insertIntoFailedSearchesTable(start_id, end_id); // if an error occurred here we do not want to throw an exception
 			result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
+		//	dbManager.executeUpdateInSuccesRate(false);
 		}
 
 		return result;
@@ -775,15 +775,17 @@ public class noEndAlg{
 		//System.out.println(a.getGlobalNumOfConnections());
 
 		//a.topSerches();
-
+/*
 		try {
 			Tester.tester();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+	*/	
 		noEndAlg alg = noEndAlg.getInstance();
 		ReturnElement returnElem = alg.lookForConnection(1, 2);
+		returnElem.getResult();
+		/*
 		if (returnElem.getResult() == ConnectionResult.Exception || returnElem.getResult() == ConnectionResult.Close_Exception){
 			//TODO PRINT TO USER TO TRY AGAIN LATER
 		}
@@ -814,7 +816,7 @@ public class noEndAlg{
 				}
 			}
 
-		}
+		}*/
 		
 		
 
