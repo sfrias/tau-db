@@ -1,6 +1,7 @@
 package database;
 
 import java.io.UnsupportedEncodingException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -588,9 +589,73 @@ public class DatabaseManager {
 		}
 	}
 
-	public ExecutionResult executeEditCharacters(String[] tables, Pair[][] addedValues, Pair[][] removedValues) {
-
-		return ExecutionResult.Success_Edit_Character;
+	public ExecutionResult executeEditCharacters(String[] tables, Pair[][] addedValues, Pair[][] removedValues, Pair character, int place_of_birth_id) {
+		
+		JDCConnection conn = null;
+		Statement stmt = null;		
+		PreparedStatement preparedStmt = null;		
+		
+		int characterId = character.getId();
+		String name = character.getName();
+		try {
+			conn = getConnection();
+			conn.setAutoCommit(false);
+			stmt = conn.createStatement();
+			
+			stmt.executeUpdate("UPDATE characters SET character_name = \'" + name + "\', character_place_of_birth_id = " + place_of_birth_id + " WHERE character_id = " + characterId);
+			
+			for (int i=0; i < tables.length; i++){
+				
+				String tableName = "characters_and_"+tables[i];
+				String field = tableName + "_" + tables[i] + "_id";
+				preparedStmt = conn.prepareStatement("INSERT INTO " + tableName + " values(" + characterId + " , ?)");
+				for (int j=0; j< addedValues[i].length; j++){
+					preparedStmt.setInt(1, addedValues[i][j].getId());
+					preparedStmt.execute();
+				}
+				
+				preparedStmt = conn.prepareStatement("DELETE FROM " +  tableName + " WHERE " + tableName + "_character_id = " + characterId + " AND " + field + " = ?");
+				for (int j=0; j< removedValues[i].length; j++){
+					preparedStmt.setInt(1, removedValues[i][j].getId());
+					preparedStmt.execute();
+				}
+			}
+			
+			conn.commit();
+			return ExecutionResult.Success_Edit_Character;
+		}
+		catch (SQLException e ) {
+			try {
+				conn.rollback();
+			} 
+			catch(SQLException excep) {
+			}
+			return ExecutionResult.Exception;
+		}
+		finally {
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (preparedStmt != null){
+				try {
+					preparedStmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.setAutoCommit(true);
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public ExecutionResult executeDelete(Tables table, int id) {
