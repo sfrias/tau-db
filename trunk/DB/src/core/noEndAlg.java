@@ -21,15 +21,14 @@ public class noEndAlg{
 
 	//mutual fields for all instances
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
-	private static JDCConnection conn=null;
+	//private static JDCConnection conn=null;
 	private static noEndAlg instance = null;
 	private static Tables[] tbs;
 	private static String[] tablesArr;
 	private static int indexOfJumps;
 	private static int maxConnection;
-	private int globalNumOfConnections;
-	private String start_name = null;
-	private String end_name = null;
+	private static boolean init=false;
+
 	private static TreeMap<String, Short> tablesMap = new TreeMap<String, Short>();
 	private static TreeMap<Short, String> reverseTablesMap = new TreeMap<Short, String>();
 	private static TreeMap<String, Integer> unspecifiedIdOfTables = new TreeMap<String,Integer>();
@@ -42,14 +41,18 @@ public class noEndAlg{
 	private DatabaseManager dbManager = DatabaseManager.getInstance();
 	private int end_id;
 	private ConnectionResult status = ConnectionResult.Ok;
-	
+	private String start_name = null;
+	private String end_name = null;
+	private int globalNumOfConnections;	
 	public noEndAlg(){
-		conn = dbManager.getConnection() ;
-		if (conn==null){ //an error occurred while trying to get a connection 
-			setR(ConnectionResult.Exception);
-		}
+		
 		tbs = Tables.values();
-		algorithmUtils.prepareTablesAndHashMaps();
+	}
+	
+	public void initialization(){
+		if (!init){
+			algorithmUtils.prepareTablesAndHashMaps();
+		}
 	}
 	
 	
@@ -65,11 +68,11 @@ public class noEndAlg{
 		return tbs;
 	}
 
-
+/*
 	public JDCConnection getConnention(){
 		return conn;
 	}
-
+*/
 	public String getStartName(){
 		return start_name;
 	}
@@ -308,12 +311,13 @@ public class noEndAlg{
 	 */
 
 	private String findConnectedCharacters(String joinedAtr,String currentAtr,int start_id, int unspecifiedIdOfCharacter, boolean directToEndID){
-
+		JDCConnection conn=null;
 		Statement atrStmt=null;
 		ResultSet atrValRS=null;
 		String charactersWithAtr = "";
 		boolean isEmptyQuery = true;
 		try {
+			conn = dbManager.getConnection() ;
 			atrStmt = conn.createStatement();			
 			atrValRS = atrStmt.executeQuery(algorithmUtils.specificAttributeValuesQuery(joinedAtr, currentAtr, start_id));
 			int unspecifiedId = unspecifiedIdOfTables.get(currentAtr);
@@ -386,7 +390,9 @@ public class noEndAlg{
 		String charactersWithAtr;
 		ResultSet atrValRS =null;
 		Statement atrStmt = null;
+		JDCConnection conn = null;
 		try {
+			conn = dbManager.getConnection() ;
 			atrStmt = conn.createStatement();
 			atrValRS = atrStmt.executeQuery(selectAtrValues);
 			atrValRS.first();
@@ -450,10 +456,11 @@ public class noEndAlg{
 		boolean foundMatch = false;
 		int[] valPlaceOfBirth = new int[1];
 
-
+		JDCConnection conn = null;
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
 			try {
+				conn = dbManager.getConnection() ;
 				currentAtr =tablesArr[atr];
 				charWithAtrStmt = conn.createStatement();
 				if (atr < indexOfJumps) {
@@ -549,12 +556,13 @@ public class noEndAlg{
 		charElement end_element;
 		Statement charAtrStmt = null;
 		int valPlaceOfBirth[] = new int[1];
-
+		JDCConnection conn = null;
 
 
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
 			try {
+				conn = dbManager.getConnection() ;
 				currentAtr =tablesArr[atr];
 				charAtrStmt = conn.createStatement();
 				if (atr < indexOfJumps) {
@@ -783,7 +791,8 @@ public class noEndAlg{
 		}
 	*/	
 		noEndAlg alg = noEndAlg.getInstance();
-		ReturnElement returnElem = alg.lookForConnection(1, 2);
+		alg.initialization();
+		ReturnElement returnElem = alg.lookForConnection(1, 6);
 		returnElem.getResult();
 		/*
 		if (returnElem.getResult() == ConnectionResult.Exception || returnElem.getResult() == ConnectionResult.Close_Exception){

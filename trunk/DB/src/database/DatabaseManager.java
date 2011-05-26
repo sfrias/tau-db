@@ -867,9 +867,10 @@ public class DatabaseManager {
 	}
 
 	
+	//for top 5 searches use field 'count'
+	//for top 5 recent matches use field 'date'
 	
-	
-	public void topSerches () {
+	public void topSerches (String field) {
 
 		JDCConnection conn = null;
 		Statement stmt = null;
@@ -879,7 +880,7 @@ public class DatabaseManager {
 		try {
 			conn = getConnection();
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM history ORDER BY count DESC LIMIT 5");
+			rs = stmt.executeQuery("SELECT * FROM history ORDER BY "+ field +" DESC LIMIT 5");
 			while (rs.next()) {
 				String startName = getNameFromId(rs.getInt(1));
 				String endName = getNameFromId(rs.getInt(2));
