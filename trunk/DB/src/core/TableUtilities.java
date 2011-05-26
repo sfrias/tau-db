@@ -288,11 +288,14 @@ public class TableUtilities {
 						ResultSet generatedKeys = null;
 
 						try{
+							conn.setAutoCommit(false);
 							addNullIdStatement = conn.createStatement();
-							addNullIdStatement.executeUpdate("INSERT IGNORE into " + subtable + "(" + fieldName+ ") values (\'" + valueArr[i] +"\')", Statement.RETURN_GENERATED_KEYS);						
+							addNullIdStatement.execute("INSERT IGNORE into " + subtable + "(" + fieldName+ ") values (\'" + valueArr[i] +"\')", Statement.RETURN_GENERATED_KEYS);						
 							generatedKeys = addNullIdStatement.getGeneratedKeys();
 							generatedKeys.first();
 							int currentId = generatedKeys.getInt(1);
+							addNullIdStatement.executeUpdate("UPDATE " + subtable + " SET " + subtable + "_fb_id = \'" + currentId + "\' WHERE " + subtable + "_id = " + currentId);
+							conn.commit();
 							System.out.println("added into " + subtable + " the values " + valueArr[i] + " with id " + currentId);
 							//adding to the map
 							interestingValuesMap.put(valueArr[i], currentId);
@@ -322,6 +325,7 @@ public class TableUtilities {
 							}
 							if (conn != null){
 								try {
+									conn.setAutoCommit(true);
 									conn.close();
 								} catch (SQLException e) {
 									e.printStackTrace();
