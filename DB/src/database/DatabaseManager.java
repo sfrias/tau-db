@@ -646,6 +646,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
+		noEndAlg noEnd = noEndAlg.getInstance();
 		try {
 			conn =  getConnection();
 			stmt = conn.createStatement();
@@ -654,7 +655,7 @@ public class DatabaseManager {
 			Name = rs.getString("character_name");
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEndAlg.setR(ConnectionResult.Exception);
+			noEnd.setR(ConnectionResult.Exception);
 		} 
 		finally {
 			if (stmt != null){
@@ -662,7 +663,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (rs!= null){
@@ -670,7 +671,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -678,7 +679,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			
@@ -698,7 +699,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
-		
+		noEndAlg noEnd = noEndAlg.getInstance();
 		if (table.equals(Tables.romantic_involvement.name()) ||
 				table.equals(Tables.parent.name()) ||
 				table.equals("child")) {
@@ -716,7 +717,7 @@ public class DatabaseManager {
 			Name = rs.getString(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEndAlg.setR(ConnectionResult.Exception);
+			noEnd.setR(ConnectionResult.Exception);
 		}
 		finally {
 			if (stmt != null){
@@ -724,7 +725,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (rs!= null){
@@ -732,7 +733,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -740,7 +741,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -756,7 +757,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		connectionElement[] connectionArray = new connectionElement[3];
-
+		noEndAlg noEnd = noEndAlg.getInstance();
 		try {
 			conn = getConnection();
 			stmt = conn.createStatement();
@@ -772,7 +773,7 @@ public class DatabaseManager {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEndAlg.setR(ConnectionResult.Exception);
+			noEnd.setR(ConnectionResult.Exception);
 		}
 		finally {
 			if (stmt != null){
@@ -780,7 +781,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (rs!= null){
@@ -788,7 +789,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -796,7 +797,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -815,6 +816,7 @@ public class DatabaseManager {
 		ResultSet rs = null;
 		int unspecifiedID = 0;
 		String field = "";
+		noEndAlg noEnd = noEndAlg.getInstance();
 		if (table.equals(Tables.characters.name())){
 			field = "character";
 		}
@@ -830,7 +832,7 @@ public class DatabaseManager {
 			unspecifiedID= rs.getInt(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEndAlg.setR(ConnectionResult.Exception);
+			noEnd.setR(ConnectionResult.Exception);
 		}
 		finally {
 			if (stmt != null){
@@ -838,7 +840,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (rs!= null){
@@ -846,7 +848,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -854,7 +856,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -880,7 +882,7 @@ public class DatabaseManager {
 		String[] arr;
 		int length = connectionsSplit.length;
 		int first, second;
-
+		noEndAlg noEnd = noEndAlg.getInstance();
 		try {
 			conn = getConnection();
 			stmt = conn.createStatement();
@@ -920,7 +922,7 @@ public class DatabaseManager {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEndAlg.setR(ConnectionResult.Exception);
+			noEnd.setR(ConnectionResult.Exception);
 		}
 		finally {
 			if (stmt != null){
@@ -928,7 +930,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -936,7 +938,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -948,6 +950,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		String toQuery;
 		String date;
+		noEndAlg noEnd = noEndAlg.getInstance();
 
 		try {
 			conn = getConnection();
@@ -959,7 +962,7 @@ public class DatabaseManager {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEndAlg.setR(ConnectionResult.Exception);
+			noEnd.setR(ConnectionResult.Exception);
 		}
 		finally {
 			if (stmt != null){
@@ -967,7 +970,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -975,7 +978,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -991,7 +994,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		boolean result = false;
-
+		noEndAlg noEnd = noEndAlg.getInstance();
 		// checks if the couple is in failed_searches table
 		try {
 			conn = getConnection();
@@ -1013,7 +1016,7 @@ public class DatabaseManager {
 			
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			noEndAlg.setR(ConnectionResult.Exception);
+			noEnd.setR(ConnectionResult.Exception);
 		}
 		finally {
 			if (stmt != null){
@@ -1021,7 +1024,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (rs!= null){
@@ -1029,7 +1032,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			
@@ -1038,7 +1041,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -1057,7 +1060,7 @@ public class DatabaseManager {
 		ResultSet rs = null;
 		boolean result = false, opposite = false;
 		int count;
-
+		noEndAlg noEnd = noEndAlg.getInstance();
 		// checks if the connection between these 2 characters already in history table
 		try {
 			conn = getConnection();
@@ -1093,7 +1096,7 @@ public class DatabaseManager {
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			noEndAlg.setR(ConnectionResult.Exception);
+			noEnd.setR(ConnectionResult.Exception);
 		}
 		finally {
 			if (stmt != null){
@@ -1101,7 +1104,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (rs!= null){
@@ -1109,7 +1112,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -1117,7 +1120,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEndAlg.setR(ConnectionResult.Close_Exception);
+					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
