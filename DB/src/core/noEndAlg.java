@@ -54,7 +54,7 @@ public class noEndAlg{
 		return r;
 	}
 	
-	public void setR(ConnectionResult re){
+	public static void setR(ConnectionResult re){
 		if (r != ConnectionResult.Ok){ //we want to hold the first error that occurred
 			return;
 		}
@@ -119,7 +119,7 @@ public class noEndAlg{
 			
 			
 		}catch (SQLException e) {
-			System.out.println("error execute query-" + e.toString());
+			System.out.println("error exelcute query-" + e.toString());
 			setR (ConnectionResult.Exception);
 			return false;
 		}
@@ -579,15 +579,16 @@ public class noEndAlg{
 		}
 
 		maxConnection=3;
+		algorithmUtils.setMaxNumber(maxConnection);
 		connectionElement[] connectionArray = new connectionElement[maxConnection];
 		
 		boolean alreadyExists = false;
 		this.end_id = end_id;
-		String start_name=algorithmUtils.getNameFromId(start_id);
-		String end_name=algorithmUtils.getNameFromId(end_id);
+		String start_name=dbManager.getNameFromId(start_id);
+		String end_name=dbManager.getNameFromId(end_id);
 		
 		// checks if the connection between these 2 characters already in history table
-		alreadyExists = algorithmUtils.lookForConnectionInHistory(start_name, end_name, start_id, end_id, connectionArray);
+		alreadyExists = dbManager.lookForConnectionInHistory(start_name, end_name, start_id, end_id, connectionArray);
 		
 		//found a connection
 		if (alreadyExists){
@@ -595,7 +596,7 @@ public class noEndAlg{
 			return result;
 		}
 		
-		alreadyExists = algorithmUtils.lookForConnectionInFailedSearchesTable(start_name, end_name, start_id, end_id);
+		alreadyExists = dbManager.lookForConnectionInFailedSearchesTable(start_name, end_name, start_id, end_id);
 		if (alreadyExists){
 			result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
 			return result;
@@ -618,7 +619,7 @@ public class noEndAlg{
 			if (matchFound) {
 				System.out.println("Match found between "+ start_name +" and "+ end_name);
 				String connectionString = algorithmUtils.prepareConnectionsForGUI(theConnection,connectionArray);
-				algorithmUtils.insertIntoHistory(connectionString, start_id, end_id);
+				dbManager.insertIntoHistory(connectionString, start_id, end_id);
 				result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
 				clearAll();
 				return result;
@@ -630,7 +631,7 @@ public class noEndAlg{
 		
 		clearAll();
 		System.out.println("couldn't find a connection");
-		algorithmUtils.insertIntoFailedSearchesTable(start_id, end_id);
+		dbManager.insertIntoFailedSearchesTable(start_id, end_id);
 		result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
 		return result;
 

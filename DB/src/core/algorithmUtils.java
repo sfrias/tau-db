@@ -1,14 +1,10 @@
 package core;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TreeMap;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
-
 
 import connection.JDCConnection;
 import database.DatabaseManager;
@@ -17,116 +13,18 @@ import enums.Tables;
 
 public class algorithmUtils {
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
+	static int maxNumberOfConnection=0;
 
-	/* 
-	 * gets the character's name by his/her id 
-	 */
-	public static String getNameFromId(int id){
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		JDCConnection conn = dbManager.getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		String Name = null;
-		try {
-			stmt = conn.createStatement();
 
-			rs = stmt.executeQuery("SELECT character_name FROM characters WHERE character_id=" +id +"");
-			rs.first();
-			Name = rs.getString("character_name");
-			rs.close(); 
-			stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} 
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			
-		}
-		return Name;	
+	public static void setMaxNumber(int number){
+		maxNumberOfConnection = number;
 	}
-
-
-	/* 
-	 * gets the attribute's name by its id
-	 */
-
-	public static String getAttributeNameFromID(String table, int id){
-
-		Statement stmt = null;
-		ResultSet rs = null;
-		String Name = null;
-		
-		if (table.equals(Tables.romantic_involvement.name()) ||
-				table.equals(Tables.parent.name()) ||
-				table.equals("child")) {
-			
-			return "none";
-		}
-		
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		JDCConnection conn = dbManager.getConnection();
-		try {
-			stmt = conn.createStatement();
-
-			rs = stmt.executeQuery("SELECT " +table+"_name FROM " + table+ " WHERE " + table+"_id=" + id);
-			rs.first();
-			Name = rs.getString(1);
-			rs.close(); 
-			stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return Name;
-	}
-
 
 	/*
 	 *prints connections in case found in history 	
 	 */
-	static void prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
+	public static void prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
+		DatabaseManager dbManager = DatabaseManager.getInstance();
 		String startName="", endName="";
 		String[] valueArr = new String[4];
 		String connections[] = connArr.split("\t");
@@ -134,10 +32,10 @@ public class algorithmUtils {
 		for (int i=0; i<connections.length; i++){
 			if (connections[i] != ""){ 
 				valueArr = connections[i].split(",");
-				startName =getNameFromId(Integer.parseInt(valueArr[0]));
-				endName = getNameFromId(Integer.parseInt(valueArr[1]));
+				startName =dbManager.getNameFromId(Integer.parseInt(valueArr[0]));
+				endName = dbManager.getNameFromId(Integer.parseInt(valueArr[1]));
 				int temp = Integer.parseInt(valueArr[3]);
-				atrName = getAttributeNameFromID(valueArr[2], temp);
+				atrName = dbManager.getAttributeNameFromID(valueArr[2], temp);
 				connectionArray[i] = new connectionElement(startName, endName, valueArr[2], atrName);
 				atrName = null;
 			}
@@ -156,222 +54,8 @@ public class algorithmUtils {
 		return s;
 	}
 
-	/* 
-	 * this function presents the 5 popular 
-	 */
-	public static void topSerches () {
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		JDCConnection conn = dbManager.getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		connectionElement[] connectionArray = new connectionElement[3];
 
-		try {
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM history ORDER BY count DESC LIMIT 5");
-			while (rs.next()) {
-				String startName = getNameFromId(rs.getInt(1));
-				String endName = getNameFromId(rs.getInt(2));
-				System.out.println("this is a connection between " + startName + " and " + endName);
-				System.out.println("this connection was found in " + rs.getDate(3));
-				prepareConnectionsFromHistory(rs.getString(4),connectionArray);
-				System.out.println();
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-
-	}
-
-	/*
-	 * gets unspecifiedId of a specific attribute
-	 */
-
-	public static int getUnspecifiedId(String table) {
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		JDCConnection conn = dbManager.getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		int unspecifiedID = 0;
-		String field = "";
-		if (table.equals(Tables.characters.name())){
-			field = "character";
-		}
-		else {
-			field = table;
-		}
-
-		try {
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
-			rs.first();
-			unspecifiedID= rs.getInt(1);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		return unspecifiedID;
-
-
-	}
-
-	/*
-	 * inserts connection found
-	 */
-
-	public static void insertIntoHistory (String connections, int start_id, int end_id) {
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		JDCConnection conn = dbManager.getConnection();
-		Statement stmt = null;
-		String toQuery;
-		String date;
-		String[] connectionsSplit = connections.split("\t");
-		String[] values;
-		String[] arr;
-		int length = connectionsSplit.length;
-		int first, second;
-
-		try {
-			stmt = conn.createStatement();
-			date = getCurrentDate();
-			String information = "";
-
-			for (int i=0; i<length; i++) {
-				arr = connectionsSplit[i].split(","); 
-				first = Integer.parseInt(arr[0]);
-
-				for (int j=i; j<length; j++) {
-					values = connectionsSplit[j].split(","); 
-					second = Integer.parseInt(values[1]);
-					information = "";
-					for (int k=i; k<j; k++) { 
-						if (connectionsSplit[k]!=null){
-							if (connectionsSplit[k+1]!=null){
-								information += connectionsSplit[k]+ "\t";
-							}
-							else {
-								information += connectionsSplit[k];
-								break;
-							}
-						}
-						else
-							break;
-					}
-
-					if (connectionsSplit[j]!= null){
-						information += connectionsSplit[j];
-					}
-					toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
-					stmt.executeUpdate(toQuery);
-				}
-
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-
-	public static void insertIntoFailedSearchesTable (int start_id, int end_id) {
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		JDCConnection conn = dbManager.getConnection();
-		Statement stmt = null;
-		String toQuery;
-		String date;
-
-		try {
-			stmt = conn.createStatement();
-			date = getCurrentDate();
-
-			toQuery = "INSERT IGNORE INTO failed_searches (character_id1, character_id2, date) values (" + start_id + "," + end_id + ",'" + date + "');";
-			stmt.executeUpdate(toQuery);
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
+// to be deleted	
 
 	public static void insertIntoStatisticTable (int start_id, int end_id, int num , long time) {
 		DatabaseManager dbManager = DatabaseManager.getInstance();
@@ -406,140 +90,8 @@ public class algorithmUtils {
 		}
 	}
 
-	/*
-	 * Searching for the couple in the failed_searches table. 
-	 */
-	public static boolean lookForConnectionInFailedSearchesTable (String start_name, String end_name, int start_id, int end_id){
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		JDCConnection conn = dbManager.getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		boolean result = false;
 
-		// checks if the couple is in failed_searches table
-		try {
-			stmt = conn.createStatement();
-			
-			rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
-			if (rs.next()) {
-				result = true;	
-			}
-			else {
-				rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
-				if (rs.next()){
-					result = true;
-				}
-			}
-			if (result) { //found the couple in the failed_searches table
-				System.out.println("couldn't find a connection between "+ start_name +" and "+ end_name);
-			}
-			
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	
-		return result;
-	}
-
-
-	/*
-	 * Searching for the connection in the history table. 
-	 * If exists - prints the connection to console.
-	 */
-	public static boolean lookForConnectionInHistory(String start_name, String end_name, int start_id, int end_id, connectionElement[] conenctionArray){
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		JDCConnection conn = dbManager.getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		boolean result = false, opposite = false;
-		int count;
-
-		// checks if the connection between these 2 characters already in history table
-		try {
-			stmt = conn.createStatement();
-			
-			rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
-			if (rs.next()) {
-				result = true;	
-			}
-			else {
-				rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
-				if (rs.next()){
-					result = true;
-					opposite = true;
-				}
-			}
-
-			if (result) { //found the connection in the history table
-				count = rs.getInt("count");
-				count++;
-				int id1 = rs.getInt(1);
-				int id2 = rs.getInt(2);
-				System.out.println("this connection was found in " + rs.getDate(3));
-				String getConnectionOfCharacters = rs.getString(4);
-				System.out.println("Match found between "+ start_name +" and "+ end_name);
-				stmt.executeUpdate("UPDATE history SET count = " + count + " WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
-
-				if (opposite) {
-					start_name = end_name;
-				}
-			
-				algorithmUtils.prepareConnectionsFromHistory(getConnectionOfCharacters, conenctionArray);
-			}
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		return result;
-
-	}
 	/*
 	 * builds a query for finding all values of a specific attribute of the character.
 	 * For example, if the attribute is 'power' and the character has 2 power - fly and jump - 
@@ -622,6 +174,7 @@ public class algorithmUtils {
 
 
 	public static void prepareTablesAndHashMaps(noEndAlg alg){
+		DatabaseManager dbManager = DatabaseManager.getInstance();
 		TreeMap<String, String> joinedAttributesMap = new TreeMap<String,String>();
 		int numOfTables = alg.tbs.length;
 		int unspec=0;
@@ -633,7 +186,7 @@ public class algorithmUtils {
 		for (int i=0; i< numOfTables; i++){
 			currentTable = alg.tbs[i].name();
 			if (currentTable.equals(Tables.characters.name())){
-				unspec = algorithmUtils.getUnspecifiedId(currentTable);
+				unspec = dbManager.getUnspecifiedId(currentTable);
 				alg.unspecifiedIdOfTables.put(Tables.characters.name(), unspec);
 			}
 			else if (!currentTable.contains("and")){
@@ -650,7 +203,7 @@ public class algorithmUtils {
 			putCouples = joinedAttributesMap.get(attributes[i]);
 			if (!attributes[i].equals(Tables.parent.name()) &&
 					!attributes[i].equals(Tables.romantic_involvement.name())){
-				unspec = algorithmUtils.getUnspecifiedId(attributes[i]);
+				unspec = dbManager.getUnspecifiedId(attributes[i]);
 				alg.unspecifiedIdOfTables.put(attributes[i], unspec);
 			}
 
@@ -690,7 +243,7 @@ public class algorithmUtils {
 	/*
 	 * get the connection from connection element
 	 */
-	public static String helperForGUI(connectionElement connElement){
+	public static String readOneConnectionElement(connectionElement connElement){
 		String theConnection;
 		String attribute = connElement.getAttribute();
 		String startName = connElement.getStartName();
@@ -711,12 +264,32 @@ public class algorithmUtils {
 		return theConnection;		
 	}
 	
+	
+	
+	/*
+	 * Helper funciton for the GUI for reading the entire connection chain
+	 */
+	public static String[] readConnectionChain(connectionElement[] connElementArray){
+		String[] connectionInStrings = new String[3];
+		for (int i=0; i<maxNumberOfConnection; i++){
+			if (connElementArray[i] != null){
+				connectionInStrings[i] = readOneConnectionElement(connElementArray[i]);
+			}
+			else {
+				break;
+			}
+
+		}
+		return connectionInStrings;
+	
+	}
+	
 	/*
 	 * prepare the connections' array from the charElement
 	 */
 		
 	public static String prepareConnectionsForGUI(charElement[] connection, connectionElement[] connectionArray){
-		
+		DatabaseManager dbManager = DatabaseManager.getInstance();
 		String startName="", endName="";
 		String toHisory="";
 		String atrName = null;
@@ -731,9 +304,9 @@ public class algorithmUtils {
 			attributeVal = conLast.attributeValue;
 			attributeString = noEndAlg.reverseTablesMap.get(attribute);
 
-			startName =algorithmUtils.getNameFromId(conLast.characterId);
-			endName = algorithmUtils.getNameFromId(conPrev.characterId);
-			atrName = algorithmUtils.getAttributeNameFromID(attributeString, attributeVal);
+			startName =dbManager.getNameFromId(conLast.characterId);
+			endName = dbManager.getNameFromId(conPrev.characterId);
+			atrName = dbManager.getAttributeNameFromID(attributeString, attributeVal);
 
 			toHisory+= conLast.characterId +","+conPrev.characterId +"," +attributeString + "," + atrName;
 			if (conPrev.prevElement != null){
