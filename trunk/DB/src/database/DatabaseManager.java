@@ -1246,6 +1246,60 @@ public class DatabaseManager {
 		return result;
 
 	}
+	
+	public int getSuccessRate(){
+		JDCConnection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		noEndAlg noEnd = noEndAlg.getInstance();
+		int total=0;
+		int success=0;
+
+		conn = getConnection();
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM success_rate");
+			rs.first();
+			total = rs.getInt(1);
+			success = rs.getInt(2);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			noEnd.setR(ConnectionResult.Exception_In_Success_Rate);
+			return -1;
+		}
+		finally{
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEnd.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEnd.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					noEnd.setR(ConnectionResult.Close_Exception);
+				}
+			}
+			
+		}
+		
+		int percentageRateOfSuccess = (success / total) * 10;
+		return percentageRateOfSuccess;
+		
+	}
 
 
 
