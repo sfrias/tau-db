@@ -6,6 +6,7 @@ import javax.swing.SwingWorker;
 
 import GUI.GuiHandler;
 import GUI.frames.PlayFrame;
+import GUI.model.AlgorithmModel;
 import GUI.model.CharacterModel;
 import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.GenericCardPanel;
@@ -16,11 +17,12 @@ import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
 import database.DatabaseManager;
+import enums.ConnectionResult;
 import enums.ExecutionResult;
 
 public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 
-	enum Action{ADD, EDIT, DELETE, QUERY};
+	enum Action{ADD, EDIT, DELETE, QUERY, ALGROTITHM};
 
 	protected DatabaseManager databaseManager = DatabaseManager.getInstance();
 	private Action action;
@@ -192,6 +194,26 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				GuiHandler.showResultSuccessDialog(action.toString());
 				editCharactersCard.clearValues();
 				break;
+			}
+			case Success_Algorithm:{
+				AlgorithmModel model = (AlgorithmModel) result.getModel();
+				ConnectionResult connResult = model.getConnResult();
+				switch (connResult){
+
+				case Did_Not_Find_Connection:
+				case Found_Connection:
+					GuiHandler.showAlgrithmResultDialog(true,connResult.toString(), model.getResultString());
+					break;
+				case Found_Connection_Of_Length_0:
+					GuiHandler.showAlgrithmResultDialog(false, connResult.toString(), model.getResultString());
+					break;
+					
+				default:
+					break;
+				}
+				if (GuiHandler.isStatusFlashing()){
+					GuiHandler.stopStatusFlash();
+				}
 			}
 			default:
 				break;
