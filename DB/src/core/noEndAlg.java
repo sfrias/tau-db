@@ -21,33 +21,50 @@ import enums.Tables;
 
 public class noEndAlg{
 
+	//mutual fields for all instances
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
+	private static JDCConnection conn=null;
+	private static noEndAlg instance = null;
+	private static Tables[] tbs;
+	private static String[] tablesArr;
+	private static int indexOfJumps;
+	private static int maxConnection;
+	private int globalNumOfConnections;
+	private String start_name = null;
+	private String end_name = null;
+	private static TreeMap<String, Short> tablesMap = new TreeMap<String, Short>();
+	private static TreeMap<Short, String> reverseTablesMap = new TreeMap<Short, String>();
+	private static TreeMap<String, Integer> unspecifiedIdOfTables = new TreeMap<String,Integer>();
+	private static TreeMap<String, String> printRepresentation = new TreeMap<String,String>();
+	private HashSet<Integer> foundCharactersIDs = new HashSet<Integer>();
+	private List<charElement> currentPhase = new ArrayList<charElement>();
+	private List<charElement> previousPhase = new ArrayList<charElement>();
+	
+	//dynamic fields
 	private DatabaseManager dbManager = DatabaseManager.getInstance();
-	static JDCConnection conn=null;
-	private static ConnectionResult r = ConnectionResult.Ok;
-
-	Tables[] tbs;
-	String[] tablesArr;
-	int indexOfJumps;
-	int maxConnection;
-	int globalNumOfConnections;
-	int skips=0;
-	int end_id;
-
-	static TreeMap<String, Short> tablesMap = new TreeMap<String, Short>();
-	static TreeMap<Short, String> reverseTablesMap = new TreeMap<Short, String>();
-	static HashSet<Integer> foundCharactersIDs = new HashSet<Integer>();
-	List<charElement> currentPhase = new ArrayList<charElement>();
-	List<charElement> previousPhase = new ArrayList<charElement>();
-	TreeMap<String, Integer> unspecifiedIdOfTables = new TreeMap<String,Integer>();
-
+	private int end_id;
+	private ConnectionResult status = ConnectionResult.Ok;
+	
 	public noEndAlg(){
 		conn = dbManager.getConnection() ;
-		if (conn==null){
+		if (conn==null){ //an error occurred while trying to get a connection 
 			setR(ConnectionResult.Exception);
 		}
-
 		tbs = Tables.values();
+		algorithmUtils.prepareTablesAndHashMaps();
+	}
+	
+	
+	public static noEndAlg getInstance(){
+		if (instance==null){
+			instance = new noEndAlg();	
+		}
+		return instance;
+	}
+	
+	
+	public static Tables[] getTables(){
+		return tbs;
 	}
 
 
@@ -55,18 +72,65 @@ public class noEndAlg{
 		return conn;
 	}
 
-	public static ConnectionResult getR (){
-		return r;
+	public String getStartName(){
+		return start_name;
+	}
+	public String getEndName(){
+		return end_name;
+	}
+	
+	public ConnectionResult getR (){
+		return status;
 	}
 
-	public static void setR(ConnectionResult re){
-		if (r != ConnectionResult.Ok){ //we want to hold the first error that occurred
+	
+	public  void setR(ConnectionResult re){
+		if (status != ConnectionResult.Ok){ //we want to hold the first error that occurred
 			return;
 		}
-		r = re;
+		status = re;
 	}
 
-
+	
+	public static void setIndexOfJumps(int idx){
+		indexOfJumps = idx;
+	}
+	
+	public static void setMaxNumOfConnection(int maxNum){
+		maxConnection = maxNum;
+	}
+	
+	public static int getMaxNumOfConnection(){
+		return maxConnection;
+	}
+	
+	public static void putInTabelsMap(String key, Short value){
+		tablesMap.put(key, value);
+	}
+	
+	public static void putInReversedTabelsMap( Short key, String value){
+		reverseTablesMap.put(key, value);
+	}
+	
+	public static void putInUnspecified( String key, Integer value){
+		unspecifiedIdOfTables.put(key, value);
+	}
+	
+	public static void putInPrintRepresentation( String key, String value){
+		printRepresentation.put(key, value);
+	}
+	
+	public static String getFromPrintRepresentation( String key){
+		return printRepresentation.get(key);
+	}
+	
+	public static void setTablesArr(String[] arr){
+		tablesArr = arr;
+	}
+	
+	public static String getValueFromReversedTableMap(short key){
+		return reverseTablesMap.get(key);
+	}
 
 	/*
 	 * While the phase is smaller than the maximum number of connections, we are running over all characters found in the last phase
@@ -108,7 +172,9 @@ public class noEndAlg{
 
 
 
-
+	/*
+	 * Place of birth is a special attribute since a character could have only one value.
+	 */
 
 	private boolean helperForDirectConnectionToAnyPlaceOfBirth(ResultSet charsWithAtrRS,charElement start_element, String currentAtr, int atrID, charElement[] result){
 
@@ -138,6 +204,12 @@ public class noEndAlg{
 
 	}
 
+	
+
+	/*
+	 * For each character that share a mutual attribute with the character represented by start element, we check whether this character
+	 * was already found. If not, we add the connection found, using 'addNewConnection' function.
+	 */
 
 	private boolean helperForDirectConnectionToAll	(ResultSet charsWithAtrRS,charElement start_element, String currentAtr, charElement[] result){
 
@@ -167,6 +239,12 @@ public class noEndAlg{
 	}
 
 
+	/*
+	 * For each character that share a mutual attribute with the character represented by start element, we check whether this character
+	 * was already found in the current phase (this function is called only if the character wasn't found in previous phases).
+	 * If not, we add the connection found and add this character to the found character both in the current phase and in general.
+	 */
+
 
 	private boolean addNewConnection(int currentid, charElement start_element, String currentAtr, int atrID, charElement[] result){
 		charElement connection = new charElement(currentid, start_element);
@@ -183,7 +261,10 @@ public class noEndAlg{
 		return false;
 	}
 
-
+/*
+ * For an attribute of relation (parent-child / romantic involvement), we need to check the exact relation.
+ * In case of a parent-child attribute it matters (while in the romantic involvement the order doesn't matter).
+ */
 
 	private boolean helperForDirectConnectionToAnyInRealtions(ResultSet charsWithAtrRS,charElement start_element, String currentAtr, charElement[] result){
 
@@ -224,6 +305,9 @@ public class noEndAlg{
 		return foundMatch;
 	}
 
+	/*
+	 * returns a string that will be used in the query of finding all characters that share an attribute with the character start_id.
+	 */
 
 	private String findConnectedCharacters(String joinedAtr,String currentAtr,int start_id, int unspecifiedIdOfCharacter, boolean directToEndID){
 
@@ -291,28 +375,9 @@ public class noEndAlg{
 	}
 
 
-
-	private String directConnectionRealtions(String currentAtr, int start_id,int unspecifiedIdOfCharacter, boolean directToEnd){
-		String first = "character_id1";
-		String second = "character_id2";
-		String parent = "parent_character_id";
-		String child = "child_character_id";
-		String charactersWithAtr;
-
-		if (currentAtr.equals(Tables.parent.name()) && directToEnd) { //only table that has meaning to each column
-			charactersWithAtr = algorithmUtils.relationsQuery(parent, child, currentAtr,"=", start_id, end_id);
-		}
-		else if (currentAtr.equals(Tables.parent.name())){
-			charactersWithAtr = algorithmUtils.relationsQuery(parent, child, currentAtr,"!=", start_id, unspecifiedIdOfCharacter);
-		}
-		else if (directToEnd){
-			charactersWithAtr = algorithmUtils.relationsQuery(first, second, currentAtr,"=", start_id, end_id);			
-		}
-		else {
-			charactersWithAtr = algorithmUtils.relationsQuery(first, second, currentAtr,"!=", start_id, unspecifiedIdOfCharacter);
-		}
-		return charactersWithAtr;
-	}
+	/*
+	 * returns the string that will be used in the query for all characters that share the same place of birth with the start_id character
+	 */
 
 
 
@@ -366,6 +431,14 @@ public class noEndAlg{
 
 	}
 
+	
+	/*
+	 * This function is used only if the current phase doesn't equal to the maximum number of connections allowed.
+	 * Here we find all characters that are directly connected to the character represented by start_element.
+	 * For each character that hasn't been found before, we add a new charElement of this character.
+	 * If character was already found, no other instance is created for this character.
+	 * If an error hasn't occurred in any phase of this function, the result value will be true. Otherwise - false.
+	 */
 
 
 	private boolean directConnectionToAny(charElement start_element, charElement[] result){
@@ -405,7 +478,7 @@ public class noEndAlg{
 				else if (	tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
 						tablesArr[atr].equals(Tables.parent.name())){
 
-					charactersWithAtr = directConnectionRealtions(currentAtr, start_id, unspecifiedIdOfCharacter, false);
+					charactersWithAtr = algorithmUtils.directConnectionRealtions(currentAtr, start_id, unspecifiedIdOfCharacter,end_id, false);
 					charToAny = charWithAtrStmt.executeQuery(charactersWithAtr);
 					foundMatch = helperForDirectConnectionToAnyInRealtions(charToAny, start_element, currentAtr, result);
 					if (getR() != ConnectionResult.Ok){
@@ -459,7 +532,13 @@ public class noEndAlg{
 		return foundMatch;
 	}
 
-
+	/*
+	 * This function is used only if the current phase equals to the maximum number of connections allowed.
+	 * Here we search if the end_id character share an attribute with (at least) one of the characters found during the previous phase.  
+	 * If an error hasn't occurred and we found a connection to end_id - the result will be true. Otherwise - false.
+	 * The charElement that represents the end_id will be returned to the calling function through the array 'result', in the first cell.
+	 * This allows us to pass the element by his reference, and not by his value (not creating duplicates).
+	 */
 
 	private boolean DirectConnectionToEnd(charElement start_element, charElement[] result){
 
@@ -500,7 +579,7 @@ public class noEndAlg{
 				else if (	tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
 						tablesArr[atr].equals(Tables.parent.name())){
 
-					charactersWithAtr = directConnectionRealtions(currentAtr, start_id, -1, true);
+					charactersWithAtr = algorithmUtils.directConnectionRealtions(currentAtr, start_id, -1,end_id, true);
 					charsWithAtrRS= charAtrStmt.executeQuery(charactersWithAtr);
 					if (charsWithAtrRS.next()){
 						if (charsWithAtrRS.getInt(1) == start_id){
@@ -589,14 +668,14 @@ public class noEndAlg{
 			return result;
 		}
 
-		maxConnection=3;
+		setMaxNumOfConnection(3);
 		algorithmUtils.setMaxNumber(maxConnection);
 		connectionElement[] connectionArray = new connectionElement[maxConnection];
 
 		boolean alreadyExists = false;
 		this.end_id = end_id;
-		String start_name=dbManager.getNameFromId(start_id);
-		String end_name=dbManager.getNameFromId(end_id);
+		start_name=dbManager.getNameFromId(start_id);
+		end_name=dbManager.getNameFromId(end_id);
 		if (getR() != ConnectionResult.Ok){ //an error occurred while trying to extract the names of the characters
 			return result;
 		}
@@ -702,6 +781,42 @@ public class noEndAlg{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		noEndAlg alg = noEndAlg.getInstance();
+		ReturnElement returnElem = alg.lookForConnection(1, 2);
+		if (returnElem.getResult() == ConnectionResult.Exception || returnElem.getResult() == ConnectionResult.Close_Exception){
+			//TODO PRINT TO USER TO TRY AGAIN LATER
+		}
+		else if (returnElem.getResult() == ConnectionResult.Did_Not_Find_Connection){
+			//TODO PRINT TO USER THAT NO CONNECTION WAS FOUND BETWEEN THESE CHARACTERS
+			//TODO NAMES ARE :
+			alg.getStartName();
+			alg.getEndName();
+	
+		}
+		else if (returnElem.getResult() == ConnectionResult.Found_Connection_Of_Length_0){
+			//TODO PRINT TO USER THAT HE HAS TO GIVE TWO DIFFERENT CHARACTERS AS AN INPUT
+		}
+		
+		else if (returnElem.getResult() == ConnectionResult.Found_Connection){
+			//TODO PRINT TO USER THAT THE CONNECTION WAS FOUND BETWEEN
+			alg.getStartName();
+			//TODO AND
+			alg.getEndName();
+			//USE THIS LOOP TO PRINT THE DESCRIPTION OF THE CONNECTION CHAIN
+			String[] connectionChain = algorithmUtils.readConnectionChain(returnElem.getConnectionArray());
+			for (int i=0; i< connectionChain.length; i++){
+				if (connectionChain[i]!=null){
+					//TODO PRINT TO THE SCREEN THE CONNECTION 
+					// NOTICE THAT THERE'S NO \n AT THE END OF EACH STRING, SO IF YOU WANT TO PRINT THE STRING ONE AFTER ANOTHER, YOU HAVE
+					// TO INSERT THAT LOGIC IN THE GUI.
+					// NOTICE THAT THE STRING OF THE ATTRIBUTE ARE ALREADY IN THE PRINT REPRESENTATION (TOSTRING AND NOT NAME)
+				}
+			}
+
+		}
+		
+		
 
 	}
 
