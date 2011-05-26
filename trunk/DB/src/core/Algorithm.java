@@ -790,10 +790,13 @@ public class Algorithm{
 			e.printStackTrace();
 		}
 	*/	
+
 		Algorithm alg = Algorithm.getInstance();
 		alg.initialization();
 		ReturnElement returnElem = alg.lookForConnection(1, 6);
 		returnElem.getResult();
+	}
+}
 		/*
 		if (returnElem.getResult() == ConnectionResult.Exception || returnElem.getResult() == ConnectionResult.Close_Exception){
 			//TODO PRINT TO USER TO TRY AGAIN LATER
@@ -823,17 +826,15 @@ public class Algorithm{
 					// TO INSERT THAT LOGIC IN THE GUI.
 					// NOTICE THAT THE STRING OF THE ATTRIBUTE ARE ALREADY IN THE PRINT REPRESENTATION (TOSTRING AND NOT NAME)
 				}
-			}
-
-		}*/
+	
+*/
 		
 		
 
-	}
 
 
 
 
 
 
-}
+

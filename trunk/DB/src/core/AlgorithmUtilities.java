@@ -39,9 +39,9 @@ public class AlgorithmUtilities {
 				if (noEnd.getR()!= ConnectionResult.Ok){
 					break;
 				}
-				int temp = Integer.parseInt(valueArr[3]);
-				atrName = dbManager.getAttributeNameFromID(valueArr[2], temp);
-				connectionArray[i] = new connectionElement(startName, endName, valueArr[2], atrName);
+				//int temp = Integer.parseInt(valueArr[3]);
+				atrName = valueArr[3];
+				connectionArray[i] = new connectionElement(startName, endName, noEndAlg.getFromPrintRepresentation(valueArr[2]), atrName);
 				atrName = null;
 			}
 		}
