@@ -27,7 +27,7 @@ public class DatabaseManager {
 
 	//TODO add finally statements to all methods and check null!!!
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "mapo00";
+	private final static String PASSWORD = "armiN203";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
@@ -589,6 +589,58 @@ public class DatabaseManager {
 		}
 	}
 
+	
+	
+	public ExecutionResult executeUpdateInSuccesRate(boolean matchfound) {
+
+		String tableName = "success_rate";
+		String success = tableName + "_successful_searches";
+		String fail = tableName + "_unsuccessful_searches";
+		String total = tableName + "_searches";
+		JDCConnection conn = null;
+		Statement stmt = null;
+		try {
+			conn = getConnection();
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("UPDATE " + tableName + " SET ");
+			if (matchfound){
+				stringBuilder.append(total + "= " + total + "+1, " + success + " = "  + success + "+1");				
+			}
+			else {
+				stringBuilder.append(total + "= " + total + "+1, " + fail + " = "  + fail + "+1");				
+			}
+
+			stmt = conn.createStatement();
+			stmt.executeUpdate(stringBuilder.toString());
+
+			return ExecutionResult.Success_Simple_Add_Edit_Delete;
+
+		} catch (SQLException e) {
+			System.err.println("An SQLException was thrown at executeUpdate("+ tableName + ")");
+			return ExecutionResult.Exception;
+		}
+		finally {
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.setAutoCommit(true);
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	
+	
+
 	public ExecutionResult executeEditCharacters(String[] tables, Pair[][] addedValues, Pair[][] removedValues, Pair character, int place_of_birth_id) {
 		
 		JDCConnection conn = null;
@@ -656,6 +708,7 @@ public class DatabaseManager {
 				}
 			}
 		}
+
 	}
 
 	public ExecutionResult executeDelete(Tables table, int id) {
