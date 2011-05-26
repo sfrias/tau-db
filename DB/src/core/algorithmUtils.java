@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import connection.JDCConnection;
 import database.DatabaseManager;
+import enums.ConnectionResult;
 import enums.Tables;
 
 
@@ -34,6 +35,9 @@ public class algorithmUtils {
 				valueArr = connections[i].split(",");
 				startName =dbManager.getNameFromId(Integer.parseInt(valueArr[0]));
 				endName = dbManager.getNameFromId(Integer.parseInt(valueArr[1]));
+				if (noEndAlg.getR()!= ConnectionResult.Ok){
+					break;
+				}
 				int temp = Integer.parseInt(valueArr[3]);
 				atrName = dbManager.getAttributeNameFromID(valueArr[2], temp);
 				connectionArray[i] = new connectionElement(startName, endName, valueArr[2], atrName);
@@ -128,11 +132,11 @@ public class algorithmUtils {
 
 
 
-	public static String allCharactersWithTheSameAttributeQuery(String select, String from,String where1, String where2,String where3, boolean firstRun){
+	public static String allCharactersWithTheSameAttributeQuery(String select, String from,String where1, String where2,String where3, boolean two_parameters){
 		String query;
 		query = "SELECT "+select +" FROM " + from +" WHERE " + where1 + " AND "; 
 
-		if (!firstRun){
+		if (!two_parameters){
 			query +=   where2 +   " AND " 
 			+ where3 ;
 		}
@@ -156,7 +160,7 @@ public class algorithmUtils {
 	}
 
 
-	public static String getAllValuesOfASpecificAttributes(String joinedAtr, String currentAtr, int start_id, int unspecifiedIdOfCharacter){
+	public static String getAllValuesOfASpecificAttribute(String joinedAtr, String currentAtr, int start_id, int unspecifiedIdOfCharacter){
 		String charactersWithAtr = "SELECT " +  joinedAtr + "_character_id ," + joinedAtr + "_" + currentAtr + "_id " +
 		" FROM " + joinedAtr + 
 		" WHERE " + joinedAtr +  "_character_id !=" + unspecifiedIdOfCharacter + " AND " +
@@ -187,6 +191,9 @@ public class algorithmUtils {
 			currentTable = alg.tbs[i].name();
 			if (currentTable.equals(Tables.characters.name())){
 				unspec = dbManager.getUnspecifiedId(currentTable);
+				if (noEndAlg.getR()!= ConnectionResult.Ok){
+					return;
+				}
 				alg.unspecifiedIdOfTables.put(Tables.characters.name(), unspec);
 			}
 			else if (!currentTable.contains("and")){
@@ -204,6 +211,9 @@ public class algorithmUtils {
 			if (!attributes[i].equals(Tables.parent.name()) &&
 					!attributes[i].equals(Tables.romantic_involvement.name())){
 				unspec = dbManager.getUnspecifiedId(attributes[i]);
+				if (noEndAlg.getR()!= ConnectionResult.Ok){
+					return;
+				}
 				alg.unspecifiedIdOfTables.put(attributes[i], unspec);
 			}
 
@@ -236,6 +246,7 @@ public class algorithmUtils {
 
 		noEndAlg.tablesMap.put("child", (short)alg.tablesArr.length);
 		noEndAlg.reverseTablesMap.put((short)alg.tablesArr.length, "child");
+		return;
 	}
 	
 	
@@ -267,7 +278,7 @@ public class algorithmUtils {
 	
 	
 	/*
-	 * Helper funciton for the GUI for reading the entire connection chain
+	 * Helper function for the GUI for reading the entire connection chain
 	 */
 	public static String[] readConnectionChain(connectionElement[] connElementArray){
 		String[] connectionInStrings = new String[3];
@@ -308,6 +319,9 @@ public class algorithmUtils {
 			endName = dbManager.getNameFromId(conPrev.characterId);
 			atrName = dbManager.getAttributeNameFromID(attributeString, attributeVal);
 
+			if (noEndAlg.getR()!= ConnectionResult.Ok){
+				return null;
+			}
 			toHisory+= conLast.characterId +","+conPrev.characterId +"," +attributeString + "," + atrName;
 			if (conPrev.prevElement != null){
 				toHisory+= "\t";
