@@ -1,12 +1,9 @@
 package core;
 
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TreeMap;
 
-import connection.JDCConnection;
 import database.DatabaseManager;
 import enums.ConnectionResult;
 import enums.Tables;
@@ -22,7 +19,7 @@ public class AlgorithmUtilities {
 	}
 
 	/*
-	 *prints connections in case found in history 	
+	 *Prepares a connection array for GUI in case found in history 	
 	 */
 	public static void prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
@@ -32,14 +29,13 @@ public class AlgorithmUtilities {
 		String connections[] = connArr.split("\t");
 		String atrName = null;
 		for (int i=0; i<connections.length; i++){
-			if (connections[i] != ""){ 
+			if (!connections[i].equals("")){ 
 				valueArr = connections[i].split(",");
 				startName =dbManager.getNameFromId(Integer.parseInt(valueArr[0]));
 				endName = dbManager.getNameFromId(Integer.parseInt(valueArr[1]));
 				if (noEnd.getR()!= ConnectionResult.Ok){
 					break;
 				}
-				//int temp = Integer.parseInt(valueArr[3]);
 				atrName = valueArr[3];
 				connectionArray[i] = new connectionElement(startName, endName, valueArr[2], atrName);
 				atrName = null;
@@ -58,43 +54,6 @@ public class AlgorithmUtilities {
 		String s = d[0]+"."+d[1]+"."+d[2];
 		return s;
 	}
-
-
-// to be deleted	
-
-	public static void insertIntoStatisticTable (int start_id, int end_id, int num , long time) {
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		JDCConnection conn = dbManager.getConnection();
-		Statement stmt = null;
-		String toQuery;
-
-		try {
-			stmt = conn.createStatement();
-
-			toQuery = "INSERT IGNORE INTO statistic (character_id1, character_id2, num_of_connections, time) values (" + start_id + "," + end_id + "," + num + "," + (int)time+ ");";
-			stmt.executeUpdate(toQuery);
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
 
 	
 	/*
@@ -226,7 +185,6 @@ public class AlgorithmUtilities {
 				attributes[indexOfAttr]=currentTable;
 				indexOfAttr++;
 				Algorithm.putInPrintRepresentation(currentTable,  Algorithm.getTables()[i].toString());
-				//System.out.println(currentTable + " -->" + Algorithm.getTables()[i].toString());
 			}
 			else {
 				atrTable = currentTable.substring(15);
@@ -356,7 +314,6 @@ public class AlgorithmUtilities {
 			if (conPrev.prevElement != null){
 				toHisory+= "\t";
 			}
-			System.out.println(Algorithm.getFromPrintRepresentation(attributeString));
 			connectionArray[i] = new connectionElement(startName, endName, Algorithm.getFromPrintRepresentation(attributeString), atrName);
 			i++;
 			conLast = conPrev;
