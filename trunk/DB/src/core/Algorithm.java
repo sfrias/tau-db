@@ -47,7 +47,6 @@ public class Algorithm{
 	
 	
 	public Algorithm(){
-		
 		tbs = Tables.values();
 	}
 	
@@ -71,11 +70,6 @@ public class Algorithm{
 		return tbs;
 	}
 
-/*
-	public JDCConnection getConnention(){
-		return conn;
-	}
-*/
 	public String getStartName(){
 		return start_name;
 	}
@@ -715,7 +709,8 @@ public class Algorithm{
 		charElement[] theConnection = new charElement[1];
 		charElement startElement = new charElement(start_id, null);
 		previousPhase.add(startElement);
-
+		String connectionString = null;
+		
 		for (int level = 1; level<maxConnection+1; level++) {
 			globalNumOfConnections = level;
 			matchFound = findConnection(theConnection);
@@ -725,28 +720,27 @@ public class Algorithm{
 			}
 
 			if (matchFound) {
-				//System.out.println("Match found between "+ start_name +" and "+ end_name);
-				String connectionString = AlgorithmUtilities.prepareConnectionsForGUI(theConnection,connectionArray);
+				connectionString = AlgorithmUtilities.prepareConnectionsForGUI(theConnection,connectionArray);
 				if (connectionString==null){ //an error has occurred
 					break;
 				}
-				dbManager.insertIntoHistory(connectionString, start_id, end_id); // if an error occurred here we do not want to throw an exception
-				result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
-				clearAll();
-				dbManager.executeUpdateInSuccesRate(true);
+
 				return result;
 			}
-			//else {
-			//	System.out.println("cannot find a connection in " + level + " num of connection\n");
-			//}
 		}
 
 		clearAll();
-		//System.out.println("couldn't find a connection");
-		if (getR() == ConnectionResult.Ok){ //if an error has occurred that doesn't mean there isn't a connection 
-			dbManager.insertIntoFailedSearchesTable(start_id, end_id); // if an error occurred here we do not want to throw an exception
+
+		if (getR() == ConnectionResult.Ok && !matchFound){ 
+			dbManager.insertIntoFailedSearchesTable(start_id, end_id);
 			result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
 			dbManager.executeUpdateInSuccesRate(false);
+		}
+		
+		else if (getR() == ConnectionResult.Ok && matchFound){ 
+			dbManager.insertIntoHistory(connectionString, start_id, end_id); // if an error occurred here we do not want to throw an exception
+			result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
+			dbManager.executeUpdateInSuccesRate(true);
 		}
 
 		return result;
