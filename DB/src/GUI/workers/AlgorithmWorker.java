@@ -23,6 +23,7 @@ public class AlgorithmWorker extends GenericWorker{
 	protected ResultHolder doInBackground() {
 
 		Algorithm alg = Algorithm.getInstance();
+		alg.initialization();
 		ReturnElement returnElem = alg.lookForConnection(firstCharId, secondCharId);
 		String firstCharName = alg.getStartName();
 		String secondCharName = alg.getEndName();
