@@ -1000,13 +1000,14 @@ public class DatabaseManager {
 	public void insertIntoHistory (String connections, int start_id, int end_id) {
 		JDCConnection conn = null;
 		Statement stmt = null;
-		String toQuery;
+		String toQuery = null;
 		String date;
 		String[] connectionsSplit = connections.split("\t");
 		String[] values;
 		String[] arr;
 		int length = connectionsSplit.length;
 		int first, second;
+		boolean execute = false;
 		Algorithm noEnd = Algorithm.getInstance();
 		try {
 			conn = getConnection();
@@ -1041,13 +1042,19 @@ public class DatabaseManager {
 					}
 					
 					if (i==0 && j==length-1){
-						toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information,count) values (" + first + "," + second + ",'" + date + "', '" + information + "',1);";			
+						toQuery = "INSERT INTO history (character_id1, character_id2, date, information,count) values (" + first + "," + second + ",'" + date + "', '" + information + "',1);";
+						execute = true;
 					}
 					else {
-						toQuery = "REPLACE INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
+						if (!lookForConnectionInHistory(first, second, new connectionElement[Algorithm.getMaxNumOfConnection()])){
+							toQuery = "INSERT INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
+							execute = true;
+						}
 					}
-
-					stmt.executeUpdate(toQuery);
+					
+					if (execute){
+						stmt.executeUpdate(toQuery);
+					}
 				}
 
 			}
@@ -1121,7 +1128,7 @@ public class DatabaseManager {
 	/*
 	 * Searching for the couple in the failed_searches table. 
 	 */
-	public  boolean lookForConnectionInFailedSearchesTable (String start_name, String end_name, int start_id, int end_id){
+	public  boolean lookForConnectionInFailedSearchesTable (int start_id, int end_id){
 		JDCConnection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -1142,9 +1149,9 @@ public class DatabaseManager {
 					result = true;
 				}
 			}
-			if (result) { //found the couple in the failed_searches table
-				System.out.println("couldn't find a connection between "+ start_name +" and "+ end_name);
-			}
+			//if (result) { //found the couple in the failed_searches table
+				//System.out.println("couldn't find a connection between "+ start_name +" and "+ end_name);
+			//}
 			
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -1186,7 +1193,7 @@ public class DatabaseManager {
 	 * Searching for the connection in the history table. 
 	 * If exists - prints the connection to console.
 	 */
-	public boolean lookForConnectionInHistory(String start_name, String end_name, int start_id, int end_id, connectionElement[] conenctionArray){
+	public boolean lookForConnectionInHistory(int start_id, int end_id, connectionElement[] conenctionArray){
 		JDCConnection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -1215,16 +1222,17 @@ public class DatabaseManager {
 				count++;
 				int id1 = rs.getInt(1);
 				int id2 = rs.getInt(2);
+				String date = AlgorithmUtilities.getCurrentDate();
 				//TODO PRINT THIS TO THE SCREEN
 				System.out.println("this connection was found in " + rs.getDate(3));
 				String getConnectionOfCharacters = rs.getString(4);
 				//TODO PRINT THIS TO THE SCREEN
-				System.out.println("Match found between "+ start_name +" and "+ end_name);
-				stmt.executeUpdate("UPDATE history SET count = " + count + " WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
+				//System.out.println("Match found between "+ start_name +" and "+ end_name);
+				stmt.executeUpdate("UPDATE history SET count = " + count + ", date = '" + date + "' WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
 
-				if (opposite) {
-					start_name = end_name;
-				}
+				//if (opposite) {
+					//start_name = end_name;
+				//}
 			
 				AlgorithmUtilities.prepareConnectionsFromHistory(getConnectionOfCharacters, conenctionArray);
 			}

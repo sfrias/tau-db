@@ -690,7 +690,7 @@ public class Algorithm{
 		}
 
 		// checks if the connection between these 2 characters already in history table
-		alreadyExists = dbManager.lookForConnectionInHistory(start_name, end_name, start_id, end_id, connectionArray);
+		alreadyExists = dbManager.lookForConnectionInHistory(start_id, end_id, connectionArray);
 		if (getR() != ConnectionResult.Ok){ //an error occurred while trying to extract the names of the characters		
 			return result;
 		}
@@ -701,7 +701,7 @@ public class Algorithm{
 			return result;
 		}
 
-		alreadyExists = dbManager.lookForConnectionInFailedSearchesTable(start_name, end_name, start_id, end_id);
+		alreadyExists = dbManager.lookForConnectionInFailedSearchesTable(start_id, end_id);
 		if (getR() != ConnectionResult.Ok){ //an error occurred while trying to extract the names of the characters		
 			return result;
 		}
