@@ -1039,7 +1039,14 @@ public class DatabaseManager {
 					if (connectionsSplit[j]!= null){
 						information += connectionsSplit[j];
 					}
-					toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
+					
+					if (i==0 && j==length-1){
+						toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information,count) values (" + first + "," + second + ",'" + date + "', '" + information + "',1);";			
+					}
+					else {
+						toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
+					}
+
 					stmt.executeUpdate(toQuery);
 				}
 
