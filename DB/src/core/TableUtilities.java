@@ -141,10 +141,25 @@ public class TableUtilities {
 			}
 
 			else if (table.equals(Tables.characters.name())){
-				//I still need to add here something
+				String insert = insertStatement;
+				int id;
+				DatabaseManager dbManager = DatabaseManager.getInstance();
+				TreeMap<String, Integer> interstingMainValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters" , 1, 2);
+				
 				while ((lineRead = bufferedReader.readLine()) != null) {
+					
 					strarr = lineRead.split("\t", 27);
-					bufferedWriter.append(insertStatement);
+					
+					if (update){ //if we update, we want to check if the character is already in the table, if so - we REPLACE it, otherwise - insert it 
+						strarr = lineRead.split("\t", 27);
+						tempString = strarr[1].replace("\'", "\\'");
+						if (interstingMainValuesMap.get(tempString) != null) {
+							id = interstingMainValuesMap.get(tempString);
+							insert = "REPLACE INTO characters (character_id,character_name,character_fb_id,character_place_of_birth_id) values(" + id + ",";
+						}
+					}
+					
+					bufferedWriter.append(insert);
 
 					for (int i = 0; i <4; i++) {
 						tempString = strarr[i].replace("\'", "\\'");
@@ -166,8 +181,11 @@ public class TableUtilities {
 					}
 				}
 
-				bufferedWriter.append(insertStatement);
+				if (!update){ //if we update we don't want to insert it again
+				bufferedWriter.append(insert);
 				bufferedWriter.append("'Unspecified', 'Unspecified',(SELECT place_of_birth_id FROM place_of_birth Where place_of_birth_name LIKE 'Unspecified'));\n");
+				}
+					
 			}
 
 			else {
@@ -593,32 +611,6 @@ public class TableUtilities {
 		}
 		return ExecutionResult.Success_Simple_Add_Edit_Delete;
 	}
-	/*
-	private static void createIndexes() throws IOException{
-
-		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
-		deleteSqlFile(sqlFile);
-		sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
-		FileWriter fileWriter = new FileWriter(sqlFile, true);
-		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-		bufferedWriter.append("CREATE INDEX chars_and_POB_ix ON characters(character_id, character_place_of_birth_id);\n");
-		bufferedWriter.append("CREATE INDEX chars_and_occ_ix ON characters_and_occupation(characters_and_occupation_character_id, characters_and_occupation_occupation_id);\n");
-		bufferedWriter.append("CREATE INDEX chars_and_pow_ix ON characters_and_power(characters_and_power_character_id, characters_and_power_power_id);\n");
-		bufferedWriter.append("CREATE INDEX chars_and_org_ix ON characters_and_organization(characters_and_organization_character_id, characters_and_organization_organization_id);\n");
-		bufferedWriter.append("CREATE INDEX chars_and_sc_ix ON characters_and_school(characters_and_school_character_id, characters_and_school_school_id);\n");
-		bufferedWriter.append("CREATE INDEX chars_and_uni_ix ON characters_and_universe(characters_and_universe_character_id, characters_and_universe_universe_id);\n");
-		bufferedWriter.append("CREATE INDEX chars_and_dis_ix ON characters_and_disease(characters_and_disease_character_id, characters_and_disease_disease_id);\n");
-		bufferedWriter.append("CREATE INDEX parent_ix ON parent(parent_parent_character_id, parent_child_character_id);\n");
-		bufferedWriter.append("CREATE INDEX romantic_ix ON romantic_involvement(romantic_involvement_character_id1, romantic_involvement_character_id2);\n");
-		bufferedWriter.flush();
-		bufferedWriter.close();
-		fileWriter.close();
-
-		AntUtils.executeTarget(Targets.POPULATE);
-
-		System.out.println("finished indexing");
-	}
-	 */
 
 	private static void updateDatabase() throws IOException{
 		
@@ -695,7 +687,6 @@ public class TableUtilities {
 		populateSimpleTableUsingBatchFile("", "INSERT IGNORE INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv", 13, 2, update);
 		System.out.println("Finished universe");
 
-		//I still need to change here something
 		populateSimpleTableUsingBatchFile("characters", "INSERT IGNORE INTO characters (character_name,character_fb_id,character_place_of_birth_id) values(","fictional_character.tsv",27,-1, update);
 		System.out.println("Finished characters");
 	}
@@ -756,8 +747,8 @@ public class TableUtilities {
 
 	public static void main(String args[]) throws IOException{
 
-		createDatabase();
-		//updateDatabase();
+		//createDatabase();
+		updateDatabase();
 		
 
 	}
