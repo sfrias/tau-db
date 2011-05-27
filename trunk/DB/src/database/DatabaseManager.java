@@ -27,7 +27,7 @@ public class DatabaseManager {
 
 	//TODO add finally statements to all methods and check null!!!
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "mapo00";
+	private final static String PASSWORD = "armiN203";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
@@ -884,10 +884,16 @@ public class DatabaseManager {
 			while (rs.next()) {
 				String startName = getNameFromId(rs.getInt(1));
 				String endName = getNameFromId(rs.getInt(2));
+				
+				//TODO - hila/amico - print these two lines to the GUI
 				System.out.println("this is a connection between " + startName + " and " + endName);
 				System.out.println("this connection was found in " + rs.getDate(3));
 				AlgorithmUtilities.prepareConnectionsFromHistory(rs.getString(4),connectionArray);
-				//System.out.println();
+	
+				//TODO - hila/amico - use the function readConnectionChain with connectionArray, 
+				// and then go over in a loop of length 4, and if the string in the i'th cell is not
+				// null - print in to the GUI.
+	
 			}
 
 		} catch (SQLException e) {
@@ -1202,8 +1208,10 @@ public class DatabaseManager {
 				count++;
 				int id1 = rs.getInt(1);
 				int id2 = rs.getInt(2);
+				//TODO PRINT THIS TO THE SCREEN
 				System.out.println("this connection was found in " + rs.getDate(3));
 				String getConnectionOfCharacters = rs.getString(4);
+				//TODO PRINT THIS TO THE SCREEN
 				System.out.println("Match found between "+ start_name +" and "+ end_name);
 				stmt.executeUpdate("UPDATE history SET count = " + count + " WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
 
@@ -1248,7 +1256,7 @@ public class DatabaseManager {
 
 	}
 	
-	public int getSuccessRate(){
+	public int[] getSuccessRate(){
 		JDCConnection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -1267,7 +1275,7 @@ public class DatabaseManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			noEnd.setR(ConnectionResult.Exception_In_Success_Rate);
-			return -1;
+			return null;
 		}
 		finally{
 			if (stmt != null){
@@ -1297,7 +1305,7 @@ public class DatabaseManager {
 			
 		}
 		
-		int percentageRateOfSuccess = (success / total) * 10;
+		int[] percentageRateOfSuccess = {success,total};
 		return percentageRateOfSuccess;
 		
 	}

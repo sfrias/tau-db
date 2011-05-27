@@ -1,6 +1,5 @@
 package core;
 
-import enums.Tables;
 
 public class connectionElement {
 	private String start_name;
@@ -12,12 +11,13 @@ public class connectionElement {
 		start_name=name1;
 		end_name=name2;
 		attribute = atr;
-		if (!atr.equals(Tables.parent.name()) && !atr.equals(Tables.romantic_involvement.name())){
-			attribute_value = attributeVal;
+		attribute_value = attributeVal;
+	/*	if (!atr.equals(Tables.parent.toString()) && !atr.equals(Tables.romantic_involvement.toString())){
+		
 		}
 		else{
 			attribute_value=null;
-		}
+		}*/
 	}
 	public String getStartName(){
 		return start_name;

@@ -44,6 +44,8 @@ public class Algorithm{
 	private String start_name = null;
 	private String end_name = null;
 	private int globalNumOfConnections;	
+	
+	
 	public Algorithm(){
 		
 		tbs = Tables.values();
@@ -52,6 +54,7 @@ public class Algorithm{
 	public void initialization(){
 		if (!init){
 			AlgorithmUtilities.prepareTablesAndHashMaps();
+			init = true;
 		}
 	}
 	
@@ -449,7 +452,7 @@ public class Algorithm{
 
 		ResultSet charToAny = null;
 		String 	currentAtr, joinedAtr, charactersWithAtr;
-		int unspecifiedIdOfCharacter = unspecifiedIdOfTables.get(Tables.characters.name()); 
+		int unspecifiedIdOfCharacter = unspecifiedIdOfTables.get(Tables.characters.toString()); 
 		int attributes = tablesArr.length;
 		int start_id = start_element.characterId;
 		Statement charWithAtrStmt=null;
@@ -722,7 +725,7 @@ public class Algorithm{
 			}
 
 			if (matchFound) {
-				System.out.println("Match found between "+ start_name +" and "+ end_name);
+				//System.out.println("Match found between "+ start_name +" and "+ end_name);
 				String connectionString = AlgorithmUtilities.prepareConnectionsForGUI(theConnection,connectionArray);
 				if (connectionString==null){ //an error has occurred
 					break;
@@ -730,12 +733,12 @@ public class Algorithm{
 				dbManager.insertIntoHistory(connectionString, start_id, end_id); // if an error occurred here we do not want to throw an exception
 				result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
 				clearAll();
-			//	dbManager.executeUpdateInSuccesRate(true);
+				dbManager.executeUpdateInSuccesRate(true);
 				return result;
 			}
-			else {
-				System.out.println("cannot find a connection in " + level + " num of connection\n");
-			}
+			//else {
+			//	System.out.println("cannot find a connection in " + level + " num of connection\n");
+			//}
 		}
 
 		clearAll();
@@ -743,7 +746,7 @@ public class Algorithm{
 		if (getR() == ConnectionResult.Ok){ //if an error has occurred that doesn't mean there isn't a connection 
 			dbManager.insertIntoFailedSearchesTable(start_id, end_id); // if an error occurred here we do not want to throw an exception
 			result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
-		//	dbManager.executeUpdateInSuccesRate(false);
+			dbManager.executeUpdateInSuccesRate(false);
 		}
 
 		return result;
@@ -793,23 +796,23 @@ public class Algorithm{
 
 		Algorithm alg = Algorithm.getInstance();
 		alg.initialization();
-		ReturnElement returnElem = alg.lookForConnection(1, 6);
+		ReturnElement returnElem = alg.lookForConnection(33850, 2433);
 		returnElem.getResult();
-	}
-}
-		/*
+	
+
+		
 		if (returnElem.getResult() == ConnectionResult.Exception || returnElem.getResult() == ConnectionResult.Close_Exception){
 			//TODO PRINT TO USER TO TRY AGAIN LATER
+			System.out.println("exception occurred");
 		}
 		else if (returnElem.getResult() == ConnectionResult.Did_Not_Find_Connection){
 			//TODO PRINT TO USER THAT NO CONNECTION WAS FOUND BETWEEN THESE CHARACTERS
 			//TODO NAMES ARE :
-			alg.getStartName();
-			alg.getEndName();
-	
+			System.out.println("couldn't find a connection between " + alg.start_name + " and " + alg.end_name);	
 		}
 		else if (returnElem.getResult() == ConnectionResult.Found_Connection_Of_Length_0){
 			//TODO PRINT TO USER THAT HE HAS TO GIVE TWO DIFFERENT CHARACTERS AS AN INPUT
+			System.out.println("a connection of length 0");
 		}
 		
 		else if (returnElem.getResult() == ConnectionResult.Found_Connection){
@@ -820,14 +823,19 @@ public class Algorithm{
 			//USE THIS LOOP TO PRINT THE DESCRIPTION OF THE CONNECTION CHAIN
 			String[] connectionChain = AlgorithmUtilities.readConnectionChain(returnElem.getConnectionArray());
 			for (int i=0; i< connectionChain.length; i++){
+				System.out.println("found a connection between " + alg.start_name + " and " + alg.end_name);
 				if (connectionChain[i]!=null){
+					System.out.println(connectionChain[i]);
 					//TODO PRINT TO THE SCREEN THE CONNECTION 
 					// NOTICE THAT THERE'S NO \n AT THE END OF EACH STRING, SO IF YOU WANT TO PRINT THE STRING ONE AFTER ANOTHER, YOU HAVE
 					// TO INSERT THAT LOGIC IN THE GUI.
 					// NOTICE THAT THE STRING OF THE ATTRIBUTE ARE ALREADY IN THE PRINT REPRESENTATION (TOSTRING AND NOT NAME)
 				}
 	
-*/
+			}
+		}
+	}
+}
 		
 		
 

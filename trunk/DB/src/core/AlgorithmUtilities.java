@@ -41,7 +41,7 @@ public class AlgorithmUtilities {
 				}
 				//int temp = Integer.parseInt(valueArr[3]);
 				atrName = valueArr[3];
-				connectionArray[i] = new connectionElement(startName, endName, noEndAlg.getFromPrintRepresentation(valueArr[2]), atrName);
+				connectionArray[i] = new connectionElement(startName, endName, valueArr[2], atrName);
 				atrName = null;
 			}
 		}
@@ -226,6 +226,7 @@ public class AlgorithmUtilities {
 				attributes[indexOfAttr]=currentTable;
 				indexOfAttr++;
 				Algorithm.putInPrintRepresentation(currentTable,  Algorithm.getTables()[i].toString());
+				//System.out.println(currentTable + " -->" + Algorithm.getTables()[i].toString());
 			}
 			else {
 				atrTable = currentTable.substring(15);
@@ -351,10 +352,11 @@ public class AlgorithmUtilities {
 			if (noEnd.getR()!= ConnectionResult.Ok){
 				return null;
 			}
-			toHisory+= conLast.characterId +","+conPrev.characterId +"," +attributeString + "," + atrName;
+			toHisory+= conLast.characterId +","+conPrev.characterId +"," +Algorithm.getFromPrintRepresentation(attributeString) + "," + atrName;
 			if (conPrev.prevElement != null){
 				toHisory+= "\t";
 			}
+			System.out.println(Algorithm.getFromPrintRepresentation(attributeString));
 			connectionArray[i] = new connectionElement(startName, endName, Algorithm.getFromPrintRepresentation(attributeString), atrName);
 			i++;
 			conLast = conPrev;
