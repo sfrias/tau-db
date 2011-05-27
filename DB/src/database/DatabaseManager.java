@@ -27,7 +27,7 @@ public class DatabaseManager {
 
 	//TODO add finally statements to all methods and check null!!!
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "armiN203";
+	private final static String PASSWORD = "6387";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
@@ -1044,7 +1044,7 @@ public class DatabaseManager {
 						toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information,count) values (" + first + "," + second + ",'" + date + "', '" + information + "',1);";			
 					}
 					else {
-						toQuery = "INSERT IGNORE INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
+						toQuery = "REPLACE INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
 					}
 
 					stmt.executeUpdate(toQuery);
