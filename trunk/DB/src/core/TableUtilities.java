@@ -628,6 +628,9 @@ public class TableUtilities {
 
 		createOrUpdateComplexTables(true);
 		AntUtils.executeTarget(Targets.POPULATE);
+		
+		deleteContent("history");
+		deleteContent("failed_searches");
 
 		long finishTime = System.currentTimeMillis();
 
@@ -745,11 +748,41 @@ public class TableUtilities {
 		}
 	}
 
+	private static void deleteContent (String tableName){
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		JDCConnection conn = dbManager.getConnection();
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			stmt.executeUpdate("TRUNCATE TABLE " + tableName);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn != null){
+				try {
+					conn.setAutoCommit(true);
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		
+	}
+	
 	public static void main(String args[]) throws IOException{
 
-		//createDatabase();
-		updateDatabase();
-		
+		createDatabase();
+		//updateDatabase();
 
 	}
 }
