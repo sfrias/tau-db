@@ -4,9 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -14,11 +11,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import enums.Tables;
-
-
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.layouts.RXCardLayout;
+import enums.Tables;
 
 public abstract class GenericTab extends JPanel implements ActionListener, GenericTabInterface{
 	private static final long serialVersionUID = 1L;
@@ -65,21 +60,6 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		cl.show(cards, cardName);
 /*		GenericCardPanel card = (GenericCardPanel)cl.getCurrentCard();
 		card.switchCard(GenericCardPanel.MAIN_CARD);*/
-	}
-
-	private String[] createAllTablesArray(){
-		Tables[] tables = Tables.values(); 
-		List<String> resultList = new ArrayList<String>();
-		for (Tables t : tables){
-			resultList.add(t.toString().toUpperCase());			
-		}
-		Object[] objArr = resultList.toArray();
-		return Arrays.copyOf(objArr, objArr.length, String[].class);
-
-		/*return {Tables.creator.toString().toUpperCase(), Tables.disease.toString().toUpperCase(), Tables.ethnicity.toString().toUpperCase(),
-				Tables.gender.toString().toUpperCase(), Tables.job.toString().toUpperCase(), Tables.location.toString().toUpperCase(),
-				Tables.occupation.toString().toUpperCase(), Tables.organization.toString().toUpperCase(), Tables.power.toString().toUpperCase(), Tables.rank.toString().toUpperCase(),
-				Tables.school.toString().toUpperCase(),  Tables.species.toString().toUpperCase(),Tables.universe.toString().toUpperCase() };*/
 	}
 
 }
