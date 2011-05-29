@@ -62,10 +62,6 @@ public class DatabaseManager {
 		return instance;
 	}
 
-	public JDCConnectionDriver getConnectionDriver() {
-		return connectionDriver;
-	}
-
 	public JDCConnection getConnection() {
 		try {
 			return (JDCConnection) connectionDriver.connect(URL, connProperties);
@@ -74,29 +70,25 @@ public class DatabaseManager {
 			return null;
 		}
 	}
-
-	public boolean executeStatement(String statement) {
-		JDCConnection conn = null;
-		Statement stmt = null;
+	
+	public void executeDeleteCharacterFromTable(String nameOfTable, int id) {
+		JDCConnection conn = getConnection();
+		Statement deleteStmt = null;
 		try {
-			conn = getConnection();
-			stmt = conn.createStatement();
-			boolean ok = stmt.execute(statement);
-			return ok;
-
+			deleteStmt = conn.createStatement();
+			deleteStmt.executeUpdate("DELETE FROM " +  nameOfTable + " WHERE (" + nameOfTable + "_character_id1 = " + id + ") OR ( " + nameOfTable + "_character_id2 = " + id + " )");
 		} catch (SQLException e) {
-			System.err.println("An SQLException was thrown at executeStatement("+statement+")");
-			return false;
+			e.printStackTrace();
 		}
 		finally{
-			if (stmt != null){
+			if (deleteStmt != null){
 				try {
-					stmt.close();
+					deleteStmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
-			if (conn!= null){
+			if (conn != null){
 				try {
 					conn.close();
 				} catch (SQLException e) {
@@ -105,30 +97,18 @@ public class DatabaseManager {
 			}
 		}
 	}
-
-	public ResultSet executeQuery(String query) {
-		JDCConnection conn = null;
+	
+	public void executeDeleteTableContent (String tableName){
+		
+		JDCConnection conn = getConnection();
 		Statement stmt = null;
-		ResultSet resultSet = null;
-
 		try {
-			conn = getConnection();
 			stmt = conn.createStatement();
-			resultSet = stmt.executeQuery(query);
-			return resultSet;
-
+			stmt.executeUpdate("TRUNCATE TABLE " + tableName);
 		} catch (SQLException e) {
-			System.err.println("An SQLException was thrown at executeQuery("+query+")");
-			return null;
+			e.printStackTrace();
 		}
-		finally{
-			if (resultSet!= null){
-				try {
-					resultSet.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+		finally {
 			if (stmt != null){
 				try {
 					stmt.close();
@@ -136,16 +116,19 @@ public class DatabaseManager {
 					e.printStackTrace();
 				}
 			}
-			if (conn!= null){
+			if (conn != null){
 				try {
+					conn.setAutoCommit(true);
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
+			
 		}
+		
 	}
-
+	
 	//TODO see who calls this method and add appropriate handling for returned null value
 	public Pair[] executeQueryAndGetValues(Tables table) {
 

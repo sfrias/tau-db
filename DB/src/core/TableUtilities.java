@@ -484,33 +484,7 @@ public class TableUtilities {
 				else {
 					for (int i = 0; i < valueArr.length; i++) {
 						if ((update) && (charactersMap.get(valueArr[i]) != null)) {
-							JDCConnection conn = null;
-							conn = dbManager.getConnection();
-							Statement deleteStmt = null;
-							try {
-								deleteStmt = conn.createStatement();
-								String deleteString = "DELETE FROM " +  nameOfTable + " WHERE (" + nameOfTable + "_character_id1 = " + charactersMap.get(valueArr[i]) + ") OR ( " + nameOfTable + "_character_id2 = " + charactersMap.get(valueArr[i]) + " )";
-								deleteStmt.executeUpdate(deleteString);
-							} catch (SQLException e) {
-								e.printStackTrace();
-							}
-							finally{
-								if (deleteStmt != null){
-									try {
-										deleteStmt.close();
-									} catch (SQLException e) {
-										e.printStackTrace();
-									}
-								}
-								if (conn != null){
-									try {
-										conn.setAutoCommit(true);
-										conn.close();
-									} catch (SQLException e) {
-										e.printStackTrace();
-									}
-								}
-							}
+							dbManager.executeDeleteCharacterFromTable(nameOfTable, charactersMap.get(valueArr[i]));
 						}
 						tempString = valueArr[i].replace("~", ", ");
 						valueArr[i] = tempString;
@@ -629,8 +603,9 @@ public class TableUtilities {
 		createOrUpdateComplexTables(true);
 		AntUtils.executeTarget(Targets.POPULATE);
 		
-		deleteContent("history");
-		deleteContent("failed_searches");
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		dbManager.executeDeleteTableContent("history");
+		dbManager.executeDeleteTableContent("failed_searches");
 
 		long finishTime = System.currentTimeMillis();
 
@@ -746,37 +721,6 @@ public class TableUtilities {
 				System.out.println("Cannot delete populate-tables");
 			}
 		}
-	}
-
-	private static void deleteContent (String tableName){
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		JDCConnection conn = dbManager.getConnection();
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-			stmt.executeUpdate("TRUNCATE TABLE " + tableName);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn != null){
-				try {
-					conn.setAutoCommit(true);
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			
-		}
-		
 	}
 	
 	public static void main(String args[]) throws IOException{
