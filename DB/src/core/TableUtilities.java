@@ -11,16 +11,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.TreeMap;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
-import connection.JDCConnection;
 import database.AntUtils;
 import database.DatabaseManager;
 import database.AntUtils.Targets;
@@ -145,11 +141,11 @@ public class TableUtilities {
 				int id;
 				DatabaseManager dbManager = DatabaseManager.getInstance();
 				TreeMap<String, Integer> interstingMainValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters" , 1, 2);
-				
+
 				while ((lineRead = bufferedReader.readLine()) != null) {
-					
+
 					strarr = lineRead.split("\t", 27);
-					
+
 					if (update){ //if we update, we want to check if the character is already in the table, if so - we REPLACE it, otherwise - insert it 
 						strarr = lineRead.split("\t", 27);
 						tempString = strarr[1].replace("\'", "\\'");
@@ -158,7 +154,7 @@ public class TableUtilities {
 							insert = "REPLACE INTO characters (character_id,character_name,character_fb_id,character_place_of_birth_id) values(" + id + ",";
 						}
 					}
-					
+
 					bufferedWriter.append(insert);
 
 					for (int i = 0; i <4; i++) {
@@ -182,10 +178,10 @@ public class TableUtilities {
 				}
 
 				if (!update){ //if we update we don't want to insert it again
-				bufferedWriter.append(insert);
-				bufferedWriter.append("'Unspecified', 'Unspecified',(SELECT place_of_birth_id FROM place_of_birth Where place_of_birth_name LIKE 'Unspecified'));\n");
+					bufferedWriter.append(insert);
+					bufferedWriter.append("'Unspecified', 'Unspecified',(SELECT place_of_birth_id FROM place_of_birth Where place_of_birth_name LIKE 'Unspecified'));\n");
 				}
-					
+
 			}
 
 			else {
@@ -276,46 +272,17 @@ public class TableUtilities {
 				String [] strarr = lineRead.split("\t", splitNum);
 				strarr[interestingFieldNum-1] = strarr[interestingFieldNum-1].replace(", ", "~");
 				String [] valueArr = strarr[interestingFieldNum-1].split(",");
-				
+
 				if (interstingMainValuesMap.get(strarr[1]) == null){
 					System.out.println(mainTable + strarr[1] + " id equals null MM");
 					continue;
 				}
-				
-				JDCConnection conn = null;
-				
+
 				if ((update) && (!subtable.equals(Tables.characters.name()))) {
-				//delete all the records from join table where the id match to the current character 
-				conn = dbManager.getConnection();
-				Statement deleteStmt = null;
-				
-				try {
-					deleteStmt = conn.createStatement();
-					String deleteString = "DELETE FROM " +  mainTable + "_and_" + subtable + " WHERE " + mainTable + "_and_" + subtable + "_character_id = " + interstingMainValuesMap.get(strarr[1]);
-					deleteStmt.executeUpdate(deleteString);
-				} catch (SQLException e) {
-					e.printStackTrace();
+					//delete all the records from join table where the id match to the current character 
+					dbManager.executeUpdate("DELETE FROM " +  mainTable + "_and_" + subtable + " WHERE " + mainTable + "_and_" + subtable + "_character_id = " + interstingMainValuesMap.get(strarr[1]));
 				}
-				finally{
-					if (deleteStmt != null){
-						try {
-							deleteStmt.close();
-						} catch (SQLException e) {
-							e.printStackTrace();
-						}
-					}
-					if (conn != null){
-						try {
-							conn.setAutoCommit(true);
-							conn.close();
-						} catch (SQLException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-				
-				
+
 				boolean alreadySet = false;
 				for (int i = 0; i < valueArr.length; i++) {
 					valueArr[i] =valueArr[i].replace("~", ", ");
@@ -335,63 +302,28 @@ public class TableUtilities {
 						System.out.println(valueArr[i]);
 
 						//adding into the attribute's table
-						conn = dbManager.getConnection();
-						Statement addNullIdStatement = null;
-						ResultSet generatedKeys = null;
-
-						try{
-							conn.setAutoCommit(false);
-							addNullIdStatement = conn.createStatement();
-							addNullIdStatement.execute("INSERT IGNORE into " + subtable + "(" + fieldName+ ") values (\'" + valueArr[i] +"\')", Statement.RETURN_GENERATED_KEYS);						
-							generatedKeys = addNullIdStatement.getGeneratedKeys();
-							generatedKeys.first();
-							int currentId = generatedKeys.getInt(1);
-							addNullIdStatement.executeUpdate("UPDATE " + subtable + " SET " + subtable + "_fb_id = \'" + currentId + "\' WHERE " + subtable + "_id = " + currentId);
-							conn.commit();
+						
+						int currentId = dbManager.executeInsertAndReturnGeneratedKey(subtable, fieldName, valueArr[i]);
+						
+						if (currentId != -1){
 							System.out.println("added into " + subtable + " the values " + valueArr[i] + " with id " + currentId);
 							//adding to the map
 							interestingValuesMap.put(valueArr[i], currentId);
+							
 							//adding to joined table
 							bufferedWriter.append(insertStatement);
 							bufferedWriter.append("'" + interstingMainValuesMap.get(strarr[1]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
 							bufferedWriter.flush();
 							alreadySet = true;
 						}
-						catch (SQLException e){
-							e.printStackTrace();
-						}
-						finally{
-							if (generatedKeys != null){
-								try {
-									generatedKeys.close();
-								} catch (SQLException e) {
-									e.printStackTrace();
-								}
-							}
-							if (addNullIdStatement != null){
-								try {
-									addNullIdStatement.close();
-								} catch (SQLException e) {
-									e.printStackTrace();
-								}
-							}
-							if (conn != null){
-								try {
-									conn.setAutoCommit(true);
-									conn.close();
-								} catch (SQLException e) {
-									e.printStackTrace();
-								}
-							}
 
-						}
 					}
 					else{
 						bufferedWriter.append(insertStatement);  
 						bufferedWriter.append("'" + interstingMainValuesMap.get(strarr[1]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
 						bufferedWriter.flush();
 						alreadySet = true;
-						} 
+					} 
 
 				}
 
@@ -451,7 +383,7 @@ public class TableUtilities {
 		BufferedWriter bufferedWriter = null;
 		FileInputStream fis = null;
 		BufferedReader bufferedReader = null;
-		
+
 		try{
 			fileWriter = new FileWriter(sqlFile, true);
 			bufferedWriter = new BufferedWriter(fileWriter);
@@ -468,7 +400,7 @@ public class TableUtilities {
 
 			//int triples = 0;
 			String nameOfTable = nameOfFile.split(".tsv")[0];
-			
+
 			while ((lineRead = bufferedReader.readLine()) != null) {
 				String [] strarr = lineRead.split("\t", splitNum);
 				String tempString = strarr[interestingFieldNum-1].replace(", ", "~");
@@ -484,7 +416,8 @@ public class TableUtilities {
 				else {
 					for (int i = 0; i < valueArr.length; i++) {
 						if ((update) && (charactersMap.get(valueArr[i]) != null)) {
-							dbManager.executeDeleteCharacterFromTable(nameOfTable, charactersMap.get(valueArr[i]));
+							int id = charactersMap.get(valueArr[i]);
+							dbManager.executeUpdate("DELETE FROM " +  nameOfTable + " WHERE (" + nameOfTable + "_character_id1 = " + id + ") OR ( " + nameOfTable + "_character_id2 = " + id + " )");
 						}
 						tempString = valueArr[i].replace("~", ", ");
 						valueArr[i] = tempString;
@@ -492,7 +425,7 @@ public class TableUtilities {
 
 						//counting how many relationships have more than 2 characters
 						//if (valueArrLen > 2){
-							//triples++;
+						//triples++;
 						//}
 
 						//adding each character with all of the rest
@@ -586,34 +519,6 @@ public class TableUtilities {
 		return ExecutionResult.Success_Simple_Add_Edit_Delete;
 	}
 
-	private static void updateDatabase() throws IOException{
-		
-		long startTime = System.currentTimeMillis();
-
-		//downloadAndExtractDumps();
-
-		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
-		deleteSqlFile(sqlFile);
-
-		createOrUpdateSimpleTables(true);
-		AntUtils.executeTarget(Targets.POPULATE);
-
-		deleteSqlFile(sqlFile);
-
-		createOrUpdateComplexTables(true);
-		AntUtils.executeTarget(Targets.POPULATE);
-		
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		dbManager.executeDeleteTableContent("history");
-		dbManager.executeDeleteTableContent("failed_searches");
-
-		long finishTime = System.currentTimeMillis();
-
-		long totalTime = finishTime - startTime;
-		System.out.println("operation took " + totalTime + " Millis");
-		
-	}
-	
 	private static void createDatabase() throws IOException{
 
 		long startTime = System.currentTimeMillis();
@@ -625,13 +530,13 @@ public class TableUtilities {
 
 		createOrUpdateSimpleTables(false);
 		AntUtils.executeTarget(Targets.SETUP);
-		
+
 		deleteSqlFile(sqlFile);
 
 		createOrUpdateComplexTables(false);
 		createStatisticsTables();
 		AntUtils.executeTarget(Targets.POPULATE);
-		
+
 		deleteSqlFile(sqlFile);
 
 		long finishTime = System.currentTimeMillis();
@@ -640,10 +545,10 @@ public class TableUtilities {
 		System.out.println("operation took " + totalTime + " Millis");
 	}
 
-	
+
 	private static void createOrUpdateSimpleTables(boolean update) {
 
-		
+
 		populateSimpleTableUsingBatchFile("", "INSERT IGNORE INTO disease (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2, update);
 		System.out.println("Finished disease");
 
@@ -722,7 +627,7 @@ public class TableUtilities {
 			}
 		}
 	}
-	
+
 	public static void main(String args[]) throws IOException{
 
 		createDatabase();
