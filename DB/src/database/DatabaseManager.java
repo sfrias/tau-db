@@ -991,7 +991,7 @@ public class DatabaseManager {
 	 * inserts connection found
 	 */
 
-	public void insertIntoHistory (String connections, int start_id, int end_id) {
+	public void insertIntoHistory (String connections) {
 		
 		Statement stmt = null;
 		String[] connectionsSplit = connections.split("\t");
@@ -1187,7 +1187,7 @@ public class DatabaseManager {
 		JDCConnection conn = getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
-		boolean result = false, opposite = false;
+		boolean result = false;
 		int count;
 		Algorithm noEnd = Algorithm.getInstance();
 		// checks if the connection between these 2 characters already in history table
@@ -1202,7 +1202,6 @@ public class DatabaseManager {
 				rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
 				if (rs.next()){
 					result = true;
-					opposite = true;
 				}
 			}
 
