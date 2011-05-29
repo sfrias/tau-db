@@ -1,6 +1,7 @@
 package database;
 
 import java.io.UnsupportedEncodingException;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,7 @@ import java.util.Properties;
 import java.util.TreeMap;
 
 import GUI.commons.Pair;
+import GUI.dataTypesObjects.SearchResultObject;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -852,65 +854,66 @@ public class DatabaseManager {
 	
 	//for top 5 searches use field 'count'
 	//for top 5 recent matches use field 'date'
-	
-	public void topSerches (String field) {
+	public SearchResultObject[] topSerches (String field) {
 
 		JDCConnection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
-		connectionElement[] connectionArray = new connectionElement[3];
-		Algorithm noEnd = Algorithm.getInstance();
+		String startName=null, endName=null;
+		Date date = null;
+		int count = -1;
+		SearchResultObject[] searchResult = new SearchResultObject[5];
+		int index=0;
+		
 		try {
 			conn = getConnection();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT * FROM history ORDER BY "+ field +" DESC LIMIT 5");
 			while (rs.next()) {
-				String startName = getNameFromId(rs.getInt(1));
-				String endName = getNameFromId(rs.getInt(2));
+				startName = getNameFromId(rs.getInt(1));
+				endName = getNameFromId(rs.getInt(2));
+				if (field.equals("count")){
+					count = rs.getInt(5);
+					if (count!=0){
+						searchResult[index] = new SearchResultObject(startName, endName, count);
+					}
+					else{
+						break;
+					}
+				}
+				else if (field.equals("date")){
+					date = rs.getDate(3);
+					searchResult[index] = new SearchResultObject(startName, endName, date);
+				}
 				
-				//TODO - hila/amico - print these two lines to the GUI
-				System.out.println("this is a connection between " + startName + " and " + endName);
-				System.out.println("this connection was found in " + rs.getDate(3));
-				AlgorithmUtilities.prepareConnectionsFromHistory(rs.getString(4),connectionArray);
-	
-				//TODO - hila/amico - use the function readConnectionChain with connectionArray, 
-				// and then go over in a loop of length 4, and if the string in the i'th cell is not
-				// null - print in to the GUI.
-	
+				else {
+					return null; // not a valid input
+				}
+				index++;
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEnd.setR(ConnectionResult.Exception);
+			return null;
 		}
 		finally {
-			if (stmt != null){
-				try {
+			try{
+				if (stmt != null){
 					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
 				}
-			}
-			if (rs!= null){
-				try {
+				if (rs!= null){
 					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
 				}
-			}
-			if (conn!= null){
-				try {
+				if (conn!= null){
 					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
 				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
 			}
 		}
 
-
+		return searchResult;
 	}
 
 
