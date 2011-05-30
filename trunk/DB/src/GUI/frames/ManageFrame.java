@@ -41,7 +41,7 @@ public class ManageFrame extends GenericFrame {
 		tabbedPanel.addTab("EDIT", GuiUtils.readImageIcon("edit.png"), new EditTab());
 		tabbedPanel.addTab("DELETE", GuiUtils.readImageIcon("remove.png"), new DeleteTab());
 		tabbedPanel.addTab("UPDATE", GuiUtils.readImageIcon("update.png"), new UpdateTab());
-		tabbedPanel.addTab("STATISTICS", GuiUtils.readImageIcon("update.png"), new StatisticsTab());
+		tabbedPanel.addTab("STATISTICS", GuiUtils.readImageIcon("statistic.png"), new StatisticsTab());
 
 		return tabbedPanel;
 	}

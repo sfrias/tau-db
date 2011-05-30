@@ -1,12 +1,12 @@
 package GUI.workers;
 
-import dataTypes.ResultHolder;
-import enums.ExecutionResult;
 import GUI.commons.Pair;
 import GUI.frames.PlayFrame;
 import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
+import dataTypes.ResultHolder;
+import enums.ExecutionResult;
 
 public class GetRecordsByNameWorker extends GenericWorker {
 

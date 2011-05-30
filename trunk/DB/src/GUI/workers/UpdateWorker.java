@@ -2,20 +2,11 @@ package GUI.workers;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
@@ -24,15 +15,12 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
-
-import connection.JDCConnection;
-
 import GUI.GuiHandler;
 import GUI.panels.Manage.Tabs.UpdateTab;
+import core.TableUtilities;
 import database.AntUtils;
-import database.DatabaseManager;
 import database.AntUtils.Targets;
-import enums.Tables;
+import database.DatabaseManager;
 import enums.UpdateResult;
 
 public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
@@ -53,6 +41,14 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 		this.parent = parent;
 	}
 
+	private void deleteFile(File sqlFile) {
+		if (sqlFile.exists()) {
+			if(!sqlFile.delete()){
+				System.out.println("Cannot delete the file: " + sqlFile.toString());
+			}
+		}
+	}
+
 	@Override
 	protected UpdateResult doInBackground() {
 		pathDir = new File(".");
@@ -62,11 +58,8 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 		save = new File(pathDir.getAbsolutePath() + File.separatorChar + "fictional_universe.tar.bz2");
 
 		sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
-		if (sqlFile.exists()) {
-			if(!sqlFile.delete()){
-				System.out.println("Cannot delete populate-tables");
-			}
-		}
+		deleteFile(sqlFile);
+
 		GuiHandler.startStatusFlash();
 		try {
 			downloadDumps();
@@ -79,15 +72,29 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 			if (!isCancelled()){			
 				setProgress(50);
 				publish(UpdateResult.finish_extract);
+				try {
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 
 			publish(UpdateResult.start_update_table);
-			//populateSimpleTables();
-			setProgress(70);
-			//populateJoinedTables();
-			setProgress(90);
-			publish(UpdateResult.finish_update_table);
 
+			if (!isCancelled()){
+				TableUtilities.createOrUpdateSimpleTables(true); 
+				setProgress(60);
+				AntUtils.executeTarget(Targets.POPULATE); 
+				deleteFile(sqlFile);
+				setProgress(70);
+				TableUtilities.createOrUpdateComplexTables(true);
+				setProgress(80);
+				AntUtils.executeTarget(Targets.POPULATE); 
+				setProgress(90);
+
+				publish(UpdateResult.finish_update_table);
+			}
+			clearHistoryTables();
 			removeTemporaryFiles();
 			if (!isCancelled()){
 				setProgress(100);
@@ -103,49 +110,17 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 
 	}
 
+	private void clearHistoryTables(){
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+
+		dbManager.executeDeleteTableContent("history"); 
+		dbManager.executeDeleteTableContent("failed_searches"); 
+	}
+
 	@Override
 	protected void process(List<UpdateResult> result){
 		UpdateResult progress = result.get(result.size()-1);
 		parent.refreshTab(progress);
-	}
-
-	@Override
-	protected void done(){
-
-		if (isCancelled()){ 						 //terminated after user pressed cancel
-			removeTemporaryFiles();
-			parent.refreshTab(UpdateResult.cancel_accepted);
-		} else{ 									//terminated because finished updating or exception
-			UpdateResult result;
-			try {
-				result = get();
-				switch (result){
-				case done:
-					parent.refreshTab(result);
-					break;
-				case exception:
-					removeTemporaryFiles();
-					parent.refreshTab(result);
-					break;
-				case cancel_accepted:
-					break;
-				case finish_delete:
-					break;
-				case finish_download:
-					break;
-				case finish_extract:
-					break;
-				case finish_update_table:
-					break;
-				case start_update_table:
-					break;
-				} 
-			}catch (InterruptedException e) {
-				parent.refreshTab(UpdateResult.exception);
-			} catch (ExecutionException e) {
-				parent.refreshTab(UpdateResult.exception);
-			}
-		}
 	}
 
 	private void downloadDumps() throws IOException{
@@ -243,76 +218,6 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 
 	}
 
-	private void populateSimpleTables () throws IOException{
-		populateSimpleTableUsingBatchFile("", "INSERT INTO species (species_name, species_fb_id) values(", "character_species.tsv",4, 2);
-		System.out.println("Finished species");
-
-		populateSimpleTableUsingBatchFile("", "INSERT INTO creator (creator_name, creator_fb_id) values(", "fictional_character_creator.tsv",3, 2);
-		System.out.println("Finished creator");
-
-		populateSimpleTableUsingBatchFile("", "INSERT INTO organization (organization_name, organization_fb_id) values(", "fictional_organization.tsv", 7, 2);
-		System.out.println("Finished organization");
-
-		populateSimpleTableUsingBatchFile("", "INSERT INTO gender (gender_name, gender_fb_id) values(", "character_gender.tsv", 3, 2);
-		System.out.println("Finished gender");
-
-		populateSimpleTableUsingBatchFile("", "INSERT INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv", 13, 2);
-		System.out.println("Finished universe");
-
-		populateSimpleTableUsingBatchFile("", "INSERT INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv", 3, 2);
-		System.out.println("Finished school");
-
-		populateSimpleTableUsingBatchFile("", "INSERT INTO rank (rank_name, rank_fb_id) values(", "character_rank.tsv", 3, 2);
-		System.out.println("Finished rank");
-
-		populateSimpleTableUsingBatchFile("", "INSERT INTO ethnicity (ethnicity_name, ethnicity_fb_id) values(", "ethnicity_in_fiction.tsv", 3, 2);
-		System.out.println("Finished ethnicity");
-
-		populateSimpleTableUsingBatchFile("", "INSERT INTO occupation (occupation_name, occupation_fb_id) values(", "character_occupation.tsv", 3, 2);
-		System.out.println("Finished occupation");
-
-		populateSimpleTableUsingBatchFile("", "INSERT INTO power (power_name, power_fb_id) values(", "character_powers.tsv", 3, 2);
-		System.out.println("Finished power");
-
-		populateSimpleTableUsingBatchFile("", "INSERT INTO job (job_name, job_fb_id) values(", "fictional_job_title.tsv", 3, 2);
-		System.out.println("Finished job");
-
-		populateSimpleTableUsingBatchFile("", "INSERT INTO disease (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2);
-		System.out.println("Finished disease");
-
-		populateSimpleTableUsingBatchFile("location", "INSERT INTO location (location_name,location_universe_id) values(", "fictional_universe.tsv",13,-1);
-		System.out.println("Finished location");
-
-		populateSimpleTableUsingBatchFile("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(", "fictional_character.tsv",27,-1);
-		System.out.println("Finished place_of_birth");
-
-		populateSimpleTableUsingBatchFile("characters", "INSERT INTO characters (character_name,character_fb_id,character_place_of_birth_id) values(","fictional_character.tsv",27,-1);
-		System.out.println("Finished characters");
-
-		AntUtils.executeTarget(Targets.SETUP);
-	}
-
-	private void populateJoinedTables () throws IOException, SQLException{
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_universe (characters_and_universe_character_id, characters_and_universe_universe_id) values(","characters", "universe", 27, 12,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_gender (characters_and_gender_character_id, characters_and_gender_gender_id) values(","characters", "gender", 27, 5,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_species (characters_and_species_character_id, characters_and_species_species_id) values(","characters", "species", 27, 6,"fictional_character.tsv");
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_creator (characters_and_creator_character_id, characters_and_creator_creator_id) values(","characters", "creator", 27, 16,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_organization (characters_and_organization_character_id, characters_and_organization_organization_id) values(","characters", "organization", 27, 10,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_school (characters_and_school_character_id, characters_and_school_school_id) values(","characters", "school", 27, 21,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_rank (characters_and_rank_character_id, characters_and_rank_rank_id) values(","characters", "rank", 27, 9,"fictional_character.tsv");
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_ethnicity (characters_and_ethnicity_character_id, characters_and_ethnicity_ethnicity_id) values(","characters", "ethnicity", 27, 20,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_occupation (characters_and_occupation_character_id, characters_and_occupation_occupation_id) values(","characters", "occupation", 27, 8,"fictional_character.tsv");	
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_power (characters_and_power_character_id, characters_and_power_power_id) values(","characters", "power", 27, 11,"fictional_character.tsv");
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_disease (characters_and_disease_character_id, characters_and_disease_disease_id) values(","characters", "disease", 27, 23,"fictional_character.tsv");
-		populateJoinedTableUsingBatchFile("INSERT IGNORE INTO parent (parent_child_character_id, parent_parent_character_id) values(", "characters","characters", 27, 7,"fictional_character.tsv");
-
-		CreateTwoFieldTable("INSERT IGNORE INTO marriage (marriage_character_id1, marriage_character_id2) values(", "marriage_of_fictional_characters.tsv", 3, 3);
-		CreateTwoFieldTable("INSERT IGNORE INTO romantic_involvement (romantic_involvement_character_id1, romantic_involvement_character_id2) values(", "romantic_involvement.tsv", 3, 3);
-		CreateTwoFieldTable("INSERT IGNORE INTO sibling (sibling_character_id1, sibling_character_id2) values(", "sibling_relationship_of_fictional_characters.tsv", 3, 3);
-
-		AntUtils.executeTarget(Targets.POPULATE);
-	}
-
 	private void removeTemporaryFiles (){
 		if (fictUniverseDir != null && fictUniverseDir.exists()){
 			File[] allFiles = fictUniverseDir.listFiles();
@@ -335,279 +240,32 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 
 	}
 
+	@Override
+	protected void done(){
 
-	private void populateJoinedTableUsingBatchFile(String insertStatement,String mainTable, String subtable, int splitNum, int interestingFieldNum,String file) throws IOException, SQLException{
-
-		FileWriter fileWriter = new FileWriter(sqlFile, true);
-		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + file);
-		FileInputStream fis = new FileInputStream(dumpFile);
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fis));
-
-		bufferedReader.readLine();
-		String lineRead;
-
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-
-		TreeMap<String, Integer> interstingMainValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + mainTable, 1, 2);
-
-		TreeMap<String, Integer> interestingValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + subtable, 1, 3);
-
-		int unspecifiedId = interestingValuesMap.get("Unspecified");
-
-		int overallCounter = 0;
-		int failuresCounter = 0;
-
-		Statement addNullId = null, getNewId = null;
-		String stringForStatment = null, getId = null, fieldName;
-		ResultSet rs = null;
-
-		JDCConnection currentConn = dbManager.getConnection();
-
-		while ((lineRead = bufferedReader.readLine()) != null) {
-			overallCounter++;
-			String [] strarr = lineRead.split("\t", splitNum);
-			String tempString = strarr[interestingFieldNum-1].replace(", ", "~");
-			strarr[interestingFieldNum-1] = tempString;
-			String [] valueArr = strarr[interestingFieldNum-1].split(",");
-
-			//			strarr[0] = new String(strarr[0].getBytes(), CHARSET);
-
-			if (interstingMainValuesMap.get(strarr[1]) == null){
-				System.out.println(mainTable + strarr[1] + " id equals null MM");
-				failuresCounter++;
-				continue;
-			}
-
-			boolean alreadySet = false;
-			for (int i = 0; i < valueArr.length; i++) {
-
-				tempString = valueArr[i].replace("~", ", ");
-				valueArr[i] = tempString;
-				valueArr[i] = new String(valueArr[i].getBytes(), CHARSET);
-
-				if (valueArr[i].equals("")){
-					continue;
-				}
-				else if (interestingValuesMap.get(valueArr[i]) == null){
-
-					if (i+1 < valueArr.length && interestingValuesMap.get(valueArr[i] + "," + valueArr[i+1]) != null){
-						valueArr[i] = valueArr[i] + "," + valueArr[i+1];
-						System.out.println("found a value between two cells- " + subtable + " " + valueArr[i]);
-						bufferedWriter.append(insertStatement);
-						bufferedWriter.append("'" + interstingMainValuesMap.get(strarr[1]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
-						bufferedWriter.flush();
-						alreadySet = true;
-						i++;
-					}
-					else {
-						if (subtable.equals(Tables.characters.toString())){
-							continue;
-						}
-						else {
-							fieldName = subtable + "_name";
-						}
-						System.out.println(subtable + " " + valueArr[i] + " id equals null, adding it to table");
-						valueArr[i] = valueArr[i].replace("\'", "\\'");
-						System.out.println(valueArr[i]);
-						//adding into the attribute's table
-						stringForStatment = "INSERT IGNORE into " + subtable + "(" + fieldName+ ") values (\'" + valueArr[i] +"\');\n";
-						addNullId = currentConn.createStatement();
-						addNullId.executeUpdate(stringForStatment);
-
-						//getting the new id for this value
-						getId = "SELECT "+ subtable + "_id FROM " + subtable + " WHERE " + subtable + "_name = '" + valueArr[i] + "'";
-						getNewId = currentConn.createStatement();
-						rs = getNewId.executeQuery(getId);
-						rs.first();
-						int currentId = rs.getInt(1);
-						System.out.println("added into " + subtable + " the values " + valueArr[i] + " with id " + currentId);
-
-						//adding it into the map
-						interestingValuesMap.put(valueArr[i], currentId);
-
-						//adding new value + id into the joined table
-
-
-						if (getNewId != null) getNewId.close();
-						if (addNullId != null) addNullId.close();
-						if (rs != null) rs.close();
-
-						bufferedWriter.append(insertStatement);
-						bufferedWriter.append("'" + interstingMainValuesMap.get(strarr[1]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
-						bufferedWriter.flush();
-						alreadySet = true;
-
-					}
-				}
-
-				else{
-					bufferedWriter.append(insertStatement);
-					bufferedWriter.append("'" + interstingMainValuesMap.get(strarr[1]) + "', '" + interestingValuesMap.get(valueArr[i]) + "');\n");
-					bufferedWriter.flush();
-					alreadySet = true;
-				}
-			}
-
-			if (!alreadySet){
-				bufferedWriter.append(insertStatement);
-				bufferedWriter.append("'"+ interstingMainValuesMap.get(strarr[1]) + "', '" + unspecifiedId + "');\n");
-				bufferedWriter.flush();
+		if (isCancelled()){ 						 //terminated after user pressed cancel
+			removeTemporaryFiles();
+			parent.refreshTab(UpdateResult.cancel_accepted);
+		} else{ 									//terminated because finished updating or exception
+			UpdateResult result;
+			try {
+				result = get();
+				switch (result){
+				case done:
+					parent.refreshTab(result);
+					break;
+				case exception:
+					removeTemporaryFiles();
+					parent.refreshTab(result);
+					break;
+				} 
+			}catch (InterruptedException e) {
+				parent.refreshTab(UpdateResult.exception);
+			} catch (ExecutionException e) {
+				parent.refreshTab(UpdateResult.exception);
 			}
 		}
-
-		System.out.println("OVERALL " + overallCounter + " FAILURES " + failuresCounter + "\n");
-		bufferedWriter.close();
-		bufferedReader.close();
-
 	}
-
-	private void populateSimpleTableUsingBatchFile(String table, String insertStatement, String dumpFileName, int splitNum, int attrNum) throws IOException {
-		FileOutputStream fileWriter = new FileOutputStream(sqlFile, true);
-		BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileWriter));
-
-		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + dumpFileName);
-		FileInputStream fileReader = new FileInputStream(dumpFile);
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileReader));
-
-		bufferedReader.readLine();
-		String lineRead;
-		String[] strarr;
-		String tempString;
-
-		if (table.equals(Tables.place_of_birth.toString())){	
-			while ((lineRead = bufferedReader.readLine()) != null) {
-				strarr = lineRead.split("\t", splitNum);
-				tempString = strarr[3].replace("\'", "\\'");
-				strarr[3] = tempString;
-				if (! strarr[3].equals("")) {
-					bufferedWriter.append(insertStatement);
-					bufferedWriter.append("'" +  strarr[3] + "');\n");
-					bufferedWriter.flush();
-				}
-
-			}
-			bufferedWriter.append(insertStatement);
-			bufferedWriter.append("'Unspecified');\n");
-		}
-
-		else if (table.equals(Tables.characters.toString())){
-			while ((lineRead = bufferedReader.readLine()) != null) {
-				strarr = lineRead.split("\t", 27);
-				bufferedWriter.append(insertStatement);
-
-				for (int i = 0; i <4; i++) {
-					tempString = strarr[i].replace("\'", "\\'");
-					strarr[i] = tempString;
-					if (i == 2) {
-						continue;
-					}
-					else if (i==3) {
-						if (strarr[3].equals("")){
-							strarr[3]="Unspecified";
-						}
-
-						bufferedWriter.append("(SELECT place_of_birth_id FROM place_of_birth Where place_of_birth_name LIKE '" + strarr[3] + "'));\n");
-						bufferedWriter.flush();
-					}
-					else{
-						bufferedWriter.append("'" + strarr[i] + "', ");
-					}
-				}
-			}
-
-			bufferedWriter.append(insertStatement);
-			bufferedWriter.append("'Unspecified', 'Unspecified',(SELECT place_of_birth_id FROM place_of_birth Where place_of_birth_name LIKE 'Unspecified'));\n");
-			bufferedWriter.flush();
-		}
-
-		else {
-			while ((lineRead = bufferedReader.readLine()) != null) {
-				strarr = lineRead.split("\t", splitNum);
-				bufferedWriter.append(insertStatement);
-				for (int i = 0; i < attrNum - 1; i++) {
-					tempString = strarr[i].replace("\'", "\\'");
-					strarr[i] = tempString;
-					bufferedWriter.append("'" + strarr[i] + "', ");
-				}
-				bufferedWriter.append("'" + strarr[attrNum - 1] + "');\n");
-				bufferedWriter.flush();
-			}
-			bufferedWriter.append(insertStatement);
-			bufferedWriter.append("'Unspecified', 'Unspecified');\n");
-			bufferedWriter.flush();
-		}
-
-		bufferedWriter.close();
-		bufferedReader.close();
-		fileReader.close();
-		fileWriter.close();
-	}
-
-	private void CreateTwoFieldTable(String insertStatement,String nameOfFile, int splitNum, int interestingFieldNum) throws IOException{
-		FileWriter fileWriter = new FileWriter(sqlFile, true);
-		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-		File dumpFile = new File(pathDir.getAbsolutePath() + File.separatorChar + "temp" + File.separatorChar + "fictional_universe" + File.separatorChar + nameOfFile);
-		FileInputStream fis = new FileInputStream(dumpFile);
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fis));
-
-		bufferedReader.readLine();
-		String lineRead;
-
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		TreeMap<String, Integer> charactersMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters", 1, 3);
-
-		int triples = 0;
-
-		while ((lineRead = bufferedReader.readLine()) != null) {
-			String [] strarr = lineRead.split("\t", splitNum);
-			String tempString = strarr[interestingFieldNum-1].replace(", ", "~");
-			strarr[interestingFieldNum-1] = tempString;
-			String [] valueArr = strarr[interestingFieldNum-1].split(",");
-			int valueArrLen = valueArr.length;
-
-			//not adding one-character relationship into table
-			if (valueArrLen<2){
-				System.out.println("Only one character in this relationship");
-			}
-
-			else {
-
-				for (int i = 0; i < valueArr.length; i++) {
-					tempString = valueArr[i].replace("~", ", ");
-					valueArr[i] = tempString;
-					valueArr[i] = new String(valueArr[i].getBytes(), CHARSET);
-
-					//counting how many relationships have more than 2 characters
-					if (valueArrLen > 2){
-						triples++;
-					}
-
-					//adding each character with all of the rest
-					for (int j=i+1; j < valueArr.length; j++){
-						if (valueArr[i].equals("") || valueArr[j].equals("")){
-							continue;
-						}
-						else if(charactersMap.get(valueArr[i])==null || charactersMap.get(valueArr[j])==null){
-							System.out.println("couldn't find the character" + valueArr[i] + " and " + valueArr[j]);
-						}
-
-						else{
-							bufferedWriter.append(insertStatement);
-							bufferedWriter.append("'" + charactersMap.get(valueArr[i]) + "', '" + charactersMap.get(valueArr[j]) + "');\n");
-							bufferedWriter.flush();
-						}
-					}
-				}
-			}
-		}
-
-		//System.out.println("number of relationship in " + nameOfFile + " is " + triples);
-	}
-
-
 }
 
 

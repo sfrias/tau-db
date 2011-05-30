@@ -1,12 +1,12 @@
 package GUI.workers;
 
-import dataTypes.ResultHolder;
-import enums.ExecutionResult;
-import enums.Tables;
 import GUI.commons.Pair;
 import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.delete.DeleteCard;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
+import dataTypes.ResultHolder;
+import enums.ExecutionResult;
+import enums.Tables;
 
 public class GetSimpleRecordsWorker extends GenericWorker {
 	private Tables table;

@@ -591,7 +591,7 @@ public class TableUtilities {
 	}
 
 
-	private static void createOrUpdateSimpleTables(boolean update) {
+	public static void createOrUpdateSimpleTables(boolean update) {
 
 
 		populateSimpleTableUsingBatchFile("disease", "INSERT INTO disease (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2, update);
@@ -619,7 +619,7 @@ public class TableUtilities {
 		System.out.println("Finished characters");
 	}
 
-	private static ExecutionResult createOrUpdateComplexTables(boolean update) {
+	public static ExecutionResult createOrUpdateComplexTables(boolean update) {
 
 		ExecutionResult result;
 		result = populateJoinedTableUsingBatchFile("INSERT IGNORE INTO characters_and_disease (characters_and_disease_character_id, characters_and_disease_disease_id) values(","characters", "disease", 27, 23,"fictional_character.tsv", update);		
