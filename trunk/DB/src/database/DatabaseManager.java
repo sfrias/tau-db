@@ -772,6 +772,7 @@ public class DatabaseManager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			noEnd.setR(ConnectionResult.Exception);
+			return null;
 		} 
 		finally {
 			if (stmt != null){
@@ -832,6 +833,7 @@ public class DatabaseManager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			noEnd.setR(ConnectionResult.Exception);
+			return null;
 		}
 		finally {
 			if (stmt != null){
@@ -1052,6 +1054,7 @@ public class DatabaseManager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			noEnd.setR(ConnectionResult.Exception);
+			return;
 		}
 		finally {
 			if (stmt != null){
@@ -1091,6 +1094,7 @@ public class DatabaseManager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			noEnd.setR(ConnectionResult.Exception);
+			return;
 		}
 		finally {
 			if (stmt != null){
@@ -1145,6 +1149,7 @@ public class DatabaseManager {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			noEnd.setR(ConnectionResult.Exception);
+			return false;
 		}
 		finally {
 			if (stmt != null){
@@ -1227,6 +1232,7 @@ public class DatabaseManager {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			noEnd.setR(ConnectionResult.Exception);
+			return false;
 		}
 		finally {
 			if (stmt != null){
@@ -1311,6 +1317,37 @@ public class DatabaseManager {
 		return percentageRateOfSuccess;
 		
 	}
+	
+	public void executeDeleteTableContent (String tableName){  
+		JDCConnection conn = getConnection(); 
+		Statement stmt = null; 
+		try { 
+			stmt = conn.createStatement(); 
+			stmt.executeUpdate("TRUNCATE TABLE " + tableName); 
+		} catch (SQLException e) {
+				e.printStackTrace(); 
+		} 
+		finally { 
+			
+			if (stmt != null){ 
+				try { stmt.close();
+				} 
+				catch (SQLException e) { 
+					e.printStackTrace();
+					} 
+			} 
+			
+			if (conn != null){
+				try { 
+					conn.setAutoCommit(true); 
+					conn.close(); 
+				} catch (SQLException e) { 
+					e.printStackTrace(); 
+				}
+			 
+			}  
+		}  
+	} 
 
 
 
