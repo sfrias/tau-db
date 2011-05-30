@@ -119,6 +119,8 @@ public class TableUtilities {
 			bufferedReader.readLine();
 			String lineRead,tempString;
 			String[] strarr;
+			DatabaseManager dbManager = DatabaseManager.getInstance();
+			TreeMap<String, Integer> tableMap;
 
 			if (table.equals(Tables.place_of_birth.name())){	
 				while ((lineRead = bufferedReader.readLine()) != null) {
@@ -139,18 +141,18 @@ public class TableUtilities {
 			else if (table.equals(Tables.characters.name())){
 				String insert = insertStatement;
 				int id;
-				DatabaseManager dbManager = DatabaseManager.getInstance();
-				TreeMap<String, Integer> interstingMainValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters" , 1, 2);
+				
+				tableMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters" , 1, 2);
 
 				while ((lineRead = bufferedReader.readLine()) != null) {
 
 					strarr = lineRead.split("\t", 27);
 
 					if (update){ //if we update, we want to check if the character is already in the table, if so - we REPLACE it, otherwise - insert it 
-						strarr = lineRead.split("\t", 27);
+						//strarr = lineRead.split("\t", 27);
 						tempString = strarr[1].replace("\'", "\\'");
-						if (interstingMainValuesMap.get(tempString) != null) {
-							id = interstingMainValuesMap.get(tempString);
+						if (tableMap.get(tempString) != null) {
+							id = tableMap.get(tempString);
 							insert = "REPLACE INTO characters (character_id,character_name,character_fb_id,character_place_of_birth_id) values(" + id + ",";
 						}
 					}
@@ -185,8 +187,19 @@ public class TableUtilities {
 			}
 
 			else {
+				tableMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + table, 1, 2);
+				
 				while ((lineRead = bufferedReader.readLine()) != null) {
+					
 					strarr = lineRead.split("\t", splitNum);
+					
+					if (update){
+						tempString = strarr[1].replace("\'", "\\'");
+						if (tableMap.get(tempString) != null){
+							continue;
+						}
+					}
+					
 					bufferedWriter.append(insertStatement);
 					for (int i = 0; i < attrNum - 1; i++) {
 						tempString = strarr[i].replace("\'", "\\'");
@@ -196,8 +209,11 @@ public class TableUtilities {
 					bufferedWriter.append("'" + strarr[attrNum - 1] + "');\n");
 					bufferedWriter.flush();
 				}
+				
+				if(!update) {
 				bufferedWriter.append(insertStatement);
 				bufferedWriter.append("'Unspecified', 'Unspecified');\n");
+				}
 			}
 
 			return ExecutionResult.Success_Populating_Simple_Table;
@@ -519,6 +535,35 @@ public class TableUtilities {
 		return ExecutionResult.Success_Simple_Add_Edit_Delete;
 	}
 
+	private static void updateDatabase() throws IOException{ 
+
+		long startTime = System.currentTimeMillis(); 
+
+		//downloadAndExtractDumps(); 
+		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH); 
+		deleteSqlFile(sqlFile); 
+
+		createOrUpdateSimpleTables(true); 
+		AntUtils.executeTarget(Targets.POPULATE); 
+
+		deleteSqlFile(sqlFile); 
+
+		createOrUpdateComplexTables(true); 
+		AntUtils.executeTarget(Targets.POPULATE); 
+
+		DatabaseManager dbManager = DatabaseManager.getInstance(); 
+		dbManager.executeDeleteTableContent("history"); 
+		dbManager.executeDeleteTableContent("failed_searches"); 
+
+		long finishTime = System.currentTimeMillis(); 
+
+
+		long totalTime = finishTime - startTime; 
+		System.out.println("operation took " + totalTime + " Millis"); 
+		
+		}
+
+	
 	private static void createDatabase() throws IOException{
 
 		long startTime = System.currentTimeMillis();
@@ -549,28 +594,28 @@ public class TableUtilities {
 	private static void createOrUpdateSimpleTables(boolean update) {
 
 
-		populateSimpleTableUsingBatchFile("", "INSERT IGNORE INTO disease (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2, update);
+		populateSimpleTableUsingBatchFile("disease", "INSERT INTO disease (disease_name, disease_fb_id) values(", "medical_condition_in_fiction.tsv", 3, 2, update);
 		System.out.println("Finished disease");
 
-		populateSimpleTableUsingBatchFile("", "INSERT IGNORE INTO occupation (occupation_name, occupation_fb_id) values(", "character_occupation.tsv", 3, 2, update);
+		populateSimpleTableUsingBatchFile("occupation", "INSERT INTO occupation (occupation_name, occupation_fb_id) values(", "character_occupation.tsv", 3, 2, update);
 		System.out.println("Finished occupation");
 
-		populateSimpleTableUsingBatchFile("", "INSERT IGNORE INTO organization (organization_name, organization_fb_id) values(", "fictional_organization.tsv", 7, 2, update);
+		populateSimpleTableUsingBatchFile("organization", "INSERT INTO organization (organization_name, organization_fb_id) values(", "fictional_organization.tsv", 7, 2, update);
 		System.out.println("Finished organization");
 
-		populateSimpleTableUsingBatchFile("", "INSERT IGNORE INTO power (power_name, power_fb_id) values(", "character_powers.tsv", 3, 2, update);
+		populateSimpleTableUsingBatchFile("power", "INSERT INTO power (power_name, power_fb_id) values(", "character_powers.tsv", 3, 2, update);
 		System.out.println("Finished power");
 
 		populateSimpleTableUsingBatchFile("place_of_birth","INSERT IGNORE place_of_birth (place_of_birth_name) values(", "fictional_character.tsv",27,-1, update);
 		System.out.println("Finished place_of_birth");
 
-		populateSimpleTableUsingBatchFile("", "INSERT IGNORE INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv", 3, 2, update);
+		populateSimpleTableUsingBatchFile("school", "INSERT INTO school (school_name, school_fb_id) values(", "school_in_fiction.tsv", 3, 2, update);
 		System.out.println("Finished school");
 
-		populateSimpleTableUsingBatchFile("", "INSERT IGNORE INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv", 13, 2, update);
+		populateSimpleTableUsingBatchFile("universe", "INSERT INTO universe (universe_name, universe_fb_id) values(", "fictional_universe.tsv", 13, 2, update);
 		System.out.println("Finished universe");
 
-		populateSimpleTableUsingBatchFile("characters", "INSERT IGNORE INTO characters (character_name,character_fb_id,character_place_of_birth_id) values(","fictional_character.tsv",27,-1, update);
+		populateSimpleTableUsingBatchFile("characters", "INSERT INTO characters (character_name,character_fb_id,character_place_of_birth_id) values(","fictional_character.tsv",27,-1, update);
 		System.out.println("Finished characters");
 	}
 
@@ -630,8 +675,8 @@ public class TableUtilities {
 
 	public static void main(String args[]) throws IOException{
 
-		createDatabase();
-		//updateDatabase();
+		//createDatabase();
+		updateDatabase();
 
 	}
 }
