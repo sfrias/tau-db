@@ -1,5 +1,6 @@
 package GUI.workers;
 
+import dataTypes.ResultHolder;
 import enums.ExecutionResult;
 import enums.Tables;
 import GUI.model.CharacterModel;

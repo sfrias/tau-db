@@ -3,6 +3,7 @@ package GUI.workers;
 import enums.ExecutionResult;
 import enums.Tables;
 import GUI.panels.Manage.cards.delete.DeleteCard;
+import dataTypes.ResultHolder;
 
 public class DeleteWorker extends GenericEditDeleteWorker {
 

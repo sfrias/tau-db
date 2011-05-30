@@ -1,5 +1,6 @@
 package GUI.workers;
 
+import dataTypes.ResultHolder;
 import GUI.commons.Pair;
 import GUI.model.CharacterModel;
 import GUI.panels.Manage.cards.add.AddCharacters;

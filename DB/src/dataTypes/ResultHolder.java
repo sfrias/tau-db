@@ -1,4 +1,4 @@
-package GUI.workers;
+package dataTypes;
 
 import enums.ExecutionResult;
 

@@ -1,4 +1,4 @@
-package GUI.dataTypesObjects;
+package dataTypes;
 
 import java.sql.Date;
 

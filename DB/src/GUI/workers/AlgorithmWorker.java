@@ -2,9 +2,10 @@ package GUI.workers;
 
 import GUI.frames.PlayFrame;
 import GUI.model.AlgorithmModel;
-import core.ReturnElement;
-import core.AlgorithmUtilities;
 import core.Algorithm;
+import core.AlgorithmUtilities;
+import core.ReturnElement;
+import dataTypes.ResultHolder;
 import enums.ConnectionResult;
 import enums.ExecutionResult;
 

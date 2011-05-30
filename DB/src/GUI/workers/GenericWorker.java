@@ -9,6 +9,8 @@ import GUI.frames.PlayFrame;
 import GUI.model.AlgorithmModel;
 import GUI.model.CharacterModel;
 import GUI.model.SimpleModel;
+import GUI.model.StatisticsModel;
+import GUI.panels.Manage.Tabs.StatisticsTab;
 import GUI.panels.Manage.cards.GenericCardPanel;
 import GUI.panels.Manage.cards.add.AddCharacters;
 import GUI.panels.Manage.cards.add.AddSimpleCard;
@@ -16,19 +18,27 @@ import GUI.panels.Manage.cards.delete.DeleteCard;
 import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
+import dataTypes.ResultHolder;
 import database.DatabaseManager;
 import enums.ConnectionResult;
 import enums.ExecutionResult;
 
 public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 
-	enum Action{ADD, EDIT, DELETE, QUERY, ALGROTITHM};
+	enum Action{ADD, EDIT, DELETE, QUERY, ALGROTITHM, STATISTICS};
 
 	protected DatabaseManager databaseManager = DatabaseManager.getInstance();
 	private Action action;
 
 	private GenericCardPanel card;
 	private PlayFrame playFrame;
+	private StatisticsTab statisticsTab;
+	
+	public GenericWorker(StatisticsTab statisticTab){
+		super();
+		this.statisticsTab = statisticTab;
+		this.action = Action.STATISTICS;
+	}
 
 	public GenericWorker(Action action, PlayFrame playFrame){
 		super();
@@ -193,6 +203,12 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				EditCharacters editCharactersCard = (EditCharacters) card;
 				GuiHandler.showResultSuccessDialog(action.toString());
 				editCharactersCard.clearValues();
+				break;
+			}
+			case Success_Statistics:{
+				StatisticsModel statisticModel = (StatisticsModel) result.getModel();
+				statisticsTab.setModel(statisticModel);
+				statisticsTab.refreshFromModel();
 				break;
 			}
 			case Success_Algorithm:{

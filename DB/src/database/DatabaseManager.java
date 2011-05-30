@@ -12,7 +12,6 @@ import java.util.Properties;
 import java.util.TreeMap;
 
 import GUI.commons.Pair;
-import GUI.dataTypesObjects.SearchResultObject;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -21,6 +20,8 @@ import connection.JDCConnectionDriver;
 import core.Algorithm;
 import core.AlgorithmUtilities;
 import core.connectionElement;
+import dataTypes.SearchResultObject;
+import dataTypes.SuccessRateObject;
 import enums.ConnectionResult;
 import enums.ExecutionResult;
 import enums.Tables;
@@ -29,7 +30,7 @@ public class DatabaseManager {
 
 	//TODO add finally statements to all methods and check null!!!
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "6387";
+	private final static String PASSWORD = "root";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
@@ -72,7 +73,7 @@ public class DatabaseManager {
 			return null;
 		}
 	}
-	
+
 	public void executeUpdate(String stmtToExecute) {
 		JDCConnection conn = getConnection();
 		Statement stmt = null;
@@ -99,7 +100,7 @@ public class DatabaseManager {
 			}
 		}
 	}
-	
+
 	public int executeInsertAndReturnGeneratedKey(String table, String fieldName, String value){
 		JDCConnection conn = getConnection();
 		Statement addNullIdStatement = null;
@@ -146,7 +147,7 @@ public class DatabaseManager {
 
 		}
 	}
-	
+
 	//TODO see who calls this method and add appropriate handling for returned null value
 	public Pair[] executeQueryAndGetValues(Tables table) {
 
@@ -390,10 +391,10 @@ public class DatabaseManager {
 			if (alreadyAdded){
 				return ExecutionResult.Success_Simple_Add_Edit_Delete;	
 			}
-			
+
 			stmt2 = conn.createStatement();
 			stmt2.executeUpdate("INSERT IGNORE INTO " + tableName + " (" + fieldName + ") values(\'" + value + "\')", Statement.RETURN_GENERATED_KEYS);
-			
+
 			generatedKeys = stmt2.getGeneratedKeys();
 			generatedKeys.first();
 			int key = generatedKeys.getInt(1);
@@ -460,7 +461,6 @@ public class DatabaseManager {
 		Statement stmt2 = null;
 		ResultSet generatedKeys = null;
 		JDCConnection conn = getConnection();
-
 		try {
 			conn.setAutoCommit(false);
 			stmt = conn.createStatement();
@@ -471,12 +471,12 @@ public class DatabaseManager {
 				placeOfBirthId = placeOfBirthArray[0].getId();
 			}
 			else{
-				
+
 				ResultSet rs = stmt.executeQuery("SELECT place_of_birth_id FROM place_of_birth WHERE place_of_birth_name LIKE \'Unspecified\'");
 				rs.first();
 				placeOfBirthId = rs.getInt(1);
 			}
-			
+
 			stmt.execute("INSERT IGNORE INTO characters (character_name, character_place_of_birth_id) values (\'"+name.getName()+"\', " + placeOfBirthId + ")", Statement.RETURN_GENERATED_KEYS);
 			generatedKeys = stmt.getGeneratedKeys();
 			generatedKeys.first();
@@ -586,8 +586,8 @@ public class DatabaseManager {
 		}
 	}
 
-	
-	
+
+
 	public ExecutionResult executeUpdateInSuccesRate(boolean matchfound) {
 
 		String tableName = "success_rate";
@@ -636,14 +636,14 @@ public class DatabaseManager {
 		}
 	}
 
-	
-	
+
+
 
 	public ExecutionResult executeEditCharacters(String[] tables, Pair[][] addedValues, Pair[][] removedValues, Pair character, int place_of_birth_id) {
-		
+
 		Statement stmt = null;		
 		PreparedStatement preparedStmt = null;		
-		
+
 		int characterId = character.getId();
 		String name = character.getName();
 		
@@ -652,11 +652,11 @@ public class DatabaseManager {
 		try {
 			conn.setAutoCommit(false);
 			stmt = conn.createStatement();
-			
+
 			stmt.executeUpdate("UPDATE characters SET character_name = \'" + name + "\', character_place_of_birth_id = " + place_of_birth_id + " WHERE character_id = " + characterId);
-			
+
 			for (int i=0; i < tables.length; i++){
-				
+
 				String tableName = "characters_and_"+tables[i];
 				String field = tableName + "_" + tables[i] + "_id";
 				preparedStmt = conn.prepareStatement("INSERT INTO " + tableName + " values(" + characterId + " , ?)");
@@ -664,14 +664,14 @@ public class DatabaseManager {
 					preparedStmt.setInt(1, addedValues[i][j].getId());
 					preparedStmt.execute();
 				}
-				
+
 				preparedStmt = conn.prepareStatement("DELETE FROM " +  tableName + " WHERE " + tableName + "_character_id = " + characterId + " AND " + field + " = ?");
 				for (int j=0; j< removedValues[i].length; j++){
 					preparedStmt.setInt(1, removedValues[i][j].getId());
 					preparedStmt.execute();
 				}
 			}
-			
+
 			conn.commit();
 			return ExecutionResult.Success_Edit_Character;
 		}
@@ -799,13 +799,13 @@ public class DatabaseManager {
 					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
-			
+
 		}
 		return Name;	
 	}
-	
-	
-	
+
+
+
 
 	/* 
 	 * gets the attribute's name by its id
@@ -820,7 +820,7 @@ public class DatabaseManager {
 		if (table.equals(Tables.romantic_involvement.name()) ||
 				table.equals(Tables.parent.name()) ||
 				table.equals("child")) {
-			
+
 			return "none";
 		}
 		
@@ -864,10 +864,10 @@ public class DatabaseManager {
 		return Name;
 	}
 
-	
+
 	//for top 5 searches use field 'count'
 	//for top 5 recent matches use field 'date'
-	public SearchResultObject[] topSerches (String field) {
+	public SearchResultObject[] topSearches (String field) {
 
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -876,7 +876,7 @@ public class DatabaseManager {
 		int count = -1;
 		SearchResultObject[] searchResult = new SearchResultObject[5];
 		int index=0;
-		
+
 		JDCConnection conn = getConnection();
 		try {			
 			stmt = conn.createStatement();
@@ -892,13 +892,10 @@ public class DatabaseManager {
 					else{
 						break;
 					}
-				}
-				else if (field.equals("date")){
+				} else if (field.equals("date")){
 					date = rs.getDate(3);
 					searchResult[index] = new SearchResultObject(startName, endName, date);
-				}
-				
-				else {
+				} else {
 					return null; // not a valid input
 				}
 				index++;
@@ -986,8 +983,8 @@ public class DatabaseManager {
 
 		return unspecifiedID;
 	}
-	
-	
+
+
 
 	/*
 	 * inserts connection found
@@ -1043,7 +1040,7 @@ public class DatabaseManager {
 							execute = true;
 						}
 					}
-					
+
 					if (execute){
 						stmt.executeUpdate(toQuery);
 					}
@@ -1115,9 +1112,9 @@ public class DatabaseManager {
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	/*
 	 * Searching for the couple in the failed_searches table. 
 	 */
@@ -1131,7 +1128,7 @@ public class DatabaseManager {
 		// checks if the couple is in failed_searches table
 		try {
 			stmt = conn.createStatement();
-			
+
 			rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
 			if (rs.next()) {
 				result = true;	
@@ -1143,9 +1140,9 @@ public class DatabaseManager {
 				}
 			}
 			//if (result) { //found the couple in the failed_searches table
-				//System.out.println("couldn't find a connection between "+ start_name +" and "+ end_name);
+			//System.out.println("couldn't find a connection between "+ start_name +" and "+ end_name);
 			//}
-			
+
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			noEnd.setR(ConnectionResult.Exception);
@@ -1168,7 +1165,7 @@ public class DatabaseManager {
 					noEnd.setR(ConnectionResult.Close_Exception);
 				}
 			}
-			
+
 			if (conn!= null){
 				try {
 					conn.close();
@@ -1178,7 +1175,7 @@ public class DatabaseManager {
 				}
 			}
 		}
-	
+
 		return result;
 	}
 
@@ -1198,7 +1195,7 @@ public class DatabaseManager {
 		// checks if the connection between these 2 characters already in history table
 		try {
 			stmt = conn.createStatement();
-			
+
 			rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
 			if (rs.next()) {
 				result = true;	
@@ -1224,9 +1221,9 @@ public class DatabaseManager {
 				stmt.executeUpdate("UPDATE history SET count = " + count + ", date = '" + date + "' WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
 
 				//if (opposite) {
-					//start_name = end_name;
+				//start_name = end_name;
 				//}
-			
+
 				AlgorithmUtilities.prepareConnectionsFromHistory(getConnectionOfCharacters, conenctionArray);
 			}
 		} catch (SQLException e1) {
@@ -1260,19 +1257,20 @@ public class DatabaseManager {
 				}
 			}
 		}
-		
+
 		return result;
 
 	}
-	
-	public int[] getSuccessRate(){
+
+	public SuccessRateObject getSuccessRate(){
 
 		Statement stmt = null;
 		ResultSet rs = null;
 		Algorithm noEnd = Algorithm.getInstance();
 		int total = 0;
 		int success = 0;
-
+		SuccessRateObject successRate;
+		
 		JDCConnection conn = getConnection();
 		try {
 			stmt = conn.createStatement();
@@ -1280,42 +1278,32 @@ public class DatabaseManager {
 			rs.first();
 			total = rs.getInt(1);
 			success = rs.getInt(2);
+			successRate = new SuccessRateObject(total, success);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEnd.setR(ConnectionResult.Exception_In_Success_Rate);
+			//noEnd.setR(ConnectionResult.Exception_In_Success_Rate);
 			return null;
 		}
 		finally{
-			if (stmt != null){
-				try {
+			try{
+				if (stmt != null){
 					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
-				}
-			}
-			if (rs!= null){
-				try {
+				} 
+				if (rs!= null){
 					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
-				}
-			}
-			if (conn!= null){
-				try {
+				} 
+				if (conn!= null){
 					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
 				}
+			}catch (SQLException e) {
+				e.printStackTrace();
+				//noEnd.setR(ConnectionResult.Close_Exception);
+				return null;
 			}
-			
 		}
-		
-		int[] percentageRateOfSuccess = {success,total};
-		return percentageRateOfSuccess;
-		
+
+		return successRate;
+
 	}
 	
 	public void executeDeleteTableContent (String tableName){  
@@ -1351,7 +1339,7 @@ public class DatabaseManager {
 
 
 
-	
-	
+
+
 
 }

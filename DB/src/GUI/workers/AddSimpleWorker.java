@@ -3,6 +3,7 @@ package GUI.workers;
 import enums.ExecutionResult;
 import enums.Tables;
 import GUI.panels.Manage.cards.add.AddSimpleCard;
+import dataTypes.ResultHolder;
 
 public class AddSimpleWorker extends GenericWorker{
 	

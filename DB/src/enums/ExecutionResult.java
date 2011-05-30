@@ -17,6 +17,7 @@ public enum ExecutionResult {
 	Success_Populating_Simple_Table,
 	Success_Characters_Query,
 	Success_Algorithm,
+	Success_Statistics,
 	IntegrityConstraintViolationException,
 	Exception;
 
