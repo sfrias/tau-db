@@ -194,7 +194,7 @@ public class Algorithm{
 
 
 		}catch (SQLException e) {
-			System.out.println("error exelcute query-" + e.toString());
+			System.out.println(e.toString());
 			setR (ConnectionResult.Exception);
 			return false;
 		}
@@ -229,7 +229,7 @@ public class Algorithm{
 				}
 			}			
 		}catch (SQLException e) {
-			System.out.println("error execute query-" + e.toString());
+			System.out.println(e.toString());
 			setR (ConnectionResult.Exception);
 			return false;
 		}
@@ -296,7 +296,7 @@ public class Algorithm{
 
 
 		}catch (SQLException e) {
-			System.out.println("error execute query-" + e.toString());
+			System.out.println(e.toString());
 			setR (ConnectionResult.Exception);
 			return false;
 		}
@@ -361,6 +361,14 @@ public class Algorithm{
 					setR(ConnectionResult.Close_Exception);
 				}
 			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					setR(ConnectionResult.Close_Exception);
+				}
+			}
 
 		}
 
@@ -417,6 +425,14 @@ public class Algorithm{
 				} catch (SQLException e) {
 					e.printStackTrace();
 					setR (ConnectionResult.Close_Exception);
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -519,6 +535,14 @@ public class Algorithm{
 				if (charToAny!= null){
 					try {
 						charToAny.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+						setR(ConnectionResult.Close_Exception);
+					}
+				}
+				if (conn!= null){
+					try {
+						conn.close();
 					} catch (SQLException e) {
 						e.printStackTrace();
 						setR(ConnectionResult.Close_Exception);
@@ -627,6 +651,14 @@ public class Algorithm{
 					} catch (SQLException e) {
 						e.printStackTrace();
 						setR (ConnectionResult.Close_Exception);
+					}
+				}
+				if (conn!= null){
+					try {
+						conn.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+						setR(ConnectionResult.Close_Exception);
 					}
 				}
 			}
@@ -738,7 +770,7 @@ public class Algorithm{
 		}
 		
 		else if (getR() == ConnectionResult.Ok && matchFound){ 
-			dbManager.insertIntoHistory(connectionString, start_id, end_id); // if an error occurred here we do not want to throw an exception
+			dbManager.insertIntoHistory(connectionString); // if an error occurred here we do not want to throw an exception
 			result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
 			dbManager.executeUpdateInSuccesRate(true);
 		}
