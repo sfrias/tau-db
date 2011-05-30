@@ -1,5 +1,6 @@
 package GUI.workers;
 
+import dataTypes.ResultHolder;
 import enums.ExecutionResult;
 import GUI.commons.Pair;
 import GUI.frames.PlayFrame;
