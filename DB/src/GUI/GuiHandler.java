@@ -20,6 +20,7 @@ public class GuiHandler {
 	private static BlinkingStatusPanel panelStatus = new BlinkingStatusPanel(); 
 	private static CustomGlassPane glass ;
 	private static JFrame loadedFrame = null;
+	private static boolean isAdmin;
 
 	private static void installLookAndFeel() {
 		try {
@@ -59,6 +60,7 @@ public class GuiHandler {
 		installLookAndFeel();
 		WelcomeScreenFrame frame = new WelcomeScreenFrame();
 		setCurrentFrame(frame);
+		setAdmin(false);
 		frame.setVisible(true);
 
 
@@ -184,6 +186,22 @@ public class GuiHandler {
 		String title = "error";
 		ImageIcon icon = GuiUtils.readImageIcon("thumbDown.png");
 		JOptionPane.showMessageDialog(loadedFrame, msg, title, JOptionPane.OK_OPTION,icon);
+	}
+	
+	public static void setAdmin(boolean shouldBeAdmin){
+		isAdmin = shouldBeAdmin;
+		setAdminMessage(isAdmin);
+	}
+	
+	public static boolean isAdmin(){
+		return isAdmin;
+	}
+	
+	private static void setAdminMessage(boolean adminStatus){
+		assert (loadedFrame instanceof WelcomeScreenFrame);
+		
+		WelcomeScreenFrame frame = (WelcomeScreenFrame)loadedFrame;
+		frame.setUserMessage(adminStatus);
 	}
 
 }

@@ -1,11 +1,11 @@
 package GUI.workers;
 
-import dataTypes.ResultHolder;
-import enums.ExecutionResult;
-import enums.Tables;
 import GUI.model.CharacterModel;
 import GUI.panels.Manage.cards.add.AddCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
+import dataTypes.ResultHolder;
+import enums.ExecutionResult;
+import enums.Tables;
 
 public class GetAllAttributesWorker extends GenericWorker{
 	

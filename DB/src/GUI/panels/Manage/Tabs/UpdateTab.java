@@ -130,7 +130,7 @@ public class UpdateTab extends JPanel implements PropertyChangeListener{
 		builder.add(descDelete, cc.xy(2,7));		
 
 		JPanel panel = builder.getPanel();
-		panel.setMaximumSize(new Dimension(360,200));
+		panel.setMaximumSize(new Dimension(370,200));
 
 		return panel;
 	}

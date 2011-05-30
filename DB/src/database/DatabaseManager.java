@@ -900,29 +900,38 @@ public class DatabaseManager {
 				}
 				index++;
 			}
+			
+			return searchResult;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
 		finally {
-			try{
-				if (stmt != null){
+			if (stmt != null){
+				try {
 					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-				if (rs!= null){
+			}
+			if (rs!= null){
+				try {
 					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-				if (conn!= null){
+			}
+			if (conn!= null){
+				try {
 					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return null;
 			}
 		}
 
-		return searchResult;
+		
 	}
 
 

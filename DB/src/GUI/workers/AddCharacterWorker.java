@@ -1,9 +1,9 @@
 package GUI.workers;
 
-import dataTypes.ResultHolder;
-import enums.ExecutionResult;
 import GUI.commons.Pair;
 import GUI.panels.Manage.cards.add.AddCharacters;
+import dataTypes.ResultHolder;
+import enums.ExecutionResult;
 
 public class AddCharacterWorker extends GenericWorker {
 

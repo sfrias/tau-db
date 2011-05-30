@@ -1,10 +1,10 @@
 package GUI.workers;
 
+import GUI.model.StatisticsModel;
+import GUI.panels.Manage.Tabs.StatisticsTab;
 import dataTypes.ResultHolder;
 import dataTypes.SearchResultObject;
 import dataTypes.SuccessRateObject;
-import GUI.model.StatisticsModel;
-import GUI.panels.Manage.Tabs.StatisticsTab;
 import enums.ExecutionResult;
 
 public class StatisticsWorker extends GenericWorker{

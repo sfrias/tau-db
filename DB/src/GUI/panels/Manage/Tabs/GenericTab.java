@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
+import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.layouts.RXCardLayout;
 import enums.Tables;
@@ -26,13 +27,18 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		JPanel panelHead = new JPanel();
 		panelHead.setLayout(new BoxLayout(panelHead, BoxLayout.PAGE_AXIS));
 		panelHead.add(new JLabel("Please select a Category you wish to " + getTabAction() + " new record to:"));
-
+		
 		//TODO insert all tabels names!!!!
 		//String[] categories = createAllTablesArray();
-		String[] categories = {Tables.characters.toString().toUpperCase(), Tables.disease.toString().toUpperCase(),
-				Tables.occupation.toString().toUpperCase(), Tables.organization.toString().toUpperCase(), 
-				Tables.power.toString().toUpperCase(), Tables.place_of_birth.toString().toUpperCase(), Tables.school.toString().toUpperCase() ,Tables.universe.toString().toUpperCase() };
-
+		String[] categories ;
+		if (GuiHandler.isAdmin()){
+			categories = new String[]{Tables.characters.toString().toUpperCase(), Tables.disease.toString().toUpperCase(),
+					Tables.occupation.toString().toUpperCase(), Tables.organization.toString().toUpperCase(), 
+					Tables.power.toString().toUpperCase(), Tables.place_of_birth.toString().toUpperCase(), Tables.school.toString().toUpperCase() ,Tables.universe.toString().toUpperCase() };
+		} else {
+			categories = new String[]{Tables.characters.toString().toUpperCase()};
+		}
+		
 		AutoCompleteComboBox comboCategory = new AutoCompleteComboBox(categories);
 		comboCategory.setPreferredSize(new Dimension(200,20));
 		comboCategory.addActionListener(this);

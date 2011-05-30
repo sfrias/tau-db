@@ -1,8 +1,8 @@
 package GUI.workers;
 
-import enums.Tables;
 import GUI.panels.Manage.cards.delete.DeleteCard;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
+import enums.Tables;
 
 public abstract class GenericEditDeleteWorker extends GenericWorker {
 	protected Tables table;

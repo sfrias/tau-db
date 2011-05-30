@@ -14,17 +14,17 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import enums.Frames;
-
-
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;
+import GUI.dialogs.CustomDialog;
+import enums.Frames;
 
 public class WelcomeScreenFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
-
-	private JButton buttonQuit ;
+	
+	private CustomDialog passwordDialog = new CustomDialog(this);
+	private JLabel userMessage = new JLabel();
 
 	public WelcomeScreenFrame(){
 		buildFrame();
@@ -86,21 +86,46 @@ public class WelcomeScreenFrame extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(labelProj);
-		panel.add(Box.createRigidArea(new Dimension(0,10)));
+		panel.add(Box.createRigidArea(new Dimension(0,5)));
 		panel.add(labelWelcome);
-		panel.add(Box.createRigidArea(new Dimension(0,10)));
+		panel.add(Box.createRigidArea(new Dimension(0,5)));
 		panel.add(labelQuestion);
 		panel.add(Box.createRigidArea(new Dimension(0,15)));
 		panel.add(actionButtons);
-		panel.add(Box.createRigidArea(new Dimension(0,10)));
-
-		buttonQuit = GuiUtils.createQuitButton();
+		panel.add(Box.createRigidArea(new Dimension(0,3)));
+		
+		JButton buttonEnableAdmin = GuiUtils.createActionButton("admin", "admin.png", new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				passwordDialog.setVisible(true);
+				if (passwordDialog.isValidPassword()){
+					GuiHandler.setAdmin(true);
+				}
+			}
+		});
+		buttonEnableAdmin.setAlignmentX(CENTER_ALIGNMENT);
+		panel.add(buttonEnableAdmin);		
+		panel.add(Box.createRigidArea(new Dimension(0,8)));
+		
+		JButton buttonQuit = GuiUtils.createQuitButton();
 		buttonQuit.setAlignmentX(CENTER_ALIGNMENT);
 		panel.add(buttonQuit);
+		panel.add(Box.createRigidArea(new Dimension(0,10)));
+		
+		userMessage.setAlignmentX(CENTER_ALIGNMENT);
+		setUserMessage(GuiHandler.isAdmin());
+		panel.add(userMessage);
 
-		panel.setBorder(new EmptyBorder(20,20,20,20));
+		panel.setBorder(new EmptyBorder(20,20,10,20));
 		return panel;
 
+	}
+	
+	public void setUserMessage(boolean isAdmin){
+		if (isAdmin){
+			userMessage.setText("User is currently logged in as an Admin");
+		} else{
+			userMessage.setText("User is currently not logged in as an Admin");
+		}
 	}
 
 

@@ -2,6 +2,8 @@ package GUI.panels.Manage.Tabs;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -12,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
 import GUI.GuiHandler;
+import GUI.buttons.IconButton;
 import GUI.model.StatisticsModel;
 import GUI.workers.StatisticsWorker;
 
@@ -58,7 +61,17 @@ public class StatisticsTab extends JPanel{
 		createTopFivePopularSearchesPanel();
 		add(Box.createRigidArea(new Dimension(0,15)));
 		createSuccessfulRatePanel();
-		add(Box.createRigidArea(new Dimension(0,15)));
+		add(Box.createRigidArea(new Dimension(0,5)));
+		
+		IconButton refreshButton = new IconButton("refresh", "refresh.png");
+		refreshButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				updateContent();
+			}
+		});
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(refreshButton);
+		add(buttonPanel);
 		
 		updateContent();
 		

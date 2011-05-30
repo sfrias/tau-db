@@ -1,8 +1,8 @@
 package GUI.workers;
 
-import dataTypes.ResultHolder;
 import GUI.commons.Pair;
 import GUI.panels.Manage.cards.edit.EditCharacters;
+import dataTypes.ResultHolder;
 import enums.ExecutionResult;
 
 public class EditCharacterWorker extends GenericWorker {
