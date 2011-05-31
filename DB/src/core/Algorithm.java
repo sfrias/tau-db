@@ -757,7 +757,7 @@ public class Algorithm{
 					break;
 				}
 
-				return result;
+				break;
 			}
 		}
 
