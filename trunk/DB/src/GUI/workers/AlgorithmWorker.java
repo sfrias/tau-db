@@ -4,8 +4,7 @@ import GUI.frames.PlayFrame;
 import GUI.model.AlgorithmModel;
 import core.Algorithm;
 import core.AlgorithmUtilities;
-import core.ReturnElement;
-import dataTypes.ResultHolder;
+import dataTypes.*;
 import enums.ConnectionResult;
 import enums.ExecutionResult;
 
