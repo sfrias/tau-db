@@ -138,17 +138,6 @@ CREATE TABLE failed_searches
 	FOREIGN KEY (character_id1) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (character_id2) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE) ENGINE=InnoDB;
 
-
-CREATE TABLE statistic
-	(character_id1 int(11) NOT NULL,
-	character_id2 int(11) NOT NULL,
-	num_of_connections int(11),
-	time int(11),
-	PRIMARY KEY (character_id1,character_id2),
-	FOREIGN KEY (character_id1) REFERENCES characters(character_id),
-	FOREIGN KEY (character_id2) REFERENCES characters(character_id));
-
-
 CREATE TABLE success_rate
 	(success_rate_searches int(11) DEFAULT NULL,
 	success_rate_successful_searches int(11) DEFAULT NULL,

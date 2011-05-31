@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TreeMap;
 
+import dataTypes.charElement;
+import dataTypes.connectionElement;
 import database.DatabaseManager;
 import enums.ConnectionResult;
 import enums.Tables;
@@ -23,8 +25,8 @@ public class AlgorithmUtilities {
 	 */
 	public static void prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
-		Algorithm noEnd = Algorithm.getInstance();
-		String startName="", endName="";
+		Algorithm alg = Algorithm.getInstance();
+		String startName=null, endName=null;
 		String[] valueArr = new String[4];
 		String connections[] = connArr.split("\t");
 		String atrName = null;
@@ -33,7 +35,7 @@ public class AlgorithmUtilities {
 				valueArr = connections[i].split(",");
 				startName =dbManager.getNameFromId(Integer.parseInt(valueArr[0]));
 				endName = dbManager.getNameFromId(Integer.parseInt(valueArr[1]));
-				if (noEnd.getR()!= ConnectionResult.Ok){
+				if (alg.getR()!= ConnectionResult.Ok){
 					break;
 				}
 				atrName = valueArr[3];
@@ -163,7 +165,7 @@ public class AlgorithmUtilities {
 
 	public static void prepareTablesAndHashMaps(){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
-		Algorithm noEnd = Algorithm.getInstance();
+		Algorithm alg = Algorithm.getInstance();
 		TreeMap<String, String> joinedAttributesMap = new TreeMap<String,String>();
 		int numOfTables = Algorithm.getTables().length;
 		int unspec=0;
@@ -176,7 +178,7 @@ public class AlgorithmUtilities {
 			currentTable = Algorithm.getTables()[i].name();
 			if (currentTable.equals(Tables.characters.name())){
 				unspec = dbManager.getUnspecifiedId(currentTable);
-				if (noEnd.getR()!= ConnectionResult.Ok){
+				if (alg.getR()!= ConnectionResult.Ok){
 					return;
 				}
 				Algorithm.putInUnspecified(Tables.characters.name(), unspec);
@@ -197,7 +199,7 @@ public class AlgorithmUtilities {
 			if (!attributes[i].equals(Tables.parent.name()) &&
 					!attributes[i].equals(Tables.romantic_involvement.name())){
 				unspec = dbManager.getUnspecifiedId(attributes[i]);
-				if (noEnd.getR()!= ConnectionResult.Ok){
+				if (alg.getR()!= ConnectionResult.Ok){
 					return;
 				}
 				Algorithm.putInUnspecified(attributes[i], unspec);
@@ -288,7 +290,7 @@ public class AlgorithmUtilities {
 	
 	public static String prepareConnectionsForGUI(charElement[] connection, connectionElement[] connectionArray){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
-		Algorithm noEnd = Algorithm.getInstance();
+		Algorithm alg = Algorithm.getInstance();
 		String startName="", endName="";
 		String toHisory="";
 		String atrName = null;
@@ -297,21 +299,21 @@ public class AlgorithmUtilities {
 		String attributeString;
 		charElement conLast = connection[0], conPrev;
 		int i=0;
-		while (conLast.prevElement != null){
-			conPrev = conLast.prevElement;
-			attribute = conLast.connectedAttribute;
-			attributeVal = conLast.attributeValue;
+		while (conLast.getPrevElement() != null){
+			conPrev = conLast.getPrevElement();
+			attribute = conLast.getConnectedAttribute();
+			attributeVal = conLast.getAttributeValue();
 			attributeString = Algorithm.getValueFromReversedTableMap(attribute);
 
-			startName =dbManager.getNameFromId(conLast.characterId);
-			endName = dbManager.getNameFromId(conPrev.characterId);
+			startName =dbManager.getNameFromId(conLast.getCharacterId());
+			endName = dbManager.getNameFromId(conPrev.getCharacterId());
 			atrName = dbManager.getAttributeNameFromID(attributeString, attributeVal);
 
-			if (noEnd.getR()!= ConnectionResult.Ok){
+			if (alg.getR()!= ConnectionResult.Ok){
 				return null;
 			}
-			toHisory+= conLast.characterId +","+conPrev.characterId +"," +Algorithm.getFromPrintRepresentation(attributeString) + "," + atrName;
-			if (conPrev.prevElement != null){
+			toHisory+= conLast.getCharacterId() +","+conPrev.getCharacterId() +"," +Algorithm.getFromPrintRepresentation(attributeString) + "," + atrName;
+			if (conPrev.getPrevElement() != null){
 				toHisory+= "\t";
 			}
 			connectionArray[i] = new connectionElement(startName, endName, Algorithm.getFromPrintRepresentation(attributeString), atrName);
