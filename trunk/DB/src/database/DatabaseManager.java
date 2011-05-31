@@ -19,9 +19,9 @@ import connection.JDCConnection;
 import connection.JDCConnectionDriver;
 import core.Algorithm;
 import core.AlgorithmUtilities;
-import core.connectionElement;
 import dataTypes.SearchResultObject;
 import dataTypes.SuccessRateObject;
+import dataTypes.connectionElement;
 import enums.ConnectionResult;
 import enums.ExecutionResult;
 import enums.Tables;
@@ -30,7 +30,9 @@ public class DatabaseManager {
 
 	//TODO add finally statements to all methods and check null!!!
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "root";
+
+	private final static String PASSWORD = "armiN203";
+
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
