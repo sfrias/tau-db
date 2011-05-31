@@ -27,7 +27,6 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 	private File pathDir, sqlFile, extractDir, fictUniverseDir;
 	private File save, compressedTar ;
 	private final String POPULATE_TABLES_SQL_FILE_PATH = "sql/mysql/populate-tables.sql";
-	private final String CHARSET = "UTF-8";
 	private UpdateTab parent;
 
 	// ************* progressBar purpose ***************

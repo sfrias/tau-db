@@ -1,10 +1,12 @@
 package GUI.workers;
 
+import GUI.GuiHandler;
 import GUI.frames.PlayFrame;
 import GUI.model.AlgorithmModel;
 import core.Algorithm;
 import core.AlgorithmUtilities;
-import dataTypes.*;
+import dataTypes.ResultHolder;
+import dataTypes.ReturnElement;
 import enums.ConnectionResult;
 import enums.ExecutionResult;
 
@@ -21,7 +23,8 @@ public class AlgorithmWorker extends GenericWorker{
 
 	@Override
 	protected ResultHolder doInBackground() {
-
+		GuiHandler.startCountDown(this);
+		
 		Algorithm alg = Algorithm.getInstance();
 		alg.initialization();
 		ReturnElement returnElem = alg.lookForConnection(firstCharId, secondCharId);

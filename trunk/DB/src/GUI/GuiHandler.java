@@ -1,8 +1,12 @@
 package GUI;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -202,6 +206,21 @@ public class GuiHandler {
 		
 		WelcomeScreenFrame frame = (WelcomeScreenFrame)loadedFrame;
 		frame.setUserMessage(adminStatus);
+	}
+	
+	public static void startCountDown(final SwingWorker worker){
+		
+		TimerTask task = new TimerTask() {
+			
+			@Override
+			public void run() {
+				worker.cancel(true);
+				
+			}
+		};
+		
+		Timer timer = new Timer();
+		timer.schedule(task, 40000);
 	}
 
 }

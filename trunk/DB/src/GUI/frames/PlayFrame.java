@@ -17,6 +17,7 @@ import javax.swing.text.JTextComponent;
 
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
+import GUI.commons.GuiUtils;
 import GUI.commons.Pair;
 import GUI.model.CharacterModel;
 import GUI.model.SimpleModel;
@@ -122,17 +123,17 @@ public class PlayFrame extends GenericFrame {
 		panelRightHead.add(panelCombo2);
 		panelRightHead.add(charIISearchButton);
 
-		JButton buttonCompare = new JButton("Look for connection!");
-		buttonCompare.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				int firstCharId = ((Pair) comboCharI.getSelectedItem()).getId();
-				int secondCharId = ((Pair) comboCharII.getSelectedItem()).getId();
-				System.out.println("first " + firstCharId + " second " + secondCharId);
-				AlgorithmWorker worker = new AlgorithmWorker(firstCharId, secondCharId, playFrame);
-				GuiHandler.startStatusFlash();
-				worker.execute();
-			}
-		});
+		JButton buttonCompare = GuiUtils.createActionButton("start", null, 
+				new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						int firstCharId = ((Pair) comboCharI.getSelectedItem()).getId();
+						int secondCharId = ((Pair) comboCharII.getSelectedItem()).getId();
+						System.out.println("first " + firstCharId + " second " + secondCharId);
+						AlgorithmWorker worker = new AlgorithmWorker(firstCharId, secondCharId, playFrame);
+						GuiHandler.startStatusFlash();
+						worker.execute();
+					}
+				});
 
 		JPanel panelSelection = new JPanel();
 		panelSelection.setLayout(new BoxLayout(panelSelection, BoxLayout.X_AXIS));
