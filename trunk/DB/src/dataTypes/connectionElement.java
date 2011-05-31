@@ -1,4 +1,4 @@
-package core;
+package dataTypes;
 
 
 public class connectionElement {
@@ -12,12 +12,6 @@ public class connectionElement {
 		end_name=name2;
 		attribute = atr;
 		attribute_value = attributeVal;
-	/*	if (!atr.equals(Tables.parent.toString()) && !atr.equals(Tables.romantic_involvement.toString())){
-		
-		}
-		else{
-			attribute_value=null;
-		}*/
 	}
 	public String getStartName(){
 		return start_name;

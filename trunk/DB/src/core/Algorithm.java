@@ -1,6 +1,5 @@
 package core;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,6 +10,9 @@ import java.util.List;
 import java.util.TreeMap;
 
 import connection.JDCConnection;
+import dataTypes.ReturnElement;
+import dataTypes.charElement;
+import dataTypes.connectionElement;
 import database.DatabaseManager;
 import enums.ConnectionResult;
 import enums.Tables;
@@ -129,6 +131,11 @@ public class Algorithm{
 	public static String getValueFromReversedTableMap(short key){
 		return reverseTablesMap.get(key);
 	}
+	
+	public int getGlobalNumOfConnections(){
+		return globalNumOfConnections;
+	}
+
 
 	/*
 	 * While the phase is smaller than the maximum number of connections, we are running over all characters found in the last phase
@@ -152,8 +159,6 @@ public class Algorithm{
 			currentPhase = new ArrayList<charElement>();
 			return resultFlag;
 		}
-
-		iterator = previousPhase.iterator();
 
 		while (iterator.hasNext()){
 			currentElement = iterator.next();
@@ -247,8 +252,8 @@ public class Algorithm{
 	private boolean addNewConnection(int currentid, charElement start_element, String currentAtr, int atrID, charElement[] result){
 		charElement connection = new charElement(currentid, start_element);
 		short attribute = tablesMap.get(currentAtr);
-		connection.connectedAttribute = attribute;;
-		connection.attributeValue = atrID;
+		connection.setConnectedAttribute(attribute);;
+		connection.setAttributeValue(atrID);
 
 		if (currentid == end_id){
 			result[0] = connection;
@@ -274,7 +279,7 @@ public class Algorithm{
 			while (charsWithAtrRS.next()) {
 				currentidField1 = charsWithAtrRS.getInt(1);
 				currentidField2 = charsWithAtrRS.getInt(2);
-				if (currentidField1 == start_element.characterId){
+				if (currentidField1 == start_element.getCharacterId()){
 					currentid = currentidField2;
 					if (currentAtr.equals(Tables.parent.name())){ //that means that the currentid is the child of start_element
 						atr = "child";
@@ -464,7 +469,7 @@ public class Algorithm{
 		String 	currentAtr, joinedAtr, charactersWithAtr;
 		int unspecifiedIdOfCharacter = unspecifiedIdOfTables.get(Tables.characters.toString()); 
 		int attributes = tablesArr.length;
-		int start_id = start_element.characterId;
+		int start_id = start_element.getCharacterId();
 		Statement charWithAtrStmt=null;
 		boolean foundMatch = false;
 		int[] valPlaceOfBirth = new int[1];
@@ -571,7 +576,7 @@ public class Algorithm{
 		ResultSet charsWithAtrRS=null;
 		String 	currentAtr="", joinedAtr, charactersWithAtr; 
 		int attributes = tablesArr.length;
-		int start_id = start_element.characterId;
+		int start_id = start_element.getCharacterId();
 		boolean foundMatch = false;
 		int currentAtrVal = -2;
 		charElement end_element;
@@ -671,8 +676,8 @@ public class Algorithm{
 
 		if (foundMatch){
 			end_element = new charElement(end_id, start_element);
-			end_element.connectedAttribute = tablesMap.get(currentAtr);
-			end_element.attributeValue = currentAtrVal;
+			end_element.setConnectedAttribute(tablesMap.get(currentAtr));
+			end_element.setAttributeValue(currentAtrVal);
 			result[0] = end_element;
 		}
 		return foundMatch;
@@ -781,86 +786,7 @@ public class Algorithm{
 
 
 
-	public int getGlobalNumOfConnections(){
-		return globalNumOfConnections;
-	}
 
-
-	public static void main(String[] args) throws IOException{
-		//noEndAlg a = new noEndAlg();
-		//AlgorithmUtilities.prepareTablesAndHashMaps(a);
-
-		//while (true){
-		//a.lookForConnection(1, 6);
-		//System.out.println("loop");
-		//}
-		//System.out.println(a.indexOfJumps);
-		/*	for (int i=0;i<table.length;i++){
-			System.out.println(i+ ": " + table[i]);
-		}*/
-
-		//a.fillTables();
-
-
-		//long start = System.currentTimeMillis();	
-		//long finish = System.currentTimeMillis();
-		//long total = finish-start;
-		//String time = String.format("%d min, %d sec",      TimeUnit.MILLISECONDS.toMinutes(total),     TimeUnit.MILLISECONDS.toSeconds(total) -      TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(total)) );
-		//System.out.println("operation took total time of " + total +"\n" + time);
-		//System.out.println(a.skips);
-		//System.out.println(foundCharactersIDs.size());
-		//System.out.println(a.getGlobalNumOfConnections());
-
-		//a.topSerches();
-/*
-		try {
-			Tester.tester();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	*/	
-
-		Algorithm alg = Algorithm.getInstance();
-		alg.initialization();
-		ReturnElement returnElem = alg.lookForConnection(33850, 2433);
-		returnElem.getResult();
-	
-
-		
-		if (returnElem.getResult() == ConnectionResult.Exception || returnElem.getResult() == ConnectionResult.Close_Exception){
-			//TODO PRINT TO USER TO TRY AGAIN LATER
-			System.out.println("exception occurred");
-		}
-		else if (returnElem.getResult() == ConnectionResult.Did_Not_Find_Connection){
-			//TODO PRINT TO USER THAT NO CONNECTION WAS FOUND BETWEEN THESE CHARACTERS
-			//TODO NAMES ARE :
-			System.out.println("couldn't find a connection between " + alg.start_name + " and " + alg.end_name);	
-		}
-		else if (returnElem.getResult() == ConnectionResult.Found_Connection_Of_Length_0){
-			//TODO PRINT TO USER THAT HE HAS TO GIVE TWO DIFFERENT CHARACTERS AS AN INPUT
-			System.out.println("a connection of length 0");
-		}
-		
-		else if (returnElem.getResult() == ConnectionResult.Found_Connection){
-			//TODO PRINT TO USER THAT THE CONNECTION WAS FOUND BETWEEN
-			alg.getStartName();
-			//TODO AND
-			alg.getEndName();
-			//USE THIS LOOP TO PRINT THE DESCRIPTION OF THE CONNECTION CHAIN
-			String[] connectionChain = AlgorithmUtilities.readConnectionChain(returnElem.getConnectionArray());
-			for (int i=0; i< connectionChain.length; i++){
-				System.out.println("found a connection between " + alg.start_name + " and " + alg.end_name);
-				if (connectionChain[i]!=null){
-					System.out.println(connectionChain[i]);
-					//TODO PRINT TO THE SCREEN THE CONNECTION 
-					// NOTICE THAT THERE'S NO \n AT THE END OF EACH STRING, SO IF YOU WANT TO PRINT THE STRING ONE AFTER ANOTHER, YOU HAVE
-					// TO INSERT THAT LOGIC IN THE GUI.
-					// NOTICE THAT THE STRING OF THE ATTRIBUTE ARE ALREADY IN THE PRINT REPRESENTATION (TOSTRING AND NOT NAME)
-				}
-	
-			}
-		}
-	}
 }
 		
 		
