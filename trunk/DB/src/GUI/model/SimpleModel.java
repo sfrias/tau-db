@@ -1,6 +1,6 @@
 package GUI.model;
 
-import GUI.commons.Pair;
+import dataTypes.Pair;
 
 public class SimpleModel {
 	private Pair[] records;

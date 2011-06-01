@@ -1,9 +1,9 @@
 package GUI.workers;
 
-import GUI.commons.Pair;
 import GUI.model.CharacterModel;
 import GUI.panels.Manage.cards.add.AddCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
+import dataTypes.Pair;
 import dataTypes.ResultHolder;
 import enums.ExecutionResult;
 import enums.Tables;

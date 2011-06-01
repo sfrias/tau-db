@@ -6,15 +6,13 @@ import java.awt.event.ActionListener;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 
-import enums.Tables;
-
-
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
-import GUI.commons.Pair;
 import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.EditAndDeleteGenericCardPanel;
 import GUI.workers.DeleteWorker;
+import dataTypes.Pair;
+import enums.Tables;
 
 public class DeleteCard extends EditAndDeleteGenericCardPanel{
 
@@ -23,18 +21,18 @@ public class DeleteCard extends EditAndDeleteGenericCardPanel{
 	protected DeleteCard thisCard = this;
 
 
-	DeleteCard(Tables table, boolean isSimpleCard) throws Exception{
+	public DeleteCard(Tables table, boolean isSimpleCard) {
 		super(table, isSimpleCard);
 		textName.setEditable(false);
 	}
 	
-	DeleteCard(Tables table){
-		super(table, true);
-		textName.setEditable(false);
+	public DeleteCard(Tables table){
+		this(table, true);
 	}
 
 	public DeleteCard(Tables table, boolean isSimpleTable, boolean generateRecords) {
 		super(table, isSimpleTable, generateRecords);
+		textName.setEditable(false);
 	}
 
 	public String getCardAction(){

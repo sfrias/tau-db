@@ -1,10 +1,10 @@
 package GUI.workers;
 
-import GUI.commons.Pair;
 import GUI.frames.PlayFrame;
 import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
+import dataTypes.Pair;
 import dataTypes.ResultHolder;
 import enums.ExecutionResult;
 
