@@ -2,6 +2,7 @@ package GUI.frames;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -111,6 +112,7 @@ public class PlayFrame extends GenericFrame {
 		panelSelectAndDetails.add(panelDetails,BorderLayout.CENTER);
 
 		JLabel labeltTitle = new JLabel("Please choose two characters you would like to find a connection between");
+		labeltTitle.setFont(new Font("Footlight MT Light", Font.BOLD, 20));
 		labeltTitle.setAlignmentX(LEFT_ALIGNMENT);
 		JPanel panelTitle = new JPanel();
 		panelTitle.add(labeltTitle);
@@ -162,8 +164,9 @@ public class PlayFrame extends GenericFrame {
 	private JPanel createTopPanel(final AutoCompleteComboBox charComboBox, CharacterDisplayPanel charDetails, String characterTitle, final int charNum){
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		JLabel labelCharI = new JLabel(characterTitle);
-		labelCharI.setAlignmentX(CENTER_ALIGNMENT);
+		JLabel labelChar = new JLabel(characterTitle);
+		labelChar.setFont(new Font("Footlight MT Light", Font.PLAIN, 15));
+		labelChar.setAlignmentX(CENTER_ALIGNMENT);
 		charComboBox.setEditable(true);
 		charComboBox.setPreferredSize(new Dimension(200, 20));
 		charComboBox.addActionListener(new ComboActionListener(charNum, charDetails));
@@ -171,8 +174,9 @@ public class PlayFrame extends GenericFrame {
 		JPanel panelCombo = new JPanel();
 		panelCombo.add(charComboBox);
 
-		JButton charISearchButton = new JButton("Search");
-		charISearchButton.addActionListener(new ActionListener() {
+		JButton charSearchButton = new JButton("Search");
+		charSearchButton.setAlignmentX(CENTER_ALIGNMENT);
+		charSearchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				Document doc = ((JTextComponent)charComboBox.getEditor().getEditorComponent()).getDocument();
 				String queryString;
@@ -189,9 +193,9 @@ public class PlayFrame extends GenericFrame {
 			}
 		});
 
-		panel.add(labelCharI);
+		panel.add(labelChar);
 		panel.add(panelCombo);
-		panel.add(charISearchButton);
+		panel.add(charSearchButton);
 		
 		return panel;
 	}

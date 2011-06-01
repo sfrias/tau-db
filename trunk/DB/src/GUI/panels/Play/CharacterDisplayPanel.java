@@ -1,9 +1,11 @@
 package GUI.panels.Play;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.util.Vector;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
@@ -65,7 +67,10 @@ public class CharacterDisplayPanel extends JPanel{
 		CellConstraints cc = new CellConstraints();
 		
 		for (int i=0; i<numOfRows; i++){
-			builder.addLabel(fieldsNames.remove(0) + ":",cc.xy(1, 2*i+1));
+			JLabel label = new JLabel(fieldsNames.remove(0) + ":");
+			label.setFont(new Font("Footlight MT Light", Font.PLAIN, 15));
+			
+			builder.add(label,cc.xy(1, 2*i+1));
 			builder.add(fieldsComponents.remove(0),cc.xy(3,2*i+1));
 		}
 		
