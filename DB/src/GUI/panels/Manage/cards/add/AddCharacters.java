@@ -11,12 +11,13 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
+import dataTypes.Pair;
+
 import enums.Tables;
 
 
 import GUI.GuiHandler;
 import GUI.commons.GuiUtils;
-import GUI.commons.Pair;
 import GUI.list.DisplayList;
 import GUI.model.CharacterModel;
 import GUI.panels.CharacterAttributePanel;

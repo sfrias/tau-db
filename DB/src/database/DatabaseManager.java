@@ -11,14 +11,13 @@ import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import GUI.commons.Pair;
-
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import connection.JDCConnection;
 import connection.JDCConnectionDriver;
 import core.Algorithm;
 import core.AlgorithmUtilities;
+import dataTypes.Pair;
 import dataTypes.SearchResultObject;
 import dataTypes.SuccessRateObject;
 import dataTypes.connectionElement;
@@ -31,7 +30,7 @@ public class DatabaseManager {
 	//TODO add finally statements to all methods and check null!!!
 	private final static String USERNAME = "root";
 
-	private final static String PASSWORD = "6387";
+	private final static String PASSWORD = "root";
 
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 

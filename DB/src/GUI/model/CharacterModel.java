@@ -1,7 +1,7 @@
 package GUI.model;
 
+import dataTypes.Pair;
 import enums.Tables;
-import GUI.commons.Pair;
 
 public class CharacterModel{
 

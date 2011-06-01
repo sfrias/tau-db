@@ -1,9 +1,9 @@
 package GUI.workers;
 
-import GUI.commons.Pair;
 import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.delete.DeleteCard;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
+import dataTypes.Pair;
 import dataTypes.ResultHolder;
 import enums.ExecutionResult;
 import enums.Tables;

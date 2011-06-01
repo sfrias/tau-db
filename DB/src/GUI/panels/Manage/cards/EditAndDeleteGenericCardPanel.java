@@ -15,9 +15,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
-import enums.Tables;
-
-
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.panels.Manage.cards.delete.DeleteCard;
@@ -26,13 +23,14 @@ import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
 import GUI.workers.GetRecordsByNameWorker;
 import GUI.workers.GetSimpleRecordsWorker;
+import enums.Tables;
 
 public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel implements EditAndDeleteGenericCardInteface{
 	private static final long serialVersionUID = 1L;
 	protected AutoCompleteComboBox comboRecord;
 	private EditAndDeleteGenericCardPanel card = this;
 
-	public EditAndDeleteGenericCardPanel(Tables table) throws Exception{
+	public EditAndDeleteGenericCardPanel(Tables table){
 		this(table, true, true);
 	}
 

@@ -15,6 +15,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import dataTypes.Pair;
+
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.frames.WelcomeScreenFrame;

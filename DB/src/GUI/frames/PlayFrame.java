@@ -15,10 +15,11 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
+import dataTypes.Pair;
+
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.GuiUtils;
-import GUI.commons.Pair;
 import GUI.model.CharacterModel;
 import GUI.model.SimpleModel;
 import GUI.panels.CustomGlassPane;

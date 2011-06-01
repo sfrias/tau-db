@@ -10,9 +10,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.ListSelectionModel;
 
+import dataTypes.Pair;
+
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
-import GUI.commons.Pair;
 import GUI.list.DisplayList;
 import GUI.model.CharacterModel;
 import GUI.model.SimpleModel;

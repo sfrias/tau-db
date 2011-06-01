@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import GUI.commons.GuiUtils;
-import GUI.commons.Pair;
 import GUI.list.DisplayList;
 import GUI.model.CharacterModel;
 import GUI.panels.CustomScrollPanel;
@@ -16,6 +15,8 @@ import GUI.panels.CustomScrollPanel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import dataTypes.Pair;
 
 import enums.Tables;
 

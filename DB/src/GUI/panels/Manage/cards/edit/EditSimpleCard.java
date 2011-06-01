@@ -3,9 +3,10 @@ package GUI.panels.Manage.cards.edit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import dataTypes.Pair;
+
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
-import GUI.commons.Pair;
 import GUI.model.SimpleModel;
 import GUI.workers.EditSimpleWorker;
 import enums.Tables;
