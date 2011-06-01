@@ -114,7 +114,8 @@ public class WelcomeScreenFrame extends JFrame {
 		userMessage.setAlignmentX(CENTER_ALIGNMENT);
 		setUserMessage(GuiHandler.isAdmin());
 		panel.add(userMessage);
-
+		
+		userMessage.setFont(new Font("Footlight MT Light", Font.PLAIN, 15));
 		panel.setBorder(new EmptyBorder(20,20,10,20));
 		return panel;
 
@@ -122,9 +123,9 @@ public class WelcomeScreenFrame extends JFrame {
 	
 	public void setUserMessage(boolean isAdmin){
 		if (isAdmin){
-			userMessage.setText("User is currently logged in as an Admin");
+			userMessage.setText("You are logged in as an Admin");
 		} else{
-			userMessage.setText("User is currently not logged in as an Admin");
+			userMessage.setText("You are currently not logged in as an Admin");
 		}
 	}
 

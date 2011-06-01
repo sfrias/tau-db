@@ -1,15 +1,16 @@
 package GUI.panels.Manage.cards;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-
 
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.buttons.IconButton;
@@ -82,11 +83,15 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setDefaultDialogBorder();
 		CellConstraints cc = new CellConstraints();
-		builder.addLabel(table.toString() + " name:", cc.xy(1,1));
+		JLabel label = new JLabel(table.toString() + " name:");
+		label.setFont(new Font("Footlight MT Light", Font.PLAIN, 15));
+		builder.add(label, cc.xy(1,1));
 		builder.add(textName, cc.xy(3,1));
 
 		for (int i=0; i<numOfRows; i++){
-			builder.addLabel(fieldsNames.remove(0) + ":",cc.xy(1, 2*i+3));
+			JLabel fieldName = new JLabel(fieldsNames.remove(0) + ":");
+			fieldName.setFont(new Font("Footlight MT Light", Font.PLAIN, 15));
+			builder.add(fieldName,cc.xy(1, 2*i+3));
 			builder.add(fieldsComponents.remove(0),cc.xy(3,2*i+3));
 		}
 		/*

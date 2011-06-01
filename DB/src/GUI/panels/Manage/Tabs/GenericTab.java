@@ -2,9 +2,11 @@ package GUI.panels.Manage.Tabs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -26,7 +28,10 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 
 		JPanel panelHead = new JPanel();
 		panelHead.setLayout(new BoxLayout(panelHead, BoxLayout.PAGE_AXIS));
-		panelHead.add(new JLabel("Please select a Category you wish to " + getTabAction() + " new record to:"));
+		JLabel label = new JLabel("Please select a Category");
+		label.setFont(new Font("Footlight MT Light", Font.BOLD, 20));
+		label.setAlignmentX(CENTER_ALIGNMENT);
+		panelHead.add(label);
 		
 		//TODO insert all tabels names!!!!
 		//String[] categories = createAllTablesArray();
@@ -56,6 +61,8 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		cards = addCards(cards);
 		add(cards,BorderLayout.CENTER);	
 		comboCategory.setSelectedIndex(0);
+		
+		setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
 	}
 
