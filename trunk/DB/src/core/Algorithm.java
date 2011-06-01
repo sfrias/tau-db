@@ -23,7 +23,7 @@ public class Algorithm{
 
 	//mutual fields for all instances
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
-	
+
 	private static Algorithm instance = null;
 	private static Tables[] tbs;
 	private static String[] tablesArr;
@@ -155,8 +155,6 @@ public class Algorithm{
 					break;
 				}
 			}
-			//previousPhase = currentPhase;
-			//currentPhase = new ArrayList<charElement>();
 			return resultFlag;
 		}
 
