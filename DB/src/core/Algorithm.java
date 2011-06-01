@@ -23,7 +23,7 @@ public class Algorithm{
 
 	//mutual fields for all instances
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
-	//private static JDCConnection conn=null;
+	
 	private static Algorithm instance = null;
 	private static Tables[] tbs;
 	private static String[] tablesArr;
@@ -155,8 +155,8 @@ public class Algorithm{
 					break;
 				}
 			}
-			previousPhase = currentPhase;
-			currentPhase = new ArrayList<charElement>();
+			//previousPhase = currentPhase;
+			//currentPhase = new ArrayList<charElement>();
 			return resultFlag;
 		}
 
@@ -179,6 +179,8 @@ public class Algorithm{
 	 * Place of birth is a special attribute since a character could have only one value.
 	 */
 
+	
+	
 	private boolean helperForDirectConnectionToAnyPlaceOfBirth(ResultSet charsWithAtrRS,charElement start_element, String currentAtr, int atrID, charElement[] result){
 
 		int currentid=0;
@@ -722,13 +724,14 @@ public class Algorithm{
 
 		// checks if the connection between these 2 characters already in history table
 		alreadyExists = dbManager.lookForConnectionInHistory(start_id, end_id, connectionArray);
-		if (getR() != ConnectionResult.Ok){ //an error occurred while trying to extract the names of the characters		
+		if (getR() != ConnectionResult.Ok){ //an error occurred while trying to extract the names of the characters
 			return result;
 		}
 
 		//found a connection
 		if (alreadyExists){
 			result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
+			dbManager.executeUpdateInSuccesRate(true);
 			return result;
 		}
 
@@ -738,6 +741,7 @@ public class Algorithm{
 		}
 		if (alreadyExists){
 			result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
+			dbManager.executeUpdateInSuccesRate(false);
 			return result;
 		}
 
