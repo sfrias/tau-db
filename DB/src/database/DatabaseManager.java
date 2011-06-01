@@ -769,8 +769,9 @@ public class DatabaseManager {
 		try {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT character_name FROM characters WHERE character_id=" +id +"");
-			rs.first();
-			Name = rs.getString("character_name");
+			if (rs.first()){
+				Name = rs.getString("character_name");
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			noEnd.setR(ConnectionResult.Exception);
@@ -829,9 +830,6 @@ public class DatabaseManager {
 		JDCConnection conn = getConnection();
 		try {
 			stmt = conn.createStatement();
-			
-			//TODO delete
-			System.out.println(table +" - " + id);
 			rs = stmt.executeQuery("SELECT " +table+"_name FROM " + table+ " WHERE " + table+"_id=" + id);
 			if (rs.first()){
 				Name = rs.getString(1);
