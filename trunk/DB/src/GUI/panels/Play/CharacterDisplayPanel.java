@@ -6,6 +6,7 @@ import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListModel;
 
 import GUI.commons.GuiUtils;
 import GUI.list.DisplayList;
@@ -16,8 +17,8 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import dataTypes.Character;
 import dataTypes.Pair;
-
 import enums.Tables;
 
 public class CharacterDisplayPanel extends JPanel{
@@ -40,6 +41,8 @@ public class CharacterDisplayPanel extends JPanel{
 	
 	public static String CHAR_MODEL = "CHAR_MODEL";
 	public static String SIMPLE_MODEL = "SIMPLE_MODEL";
+	
+	private int charId;
 	
 	public CharacterDisplayPanel(){
 		super();
@@ -172,5 +175,39 @@ public class CharacterDisplayPanel extends JPanel{
 		}
 		
 		return true;
+	}
+	
+	public Character getSelectedCharacter(){
+		Character character = new Character(charId);
+	
+		character.setDiseases(getListFromDisplayList(disease));
+		character.setOccupations(getListFromDisplayList(occupation));
+		character.setOrganizations(getListFromDisplayList(organization));
+		character.setPowers(getListFromDisplayList(power));
+		character.setPlaceOfBirth(getListFromDisplayList(placeOfBirth));
+		character.setSchools(getListFromDisplayList(school));
+		character.setUniverses(getListFromDisplayList(universe));
+		
+		return character;
+		
+	}
+	
+	private int[] getListFromDisplayList(DisplayList attributeList){
+		ListModel model = attributeList.getModel();
+		int resultSize = model.getSize();
+		int[] result = new int[resultSize];
+		
+		for (int i=0; i<resultSize; i++){
+			Pair pair = (Pair)model.getElementAt(i);
+			if (pair.getName().equals("Unspecified")){
+				return null;
+			}
+			result[i] = pair.getId();
+		}
+		return result;
+	}
+	
+	public void setCharId(int id){
+		this.charId = id;
 	}
 }

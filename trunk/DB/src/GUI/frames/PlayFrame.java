@@ -26,6 +26,7 @@ import GUI.workers.AlgorithmWorker;
 import GUI.workers.GetCharacterAttributesWorker;
 import GUI.workers.GetRecordsByNameWorker;
 import GUI.workers.updateSuccessRateWorker;
+import dataTypes.Character;
 import dataTypes.Pair;
 import enums.ConnectionResult;
 
@@ -58,15 +59,18 @@ public class PlayFrame extends GenericFrame {
 
 	private JPanel mainPanelBuilder(){
 
-		JPanel panelLeftHead = createTopPanel(comboCharI, "Character I", 1);
-		JPanel panelRightHead = createTopPanel(comboCharII, "Character II", 2);
+		panelLeftDetails = new CharacterDisplayPanel();
+		panelRightDetails = new CharacterDisplayPanel();
+
+		JPanel panelLeftHead = createTopPanel(comboCharI, panelLeftDetails, "Character I", 1);
+		JPanel panelRightHead = createTopPanel(comboCharII, panelRightDetails, "Character II", 2);
 
 		JButton buttonCompare = GuiUtils.createActionButton("start", null, 
 				new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
 						try {
 							Pair pairI = (Pair)comboCharI.getSelectedItem();;
-							Pair pairII = (Pair)comboCharII.getSelectedItem();
+							Pair pairII = (Pair)comboCharII.getSelectedItem();			
 							if (pairI == null || pairII == null){
 								GuiHandler.showChooseCharactersDialog();
 							}else if (panelLeftDetails.isAllAttributesUnSpecified() || panelRightDetails.isAllAttributesUnSpecified()){
@@ -74,10 +78,12 @@ public class PlayFrame extends GenericFrame {
 								worker.execute();
 								GuiHandler.showAlgrithmResultDialog(false, ConnectionResult.Did_Not_Find_Connection.toString(), "Could not find a connection between " +  pairI.getName() + " and " + pairII.getName());
 							} else{
-								int firstCharId = ((Pair) comboCharI.getSelectedItem()).getId();
-								int secondCharId = ((Pair) comboCharII.getSelectedItem()).getId();
-								System.out.println("first " + firstCharId + " second " + secondCharId);
-								AlgorithmWorker worker = new AlgorithmWorker(firstCharId, secondCharId, playFrame);
+//								int firstCharId = ((Pair) comboCharI.getSelectedItem()).getId();
+//								int secondCharId = ((Pair) comboCharII.getSelectedItem()).getId();
+								Character charI = panelLeftDetails.getSelectedCharacter();
+								Character charII = panelRightDetails.getSelectedCharacter();
+								System.out.println("first " + charI.getCharId() + " second " + charII.getCharId());
+								AlgorithmWorker worker = new AlgorithmWorker(charI, charII, playFrame);
 								GuiHandler.startStatusFlash();
 								worker.execute();
 							}
@@ -94,9 +100,6 @@ public class PlayFrame extends GenericFrame {
 		panelSelection.add(buttonCompare);
 		panelSelection.add(Box.createHorizontalGlue());
 		panelSelection.add(panelRightHead);
-
-		panelLeftDetails = new CharacterDisplayPanel();
-		panelRightDetails = new CharacterDisplayPanel();
 
 		JPanel panelDetails = new JPanel();
 		panelDetails.setLayout(new BoxLayout(panelDetails, BoxLayout.X_AXIS));
@@ -156,14 +159,14 @@ public class PlayFrame extends GenericFrame {
 		return simpleModel;
 	}
 	
-	private JPanel createTopPanel(final AutoCompleteComboBox charComboBox, String characterTitle, final int charNum){
+	private JPanel createTopPanel(final AutoCompleteComboBox charComboBox, CharacterDisplayPanel charDetails, String characterTitle, final int charNum){
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		JLabel labelCharI = new JLabel(characterTitle);
 		labelCharI.setAlignmentX(CENTER_ALIGNMENT);
 		charComboBox.setEditable(true);
 		charComboBox.setPreferredSize(new Dimension(200, 20));
-		charComboBox.addActionListener(new ComboActionListener(charNum));
+		charComboBox.addActionListener(new ComboActionListener(charNum, charDetails));
 
 		JPanel panelCombo = new JPanel();
 		panelCombo.add(charComboBox);
@@ -196,10 +199,12 @@ public class PlayFrame extends GenericFrame {
 	private class ComboActionListener implements ActionListener {
 
 		private int charNum;
+		private CharacterDisplayPanel charDetails;
 
-		public ComboActionListener(int charNum){
+		public ComboActionListener(int charNum, CharacterDisplayPanel charDetails){
 			super();
 			this.charNum = charNum;
+			this.charDetails = charDetails;
 		}
 
 		@Override
@@ -209,6 +214,7 @@ public class PlayFrame extends GenericFrame {
 			if (selected != null && selected instanceof Pair){
 				Pair record = (Pair) selected;
 				if (record != null){
+					charDetails.setCharId(record.getId());
 					GetCharacterAttributesWorker worker = new GetCharacterAttributesWorker(playFrame, record.getId(), charNum);
 					GuiHandler.startStatusFlash();
 					worker.execute();
