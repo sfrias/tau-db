@@ -5,6 +5,7 @@ import GUI.frames.PlayFrame;
 import GUI.model.AlgorithmModel;
 import core.Algorithm;
 import core.AlgorithmUtilities;
+import dataTypes.Character;
 import dataTypes.ResultHolder;
 import dataTypes.ReturnElement;
 import enums.ConnectionResult;
@@ -12,13 +13,13 @@ import enums.ExecutionResult;
 
 public class AlgorithmWorker extends GenericWorker{
 
-	private int firstCharId;
-	private int secondCharId;
+	private Character firstChar;
+	private Character secondChar;
 
-	public AlgorithmWorker(int firstCharId, int secondCharId, PlayFrame playFrame) {
+	public AlgorithmWorker(Character firstCharId, Character secondCharId, PlayFrame playFrame) {
 		super(Action.ALGROTITHM, playFrame);
-		this.firstCharId = firstCharId;
-		this.secondCharId = secondCharId;
+		this.firstChar = firstCharId;
+		this.secondChar = secondCharId;
 	}
 
 	@Override
