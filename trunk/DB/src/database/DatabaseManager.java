@@ -1008,6 +1008,7 @@ public class DatabaseManager {
 		String[] connectionsSplit = connections.split("\t");
 		int length = connectionsSplit.length;
 		boolean execute = false;
+		String toQuery = null;
 		Algorithm noEnd = Algorithm.getInstance();
 		JDCConnection conn = getConnection();
 
@@ -1037,11 +1038,14 @@ public class DatabaseManager {
 						else
 							break;
 					}
-					String toQuery = null;
+					
+					toQuery = null;
 
 					if (connectionsSplit[j]!= null){
 						information += connectionsSplit[j];
 					}
+					
+					information = information.replace("\'", "\\'");
 					if (i==0 && j==length-1){
 						toQuery = "INSERT INTO history (character_id1, character_id2, date, information,count) values (" + first + "," + second + ",'" + date + "', '" + information + "',1);";
 						execute = true;
@@ -1056,6 +1060,7 @@ public class DatabaseManager {
 					if (execute){
 						stmt.executeUpdate(toQuery);
 					}
+					execute = false;
 				}
 
 			}
