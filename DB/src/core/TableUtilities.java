@@ -120,7 +120,7 @@ public class TableUtilities {
 			String lineRead,tempString;
 			String[] strarr;
 			DatabaseManager dbManager = DatabaseManager.getInstance();
-			TreeMap<String, Integer> tableMap;
+			TreeMap<String, Integer> tableMap = null;
 
 			if (table.equals(Tables.place_of_birth.name())){	
 				while ((lineRead = bufferedReader.readLine()) != null) {
@@ -142,8 +142,9 @@ public class TableUtilities {
 				String insert = insertStatement;
 				int id;
 				
-				tableMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters" , 1, 2);
-
+				if (update){
+					tableMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters" , 1, 2);
+				}
 				while ((lineRead = bufferedReader.readLine()) != null) {
 
 					strarr = lineRead.split("\t", 27);
@@ -187,7 +188,9 @@ public class TableUtilities {
 			}
 
 			else {
-				tableMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + table, 1, 2);
+				if (update){
+					tableMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + table, 1, 2);
+				}
 				
 				while ((lineRead = bufferedReader.readLine()) != null) {
 					
@@ -568,7 +571,7 @@ public class TableUtilities {
 
 		long startTime = System.currentTimeMillis();
 
-		downloadAndExtractDumps();
+	//	downloadAndExtractDumps();
 
 		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
 		deleteSqlFile(sqlFile);
@@ -675,8 +678,8 @@ public class TableUtilities {
 
 	public static void main(String args[]) throws IOException{
 
-		//createDatabase();
-		updateDatabase();
+		createDatabase();
+	//	updateDatabase();
 
 	}
 }
