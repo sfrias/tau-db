@@ -34,6 +34,10 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 	private PlayFrame playFrame;
 	private StatisticsTab statisticsTab;
 
+	public GenericWorker(){
+		super();
+	}
+	
 	public GenericWorker(StatisticsTab statisticTab){
 		super();
 		this.statisticsTab = statisticTab;

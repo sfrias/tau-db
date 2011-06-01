@@ -16,6 +16,7 @@ public enum ExecutionResult {
 	Success_Populating_Joined_Table,
 	Success_Populating_Simple_Table,
 	Success_Characters_Query,
+	Success_Update_Success_Rate,
 	Success_Algorithm,
 	Success_Statistics,
 	IntegrityConstraintViolationException,

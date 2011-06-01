@@ -169,6 +169,10 @@ public class GuiHandler {
 		JOptionPane.showMessageDialog(loadedFrame, msg, title, JOptionPane.OK_OPTION, icon);       	    		
 	}
 	
+	public static void showChooseCharactersDialog(){
+		JOptionPane.showMessageDialog(loadedFrame, "please select 2 characters to start the search", "pay attention", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
 	public static void showAlgrithmResultDialog(boolean success, String title, String msg){
 		ImageIcon icon;
 		if (success){
