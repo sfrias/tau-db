@@ -307,7 +307,6 @@ public class AlgorithmUtilities {
 
 			startName =dbManager.getNameFromId(conLast.getCharacterId());
 			endName = dbManager.getNameFromId(conPrev.getCharacterId());
-			System.out.println(attributeString+"-"+attributeVal+"-"+i);
 			atrName = dbManager.getAttributeNameFromID(attributeString, attributeVal);
 
 			if (alg.getR()!= ConnectionResult.Ok){
