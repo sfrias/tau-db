@@ -132,7 +132,7 @@ public class AlgorithmUtilities {
 
 
 	public static String getDirectConnectionString(String joinedAtr, String currentAtr, int end_id){
-		String charactersWithAtr = "SELECT " +  joinedAtr + "_character_id ," + joinedAtr + "_" + currentAtr + "_id " +
+		String charactersWithAtr = "SELECT " + joinedAtr + "_" + currentAtr + "_id " +
 		" FROM " + joinedAtr + 
 		" WHERE " + joinedAtr +  "_character_id =" + end_id + " AND (" ;
 		return charactersWithAtr;
@@ -307,6 +307,7 @@ public class AlgorithmUtilities {
 
 			startName =dbManager.getNameFromId(conLast.getCharacterId());
 			endName = dbManager.getNameFromId(conPrev.getCharacterId());
+			System.out.println(attributeString+"-"+attributeVal+"-"+i);
 			atrName = dbManager.getAttributeNameFromID(attributeString, attributeVal);
 
 			if (alg.getR()!= ConnectionResult.Ok){
