@@ -170,7 +170,11 @@ public class GuiHandler {
 	}
 	
 	public static void showChooseCharactersDialog(){
-		JOptionPane.showMessageDialog(loadedFrame, "please select 2 characters to start the search", "pay attention", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(loadedFrame, "Please select 2 characters to start the search", "info", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	public static void showChooseFromCombo(){
+		JOptionPane.showMessageDialog(loadedFrame, "You must choose characters from the given list. Free text is not allowed ", "info", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	public static void showAlgrithmResultDialog(boolean success, String title, String msg){
