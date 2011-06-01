@@ -32,8 +32,8 @@ import enums.ConnectionResult;
 public class PlayFrame extends GenericFrame {
 	private static final long serialVersionUID = 1L;
 
-	private AutoCompleteComboBox comboCharI ;
-	private AutoCompleteComboBox comboCharII;
+	private AutoCompleteComboBox comboCharI = new AutoCompleteComboBox();
+	private AutoCompleteComboBox comboCharII = new AutoCompleteComboBox();
 	private CharacterDisplayPanel panelRightDetails;
 	private CharacterDisplayPanel panelLeftDetails;
 	private SimpleModel simpleModel;
@@ -58,72 +58,8 @@ public class PlayFrame extends GenericFrame {
 
 	private JPanel mainPanelBuilder(){
 
-		JPanel panelLeftHead = new JPanel();
-		panelLeftHead.setLayout(new BoxLayout(panelLeftHead, BoxLayout.Y_AXIS));
-		JLabel labelCharI = new JLabel("Character I");
-		labelCharI.setAlignmentX(CENTER_ALIGNMENT);
-		comboCharI = new AutoCompleteComboBox();
-		comboCharI.setEditable(true);
-		comboCharI.setPreferredSize(new Dimension(200, 20));
-		comboCharI.addActionListener(new ComboActionListener(1));
-
-		JPanel panelCombo1 = new JPanel();
-		panelCombo1.add(comboCharI);
-
-		JButton charISearchButton = new JButton("Search");
-		charISearchButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				Document doc = ((JTextComponent)comboCharI.getEditor().getEditorComponent()).getDocument();
-				String queryString;
-				try {
-					queryString = doc.getText(0, doc.getLength());
-					GetRecordsByNameWorker worker = new GetRecordsByNameWorker(playFrame, 1, queryString);
-					GuiHandler.startStatusFlash();
-					worker.execute();
-				} catch (BadLocationException e) {
-
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-
-		panelLeftHead.add(labelCharI);
-		panelLeftHead.add(panelCombo1);
-		panelLeftHead.add(charISearchButton);
-
-		JPanel panelRightHead = new JPanel();
-		panelRightHead.setLayout(new BoxLayout(panelRightHead,BoxLayout.Y_AXIS));
-		JLabel labelCharII = new JLabel("Character II");
-		labelCharII.setAlignmentX(CENTER_ALIGNMENT);
-		comboCharII = new AutoCompleteComboBox();
-		comboCharII.setEditable(true);
-		comboCharII.setPreferredSize(new Dimension(200, 20));
-		comboCharII.addActionListener(new ComboActionListener(2));
-
-		JPanel panelCombo2 = new JPanel();
-		panelCombo2.add(comboCharII);
-
-		JButton charIISearchButton = new JButton("Search");
-		charIISearchButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				Document doc = ((JTextComponent)comboCharII.getEditor().getEditorComponent()).getDocument();
-				String queryString;
-				try {
-					queryString = doc.getText(0, doc.getLength());
-					GetRecordsByNameWorker worker = new GetRecordsByNameWorker(playFrame, 2, queryString);
-					GuiHandler.startStatusFlash();
-					worker.execute();
-				} catch (BadLocationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-
-		panelRightHead.add(labelCharII);
-		panelRightHead.add(panelCombo2);
-		panelRightHead.add(charIISearchButton);
+		JPanel panelLeftHead = createTopPanel(comboCharI, "Character I", 1);
+		JPanel panelRightHead = createTopPanel(comboCharII, "Character II", 2);
 
 		JButton buttonCompare = GuiUtils.createActionButton("start", null, 
 				new ActionListener() {
@@ -218,6 +154,43 @@ public class PlayFrame extends GenericFrame {
 
 	public SimpleModel getSimpleModel(){
 		return simpleModel;
+	}
+	
+	private JPanel createTopPanel(final AutoCompleteComboBox charComboBox, String characterTitle, final int charNum){
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		JLabel labelCharI = new JLabel(characterTitle);
+		labelCharI.setAlignmentX(CENTER_ALIGNMENT);
+		charComboBox.setEditable(true);
+		charComboBox.setPreferredSize(new Dimension(200, 20));
+		charComboBox.addActionListener(new ComboActionListener(charNum));
+
+		JPanel panelCombo = new JPanel();
+		panelCombo.add(charComboBox);
+
+		JButton charISearchButton = new JButton("Search");
+		charISearchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				Document doc = ((JTextComponent)charComboBox.getEditor().getEditorComponent()).getDocument();
+				String queryString;
+				try {
+					queryString = doc.getText(0, doc.getLength());
+					GetRecordsByNameWorker worker = new GetRecordsByNameWorker(playFrame, charNum, queryString);
+					GuiHandler.startStatusFlash();
+					worker.execute();
+				} catch (BadLocationException e) {
+
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
+		panel.add(labelCharI);
+		panel.add(panelCombo);
+		panel.add(charISearchButton);
+		
+		return panel;
 	}
 
 	private class ComboActionListener implements ActionListener {
