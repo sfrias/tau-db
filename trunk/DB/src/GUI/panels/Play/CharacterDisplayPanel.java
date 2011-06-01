@@ -2,6 +2,7 @@ package GUI.panels.Play;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.util.HashSet;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -197,17 +198,17 @@ public class CharacterDisplayPanel extends JPanel{
 		
 	}
 	
-	private int[] getListFromDisplayList(DisplayList attributeList){
+	private HashSet<Integer> getListFromDisplayList(DisplayList attributeList){
 		ListModel model = attributeList.getModel();
 		int resultSize = model.getSize();
-		int[] result = new int[resultSize];
+		HashSet<Integer> result = new HashSet<Integer>();
 		
 		for (int i=0; i<resultSize; i++){
 			Pair pair = (Pair)model.getElementAt(i);
 			if (pair.getName().equals("Unspecified")){
 				return null;
 			}
-			result[i] = pair.getId();
+			result.add(pair.getId());
 		}
 		return result;
 	}

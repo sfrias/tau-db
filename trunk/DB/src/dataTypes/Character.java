@@ -1,14 +1,16 @@
 package dataTypes;
 
+import java.util.HashSet;
+
 
 public class Character{
-	private int[] disease;
-	private int[] occupation;
-	private int[] organization;
-	private int[] power;
-	private int[] place_of_birth;
-	private int[] school;
-	private int[] universe;
+	private HashSet<Integer> disease;
+	private HashSet<Integer> occupation;
+	private HashSet<Integer> organization;
+	private HashSet<Integer> power;
+	private HashSet<Integer> place_of_birth;
+	private HashSet<Integer> school;
+	private HashSet<Integer> universe;
 	
 	private int charId;
 	
@@ -16,59 +18,59 @@ public class Character{
 		this.charId = charId;
 	}
 	
-	public int[] getDiseases(){
+	public HashSet<Integer> getDiseases(){
 		return disease;
 	}
 	
-	public int[] getOccupations(){
+	public HashSet<Integer> getOccupations(){
 		return occupation;
 	}
 	
-	public int[] getOrganiztions(){
+	public HashSet<Integer> getOrganiztions(){
 		return organization;
 	}
 	
-	public int[] getPowers(){
+	public HashSet<Integer> getPowers(){
 		return power;
 	}
 	
-	public int[] getPlaceOfBirth(){
+	public HashSet<Integer> getPlaceOfBirth(){
 		return place_of_birth;
 	}
 	
-	public int[] getSchools(){
+	public HashSet<Integer> getSchools(){
 		return school;
 	}
 	
-	public int[] getUniverses(){
+	public HashSet<Integer> getUniverses(){
 		return universe;
 	}
 	
-	public void setDiseases(int[] diseases){
+	public void setDiseases(HashSet<Integer> diseases){
 		this.disease = diseases;
 	}
 	
-	public void setOccupations(int[] occupation){
+	public void setOccupations(HashSet<Integer> occupation){
 		this.occupation = occupation;
 	}
 	
-	public void setOrganizations(int[] organization){
+	public void setOrganizations(HashSet<Integer> organization){
 		this.organization = organization;
 	}
 	
-	public void setPowers(int[] powers){
+	public void setPowers(HashSet<Integer> powers){
 		this.power = powers;
 	}
 	
-	public void setPlaceOfBirth(int[] placeOfBirth){
+	public void setPlaceOfBirth(HashSet<Integer> placeOfBirth){
 		this.place_of_birth = placeOfBirth;
 	}
 	
-	public void setSchools(int[] schools){
+	public void setSchools(HashSet<Integer> schools){
 		this.school = schools;
 	}
 	
-	public void setUniverses(int[] universes){
+	public void setUniverses(HashSet<Integer> universes){
 		this.universe = universes;
 	}
 	
