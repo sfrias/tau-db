@@ -31,7 +31,7 @@ public class DatabaseManager {
 	//TODO add finally statements to all methods and check null!!!
 	private final static String USERNAME = "root";
 
-	private final static String PASSWORD = "armiN203";
+	private final static String PASSWORD = "6387";
 
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
@@ -829,9 +829,13 @@ public class DatabaseManager {
 		JDCConnection conn = getConnection();
 		try {
 			stmt = conn.createStatement();
+			
+			//TODO delete
+			System.out.println(table +" - " + id);
 			rs = stmt.executeQuery("SELECT " +table+"_name FROM " + table+ " WHERE " + table+"_id=" + id);
-			rs.first();
-			Name = rs.getString(1);
+			if (rs.first()){
+				Name = rs.getString(1);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			noEnd.setR(ConnectionResult.Exception);

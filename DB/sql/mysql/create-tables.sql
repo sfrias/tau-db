@@ -55,7 +55,7 @@ CREATE TABLE disease
 CREATE TABLE characters
 	(character_id int(11) NOT NULL AUTO_INCREMENT,
 	character_fb_id varchar(40) NOT NULL DEFAULT '',
-	character_name varchar(80) NOT NULL,
+	character_name varchar(120) NOT NULL,
 	character_place_of_birth_id int(11) NOT NULL DEFAULT 5,
 	KEY ix_character_id (character_id),
 	UNIQUE (character_fb_id),
