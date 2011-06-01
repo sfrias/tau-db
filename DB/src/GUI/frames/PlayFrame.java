@@ -15,8 +15,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
-import dataTypes.Pair;
-
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.commons.GuiUtils;
@@ -28,6 +26,7 @@ import GUI.workers.AlgorithmWorker;
 import GUI.workers.GetCharacterAttributesWorker;
 import GUI.workers.GetRecordsByNameWorker;
 import GUI.workers.updateSuccessRateWorker;
+import dataTypes.Pair;
 import enums.ConnectionResult;
 
 public class PlayFrame extends GenericFrame {
@@ -129,24 +128,28 @@ public class PlayFrame extends GenericFrame {
 		JButton buttonCompare = GuiUtils.createActionButton("start", null, 
 				new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Pair pairI = (Pair)comboCharI.getSelectedItem();;
-						Pair pairII = (Pair)comboCharII.getSelectedItem();
-						if (pairI == null || pairII == null){
-							GuiHandler.showChooseCharactersDialog();
-						}else if (panelLeftDetails.isAllAttributesUnSpecified() || panelRightDetails.isAllAttributesUnSpecified()){
-							updateSuccessRateWorker worker = new updateSuccessRateWorker(false);
-							worker.execute();
-							GuiHandler.showAlgrithmResultDialog(false, ConnectionResult.Did_Not_Find_Connection.toString(), "Could not find a connection between " +  pairI.getName() + " and " + pairII.getName());
-						} else{
-							int firstCharId = ((Pair) comboCharI.getSelectedItem()).getId();
-							int secondCharId = ((Pair) comboCharII.getSelectedItem()).getId();
-							System.out.println("first " + firstCharId + " second " + secondCharId);
-							AlgorithmWorker worker = new AlgorithmWorker(firstCharId, secondCharId, playFrame);
-							GuiHandler.startStatusFlash();
-							worker.execute();
+						try {
+							Pair pairI = (Pair)comboCharI.getSelectedItem();;
+							Pair pairII = (Pair)comboCharII.getSelectedItem();
+							if (pairI == null || pairII == null){
+								GuiHandler.showChooseCharactersDialog();
+							}else if (panelLeftDetails.isAllAttributesUnSpecified() || panelRightDetails.isAllAttributesUnSpecified()){
+								updateSuccessRateWorker worker = new updateSuccessRateWorker(false);
+								worker.execute();
+								GuiHandler.showAlgrithmResultDialog(false, ConnectionResult.Did_Not_Find_Connection.toString(), "Could not find a connection between " +  pairI.getName() + " and " + pairII.getName());
+							} else{
+								int firstCharId = ((Pair) comboCharI.getSelectedItem()).getId();
+								int secondCharId = ((Pair) comboCharII.getSelectedItem()).getId();
+								System.out.println("first " + firstCharId + " second " + secondCharId);
+								AlgorithmWorker worker = new AlgorithmWorker(firstCharId, secondCharId, playFrame);
+								GuiHandler.startStatusFlash();
+								worker.execute();
+							}
+						}catch (ClassCastException e){
+							GuiHandler.showChooseFromCombo();
 						}
 					}
-				});
+		});
 
 		JPanel panelSelection = new JPanel();
 		panelSelection.setLayout(new BoxLayout(panelSelection, BoxLayout.X_AXIS));
