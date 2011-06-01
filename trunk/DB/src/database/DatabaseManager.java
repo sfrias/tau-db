@@ -613,7 +613,7 @@ public class DatabaseManager {
 			stmt = conn.createStatement();
 			stmt.executeUpdate(stringBuilder.toString());
 
-			return ExecutionResult.Success_Simple_Add_Edit_Delete;
+			return ExecutionResult.Success_Update_Success_Rate;
 
 		} catch (SQLException e) {
 			System.err.println("An SQLException was thrown at executeUpdate("+ tableName + ")");

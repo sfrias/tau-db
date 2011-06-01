@@ -7,8 +7,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-
 import GUI.commons.GuiUtils;
+import GUI.commons.Pair;
 import GUI.list.DisplayList;
 import GUI.model.CharacterModel;
 import GUI.panels.CustomScrollPanel;
@@ -136,5 +136,40 @@ public class CharacterDisplayPanel extends JPanel{
 			}
 		}
 		charModel = null;
+	}
+	
+	public boolean isAllAttributesUnSpecified(){
+		Pair pair;
+		
+		pair = (Pair)disease.getModel().getElementAt(0);
+		if (!pair.getName().equals("Unspecified")) {
+			return false;
+		}
+		pair = (Pair)occupation.getModel().getElementAt(0);
+		if (!pair.getName().equals("Unspecified")) {
+			return false;
+		}
+		pair = (Pair)organization.getModel().getElementAt(0);
+		if (!pair.getName().equals("Unspecified")) {
+			return false;
+		}
+		pair = (Pair)power.getModel().getElementAt(0);
+		if (!pair.getName().equals("Unspecified")) {
+			return false;
+		}
+		pair = (Pair)placeOfBirth.getModel().getElementAt(0);
+		if (!pair.getName().equals("Unspecified")) {
+			return false;
+		}
+		pair = (Pair)school.getModel().getElementAt(0);
+		if (!pair.getName().equals("Unspecified")) {
+			return false;
+		}
+		pair = (Pair)universe.getModel().getElementAt(0);
+		if (!pair.getName().equals("Unspecified")) {
+			return false;
+		}
+		
+		return true;
 	}
 }
