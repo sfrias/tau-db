@@ -44,7 +44,7 @@ public class WelcomeScreenFrame extends JFrame {
 
 
 	private JPanel mainPanelBuilder(){
-		JLabel labelProj = new JLabel("DB Project");
+		JLabel labelProj = new JLabel(GuiUtils.readImageIcon("mainLogo.png"));
 		labelProj.setFont(new Font("Footlight MT Light", Font.BOLD, 72));
 		labelProj.setAlignmentX(CENTER_ALIGNMENT);
 
