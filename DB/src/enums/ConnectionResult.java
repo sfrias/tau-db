@@ -7,8 +7,7 @@ public enum ConnectionResult {
 	Found_Connection_Of_Length_0(1,"Start character is equal to end character"),
 	Did_Not_Find_Connection(2,"Cannot find the desired connection"),
 	Close_Exception,
-	Exception,
-	Exception_In_Success_Rate;
+	Exception;
 
 
 	private int index;
