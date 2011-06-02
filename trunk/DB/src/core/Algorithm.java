@@ -1,7 +1,5 @@
 package core;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,6 +16,7 @@ import dataTypes.charElement;
 import dataTypes.connectionElement;
 import database.DatabaseManager;
 import enums.ConnectionResult;
+import enums.ExecutionResult;
 import enums.Tables;
 
 
@@ -43,7 +42,7 @@ public class Algorithm{
 	private List<charElement> previousPhase = new ArrayList<charElement>();
 	
 	//dynamic fields
-	private DatabaseManager dbManager = DatabaseManager.getInstance();
+	private DatabaseManager dbManager =null;
 	private int end_id;
 	private Character start_character = null;
 	private Character end_character = null;
@@ -53,19 +52,24 @@ public class Algorithm{
 	private int globalNumOfConnections;	
 	
 	
-	public Algorithm(){
+	public Algorithm() throws SQLException{
 		tbs = Tables.values();
+		dbManager = DatabaseManager.getInstance();
 	}
 	
 	public void initialization(){
 		if (!init){
-			AlgorithmUtilities.prepareTablesAndHashMaps();
-			init = true;
+			if (AlgorithmUtilities.prepareTablesAndHashMaps()==ExecutionResult.Success_Using_Algorithm_Instance){
+				init = true;				
+			}
+			else{
+				init = false;				
+			}
 		}
 	}
 	
 	
-	public static Algorithm getInstance(){
+	public static Algorithm getInstance() throws SQLException{
 		if (instance==null){
 			instance = new Algorithm();	
 		}
@@ -842,7 +846,8 @@ public class Algorithm{
 
 			if (matchFound) {
 				connectionString = AlgorithmUtilities.prepareConnectionsForGUI(theConnection,connectionArray);
-				if (connectionString==null){ //an error has occurred
+				if (connectionString==null){//an error has occurred
+					setR(ConnectionResult.Exception);
 					break;
 				}
 
@@ -854,14 +859,16 @@ public class Algorithm{
 
 		if (getR() == ConnectionResult.Ok && !matchFound){ 
 			dbManager.insertIntoFailedSearchesTable(start_id, end_id);
-			result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
 			dbManager.executeUpdateInSuccesRate(false);
+			result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
+			
 		}
 		
 		else if (getR() == ConnectionResult.Ok && matchFound){ 
-			dbManager.insertIntoHistory(connectionString); // if an error occurred here we do not want to throw an exception
-			result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
+			dbManager.insertIntoHistory(connectionString); 
 			dbManager.executeUpdateInSuccesRate(true);
+			result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
+			
 		}
 
 		return result;

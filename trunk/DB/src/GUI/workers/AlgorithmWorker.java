@@ -1,5 +1,7 @@
 package GUI.workers;
 
+import java.sql.SQLException;
+
 import GUI.GuiHandler;
 import GUI.frames.PlayFrame;
 import GUI.model.AlgorithmModel;
@@ -26,8 +28,15 @@ public class AlgorithmWorker extends GenericWorker{
 	protected ResultHolder doInBackground() {
 		GuiHandler.startCountDown(this);
 		
-		Algorithm alg = Algorithm.getInstance();
+		Algorithm alg;
+		try {
+			alg = Algorithm.getInstance();
+		} catch (SQLException e) { //cannot get a new instance of algorithm during error in getting the instance of databaseManager
+			e.printStackTrace();
+			return new ResultHolder(ExecutionResult.Exception);
+		}
 		alg.initialization();
+		
 		ReturnElement returnElem = alg.lookForConnection(firstChar, secondChar);
 		String firstCharName = alg.getStartName();
 		String secondCharName = alg.getEndName();

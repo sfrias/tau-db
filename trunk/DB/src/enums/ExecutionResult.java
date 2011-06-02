@@ -19,6 +19,7 @@ public enum ExecutionResult {
 	Success_Update_Success_Rate,
 	Success_Algorithm,
 	Success_Statistics,
+	Success_Using_Algorithm_Instance,
 	IntegrityConstraintViolationException,
 	Exception;
 
