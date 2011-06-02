@@ -10,8 +10,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.ListSelectionModel;
 
-import dataTypes.Pair;
-
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.list.DisplayList;
@@ -21,6 +19,8 @@ import GUI.panels.CharacterAttributePanel;
 import GUI.workers.EditCharacterWorker;
 import GUI.workers.GetAllAttributesWorker;
 import GUI.workers.GetCharacterAttributesWorker;
+import dataTypes.Pair;
+import database.DatabaseManager;
 import enums.Tables;
 
 public class EditCharacters extends EditCard{
@@ -157,14 +157,19 @@ public class EditCharacters extends EditCard{
 		return new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				String[] tables = getTablesNames();
+				Tables[] tables = getTablesNames();
 				Pair[][] addedValues = getAddedValues();
 				Pair[][] removedValues = getRemovedValues();
 				Pair characerPair = (Pair) comboRecord.getSelectedItem();
 				characerPair.setName(textName.getText());
 				DefaultListModel listModel = (DefaultListModel) placeOfBirthCharacterValues.getModel();
-				Pair placeOfBirthPair = (Pair) listModel.get(0);
-				int placeOfBirthId = placeOfBirthPair.getId();
+				int placeOfBirthId;
+				if (listModel.size() == 0){
+					placeOfBirthId = DatabaseManager.getInstance().getUnspecifiedId(Tables.place_of_birth);
+				} else {
+					Pair placeOfBirthPair = (Pair) listModel.get(0);
+					placeOfBirthId= placeOfBirthPair.getId();
+				}
 				EditCharacterWorker worker = new EditCharacterWorker(tables, addedValues, removedValues, characerPair, placeOfBirthId, me);
 				GuiHandler.startStatusFlash();
 				worker.execute();
@@ -232,12 +237,12 @@ public class EditCharacters extends EditCard{
 
 		Pair[][] values = new Pair[6][];
 
-		values[Tables.disease.getIndex()] = getAddedPairs(diseaseCharacterValues, originalCharacterValuesIndex[Tables.disease.getIndex()]);
-		values[Tables.occupation.getIndex()] = getAddedPairs(occupationCharacterValues, originalCharacterValuesIndex[Tables.occupation.getIndex()]);
-		values[Tables.organization.getIndex()] = getAddedPairs(organizationCharacterValues, originalCharacterValuesIndex[Tables.organization.getIndex()]);
-		values[Tables.power.getIndex()] = getAddedPairs(powerCharacterValues, originalCharacterValuesIndex[Tables.power.getIndex()]);
-		values[Tables.school.getIndex()] = getAddedPairs(schoolCharacterValues, originalCharacterValuesIndex[Tables.school.getIndex()]);
-		values[Tables.universe.getIndex()] = getAddedPairs(universeCharacterValues, originalCharacterValuesIndex[Tables.universe.getIndex()]);
+		values[Tables.disease.getIndex()] = getAddedPairs(diseaseCharacterValues, originalCharacterValuesIndex[Tables.disease.getIndex()], Tables.disease);
+		values[Tables.occupation.getIndex()] = getAddedPairs(occupationCharacterValues, originalCharacterValuesIndex[Tables.occupation.getIndex()], Tables.occupation);
+		values[Tables.organization.getIndex()] = getAddedPairs(organizationCharacterValues, originalCharacterValuesIndex[Tables.organization.getIndex()], Tables.organization);
+		values[Tables.power.getIndex()] = getAddedPairs(powerCharacterValues, originalCharacterValuesIndex[Tables.power.getIndex()], Tables.power);
+		values[Tables.school.getIndex()] = getAddedPairs(schoolCharacterValues, originalCharacterValuesIndex[Tables.school.getIndex()], Tables.school);
+		values[Tables.universe.getIndex()] = getAddedPairs(universeCharacterValues, originalCharacterValuesIndex[Tables.universe.getIndex()], Tables.universe);
 		
 		return values;
 	}
@@ -246,32 +251,41 @@ public class EditCharacters extends EditCard{
 
 		Pair[][] values = new Pair[6][];
 
-		values[Tables.disease.getIndex()] = getRemovedPairs(diseaseCharacterValues, originalCharacterValuesIndex[Tables.disease.getIndex()]);
-		values[Tables.occupation.getIndex()] = getRemovedPairs(occupationCharacterValues, originalCharacterValuesIndex[Tables.occupation.getIndex()]);
-		values[Tables.organization.getIndex()] = getRemovedPairs(organizationCharacterValues, originalCharacterValuesIndex[Tables.organization.getIndex()]);
-		values[Tables.power.getIndex()] = getRemovedPairs(powerCharacterValues, originalCharacterValuesIndex[Tables.power.getIndex()]);
-		values[Tables.school.getIndex()] = getRemovedPairs(schoolCharacterValues, originalCharacterValuesIndex[Tables.school.getIndex()]);
-		values[Tables.universe.getIndex()] = getRemovedPairs(universeCharacterValues, originalCharacterValuesIndex[Tables.universe.getIndex()]);
+		values[Tables.disease.getIndex()] = getRemovedPairs(diseaseCharacterValues, originalCharacterValuesIndex[Tables.disease.getIndex()], Tables.disease);
+		values[Tables.occupation.getIndex()] = getRemovedPairs(occupationCharacterValues, originalCharacterValuesIndex[Tables.occupation.getIndex()], Tables.occupation);
+		values[Tables.organization.getIndex()] = getRemovedPairs(organizationCharacterValues, originalCharacterValuesIndex[Tables.organization.getIndex()], Tables.organization);
+		values[Tables.power.getIndex()] = getRemovedPairs(powerCharacterValues, originalCharacterValuesIndex[Tables.power.getIndex()], Tables.power);
+		values[Tables.school.getIndex()] = getRemovedPairs(schoolCharacterValues, originalCharacterValuesIndex[Tables.school.getIndex()], Tables.school);
+		values[Tables.universe.getIndex()] = getRemovedPairs(universeCharacterValues, originalCharacterValuesIndex[Tables.universe.getIndex()], Tables.universe);
 		
 		return values;
 	}
 
-	private Pair[] getAddedPairs(DisplayList list, DisplayList originalList){
+	private Pair[] getAddedPairs(DisplayList list, DisplayList originalList, Tables table){
 
 		DefaultListModel model = (DefaultListModel) list.getModel();
 		DefaultListModel originalModel = (DefaultListModel) originalList.getModel();
 
 		List<Pair> values = new ArrayList<Pair>();
-		for (int i=0; i < model.getSize(); i++) {
-			Object currentPair = model.getElementAt(i);
-			if (!originalModel.contains(currentPair)){
-				values.add((Pair) currentPair);
+		int modelSize = model.getSize();
+		if (modelSize == 0){
+			Pair pair = (Pair)originalModel.elementAt(0);
+			int id = DatabaseManager.getInstance().getUnspecifiedId(table);
+			if (pair.getId() != id){
+				values.add(new Pair("Unspecified",id));
+			}
+		} else {
+			for (int i=0; i < modelSize; i++) {
+				Object currentPair = model.getElementAt(i);
+				if (!originalModel.contains(currentPair)){
+					values.add((Pair) currentPair);
+				}
 			}
 		}
 		return values.toArray(new Pair[values.size()]);
 	}
 	
-	private Pair[] getRemovedPairs(DisplayList list, DisplayList originalList){
+	private Pair[] getRemovedPairs(DisplayList list, DisplayList originalList, Tables table){
 
 		DefaultListModel model = (DefaultListModel) list.getModel();
 		DefaultListModel originalModel = (DefaultListModel) originalList.getModel();
@@ -279,22 +293,23 @@ public class EditCharacters extends EditCard{
 		List<Pair> values = new ArrayList<Pair>();
 		for (int i=0; i < originalModel.getSize(); i++) {
 			Object currentPair = originalModel.getElementAt(i);
-			if (!model.contains(currentPair)){
+			Pair pair = (Pair) currentPair;
+			if (!model.contains(currentPair) && !(pair.getId() == DatabaseManager.getInstance().getUnspecifiedId(table))){
 				values.add((Pair) currentPair);
 			}
 		}
 		return values.toArray(new Pair[values.size()]);
 	}
 	
-	private String[] getTablesNames() {
+	private Tables[] getTablesNames() {
 
-		String [] values = new String[6];
-		values[Tables.disease.getIndex()] = Tables.disease.name();
-		values[Tables.occupation.getIndex()] = Tables.occupation.name();
-		values[Tables.organization.getIndex()] = Tables.organization.name();
-		values[Tables.power.getIndex()] = Tables.power.name();
-		values[Tables.school.getIndex()] = Tables.school.name();
-		values[Tables.universe.getIndex()] = Tables.universe.name();
+		Tables [] values = new Tables[Tables.getMaxIndex()];
+		values[Tables.disease.getIndex()] = Tables.disease;
+		values[Tables.occupation.getIndex()] = Tables.occupation;
+		values[Tables.organization.getIndex()] = Tables.organization;
+		values[Tables.power.getIndex()] = Tables.power;
+		values[Tables.school.getIndex()] = Tables.school;
+		values[Tables.universe.getIndex()] = Tables.universe;
 
 		return values;
 	}

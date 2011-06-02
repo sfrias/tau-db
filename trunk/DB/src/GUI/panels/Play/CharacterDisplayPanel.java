@@ -22,6 +22,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import dataTypes.Character;
 import dataTypes.Pair;
+import database.DatabaseManager;
 import enums.Tables;
 
 public class CharacterDisplayPanel extends JPanel{
@@ -46,6 +47,7 @@ public class CharacterDisplayPanel extends JPanel{
 	public static String SIMPLE_MODEL = "SIMPLE_MODEL";
 	
 	private int charId;
+	private DatabaseManager databaseManager = DatabaseManager.getInstance();
 	
 	public CharacterDisplayPanel(){
 		super();
@@ -149,38 +151,37 @@ public class CharacterDisplayPanel extends JPanel{
 	}
 	
 	public boolean isAllAttributesUnSpecified(){
-		Pair pair;
-		
-		pair = (Pair)disease.getModel().getElementAt(0);
-		if (!pair.getName().equals("Unspecified")) {
+		if (!isUnspesified((Pair)disease.getModel().getElementAt(0), Tables.disease)){
 			return false;
 		}
-		pair = (Pair)occupation.getModel().getElementAt(0);
-		if (!pair.getName().equals("Unspecified")) {
+		if (!isUnspesified((Pair)occupation.getModel().getElementAt(0), Tables.occupation)){
 			return false;
 		}
-		pair = (Pair)organization.getModel().getElementAt(0);
-		if (!pair.getName().equals("Unspecified")) {
+		if (!isUnspesified((Pair)organization.getModel().getElementAt(0), Tables.organization)){
 			return false;
 		}
-		pair = (Pair)power.getModel().getElementAt(0);
-		if (!pair.getName().equals("Unspecified")) {
+		if (!isUnspesified((Pair)power.getModel().getElementAt(0), Tables.power)){
 			return false;
 		}
-		pair = (Pair)placeOfBirth.getModel().getElementAt(0);
-		if (!pair.getName().equals("Unspecified")) {
+		if (!isUnspesified((Pair)placeOfBirth.getModel().getElementAt(0), Tables.place_of_birth)){
 			return false;
 		}
-		pair = (Pair)school.getModel().getElementAt(0);
-		if (!pair.getName().equals("Unspecified")) {
+		if (!isUnspesified((Pair)school.getModel().getElementAt(0), Tables.school)){
 			return false;
 		}
-		pair = (Pair)universe.getModel().getElementAt(0);
-		if (!pair.getName().equals("Unspecified")) {
+		if (!isUnspesified((Pair)universe.getModel().getElementAt(0), Tables.universe)){
 			return false;
 		}
-		
+
 		return true;
+	}
+	
+	private boolean isUnspesified(Pair pair, Tables table){
+		if (pair.getId() == databaseManager.getUnspecifiedId(table)){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public Character getSelectedCharacter(){

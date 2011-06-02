@@ -192,7 +192,7 @@ public class AddCharacters extends AddCard {
 		Pair[] values;
 		
 		if (modelSize == 0){
-			values = new Pair[]{new Pair("Unspecified", DatabaseManager.getInstance().getUnspecifiedId(table.name()))};
+			values = new Pair[]{new Pair("Unspecified", DatabaseManager.getInstance().getUnspecifiedId(table))};
 		} else{
 			values = new Pair[model.getSize()];
 			for (int i=0; i < model.getSize(); i++) {

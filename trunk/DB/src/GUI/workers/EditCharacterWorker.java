@@ -4,17 +4,18 @@ import GUI.panels.Manage.cards.edit.EditCharacters;
 import dataTypes.Pair;
 import dataTypes.ResultHolder;
 import enums.ExecutionResult;
+import enums.Tables;
 
 public class EditCharacterWorker extends GenericWorker {
 
 	private Pair[][] addedValues;
 	private Pair[][] removedValues;
-	private String [] tables ;
+	private Tables [] tables ;
 	private Pair character;
 	private int placeOfBirthId;
 	
 	
-	public EditCharacterWorker(String[] tables, Pair[][] addedValues, Pair[][] removedValues, Pair character, int placeOfBirthId, EditCharacters card) {
+	public EditCharacterWorker(Tables[] tables, Pair[][] addedValues, Pair[][] removedValues, Pair character, int placeOfBirthId, EditCharacters card) {
 		super(Action.EDIT, card);
 		this.tables = tables;
 		this.addedValues = addedValues;

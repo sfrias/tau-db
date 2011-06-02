@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -12,9 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import enums.Tables;
-
-
 import GUI.GuiHandler;
 import GUI.commons.GuiUtils;
 import GUI.list.DisplayList;
@@ -22,6 +20,7 @@ import GUI.panels.Manage.cards.GenericCardPanel;
 import GUI.panels.Manage.cards.add.AddCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.workers.AddCharacterAttributeWorker;
+import enums.Tables;
 
 public class CharacterAttributePanel extends JPanel{
 
@@ -91,7 +90,13 @@ public class CharacterAttributePanel extends JPanel{
 					for (int i=0; i<values.length; i++){
 						model.removeElement(values[i]);
 					}
+					DefaultListModel allModel = (DefaultListModel)allValues.getModel();
+					for (int i=0; i<values.length; i++){
+						allModel.addElement(values[i]);
+					}
+										
 					selectedValues.setModel(model);
+					allValues.setModel(createSortedModel(allModel));
 					selectedValues.clearSelection();
 
 				}
@@ -101,7 +106,9 @@ public class CharacterAttributePanel extends JPanel{
 			addValueToListButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					DefaultListModel model = (DefaultListModel) selectedValues.getModel();
-
+					Arrays.sort(model.toArray());
+					
+					
 					if (table.equals(Tables.place_of_birth) && model.size() >= 1){
 						GuiHandler.showCantHaveMoreThanOnePlaceOfBirthDialog();
 					}
@@ -110,7 +117,12 @@ public class CharacterAttributePanel extends JPanel{
 						for (int i=0; i<values.length; i++){
 							model.addElement(values[i]);
 						}
-						selectedValues.setModel(model);
+						DefaultListModel allModel = (DefaultListModel)allValues.getModel();
+						for (int i=0; i<values.length; i++){
+							allModel.removeElement(values[i]);
+						}
+						selectedValues.setModel(createSortedModel(model));
+						allValues.setModel(allModel);
 						allValues.clearSelection();
 					}
 				}
@@ -144,6 +156,16 @@ public class CharacterAttributePanel extends JPanel{
 
 	public DisplayList getAllValues() {
 		return allValues;
+	}
+	
+	private DefaultListModel createSortedModel(DefaultListModel unsortedModel){
+		Object[] modelPairs = unsortedModel.toArray();
+		Arrays.sort(modelPairs);
+		DefaultListModel sortedModel = new DefaultListModel();
+		for (int i=0; i<modelPairs.length; i++){
+			sortedModel.addElement(modelPairs[i]);
+		}
+		return sortedModel;
 	}
 
 }
