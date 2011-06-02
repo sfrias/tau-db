@@ -32,7 +32,7 @@ public class DatabaseManager {
 
 	private final static String USERNAME = "root";
 
-	private final static String PASSWORD = "armiN203";
+	private final static String PASSWORD = "root";
 
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
@@ -72,13 +72,11 @@ public class DatabaseManager {
 		return instance;
 	}
 	
-	public static void initialize() throws Exception{
-
+	public void initialize() throws Exception{
 		if (!init){
 			buildUnspecifiedMapPerTable();
 			init = true;
 		}
-
 	}
 	
 	public static void buildUnspecifiedMapPerTable() throws Exception{
@@ -709,7 +707,7 @@ public class DatabaseManager {
 
 
 
-	public ExecutionResult executeEditCharacters(String[] tables, Pair[][] addedValues, Pair[][] removedValues, Pair character, int place_of_birth_id) {
+	public ExecutionResult executeEditCharacters(Tables[] tables, Pair[][] addedValues, Pair[][] removedValues, Pair character, int place_of_birth_id) {
 
 		Statement stmt = null;		
 		PreparedStatement preparedStmt = null;		
@@ -728,8 +726,8 @@ public class DatabaseManager {
 
 			for (int i=0; i < tables.length; i++){
 
-				String tableName = "characters_and_"+tables[i];
-				String field = tableName + "_" + tables[i] + "_id";
+				String tableName = "characters_and_"+tables[i].name();
+				String field = tableName + "_" + tables[i].name() + "_id";
 				preparedStmt = conn.prepareStatement("INSERT INTO " + tableName + " values(" + characterId + " , ?)");
 				//TODO CHANGE PARAMETER TABLES TO BE TABLES AND NOT STRINGS!!!!!!!! WE NEED TO BE CONSISTENT AND GENERIC
 				unspecified = getUnspecifiedId(tables[i]);
@@ -752,6 +750,7 @@ public class DatabaseManager {
 			return ExecutionResult.Success_Edit_Character;
 		}
 		catch (SQLException e ) {
+			e.printStackTrace();
 			try {
 				conn.rollback();
 			} 

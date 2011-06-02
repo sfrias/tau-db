@@ -10,14 +10,13 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import database.DatabaseManager;
-
 import GUI.commons.GuiUtils;
 import GUI.frames.ManageFrame;
 import GUI.frames.PlayFrame;
 import GUI.frames.WelcomeScreenFrame;
 import GUI.panels.CustomGlassPane;
 import GUI.panels.General.BlinkingStatusPanel;
+import database.DatabaseManager;
 import enums.Frames;
 
 
@@ -66,10 +65,12 @@ public class GuiHandler {
 	public static void main(String[] args) {
 		installLookAndFeel();
 		try {
-			DatabaseManager.initialize();
+			dbManager.initialize();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			showInitializeErrorDialog();
 			e.printStackTrace();
+			System.exit(0);
+			
 		}
 		WelcomeScreenFrame frame = new WelcomeScreenFrame();
 		setCurrentFrame(frame);
@@ -171,6 +172,13 @@ public class GuiHandler {
 		String msg = "Update completed Successfuly";
 		String title = "done";
 		ImageIcon icon = GuiUtils.readImageIcon("thumbUp.png");
+		showResultDialog(msg, title, icon);
+	}
+	
+	private static void showInitializeErrorDialog(){
+		String msg = "Unabled to initialize the system\n The program will now quit";
+		String title = "Error";
+		ImageIcon icon = GuiUtils.readImageIcon("thumbDown.png");
 		showResultDialog(msg, title, icon);
 	}
 

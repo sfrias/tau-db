@@ -1,6 +1,6 @@
 package dataTypes;
 
-public class Pair {
+public class Pair implements Comparable<Pair>{
 	private String name;
 	private int id;
 	
@@ -24,6 +24,11 @@ public class Pair {
 	@Override
 	public String toString(){
 		return name;
+	}
+
+	@Override
+	public int compareTo(Pair o) {
+		return (name.compareTo(o.getName()));
 	}
 
 }
