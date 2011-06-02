@@ -1,5 +1,6 @@
 package core;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TreeMap;
@@ -8,6 +9,7 @@ import dataTypes.charElement;
 import dataTypes.connectionElement;
 import database.DatabaseManager;
 import enums.ConnectionResult;
+import enums.ExecutionResult;
 import enums.Tables;
 
 
@@ -23,9 +25,15 @@ public class AlgorithmUtilities {
 	/*
 	 *Prepares a connection array for GUI in case found in history 	
 	 */
-	public static void prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
+	public static ExecutionResult prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
-		Algorithm alg = Algorithm.getInstance();
+		Algorithm alg=null;
+		try {
+			alg = Algorithm.getInstance();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return ExecutionResult.Exception;
+		}
 		String startName=null, endName=null;
 		String[] valueArr = new String[4];
 		String connections[] = connArr.split("\t");
@@ -43,6 +51,7 @@ public class AlgorithmUtilities {
 				atrName = null;
 			}
 		}
+		return ExecutionResult.Success_Using_Algorithm_Instance;
 	}
 
 
@@ -163,9 +172,15 @@ public class AlgorithmUtilities {
 
 
 
-	public static void prepareTablesAndHashMaps(){
+	public static ExecutionResult prepareTablesAndHashMaps(){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
-		Algorithm alg = Algorithm.getInstance();
+		Algorithm alg;
+		try {
+			alg = Algorithm.getInstance();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return ExecutionResult.Exception;
+		}
 		TreeMap<String, String> joinedAttributesMap = new TreeMap<String,String>();
 		int numOfTables = Algorithm.getTables().length;
 		int unspec=0;
@@ -179,7 +194,7 @@ public class AlgorithmUtilities {
 			if (currentTable.equals(Tables.characters.name())){
 				unspec = dbManager.getUnspecifiedId(currentTable);
 				if (alg.getR()!= ConnectionResult.Ok){
-					return;
+					return ExecutionResult.Exception;
 				}
 				Algorithm.putInUnspecified(Tables.characters.name(), unspec);
 			}
@@ -200,7 +215,7 @@ public class AlgorithmUtilities {
 					!attributes[i].equals(Tables.romantic_involvement.name())){
 				unspec = dbManager.getUnspecifiedId(attributes[i]);
 				if (alg.getR()!= ConnectionResult.Ok){
-					return;
+					return ExecutionResult.Exception;
 				}
 				Algorithm.putInUnspecified(attributes[i], unspec);
 			}
@@ -234,7 +249,7 @@ public class AlgorithmUtilities {
 		Algorithm.putInTabelsMap("child",(short) result.length);
 		Algorithm.putInReversedTabelsMap((short) result.length, "child");
 
-		return;
+		return 	ExecutionResult.Success_Using_Algorithm_Instance;
 	}
 	
 	
@@ -290,7 +305,13 @@ public class AlgorithmUtilities {
 	
 	public static String prepareConnectionsForGUI(charElement[] connection, connectionElement[] connectionArray){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
-		Algorithm alg = Algorithm.getInstance();
+		Algorithm alg;
+		try {
+			alg = Algorithm.getInstance();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 		String startName="", endName="";
 		String toHisory="";
 		String atrName = null;

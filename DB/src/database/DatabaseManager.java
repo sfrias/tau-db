@@ -76,9 +76,10 @@ public class DatabaseManager {
 	}
 
 	public void executeUpdate(String stmtToExecute) {
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 		Statement stmt = null;
 		try {
+			conn = getConnection();
 			stmt = conn.createStatement();
 			stmt.executeUpdate(stmtToExecute);
 		} catch (SQLException e) {
@@ -103,10 +104,11 @@ public class DatabaseManager {
 	}
 
 	public int executeInsertAndReturnGeneratedKey(String table, String fieldName, String value){
-		JDCConnection conn = getConnection();
+		JDCConnection conn =null;
 		Statement addNullIdStatement = null;
 		ResultSet generatedKeys = null;
 		try{
+			conn = getConnection();
 			conn.setAutoCommit(false);
 			addNullIdStatement = conn.createStatement();
 			addNullIdStatement.execute("INSERT IGNORE into " + table + "(" + fieldName+ ") values (\'" + value +"\')", Statement.RETURN_GENERATED_KEYS);						
@@ -162,10 +164,11 @@ public class DatabaseManager {
 
 		Statement stmt = null;
 		ResultSet resultSet = null;
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 
 		try {
 			String statementString;
+			conn = getConnection();
 			if (table.equals(Tables.characters)){
 				statementString = "SELECT character_id, character_name FROM characters ORDER BY character_name ASC";
 			}
@@ -219,9 +222,10 @@ public class DatabaseManager {
 
 		Statement stmt = null;
 		ResultSet resultSet = null;
-		JDCConnection conn = getConnection();
+		JDCConnection conn =null;
 
 		try {
+			conn = getConnection();
 			stmt = conn.createStatement();
 			resultSet = stmt.executeQuery(query);
 
@@ -268,9 +272,10 @@ public class DatabaseManager {
 
 		Statement stmt = null;
 		ResultSet resultSet = null;
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 
 		try {
+			conn = getConnection();
 			stmt = conn.createStatement();
 			resultSet = stmt.executeQuery("SELECT character_id, character_name FROM characters WHERE character_name REGEXP '^" + recordName + "\' ORDER BY character_name");
 			List<Pair> valuesList = new ArrayList<Pair>() ;
@@ -314,9 +319,10 @@ public class DatabaseManager {
 
 		Statement stmt = null;
 		ResultSet resultSet = null;
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 
 		try {
+			conn = getConnection();
 			Pair [][] values = new Pair[tables.length][];
 
 			stmt = conn.createStatement();
@@ -380,9 +386,10 @@ public class DatabaseManager {
 		Statement stmt2 = null;
 		ResultSet resultSet = null;
 		ResultSet generatedKeys = null;
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 
 		try {
+			conn = getConnection();
 			conn.setAutoCommit(false);
 
 			stmt1 = conn.createStatement();
@@ -461,8 +468,9 @@ public class DatabaseManager {
 		Statement stmt = null;		
 		Statement stmt2 = null;
 		ResultSet generatedKeys = null;
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 		try {
+			conn = getConnection();
 			conn.setAutoCommit(false);
 			stmt = conn.createStatement();
 			Pair name = values[0][0];
@@ -547,9 +555,10 @@ public class DatabaseManager {
 
 		String tableName = table.name();
 		Statement stmt = null;
-		JDCConnection conn = getConnection();
+		JDCConnection conn =null;
 
 		try {
+			conn = getConnection();
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder.append("UPDATE " + tableName + " SET ");
 			int length = fieldNames.length;
@@ -597,9 +606,10 @@ public class DatabaseManager {
 		String total = tableName + "_searches";
 
 		Statement stmt = null;
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 
 		try {
+			conn = getConnection();
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder.append("UPDATE " + tableName + " SET ");
 			if (matchfound){
@@ -624,6 +634,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					return ExecutionResult.Exception;		
 				}
 			}
 			if (conn!= null){
@@ -632,6 +643,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					return ExecutionResult.Exception;
 				}
 			}
 		}
@@ -648,9 +660,10 @@ public class DatabaseManager {
 		int characterId = character.getId();
 		String name = character.getName();
 		
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 
 		try {
+			conn = getConnection();
 			conn.setAutoCommit(false);
 			stmt = conn.createStatement();
 
@@ -715,9 +728,10 @@ public class DatabaseManager {
 
 		String tableName = table.name();
 		Statement stmt = null;
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 
 		try {
+			conn = getConnection();
 			stmt = conn.createStatement();
 			if (table.equals(Tables.characters)){
 				stmt.executeUpdate("DELETE FROM characters WHERE character_id = " + id);		
@@ -762,10 +776,12 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
-		Algorithm noEnd = Algorithm.getInstance();
-		JDCConnection conn = getConnection();
+		Algorithm alg = null;
+		JDCConnection conn = null;
 
 		try {
+			conn = getConnection();
+			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT character_name FROM characters WHERE character_id=" +id +"");
 			if (rs.first()){
@@ -773,7 +789,7 @@ public class DatabaseManager {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEnd.setR(ConnectionResult.Exception);
+			alg.setR(ConnectionResult.Exception);
 			return null;
 		} 
 		finally {
@@ -782,7 +798,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (rs!= null){
@@ -790,7 +806,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -798,7 +814,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 
@@ -818,7 +834,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
-		Algorithm noEnd = Algorithm.getInstance();
+		Algorithm alg = null;
 		if (table.equals(Tables.romantic_involvement.name()) ||
 				table.equals(Tables.parent.name()) ||
 				table.equals("child")) {
@@ -826,8 +842,10 @@ public class DatabaseManager {
 			return "none";
 		}
 		
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 		try {
+			conn = getConnection();
+			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT " +table+"_name FROM " + table+ " WHERE " + table+"_id=" + id);
 			if (rs.first()){
@@ -835,7 +853,7 @@ public class DatabaseManager {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEnd.setR(ConnectionResult.Exception);
+			alg.setR(ConnectionResult.Exception);
 			return null;
 		}
 		finally {
@@ -844,7 +862,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (rs!= null){
@@ -852,7 +870,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -860,7 +878,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -880,8 +898,9 @@ public class DatabaseManager {
 		SearchResultObject[] searchResult = new SearchResultObject[5];
 		int index=0;
 
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 		try {			
+			conn = getConnection();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT * FROM history ORDER BY "+ field +" DESC LIMIT 5");
 			while (rs.next()) {
@@ -948,7 +967,7 @@ public class DatabaseManager {
 		ResultSet rs = null;
 		int unspecifiedID = 0;
 		String field = "";
-		Algorithm noEnd = Algorithm.getInstance();
+		Algorithm alg = null;
 		if (table.equals(Tables.characters.name())){
 			field = "character";
 		}
@@ -956,15 +975,17 @@ public class DatabaseManager {
 			field = table;
 		}
 
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 		try {
+			conn = getConnection();
+			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
 			rs.first();
 			unspecifiedID= rs.getInt(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEnd.setR(ConnectionResult.Exception);
+			alg.setR(ConnectionResult.Exception);
 		}
 		finally {
 			if (stmt != null){
@@ -972,7 +993,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (rs!= null){
@@ -980,7 +1001,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -988,7 +1009,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -1009,10 +1030,12 @@ public class DatabaseManager {
 		int length = connectionsSplit.length;
 		boolean execute = false;
 		String toQuery = null;
-		Algorithm noEnd = Algorithm.getInstance();
-		JDCConnection conn = getConnection();
+		Algorithm alg = null;
+		JDCConnection conn = null;
 
 		try {			
+			conn = getConnection();
+			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			String date = AlgorithmUtilities.getCurrentDate();
 			String information = "";
@@ -1067,7 +1090,7 @@ public class DatabaseManager {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEnd.setR(ConnectionResult.Exception);
+			alg.setR(ConnectionResult.Exception);
 			return;
 		}
 		finally {
@@ -1076,7 +1099,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -1084,7 +1107,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -1095,10 +1118,12 @@ public class DatabaseManager {
 		Statement stmt = null;
 		String toQuery;
 		String date;
-		Algorithm noEnd = Algorithm.getInstance();
-		JDCConnection conn = getConnection();
+		Algorithm alg = null;
+		JDCConnection conn = null;
 
 		try {
+			conn = getConnection();
+			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			date = AlgorithmUtilities.getCurrentDate();
 
@@ -1107,7 +1132,7 @@ public class DatabaseManager {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			noEnd.setR(ConnectionResult.Exception);
+			alg.setR(ConnectionResult.Exception);
 			return;
 		}
 		finally {
@@ -1116,7 +1141,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -1124,7 +1149,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -1139,11 +1164,13 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		boolean result = false;
-		Algorithm noEnd = Algorithm.getInstance();
-		JDCConnection conn = getConnection();;
+		Algorithm alg = null;
+		JDCConnection conn = null;
 
 		// checks if the couple is in failed_searches table
 		try {
+			conn = getConnection();
+			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 
 			rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
@@ -1156,13 +1183,11 @@ public class DatabaseManager {
 					result = true;
 				}
 			}
-			//if (result) { //found the couple in the failed_searches table
-			//System.out.println("couldn't find a connection between "+ start_name +" and "+ end_name);
-			//}
+
 
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			noEnd.setR(ConnectionResult.Exception);
+			alg.setR(ConnectionResult.Exception);
 			return false;
 		}
 		finally {
@@ -1171,7 +1196,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (rs!= null){
@@ -1179,7 +1204,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 
@@ -1188,7 +1213,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -1203,14 +1228,16 @@ public class DatabaseManager {
 	 */
 	public boolean lookForConnectionInHistory(int start_id, int end_id, connectionElement[] conenctionArray){
 		
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		boolean result = false;
 		int count;
-		Algorithm noEnd = Algorithm.getInstance();
+		Algorithm alg = null;
 		// checks if the connection between these 2 characters already in history table
 		try {
+			conn = getConnection();
+			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 
 			rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
@@ -1230,22 +1257,13 @@ public class DatabaseManager {
 				int id1 = rs.getInt(1);
 				int id2 = rs.getInt(2);
 				String date = AlgorithmUtilities.getCurrentDate();
-				//TODO PRINT THIS TO THE SCREEN
-				System.out.println("this connection was found in " + rs.getDate(3));
 				String getConnectionOfCharacters = rs.getString(4);
-				//TODO PRINT THIS TO THE SCREEN
-				//System.out.println("Match found between "+ start_name +" and "+ end_name);
 				stmt.executeUpdate("UPDATE history SET count = " + count + ", date = '" + date + "' WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
-
-				//if (opposite) {
-				//start_name = end_name;
-				//}
-
 				AlgorithmUtilities.prepareConnectionsFromHistory(getConnectionOfCharacters, conenctionArray);
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			noEnd.setR(ConnectionResult.Exception);
+			alg.setR(ConnectionResult.Exception);
 			return false;
 		}
 		finally {
@@ -1254,7 +1272,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (rs!= null){
@@ -1262,7 +1280,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 			if (conn!= null){
@@ -1270,7 +1288,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					noEnd.setR(ConnectionResult.Close_Exception);
+					alg.setR(ConnectionResult.Close_Exception);
 				}
 			}
 		}
@@ -1283,13 +1301,15 @@ public class DatabaseManager {
 
 		Statement stmt = null;
 		ResultSet rs = null;
-		Algorithm noEnd = Algorithm.getInstance();
+		Algorithm alg = null;
 		int total = 0;
 		int success = 0;
 		SuccessRateObject successRate;
 		
-		JDCConnection conn = getConnection();
+		JDCConnection conn = null;
 		try {
+			conn = getConnection();
+			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT * FROM success_rate");
 			rs.first();
@@ -1298,7 +1318,6 @@ public class DatabaseManager {
 			successRate = new SuccessRateObject(total, success);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			//noEnd.setR(ConnectionResult.Exception_In_Success_Rate);
 			return null;
 		}
 		finally{
@@ -1314,7 +1333,6 @@ public class DatabaseManager {
 				}
 			}catch (SQLException e) {
 				e.printStackTrace();
-				//noEnd.setR(ConnectionResult.Close_Exception);
 				return null;
 			}
 		}
@@ -1324,9 +1342,10 @@ public class DatabaseManager {
 	}
 	
 	public void executeDeleteTableContent (String tableName){  
-		JDCConnection conn = getConnection(); 
+		JDCConnection conn =null;
 		Statement stmt = null; 
 		try { 
+			conn = getConnection();
 			stmt = conn.createStatement(); 
 			stmt.executeUpdate("TRUNCATE TABLE " + tableName); 
 		} catch (SQLException e) {
