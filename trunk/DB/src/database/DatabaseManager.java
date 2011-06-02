@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -29,11 +30,11 @@ public class DatabaseManager {
 
 	//TODO add finally statements to all methods and check null!!!
 
-	private final static String USERNAME = "DbMysql09";
+	private final static String USERNAME = "root";
 
-	private final static String PASSWORD = "DbMysql09";
+	private final static String PASSWORD = "armiN203";
 
-	private final static String URL = "jdbc:mysql://localhost:3305/DbMysql09"; 
+	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
 
@@ -76,6 +77,7 @@ public class DatabaseManager {
 		}
 	}
 
+	
 	public void executeUpdate(String stmtToExecute) {
 		JDCConnection conn = null;
 		Statement stmt = null;
@@ -104,6 +106,7 @@ public class DatabaseManager {
 		}
 	}
 
+	
 	public int executeInsertAndReturnGeneratedKey(String table, String fieldName, String value){
 		JDCConnection conn =null;
 		Statement addNullIdStatement = null;
@@ -183,6 +186,20 @@ public class DatabaseManager {
 
 			while (resultSet.next()) {
 				valuesList.add(new Pair(resultSet.getString(2), resultSet.getInt(1)));
+			}
+			
+			int unspecified = getUnspecifiedId(table.name());
+			
+			Pair currentPair = null;
+			if (valuesList.size() > 1){
+				Iterator<Pair> iter = valuesList.iterator();
+				while (iter.hasNext()){
+					currentPair = iter.next();
+					if (currentPair.getId() == unspecified){
+						valuesList.remove(currentPair);
+						break;
+					}
+				}
 			}
 
 			resultSet.close();
