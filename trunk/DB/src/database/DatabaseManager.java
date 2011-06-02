@@ -41,6 +41,10 @@ public class DatabaseManager {
 	private static JDCConnectionDriver connectionDriver;
 
 	private static Properties connProperties;
+	
+	private static TreeMap<Tables, Integer> unspecifiedIdOfTables = new TreeMap<Tables,Integer>();
+	
+	private static boolean init = false;
 
 
 	private DatabaseManager(){
@@ -67,8 +71,43 @@ public class DatabaseManager {
 
 		return instance;
 	}
+	
+	public static void initialize() throws Exception{
 
-	public JDCConnection getConnection() {
+		if (!init){
+			buildUnspecifiedMapPerTable();
+			init = true;
+		}
+
+	}
+	
+	public static void buildUnspecifiedMapPerTable() throws Exception{
+		Tables[] tablesArray = Tables.values();
+		Tables currentTable;
+		int unspecified;
+		for (int i=0; i< tablesArray.length; i++){
+			currentTable = tablesArray[i];
+			if ((currentTable == Tables.characters ||
+				!currentTable.name().contains("and")) && 
+				currentTable != Tables.parent &&
+				currentTable != Tables.romantic_involvement) {
+				
+				unspecified=getUnspecifiedId(currentTable.name());
+				
+				if (unspecified==-1){
+					throw new Exception();
+				}
+				
+				else {
+				unspecifiedIdOfTables.put(currentTable, unspecified);
+				}
+			}
+		}
+
+	}
+
+	
+	public static JDCConnection getConnection() {
 		try {
 			return (JDCConnection) connectionDriver.connect(URL, connProperties);
 		} catch (SQLException e) {
@@ -76,7 +115,7 @@ public class DatabaseManager {
 			return null;
 		}
 	}
-
+	
 	
 	public void executeUpdate(String stmtToExecute) {
 		JDCConnection conn = null;
@@ -294,6 +333,7 @@ public class DatabaseManager {
 		try {
 			conn = getConnection();
 			stmt = conn.createStatement();
+			recordName = recordName.replace("\'", "\\'");
 			resultSet = stmt.executeQuery("SELECT character_id, character_name FROM characters WHERE character_name REGEXP '^" + recordName + "\' ORDER BY character_name");
 			List<Pair> valuesList = new ArrayList<Pair>() ;
 
@@ -982,13 +1022,20 @@ public class DatabaseManager {
 	 * gets unspecifiedId of a specific attribute
 	 */
 
-	public int getUnspecifiedId(String table) {
+	public int getUnspecifiedId(Tables table){
+		if (unspecifiedIdOfTables.get(table) != null){
+			return unspecifiedIdOfTables.get(table);
+		}
+		else{
+			return -1;
+		}
+	}
+	private static  int getUnspecifiedId(String table) {
 		
 		Statement stmt = null;
 		ResultSet rs = null;
 		int unspecifiedID = 0;
 		String field = "";
-		Algorithm alg = null;
 		if (table.equals(Tables.characters.name())){
 			field = "character";
 		}
@@ -999,14 +1046,13 @@ public class DatabaseManager {
 		JDCConnection conn = null;
 		try {
 			conn = getConnection();
-			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
 			rs.first();
 			unspecifiedID= rs.getInt(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			alg.setR(ConnectionResult.Exception);
+			return -1;
 		}
 		finally {
 			if (stmt != null){
@@ -1014,7 +1060,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return -1;
 				}
 			}
 			if (rs!= null){
@@ -1022,7 +1068,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return -1;
 				}
 			}
 			if (conn!= null){
@@ -1030,7 +1076,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return -1;
 				}
 			}
 		}
