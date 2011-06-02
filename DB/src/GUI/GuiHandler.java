@@ -10,6 +10,8 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import database.DatabaseManager;
+
 import GUI.commons.GuiUtils;
 import GUI.frames.ManageFrame;
 import GUI.frames.PlayFrame;
@@ -25,6 +27,7 @@ public class GuiHandler {
 	private static CustomGlassPane glass ;
 	private static JFrame loadedFrame = null;
 	private static boolean isAdmin;
+	private static DatabaseManager dbManager = DatabaseManager.getInstance();
 
 	private static void installLookAndFeel() {
 		try {
@@ -62,6 +65,12 @@ public class GuiHandler {
 
 	public static void main(String[] args) {
 		installLookAndFeel();
+		try {
+			DatabaseManager.initialize();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		WelcomeScreenFrame frame = new WelcomeScreenFrame();
 		setCurrentFrame(frame);
 		setAdmin(false);

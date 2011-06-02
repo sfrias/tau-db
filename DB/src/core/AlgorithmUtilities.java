@@ -173,65 +173,54 @@ public class AlgorithmUtilities {
 
 
 	public static ExecutionResult prepareTablesAndHashMaps(){
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		Algorithm alg;
+		Algorithm alg=null;		
 		try {
 			alg = Algorithm.getInstance();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return ExecutionResult.Exception;
 		}
-		TreeMap<String, String> joinedAttributesMap = new TreeMap<String,String>();
+		
+		TreeMap<String, Tables> joinedAttributesMap = new TreeMap<String,Tables>();
 		int numOfTables = Algorithm.getTables().length;
-		int unspec=0;
-		String atrTable, currentTable, putCouples;
-		String[] attributes = new String[numOfTables-1]; 
-		String[] result = new String[numOfTables-1];
+		String atrTable; 
+		Tables currentTable,putCouples;
+		Tables[] attributes = new Tables[numOfTables-1]; 
+		Tables[] result = new Tables[numOfTables-1];
 
 		int indexOfAttr=0, indexOfResult=0;
 		for (int i=0; i< numOfTables; i++){
-			currentTable = Algorithm.getTables()[i].name();
+			currentTable = Algorithm.getTables()[i];
 			if (currentTable.equals(Tables.characters.name())){
-				unspec = dbManager.getUnspecifiedId(currentTable);
-				if (alg.getR()!= ConnectionResult.Ok){
-					return ExecutionResult.Exception;
-				}
-				Algorithm.putInUnspecified(Tables.characters.name(), unspec);
+				continue;
 			}
-			else if (!currentTable.contains("and")){
+			else if (!currentTable.name().contains("and")){
 				attributes[indexOfAttr]=currentTable;
 				indexOfAttr++;
-				Algorithm.putInPrintRepresentation(currentTable,  Algorithm.getTables()[i].toString());
+				Algorithm.putInPrintRepresentation(currentTable.name(),  Algorithm.getTables()[i].toString());
 			}
 			else {
-				atrTable = currentTable.substring(15);
+				atrTable = currentTable.name().substring(15);
 				joinedAttributesMap.put(atrTable, currentTable);
 			}
 		}
 
 		for (int i=0; i<indexOfAttr;i++){ 		//first loop- looking for joinedTables
-			putCouples = joinedAttributesMap.get(attributes[i]);
-			if (!attributes[i].equals(Tables.parent.name()) &&
-					!attributes[i].equals(Tables.romantic_involvement.name())){
-				unspec = dbManager.getUnspecifiedId(attributes[i]);
-				if (alg.getR()!= ConnectionResult.Ok){
-					return ExecutionResult.Exception;
-				}
-				Algorithm.putInUnspecified(attributes[i], unspec);
-			}
-
+			putCouples = joinedAttributesMap.get(attributes[i].name());
 			if (putCouples != null){
 				result[indexOfResult]=attributes[i];
 				result[indexOfResult+1]=putCouples;
 				indexOfResult = indexOfResult + 2;
-				attributes[i]="ok";
+				attributes[i]=Tables.characters;
 			}
 		}
+		System.out.println(indexOfResult);
 		Algorithm.setIndexOfJumps(indexOfResult);
 
 		//adding all other tables;
 		for (int i=0; i<indexOfAttr;i++){
-			if(!attributes[i].equals("ok")){
+			if(attributes[i] != Tables.characters){
+				System.out.println(indexOfResult);
 				result[indexOfResult]=attributes[i];
 				indexOfResult++;
 			}
@@ -242,8 +231,8 @@ public class AlgorithmUtilities {
 
 		//adding all tables and their internal identifier to hash maps
 		for (short i=0; i<result.length;i++){
-			Algorithm.putInTabelsMap(result[i],i);
-			Algorithm.putInReversedTabelsMap((short)i, result[i]);
+			Algorithm.putInTabelsMap(result[i].name(),i);
+			Algorithm.putInReversedTabelsMap((short)i, result[i].name());
 		}
 
 		Algorithm.putInTabelsMap("child",(short) result.length);
