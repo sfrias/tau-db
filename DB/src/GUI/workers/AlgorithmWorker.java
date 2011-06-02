@@ -28,7 +28,7 @@ public class AlgorithmWorker extends GenericWorker{
 		
 		Algorithm alg = Algorithm.getInstance();
 		alg.initialization();
-		ReturnElement returnElem = alg.lookForConnection(firstCharId, secondCharId);
+		ReturnElement returnElem = alg.lookForConnection(firstChar, secondChar);
 		String firstCharName = alg.getStartName();
 		String secondCharName = alg.getEndName();
 		if (returnElem.getResult() == ConnectionResult.Exception || returnElem.getResult() == ConnectionResult.Close_Exception){

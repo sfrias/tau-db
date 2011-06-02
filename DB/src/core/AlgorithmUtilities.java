@@ -269,7 +269,7 @@ public class AlgorithmUtilities {
 	 * Helper function for the GUI for reading the entire connection chain
 	 */
 	public static String[] readConnectionChain(connectionElement[] connElementArray){
-		String[] connectionInStrings = new String[3];
+		String[] connectionInStrings = new String[maxNumberOfConnection];
 		for (int i=0; i<maxNumberOfConnection; i++){
 			if (connElementArray[i] != null){
 				connectionInStrings[i] = readOneConnectionElement(connElementArray[i]);

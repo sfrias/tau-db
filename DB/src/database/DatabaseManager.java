@@ -30,7 +30,7 @@ public class DatabaseManager {
 	//TODO add finally statements to all methods and check null!!!
 	private final static String USERNAME = "root";
 
-	private final static String PASSWORD = "root";
+	private final static String PASSWORD = "armiN203";
 
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 

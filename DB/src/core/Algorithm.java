@@ -1,5 +1,7 @@
 package core;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 import connection.JDCConnection;
+import dataTypes.Character;
 import dataTypes.ReturnElement;
 import dataTypes.charElement;
 import dataTypes.connectionElement;
@@ -42,6 +45,8 @@ public class Algorithm{
 	//dynamic fields
 	private DatabaseManager dbManager = DatabaseManager.getInstance();
 	private int end_id;
+	private Character start_character = null;
+	private Character end_character = null;
 	private ConnectionResult status = ConnectionResult.Ok;
 	private String start_name = null;
 	private String end_name = null;
@@ -312,12 +317,11 @@ public class Algorithm{
 	 * returns a string that will be used in the query of finding all characters that share an attribute with the character start_id.
 	 */
 
-	private String findConnectedCharacters(String joinedAtr,String currentAtr,int start_id, int unspecifiedIdOfCharacter, boolean directToEndID){
+	private int findConnectionToEnd(String joinedAtr,String currentAtr,int start_id){
 		JDCConnection conn=null;
 		Statement atrStmt=null;
 		ResultSet atrValRS=null;
-		String charactersWithAtr = "";
-		boolean isEmptyQuery = true;
+		
 		try {
 			conn = dbManager.getConnection() ;
 			atrStmt = conn.createStatement();			
@@ -325,29 +329,20 @@ public class Algorithm{
 			int unspecifiedId = unspecifiedIdOfTables.get(currentAtr);
 			int currentAtrVal=-1;
 
-			if (directToEndID){
-				charactersWithAtr = AlgorithmUtilities.getDirectConnectionString(joinedAtr, currentAtr, end_id);
-			}
-			else{
-				charactersWithAtr =AlgorithmUtilities.getAllValuesOfASpecificAttribute(joinedAtr, currentAtr, start_id, unspecifiedIdOfCharacter);
-			}
-
 			while (atrValRS.next()){ //all attributes
 				currentAtrVal = atrValRS.getInt(1);
 				if (currentAtrVal== unspecifiedId ) { //not relevant 
 					continue;
 				}
-				if (!isEmptyQuery){
-					charactersWithAtr += " OR ";
+				if (end_character.getValueByAttribute(currentAtr) != null && end_character.getValueByAttribute(currentAtr).contains(currentAtrVal)){
+					return currentAtrVal;
 				}
-				isEmptyQuery = false;
-				charactersWithAtr +=  joinedAtr + "_" + currentAtr + "_id =" + currentAtrVal;
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 			setR(ConnectionResult.Exception);
-			return null;
+			return -1;
 		}
 		finally {
 			if (atrStmt != null){
@@ -376,7 +371,94 @@ public class Algorithm{
 			}
 
 		}
+		return -1;
+	}
+	
+	private String findConnectedCharacters(String joinedAtr,String currentAtr,int start_id, int unspecifiedIdOfCharacter, boolean firstConnection){
+		JDCConnection conn=null;
+		Statement atrStmt=null;
+		ResultSet atrValRS=null;
+		String charactersWithAtr = "";
+		boolean isEmptyQuery = true;
+		int currentAtrVal=-1;
+		
+		charactersWithAtr =AlgorithmUtilities.getAllValuesOfASpecificAttribute(joinedAtr, currentAtr, start_id, unspecifiedIdOfCharacter);
+		
+		if (firstConnection){
+			if (start_character.getValueByAttribute(currentAtr)== null){
+				return null;
+			}
+			Iterator<Integer> iter = start_character.getValueByAttribute(currentAtr).iterator();
+			while (iter.hasNext()){
+				currentAtrVal = iter.next();
 
+				if (!isEmptyQuery){
+					charactersWithAtr += " OR ";
+				}
+				
+				isEmptyQuery = false;
+				charactersWithAtr +=  joinedAtr + "_" + currentAtr + "_id =" + currentAtrVal;
+			}
+		}
+		
+		else {
+			
+	
+			try {
+				conn = dbManager.getConnection() ;
+				atrStmt = conn.createStatement();			
+				atrValRS = atrStmt.executeQuery(AlgorithmUtilities.specificAttributeValuesQuery(joinedAtr, currentAtr, start_id));
+				int unspecifiedId = unspecifiedIdOfTables.get(currentAtr);
+				
+				
+	
+				while (atrValRS.next()){ //all attributes
+					currentAtrVal = atrValRS.getInt(1);
+					if (currentAtrVal== unspecifiedId ) { //not relevant 
+						continue;
+					}
+					
+					if (!isEmptyQuery){
+						charactersWithAtr += " OR ";
+					}
+					isEmptyQuery = false;
+					charactersWithAtr +=  joinedAtr + "_" + currentAtr + "_id =" + currentAtrVal;
+				}
+	
+			} catch (SQLException e) {
+				e.printStackTrace();
+				setR(ConnectionResult.Exception);
+				return null;
+			}
+			finally {
+				if (atrStmt != null){
+					try {
+						atrStmt.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+						setR(ConnectionResult.Close_Exception);
+					}
+				}
+				if (atrValRS!= null){
+					try {
+						atrValRS.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+						setR(ConnectionResult.Close_Exception);
+					}
+				}
+				if (conn!= null){
+					try {
+						conn.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+						setR(ConnectionResult.Close_Exception);
+					}
+				}
+	
+			}
+		}
+		
 		if (!isEmptyQuery){
 			charactersWithAtr += ")";
 			return charactersWithAtr;
@@ -444,7 +526,7 @@ public class Algorithm{
 
 		atrVal[0]=placeOfBirth;
 		if (directToEnd){
-			charactersWithAtr = AlgorithmUtilities.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + currentAtr+ "_id =" + placeOfBirth ,  "character_id = " + end_id,null, true);
+			return null;
 		}
 		else {
 			charactersWithAtr = AlgorithmUtilities.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + currentAtr+ "_id =" + placeOfBirth ,  "character_id != " + unspecifiedIdOfCharacter,"character_" + currentAtr+ "_id !=" +unspecifiedIdOfTables.get(currentAtr), false);
@@ -470,10 +552,14 @@ public class Algorithm{
 		int unspecifiedIdOfCharacter = unspecifiedIdOfTables.get(Tables.characters.toString()); 
 		int attributes = tablesArr.length;
 		int start_id = start_element.getCharacterId();
+		boolean firstConnection = false;
 		Statement charWithAtrStmt=null;
 		boolean foundMatch = false;
 		int[] valPlaceOfBirth = new int[1];
 
+		if (start_id == start_character.getCharId()){
+			firstConnection=true;
+		}
 		JDCConnection conn = null;
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
@@ -483,7 +569,7 @@ public class Algorithm{
 				charWithAtrStmt = conn.createStatement();
 				if (atr < indexOfJumps) {
 					joinedAtr = tablesArr[atr+1];
-					charactersWithAtr = findConnectedCharacters(joinedAtr, currentAtr, start_id, unspecifiedIdOfCharacter, false);
+					charactersWithAtr = findConnectedCharacters(joinedAtr, currentAtr, start_id, unspecifiedIdOfCharacter,firstConnection);
 					if (getR() != ConnectionResult.Ok){
 						return false;
 					}
@@ -594,16 +680,12 @@ public class Algorithm{
 				if (atr < indexOfJumps) {
 
 					joinedAtr = tablesArr[atr+1];
-					charactersWithAtr = findConnectedCharacters(joinedAtr, currentAtr, start_id, -1, true);
+					currentAtrVal = findConnectionToEnd(joinedAtr, currentAtr, start_id);
 					if (getR() != ConnectionResult.Ok){
 						return false;
 					}
-					if (charactersWithAtr != null){
-						charsWithAtrRS= charAtrStmt.executeQuery(charactersWithAtr);
-						if (charsWithAtrRS.next()){
-							currentAtrVal =charsWithAtrRS.getInt(1);
-							foundMatch=true;
-						}
+					if (currentAtrVal != -1){
+						foundMatch = true;
 					}
 					atr=atr+1;
 				} //end of while loop
@@ -623,16 +705,13 @@ public class Algorithm{
 				}	
 
 				else if (tablesArr[atr].equals(Tables.place_of_birth.name())){
-					charactersWithAtr = directConnetionPlaceOfBirth(start_id, -1,valPlaceOfBirth, true);
+					directConnetionPlaceOfBirth(start_id, -1,valPlaceOfBirth, true);
 					if (getR() != ConnectionResult.Ok){
 						return false;
 					}
-					if (charactersWithAtr!= null){
-						charsWithAtrRS= charAtrStmt.executeQuery(charactersWithAtr);
-						if (charsWithAtrRS.first()){
+					if (end_character.getPlaceOfBirth()!= null && end_character.getPlaceOfBirth().contains(valPlaceOfBirth[0])){
 							foundMatch=true;
 							currentAtrVal = valPlaceOfBirth[0];
-						}	
 					}
 				}
 
@@ -698,10 +777,13 @@ public class Algorithm{
 	 * main function for looking a connection between two characters
 	 */
 
-	public ReturnElement lookForConnection(int start_id, int end_id){
+	public ReturnElement lookForConnection(Character start_character, Character end_character){
 
 		ReturnElement result = new ReturnElement(ConnectionResult.Exception,null);;
-
+		int start_id = start_character.getCharId();
+		int end_id = end_character.getCharId();
+		this.start_character= start_character;
+		this.end_character= end_character;
 		if (start_id == end_id){
 			System.out.println("match of length 0");
 			result = new ReturnElement(ConnectionResult.Found_Connection_Of_Length_0,null);
@@ -785,9 +867,6 @@ public class Algorithm{
 		return result;
 
 	}
-
-
-
 
 }
 		

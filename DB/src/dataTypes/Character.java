@@ -2,6 +2,8 @@ package dataTypes;
 
 import java.util.HashSet;
 
+import enums.Tables;
+
 
 public class Character{
 	private HashSet<Integer> disease;
@@ -76,5 +78,35 @@ public class Character{
 	
 	public int getCharId(){
 		return charId;
+	}
+	
+	public HashSet<Integer> getValueByAttribute(String attribute){
+
+		if (attribute.equals(Tables.disease.name())){
+			return getDiseases();
+		}
+		else if (attribute.equals(Tables.occupation.name())){
+			return getOccupations();
+		}
+		else if (attribute.equals(Tables.organization.name())){
+			return getOrganiztions();
+		}
+		else if (attribute.equals(Tables.power.name())){
+			return getPowers();
+		}
+		
+		else if (attribute.equals(Tables.place_of_birth.name())){
+			return getPlaceOfBirth();
+		}
+		
+		else if (attribute.equals(Tables.school.name())){
+			return getSchools();
+		}
+		else if (attribute.equals(Tables.universe.name())){
+			return getUniverses();
+		}
+		else{
+			return null;
+		}
 	}
 }
