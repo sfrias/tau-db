@@ -191,16 +191,15 @@ public class DatabaseManager {
 			int unspecified = getUnspecifiedId(table.name());
 			
 			Pair currentPair = null;
-			if (valuesList.size() > 1){
-				Iterator<Pair> iter = valuesList.iterator();
-				while (iter.hasNext()){
-					currentPair = iter.next();
-					if (currentPair.getId() == unspecified){
-						valuesList.remove(currentPair);
-						break;
-					}
+			Iterator<Pair> iter = valuesList.iterator();
+			while (iter.hasNext()){
+				currentPair = iter.next();
+				if (currentPair.getId() == unspecified){
+					valuesList.remove(currentPair);
+					break;
 				}
 			}
+			
 
 			resultSet.close();
 			stmt.close();
