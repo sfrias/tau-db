@@ -676,7 +676,7 @@ public class DatabaseManager {
 
 		int characterId = character.getId();
 		String name = character.getName();
-		
+		int unspecified = -1;
 		JDCConnection conn = null;
 
 		try {
@@ -691,10 +691,14 @@ public class DatabaseManager {
 				String tableName = "characters_and_"+tables[i];
 				String field = tableName + "_" + tables[i] + "_id";
 				preparedStmt = conn.prepareStatement("INSERT INTO " + tableName + " values(" + characterId + " , ?)");
+				unspecified = getUnspecifiedId(tables[i]);
+				stmt = conn.createStatement();
 				for (int j=0; j< addedValues[i].length; j++){
 					preparedStmt.setInt(1, addedValues[i][j].getId());
 					preparedStmt.execute();
+					stmt.executeUpdate("DELETE FROM "+tableName + " WHERE " + tableName + "_character_id = " + characterId + " AND " + field + " = " + unspecified);
 				}
+
 
 				preparedStmt = conn.prepareStatement("DELETE FROM " +  tableName + " WHERE " + tableName + "_character_id = " + characterId + " AND " + field + " = ?");
 				for (int j=0; j< removedValues[i].length; j++){
