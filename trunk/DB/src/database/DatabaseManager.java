@@ -227,7 +227,7 @@ public class DatabaseManager {
 				valuesList.add(new Pair(resultSet.getString(2), resultSet.getInt(1)));
 			}
 			
-			int unspecified = getUnspecifiedId(table.name());
+			int unspecified = getUnspecifiedId(table);
 			
 			Pair currentPair = null;
 			Iterator<Pair> iter = valuesList.iterator();
@@ -731,6 +731,7 @@ public class DatabaseManager {
 				String tableName = "characters_and_"+tables[i];
 				String field = tableName + "_" + tables[i] + "_id";
 				preparedStmt = conn.prepareStatement("INSERT INTO " + tableName + " values(" + characterId + " , ?)");
+				//TODO CHANGE PARAMETER TABLES TO BE TABLES AND NOT STRINGS!!!!!!!! WE NEED TO BE CONSISTENT AND GENERIC
 				unspecified = getUnspecifiedId(tables[i]);
 				stmt = conn.createStatement();
 				for (int j=0; j< addedValues[i].length; j++){
