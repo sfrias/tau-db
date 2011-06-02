@@ -134,8 +134,11 @@ public class TableUtilities {
 					}
 
 				}
+				
+				if (!update){
 				bufferedWriter.append(insertStatement);
 				bufferedWriter.append("'Unspecified');\n");
+				}
 			}
 
 			else if (table.equals(Tables.characters.name())){
@@ -322,7 +325,6 @@ public class TableUtilities {
 
 						//adding into the attribute's table
 						
-						//int currentId = dbManager.executeInsertAndReturnGeneratedKey(subtable, fieldName, "tal");
 						int currentId = dbManager.executeInsertAndReturnGeneratedKey(subtable, fieldName, valueArr[i]);
 						
 						if (currentId != -1){
@@ -442,11 +444,6 @@ public class TableUtilities {
 						tempString = valueArr[i].replace("~", ", ");
 						valueArr[i] = tempString;
 						valueArr[i] = new String(valueArr[i].getBytes(), CHARSET);
-
-						//counting how many relationships have more than 2 characters
-						//if (valueArrLen > 2){
-						//triples++;
-						//}
 
 						//adding each character with all of the rest
 						for (int j=i+1; j < valueArr.length; j++){
@@ -572,7 +569,7 @@ public class TableUtilities {
 
 		long startTime = System.currentTimeMillis();
 
-		//downloadAndExtractDumps();
+		downloadAndExtractDumps();
 
 		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
 		deleteSqlFile(sqlFile);
@@ -681,9 +678,6 @@ public class TableUtilities {
 
 		createDatabase();
 	//	updateDatabase();
-		//DatabaseManager dbManager = DatabaseManager.getInstance();
-		//int currentId = dbManager.executeInsertAndReturnGeneratedKey("power", "power_name", "tal");
-		//System.out.println(currentId);
 
 	}
 }
