@@ -11,11 +11,6 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
-import dataTypes.Pair;
-
-import enums.Tables;
-
-
 import GUI.GuiHandler;
 import GUI.commons.GuiUtils;
 import GUI.list.DisplayList;
@@ -23,6 +18,9 @@ import GUI.model.CharacterModel;
 import GUI.panels.CharacterAttributePanel;
 import GUI.workers.AddCharacterWorker;
 import GUI.workers.GetAllAttributesWorker;
+import dataTypes.Pair;
+import database.DatabaseManager;
+import enums.Tables;
 
 public class AddCharacters extends AddCard {
 	private static final long serialVersionUID = 1L;
@@ -177,23 +175,29 @@ public class AddCharacters extends AddCard {
 		Pair[][] values = new Pair[Tables.getMaxIndex()+2][];
 
 		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
-		values[Tables.disease.getIndex() + 1] = getPairs(disease);
-		values[Tables.occupation.getIndex() + 1] = getPairs(occupation);
-		values[Tables.organization.getIndex() + 1] = getPairs(organization);
-		values[Tables.place_of_birth.getIndex() + 1] = getPairs(placeOfBirth);
-		values[Tables.power.getIndex() + 1] = getPairs(power);
-		values[Tables.school.getIndex() + 1] = getPairs(school);
-		values[Tables.universe.getIndex() + 1] = getPairs(universe);
+		values[Tables.disease.getIndex() + 1] = getPairs(disease, Tables.disease);
+		values[Tables.occupation.getIndex() + 1] = getPairs(occupation, Tables.occupation);
+		values[Tables.organization.getIndex() + 1] = getPairs(organization, Tables.organization);
+		values[Tables.place_of_birth.getIndex() + 1] = getPairs(placeOfBirth, Tables.place_of_birth);
+		values[Tables.power.getIndex() + 1] = getPairs(power, Tables.power);
+		values[Tables.school.getIndex() + 1] = getPairs(school, Tables.school);
+		values[Tables.universe.getIndex() + 1] = getPairs(universe, Tables.universe);
 		return values;
 	}
 
-	private Pair[] getPairs(DisplayList list){
+	private Pair[] getPairs(DisplayList list, Tables table){
 		
 		ListModel model = list.getModel();
+		int modelSize = model.getSize();
+		Pair[] values;
 		
-		Pair[] values = new Pair[model.getSize()];
-		for (int i=0; i < model.getSize(); i++) {
-			values[i] = (Pair) model.getElementAt(i);
+		if (modelSize == 0){
+			values = new Pair[]{new Pair("Unspecified", DatabaseManager.getInstance().getUnspecifiedId(table.name()))};
+		} else{
+			values = new Pair[model.getSize()];
+			for (int i=0; i < model.getSize(); i++) {
+				values[i] = (Pair) model.getElementAt(i);
+			}
 		}
 		
 		return values;
