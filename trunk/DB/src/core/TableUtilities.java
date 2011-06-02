@@ -117,7 +117,7 @@ public class TableUtilities {
 			bufferedReader = new BufferedReader(new InputStreamReader(fileReader));
 
 			bufferedReader.readLine();
-			String lineRead,tempString;
+			String lineRead;
 			String[] strarr;
 			DatabaseManager dbManager = DatabaseManager.getInstance();
 			TreeMap<String, Integer> tableMap = null;
@@ -125,8 +125,8 @@ public class TableUtilities {
 			if (table.equals(Tables.place_of_birth.name())){	
 				while ((lineRead = bufferedReader.readLine()) != null) {
 					strarr = lineRead.split("\t", splitNum);
-					tempString = strarr[3].replace("\'", "\\'");
-					strarr[3] = tempString;
+					strarr[3] = strarr[3].replace("\'", "\\'");
+				
 					if (! strarr[3].equals("")) {
 						bufferedWriter.append(insertStatement);
 						bufferedWriter.append("'" +  strarr[3] + "');\n");
@@ -145,15 +145,15 @@ public class TableUtilities {
 				if (update){
 					tableMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters" , 1, 2);
 				}
+				
 				while ((lineRead = bufferedReader.readLine()) != null) {
 
 					strarr = lineRead.split("\t", 27);
 
 					if (update){ //if we update, we want to check if the character is already in the table, if so - we REPLACE it, otherwise - insert it 
-						//strarr = lineRead.split("\t", 27);
-						tempString = strarr[1].replace("\'", "\\'");
-						if (tableMap.get(tempString) != null) {
-							id = tableMap.get(tempString);
+						strarr[1] = strarr[1].replace("\'", "\\'");
+						if (tableMap.get(strarr[1]) != null) {
+							id = tableMap.get(strarr[1]);
 							insert = "REPLACE INTO characters (character_id,character_name,character_fb_id,character_place_of_birth_id) values(" + id + ",";
 						}
 					}
@@ -161,8 +161,8 @@ public class TableUtilities {
 					bufferedWriter.append(insert);
 
 					for (int i = 0; i <4; i++) {
-						tempString = strarr[i].replace("\'", "\\'");
-						strarr[i] = tempString;
+						strarr[i] = strarr[i].replace("\'", "\\'");
+						
 						if (i == 2) {
 							continue;
 						}
@@ -197,16 +197,16 @@ public class TableUtilities {
 					strarr = lineRead.split("\t", splitNum);
 					
 					if (update){
-						tempString = strarr[1].replace("\'", "\\'");
-						if (tableMap.get(tempString) != null){
+						strarr[1] = strarr[1].replace("\'", "\\'");
+						if (tableMap.get(strarr[1]) != null){
 							continue;
 						}
 					}
 					
 					bufferedWriter.append(insertStatement);
 					for (int i = 0; i < attrNum - 1; i++) {
-						tempString = strarr[i].replace("\'", "\\'");
-						strarr[i] = tempString;
+						strarr[i] = strarr[i].replace("\'", "\\'");
+						
 						bufferedWriter.append("'" + strarr[i] + "', ");
 					}
 					bufferedWriter.append("'" + strarr[attrNum - 1] + "');\n");
@@ -322,6 +322,7 @@ public class TableUtilities {
 
 						//adding into the attribute's table
 						
+						//int currentId = dbManager.executeInsertAndReturnGeneratedKey(subtable, fieldName, "tal");
 						int currentId = dbManager.executeInsertAndReturnGeneratedKey(subtable, fieldName, valueArr[i]);
 						
 						if (currentId != -1){
@@ -571,7 +572,7 @@ public class TableUtilities {
 
 		long startTime = System.currentTimeMillis();
 
-	//	downloadAndExtractDumps();
+		//downloadAndExtractDumps();
 
 		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH);
 		deleteSqlFile(sqlFile);
@@ -680,6 +681,9 @@ public class TableUtilities {
 
 		createDatabase();
 	//	updateDatabase();
+		//DatabaseManager dbManager = DatabaseManager.getInstance();
+		//int currentId = dbManager.executeInsertAndReturnGeneratedKey("power", "power_name", "tal");
+		//System.out.println(currentId);
 
 	}
 }

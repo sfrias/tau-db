@@ -28,11 +28,12 @@ import enums.Tables;
 public class DatabaseManager {
 
 	//TODO add finally statements to all methods and check null!!!
-	private final static String USERNAME = "root";
 
-	private final static String PASSWORD = "armiN203";
+	private final static String USERNAME = "DbMysql09";
 
-	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
+	private final static String PASSWORD = "DbMysql09";
+
+	private final static String URL = "jdbc:mysql://localhost:3305/DbMysql09"; 
 
 	private static DatabaseManager instance = null;
 
@@ -111,11 +112,11 @@ public class DatabaseManager {
 			conn = getConnection();
 			conn.setAutoCommit(false);
 			addNullIdStatement = conn.createStatement();
-			addNullIdStatement.execute("INSERT IGNORE into " + table + "(" + fieldName+ ") values (\'" + value +"\')", Statement.RETURN_GENERATED_KEYS);						
+			addNullIdStatement.execute("INSERT IGNORE into DbMysql09." + table + " (" + fieldName+ ") values (\'" + value +"\')", Statement.RETURN_GENERATED_KEYS);						
 			generatedKeys = addNullIdStatement.getGeneratedKeys();
 			generatedKeys.first();
 			int currentId = generatedKeys.getInt(1);
-			addNullIdStatement.executeUpdate("UPDATE " + table + " SET " + table + "_fb_id = \'" + currentId + "\' WHERE " + table + "_id = " + currentId);
+			addNullIdStatement.executeUpdate("UPDATE " + table + " SET " + table + "_fb_id = '" + currentId + "' WHERE " + table + "_id = " + currentId);
 			conn.commit();
 			
 			return currentId;
