@@ -160,20 +160,24 @@ public class EditCharacters extends EditCard{
 				Tables[] tables = getTablesNames();
 				Pair[][] addedValues = getAddedValues();
 				Pair[][] removedValues = getRemovedValues();
-				Pair characerPair = (Pair) comboRecord.getSelectedItem();
-				characerPair.setName(textName.getText());
-				DefaultListModel listModel = (DefaultListModel) placeOfBirthCharacterValues.getModel();
-				int placeOfBirthId;
-				if (listModel.size() == 0){
-					placeOfBirthId = DatabaseManager.getInstance().getUnspecifiedId(Tables.place_of_birth);
-				} else {
-					Pair placeOfBirthPair = (Pair) listModel.get(0);
-					placeOfBirthId= placeOfBirthPair.getId();
+				
+				try{
+					Pair characerPair = (Pair) comboRecord.getSelectedItem();
+					DefaultListModel listModel = (DefaultListModel) placeOfBirthCharacterValues.getModel();
+					int placeOfBirthId;
+					if (listModel.size() == 0){
+						placeOfBirthId = DatabaseManager.getInstance().getUnspecifiedId(Tables.place_of_birth);
+					} else {
+						Pair placeOfBirthPair = (Pair) listModel.get(0);
+						placeOfBirthId= placeOfBirthPair.getId();
+					}
+					EditCharacterWorker worker = new EditCharacterWorker(tables, addedValues, removedValues, characerPair, placeOfBirthId, me);
+					GuiHandler.startStatusFlash();
+					worker.execute();
+					comboRecord.removeAllItems();
+				}catch (ClassCastException e){
+					GuiHandler.showChooseFromComboDialog();
 				}
-				EditCharacterWorker worker = new EditCharacterWorker(tables, addedValues, removedValues, characerPair, placeOfBirthId, me);
-				GuiHandler.startStatusFlash();
-				worker.execute();
-
 			}
 		};
 	}

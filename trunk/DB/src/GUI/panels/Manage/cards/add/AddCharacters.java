@@ -89,7 +89,6 @@ public class AddCharacters extends AddCard {
 		for (int i=0; i<allValuesIndex.length; i++){
 			if (model.isAtrributeModified(i)){
 				populateList(allValuesIndex[i], model.getAttributePairs(i));
-				//model.resetAttributeCell(i);
 			}
 		}
 

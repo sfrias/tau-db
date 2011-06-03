@@ -31,7 +31,6 @@ public class ManageFrame extends GenericFrame {
 		setSize(800,650);
 		setResizable(false);
 		add(BorderLayout.CENTER, tabPanelBuilder());
-		//setContentPane(mainPanelBuilder());
 	}
 
 	private JTabbedPane tabPanelBuilder(){

@@ -3,12 +3,11 @@ package GUI.panels.Manage.cards.edit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import dataTypes.Pair;
-
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.model.SimpleModel;
 import GUI.workers.EditSimpleWorker;
+import dataTypes.Pair;
 import enums.Tables;
 
 public class EditSimpleCard extends EditCard{
@@ -45,14 +44,20 @@ public class EditSimpleCard extends EditCard{
 		return new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				Pair selectedPair = (Pair) cb.getSelectedItem();
-				int recordId = selectedPair.getId();
-				String [] fieldNames = new String[]{table.name()+"_name"};
-				String [] fieldValues = new String[]{textName.getText()};
-				EditSimpleWorker worker = new EditSimpleWorker(table, fieldNames, fieldValues, recordId,thisCard);
-				GuiHandler.startStatusFlash();
-				worker.execute();
+				try{
+					Pair selectedPair = (Pair) cb.getSelectedItem();
+					int recordId = selectedPair.getId();
+					String [] fieldNames = new String[]{table.name()+"_name"};
+					String [] fieldValues = new String[]{textName.getText()};
+					EditSimpleWorker worker = new EditSimpleWorker(table, fieldNames, fieldValues, recordId,thisCard);
+					GuiHandler.startStatusFlash();
+					worker.execute();
+					cb.removeAllItems();
+					textName.setText(null);
 				//TODO - update combo
+				}catch (ClassCastException e){
+					GuiHandler.showChooseFromComboDialog();
+				}
 			}
 		};
 	}

@@ -190,8 +190,12 @@ public class GuiHandler {
 		JOptionPane.showMessageDialog(loadedFrame, "Please select 2 characters to start the search", "info", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	public static void showChooseFromCombo(){
-		JOptionPane.showMessageDialog(loadedFrame, "You must choose characters from the given list. Free text is not allowed ", "info", JOptionPane.INFORMATION_MESSAGE);
+	public static void showChooseFromComboDialog(){
+		JOptionPane.showMessageDialog(loadedFrame, "You must choose from the given combobox. Free text is not allowed ", "info", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	public static void showNoEmptyStringSearchDialog(){
+		JOptionPane.showMessageDialog(loadedFrame, "Searching with empty string is not allowed", "info", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	public static void showAlgrithmResultDialog(boolean success, String title, String msg){

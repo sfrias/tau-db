@@ -23,10 +23,6 @@ import GUI.workers.AddCharacterAttributeWorker;
 import enums.Tables;
 
 public class CharacterAttributePanel extends JPanel{
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private DisplayList selectedValues;

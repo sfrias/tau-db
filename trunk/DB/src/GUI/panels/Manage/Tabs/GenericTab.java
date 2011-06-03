@@ -34,7 +34,6 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		panelHead.add(label);
 		
 		//TODO insert all tabels names!!!!
-		//String[] categories = createAllTablesArray();
 		String[] categories ;
 		if (GuiHandler.isAdmin()){
 			categories = new String[]{Tables.characters.toString().toUpperCase(), Tables.disease.toString().toUpperCase(),
@@ -47,6 +46,7 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		AutoCompleteComboBox comboCategory = new AutoCompleteComboBox(categories);
 		comboCategory.setPreferredSize(new Dimension(200,20));
 		comboCategory.addActionListener(this);
+		comboCategory.setEditable(false);
 
 		JPanel panelTitle = new JPanel();
 		panelTitle.add(comboCategory);
@@ -71,8 +71,6 @@ public abstract class GenericTab extends JPanel implements ActionListener, Gener
 		String cardName = (String)cb.getSelectedItem();
 		RXCardLayout cl = (RXCardLayout)(cards.getLayout());
 		cl.show(cards, cardName);
-/*		GenericCardPanel card = (GenericCardPanel)cl.getCurrentCard();
-		card.switchCard(GenericCardPanel.MAIN_CARD);*/
 	}
 
 }

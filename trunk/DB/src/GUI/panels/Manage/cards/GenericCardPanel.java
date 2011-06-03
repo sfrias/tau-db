@@ -30,8 +30,6 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 	
 	protected boolean isSimpleCard;
 	protected Tables table;
-	//JPanel fieldsNDefaultCards;
-	//private RXCardLayout cardLayout= new RXCardLayout();
 	
 	public static String DEFAULT_CARD = "default";
 	public static String MAIN_CARD = "main";
@@ -51,7 +49,6 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		IconButton buttonAction = new IconButton("OK","ok.png");
 		buttonAction.addActionListener(createActionButtonListener());
 		panelButton.add(buttonAction);
-		
 		JPanel panelBottom = new JPanel();
 		panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.PAGE_AXIS));
 		panelBottom.add(new JSeparator(JSeparator.HORIZONTAL));
@@ -94,11 +91,6 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 			builder.add(fieldName,cc.xy(1, 2*i+3));
 			builder.add(fieldsComponents.remove(0),cc.xy(3,2*i+3));
 		}
-		/*
-		fieldsNDefaultCards = new JPanel(cardLayout);
-		
-		fieldsNDefaultCards.add(new DefaultCard(),DEFAULT_CARD);
-		fieldsNDefaultCards.add(builder.getPanel(),MAIN_CARD);*/
 		
 		if (fieldsNames!=null){  //not simple card
 			JScrollPane panelScroll = new JScrollPane(builder.getPanel());
@@ -113,10 +105,7 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 	}
 	
 	public void refreshCards(){
-		//createRecordCombo(false);
 		generateRecords();
-/*		textName.setText("");
-		switchCard(DEFAULT_CARD);*/
 	}
 
 

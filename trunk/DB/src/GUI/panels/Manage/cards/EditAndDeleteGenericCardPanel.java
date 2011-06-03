@@ -40,7 +40,6 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 
 	public EditAndDeleteGenericCardPanel(Tables table, boolean isSimpleCard, boolean generateRecords){
 		super(table, isSimpleCard);
-		//Pair[] records = createRecordList();
 		comboRecord = new AutoCompleteComboBox();
 		comboRecord.setPrototypeDisplayValue("XXX");
 		comboRecord.addActionListener(createRecordComboListener());
@@ -58,17 +57,21 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 					Document doc = ((JTextComponent)comboRecord.getEditor().getEditorComponent()).getDocument();
 					String queryString;
 					try {
-						queryString = doc.getText(0, doc.getLength());
-						GetRecordsByNameWorker worker;
-						if (card instanceof EditCharacters){
-							worker = new GetRecordsByNameWorker((EditCharacters) card, -1, queryString);
+						if (doc.getLength() == 0){
+							GuiHandler.showNoEmptyStringSearchDialog();
+						} else {
+							queryString = doc.getText(0, doc.getLength());
+							GetRecordsByNameWorker worker;
+							if (card instanceof EditCharacters){
+								worker = new GetRecordsByNameWorker((EditCharacters) card, -1, queryString);
+							}
+							else{
+								worker = new GetRecordsByNameWorker((DeleteCharacters) card, -1, queryString);
+							}
+	
+							GuiHandler.startStatusFlash();
+							worker.execute();
 						}
-						else{
-							worker = new GetRecordsByNameWorker((DeleteCharacters) card, -1, queryString);
-						}
-
-						GuiHandler.startStatusFlash();
-						worker.execute();
 					} catch (BadLocationException e) {
 
 						// TODO Auto-generated catch block
@@ -99,7 +102,6 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 				try {
 					boolean refresh = !((card instanceof DeleteCharacters) || (card instanceof EditCharacters));
 					if (refresh ){
-						System.out.println("start cards refreshing in " + this + " " + getCardAction());
 						refreshCards();
 
 						textName.setText("");
