@@ -39,7 +39,6 @@ public class WelcomeScreenFrame extends JFrame {
 	private void buildFrame(){
 		setTitle("DB Project");
 		setContentPane(mainPanelBuilder());
-		//setSize(1000,1000);
 	}
 
 

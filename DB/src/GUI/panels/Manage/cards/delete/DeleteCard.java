@@ -57,12 +57,18 @@ public class DeleteCard extends EditAndDeleteGenericCardPanel{
 		return new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				Pair selectedPair = (Pair) cb.getSelectedItem();
-				int recordId = selectedPair.getId();
-				DeleteWorker worker = new DeleteWorker(table, recordId, thisCard);
-				//TODO - update combo
-				GuiHandler.startStatusFlash();
-				worker.execute();
+				try{
+					Pair selectedPair = (Pair) cb.getSelectedItem();
+					int recordId = selectedPair.getId();
+					DeleteWorker worker = new DeleteWorker(table, recordId, thisCard);
+					GuiHandler.startStatusFlash();
+					worker.execute();
+					
+					cb.removeAllItems();
+					textName.setText(null);
+				}catch (ClassCastException e){
+					GuiHandler.showChooseFromComboDialog();
+				}
 			}
 		};
 	}

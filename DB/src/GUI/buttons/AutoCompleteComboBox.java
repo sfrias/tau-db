@@ -10,7 +10,7 @@ public class AutoCompleteComboBox extends JComboBox	{
 		super(items) ;
 		setEditable(true);
 		JTextComponent editor = (JTextComponent) getEditor().getEditorComponent();
-		editor.setDocument(new S04FirstAutoCompletion(this));
+		editor.setDocument(new AutoCompleteDocument(this));
 		setSelectedItem(null);
 	}
 	
@@ -18,7 +18,7 @@ public class AutoCompleteComboBox extends JComboBox	{
 		super() ;
 		setEditable(true);
 		JTextComponent editor = (JTextComponent) getEditor().getEditorComponent();
-		editor.setDocument(new S04FirstAutoCompletion(this));
+		editor.setDocument(new AutoCompleteDocument(this));
 		setSelectedItem(null);
 	}
 	

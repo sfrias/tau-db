@@ -14,7 +14,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 
-public class S04FirstAutoCompletion extends PlainDocument {
+public class AutoCompleteDocument extends PlainDocument {
     
 	private static final long serialVersionUID = 1L;
 	JComboBox comboBox;
@@ -24,7 +24,7 @@ public class S04FirstAutoCompletion extends PlainDocument {
     // subsequent calls to remove/insertString should be ignored
     boolean selecting=false;
     
-    public S04FirstAutoCompletion(final JComboBox comboBox) {
+    public AutoCompleteDocument(final JComboBox comboBox) {
         this.comboBox = comboBox;
         model = comboBox.getModel();
         editor = (JTextComponent) comboBox.getEditor().getEditorComponent();
@@ -74,7 +74,6 @@ public class S04FirstAutoCompletion extends PlainDocument {
             Object currentItem = model.getElementAt(i);
             // current item starts with the pattern?
             if (startsWithIgnoreCase(currentItem.toString(), pattern)) {
-                //System.out.println("'" + currentItem + "' matches pattern '" + pattern + "'");
                 return currentItem;
             }
         }

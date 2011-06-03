@@ -79,17 +79,14 @@ public class PlayFrame extends GenericFrame {
 								worker.execute();
 								GuiHandler.showAlgrithmResultDialog(false, ConnectionResult.Did_Not_Find_Connection.toString(), "Could not find a connection between " +  pairI.getName() + " and " + pairII.getName());
 							} else{
-//								int firstCharId = ((Pair) comboCharI.getSelectedItem()).getId();
-//								int secondCharId = ((Pair) comboCharII.getSelectedItem()).getId();
 								Character charI = panelLeftDetails.getSelectedCharacter();
 								Character charII = panelRightDetails.getSelectedCharacter();
-								System.out.println("first " + charI.getCharId() + " second " + charII.getCharId());
 								AlgorithmWorker worker = new AlgorithmWorker(charI, charII, playFrame);
 								GuiHandler.startStatusFlash();
 								worker.execute();
 							}
 						}catch (ClassCastException e){
-							GuiHandler.showChooseFromCombo();
+							GuiHandler.showChooseFromComboDialog();
 						}
 					}
 		});
@@ -181,10 +178,14 @@ public class PlayFrame extends GenericFrame {
 				Document doc = ((JTextComponent)charComboBox.getEditor().getEditorComponent()).getDocument();
 				String queryString;
 				try {
-					queryString = doc.getText(0, doc.getLength());
-					GetRecordsByNameWorker worker = new GetRecordsByNameWorker(playFrame, charNum, queryString);
-					GuiHandler.startStatusFlash();
-					worker.execute();
+					if (doc.getLength() == 0){
+						GuiHandler.showNoEmptyStringSearchDialog();
+					} else {
+						queryString = doc.getText(0, doc.getLength());
+						GetRecordsByNameWorker worker = new GetRecordsByNameWorker(playFrame, charNum, queryString);
+						GuiHandler.startStatusFlash();
+						worker.execute();
+					}
 				} catch (BadLocationException e) {
 
 					// TODO Auto-generated catch block

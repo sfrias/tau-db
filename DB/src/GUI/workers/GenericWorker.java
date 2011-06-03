@@ -91,6 +91,7 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 		if (isCancelled()){
 			GuiHandler.stopStatusFlash();
 			GuiHandler.showResultExceptionDialog("TIMER-STOPPED-FOR-DEBUG-ONLY");
+			
 		}else{
 
 			try {
@@ -101,7 +102,6 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				switch (e){
 				case Success_Simple_Add_Edit_Delete:{
 					GuiHandler.showResultSuccessDialog(action.toString());
-					card.refreshFromModel();
 					break;
 				}
 				case Success_Add_Character:{

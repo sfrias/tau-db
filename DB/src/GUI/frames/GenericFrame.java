@@ -10,13 +10,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import enums.Frames;
-
-
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;
 import GUI.panels.General.BlinkingStatusPanel;
+import enums.Frames;
 
 public class GenericFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -42,16 +40,7 @@ public class GenericFrame extends JFrame {
 
 		JButton buttonQuit = GuiUtils.createQuitButton();
 
-		BlinkingStatusPanel panelStatus = GuiHandler.getStatusPanel();		
-		/*JPanel panelStatus = new JPanel();
-		Font font = new Font("Footlight MT Light", Font.BOLD, 18);
-		JLabel labelTitle = new JLabel("Status:");
-		labelTitle.setFont(font);
-		labelStatus = new JLabel("Ready");
-		labelStatus.setFont(font);
-		panelStatus.setBorder(new EmptyBorder(5,0,0,0));
-		panelStatus.add(labelTitle);
-		panelStatus.add(labelStatus);*/
+		BlinkingStatusPanel panelStatus = GuiHandler.getStatusPanel();	
 		
 		JPanel panelButtom = new JPanel(new BorderLayout());
 		panelButtom.add(BorderLayout.WEST, buttonBack);
