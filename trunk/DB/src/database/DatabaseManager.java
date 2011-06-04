@@ -32,7 +32,7 @@ public class DatabaseManager {
 
 	private final static String USERNAME = "root";
 
-	private final static String PASSWORD = "root";
+	private final static String PASSWORD = "armiN203";
 
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
@@ -716,6 +716,7 @@ public class DatabaseManager {
 		String name = character.getName();
 		int unspecified = -1;
 		JDCConnection conn = null;
+		ResultSet rs = null;
 
 		try {
 			conn = getConnection();
@@ -744,6 +745,14 @@ public class DatabaseManager {
 					preparedStmt.setInt(1, removedValues[i][j].getId());
 					preparedStmt.execute();
 				}
+				
+				stmt = conn.createStatement();
+				rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE "+ tableName + "_character_id = " + characterId);
+				if (!rs.first()){
+					stmt = conn.createStatement();
+					stmt.executeUpdate("INSERT INTO " + tableName +" values(" + characterId+", "+ unspecified + ")");
+				}
+				
 			}
 
 			conn.commit();
@@ -755,10 +764,19 @@ public class DatabaseManager {
 				conn.rollback();
 			} 
 			catch(SQLException excep) {
+				e.printStackTrace();
 			}
 			return ExecutionResult.Exception;
 		}
 		finally {
+			if (rs !=null){
+				try{
+					rs.close();
+				}catch(SQLException excep) {
+					return ExecutionResult.Exception;
+				}
+
+			}
 			if (stmt != null){
 				try {
 					stmt.close();
