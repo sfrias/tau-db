@@ -237,7 +237,12 @@ public class StatisticsTab extends JPanel{
 		
 		successRateTotalLabel.setText(Long.toString(successRate.getTotalSearches()));
 		successRateSucessLabel.setText(Long.toString(successRate.getSuccessSearches()));
-		successRateLabel.setText( Long.toString( ( successRate.getSuccessSearches()* 100) / successRate.getTotalSearches())   + "%");
+		if (successRate.getTotalSearches()!=0 ){
+			successRateLabel.setText( Long.toString( ( successRate.getSuccessSearches()* 100) / successRate.getTotalSearches())   + "%");
+		}
+		else{
+			successRateLabel.setText("0%");			
+		}
 	}
 	
 	public void setModel(StatisticsModel model){
