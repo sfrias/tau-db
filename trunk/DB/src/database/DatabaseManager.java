@@ -28,22 +28,14 @@ import enums.Tables;
 
 public class DatabaseManager {
 
-	//TODO add finally statements to all methods and check null!!!
-
-	private final static String USERNAME = "root";
-
-	private final static String PASSWORD = "armiN203";
-
-	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
+	private final static String USERNAME = "DbMysql09";
+	private final static String PASSWORD = "DbMysql09";
+	private final static String URL = "jdbc:mysql://localhost:3305/DbMysql09"; 
 
 	private static DatabaseManager instance = null;
-
 	private static JDCConnectionDriver connectionDriver;
-
 	private static Properties connProperties;
-	
 	private static TreeMap<Tables, Integer> unspecifiedIdOfTables = new TreeMap<Tables,Integer>();
-	
 	private static boolean init = false;
 
 
@@ -90,7 +82,7 @@ public class DatabaseManager {
 				currentTable != Tables.parent &&
 				currentTable != Tables.romantic_involvement) {
 				
-				unspecified=getUnspecifiedId(currentTable.name());
+				unspecified = getUnspecifiedId(currentTable.name());
 				
 				if (unspecified==-1){
 					throw new Exception();
@@ -105,7 +97,7 @@ public class DatabaseManager {
 	}
 
 	
-	public static JDCConnection getConnection() {
+	public JDCConnection getConnection() {
 		try {
 			return (JDCConnection) connectionDriver.connect(URL, connProperties);
 		} catch (SQLException e) {
@@ -142,7 +134,6 @@ public class DatabaseManager {
 			}
 		}
 	}
-
 	
 	public int executeInsertAndReturnGeneratedKey(String table, String fieldName, String value){
 		JDCConnection conn =null;
@@ -152,7 +143,7 @@ public class DatabaseManager {
 			conn = getConnection();
 			conn.setAutoCommit(false);
 			addNullIdStatement = conn.createStatement();
-			addNullIdStatement.execute("INSERT IGNORE into DbMysql09." + table + " (" + fieldName+ ") values (\'" + value +"\')", Statement.RETURN_GENERATED_KEYS);						
+			addNullIdStatement.execute("INSERT IGNORE into " + table + " (" + fieldName+ ") values (\'" + value +"\')", Statement.RETURN_GENERATED_KEYS);						
 			generatedKeys = addNullIdStatement.getGeneratedKeys();
 			generatedKeys.first();
 			int currentId = generatedKeys.getInt(1);
@@ -750,7 +741,7 @@ public class DatabaseManager {
 				rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE "+ tableName + "_character_id = " + characterId);
 				if (!rs.first()){
 					stmt = conn.createStatement();
-					stmt.executeUpdate("INSERT INTO " + tableName +" values(" + characterId+", "+ unspecified + ")");
+					stmt.executeUpdate("INSERT INTO " + tableName +" values(" + characterId + ", "+ unspecified + ")");
 				}
 				
 			}
@@ -1048,7 +1039,7 @@ public class DatabaseManager {
 			return -1;
 		}
 	}
-	private static  int getUnspecifiedId(String table) {
+	private static int getUnspecifiedId(String table) {
 		
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -1063,7 +1054,7 @@ public class DatabaseManager {
 
 		JDCConnection conn = null;
 		try {
-			conn = getConnection();
+			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
 			rs.first();
