@@ -51,7 +51,7 @@ public class Algorithm{
 	private int globalNumOfConnections;	
 	
 	
-	public Algorithm() throws SQLException{
+	private Algorithm() throws SQLException{
 		tbs = Tables.values();
 		dbManager = DatabaseManager.getInstance();
 	}
@@ -323,7 +323,7 @@ public class Algorithm{
 		ResultSet atrValRS=null;
 		
 		try {
-			conn = DatabaseManager.getConnection() ;
+			conn = dbManager.getConnection();
 			atrStmt = conn.createStatement();			
 			atrValRS = atrStmt.executeQuery(AlgorithmUtilities.specificAttributeValuesQuery(joinedAtr.name(), currentAtr.name(), start_id));
 			int unspecifiedId = dbManager.getUnspecifiedId(currentAtr);
@@ -405,7 +405,7 @@ public class Algorithm{
 			
 	
 			try {
-				conn = DatabaseManager.getConnection() ;
+				conn = dbManager.getConnection();
 				atrStmt = conn.createStatement();			
 				atrValRS = atrStmt.executeQuery(AlgorithmUtilities.specificAttributeValuesQuery(joinedAtr.name(), currentAtr.name(), start_id));
 				int unspecifiedId = dbManager.getUnspecifiedId(currentAtr);
@@ -484,7 +484,7 @@ public class Algorithm{
 		Statement atrStmt = null;
 		JDCConnection conn = null;
 		try {
-			conn = DatabaseManager.getConnection() ;
+			conn = dbManager.getConnection();
 			atrStmt = conn.createStatement();
 			atrValRS = atrStmt.executeQuery(selectAtrValues);
 			atrValRS.first();
@@ -565,7 +565,7 @@ public class Algorithm{
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
 			try {
-				conn = DatabaseManager.getConnection() ;
+				conn = dbManager.getConnection();
 				currentAtr =tablesArr[atr];
 				charWithAtrStmt = conn.createStatement();
 				if (atr < indexOfJumps) {
@@ -677,7 +677,7 @@ public class Algorithm{
 		//running on all attributes
 		for (int atr=0; atr<attributes; atr=atr+1){
 			try {
-				conn = DatabaseManager.getConnection() ;
+				conn = dbManager.getConnection();
 				currentAtr =tablesArr[atr];
 				charAtrStmt = conn.createStatement();
 				if (atr < indexOfJumps) {

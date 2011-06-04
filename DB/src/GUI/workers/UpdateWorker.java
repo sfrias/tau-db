@@ -19,8 +19,8 @@ import GUI.GuiHandler;
 import GUI.panels.Manage.Tabs.UpdateTab;
 import core.TableUtilities;
 import database.AntUtils;
-import database.AntUtils.Targets;
 import database.DatabaseManager;
+import database.AntUtils.Targets;
 import enums.UpdateResult;
 
 public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
@@ -256,6 +256,8 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 				case exception:
 					removeTemporaryFiles();
 					parent.refreshTab(result);
+					break;
+				default:
 					break;
 				} 
 			}catch (InterruptedException e) {
