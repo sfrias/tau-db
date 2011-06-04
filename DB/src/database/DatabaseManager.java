@@ -532,7 +532,7 @@ public class DatabaseManager {
 				placeOfBirthId = rs.getInt(1);
 			}
 
-			stmt.execute("INSERT IGNORE INTO characters (character_name, character_place_of_birth_id) values (\'"+name.getName()+"\', " + placeOfBirthId + ")", Statement.RETURN_GENERATED_KEYS);
+			stmt.execute("INSERT IGNORE INTO characters (character_name, character_place_of_birth_id) values (\'"+name.getName().replace("\'" , "\\'") +"\', " + placeOfBirthId + ")", Statement.RETURN_GENERATED_KEYS);
 			generatedKeys = stmt.getGeneratedKeys();
 			generatedKeys.first();
 			int key = generatedKeys.getInt(1);
@@ -705,6 +705,7 @@ public class DatabaseManager {
 
 		int characterId = character.getId();
 		String name = character.getName();
+		name = name.replace("\'", "\\'");
 		int unspecified = -1;
 		JDCConnection conn = null;
 		ResultSet rs = null;
