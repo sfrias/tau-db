@@ -15,9 +15,11 @@ public class Character{
 	private HashSet<Integer> universe;
 	
 	private int charId;
+	private String charName;
 	
-	public Character(int charId){
+	public Character(int charId, String charName){
 		this.charId = charId;
+		this.charName = charName;
 	}
 	
 	public HashSet<Integer> getDiseases(){
@@ -78,6 +80,10 @@ public class Character{
 	
 	public int getCharId(){
 		return charId;
+	}
+	
+	public String getCharName(){
+		return charName;
 	}
 	
 	public HashSet<Integer> getValueByAttribute(String attribute){

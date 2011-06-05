@@ -15,13 +15,9 @@ import enums.ExecutionResult;
 
 public class AlgorithmWorker extends GenericWorker{
 
-	private Character firstChar;
-	private Character secondChar;
 
-	public AlgorithmWorker(Character firstCharId, Character secondCharId, PlayFrame playFrame) {
-		super(Action.ALGROTITHM, playFrame);
-		this.firstChar = firstCharId;
-		this.secondChar = secondCharId;
+	public AlgorithmWorker(Character firstChar, Character secondChar, PlayFrame playFrame) {
+		super(Action.ALGROTITHM, firstChar, secondChar, playFrame);
 	}
 
 	@Override
@@ -38,8 +34,8 @@ public class AlgorithmWorker extends GenericWorker{
 		alg.initialization();
 		
 		ReturnElement returnElem = alg.lookForConnection(firstChar, secondChar);
-		String firstCharName = alg.getStartName();
-		String secondCharName = alg.getEndName();
+		String firstCharName = firstChar.getCharName();
+		String secondCharName = secondChar.getCharName();
 		if (returnElem.getResult() == ConnectionResult.Exception || returnElem.getResult() == ConnectionResult.Close_Exception){
 			return new ResultHolder(ExecutionResult.Exception);
 		}
