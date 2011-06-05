@@ -18,6 +18,7 @@ import GUI.panels.Manage.cards.delete.DeleteCard;
 import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
+import dataTypes.Character;
 import dataTypes.ResultHolder;
 import database.DatabaseManager;
 import enums.ConnectionResult;
@@ -34,6 +35,9 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 	private PlayFrame playFrame;
 	private StatisticsTab statisticsTab;
 
+	protected Character firstChar;
+	protected Character secondChar;
+
 	public GenericWorker(){
 		super();
 	}
@@ -44,10 +48,16 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 		this.action = Action.STATISTICS;
 	}
 
-	public GenericWorker(Action action, PlayFrame playFrame){
+	public GenericWorker(Action action, Character firstChar, Character secondChar, PlayFrame playFrame){
 		super();
 		this.action = action;
 		this.playFrame = playFrame;
+		this.firstChar = firstChar;
+		this.secondChar = secondChar;
+	}
+	
+	public GenericWorker(Action action, PlayFrame playFrame){
+		this(action, null, null, playFrame);
 	}
 
 	public GenericWorker(EditSimpleCard card) {
@@ -90,7 +100,8 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 	public void done(){
 		if (isCancelled()){
 			GuiHandler.stopStatusFlash();
-			GuiHandler.showResultExceptionDialog("TIMER-STOPPED-FOR-DEBUG-ONLY");
+			GuiHandler.showAlgrithmResultDialog(false, ConnectionResult.Did_Not_Find_Connection.toString(), 
+					"Could not find a connection between " + firstChar.getCharName() + " and " + secondChar.getCharName());
 			
 		}else{
 
@@ -224,11 +235,10 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 					AlgorithmModel model = (AlgorithmModel) result.getModel();
 					ConnectionResult connResult = model.getConnResult();
 					switch (connResult){
-
-					case Did_Not_Find_Connection:
 					case Found_Connection:
 						GuiHandler.showAlgrithmResultDialog(true,connResult.toString(), model.getResultString());
 						break;
+					case Did_Not_Find_Connection:
 					case Found_Connection_Of_Length_0:
 						GuiHandler.showAlgrithmResultDialog(false, connResult.toString(), model.getResultString());
 						break;

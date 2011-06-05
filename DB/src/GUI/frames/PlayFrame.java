@@ -26,10 +26,8 @@ import GUI.panels.Play.CharacterDisplayPanel;
 import GUI.workers.AlgorithmWorker;
 import GUI.workers.GetCharacterAttributesWorker;
 import GUI.workers.GetRecordsByNameWorker;
-import GUI.workers.updateSuccessRateWorker;
 import dataTypes.Character;
 import dataTypes.Pair;
-import enums.ConnectionResult;
 
 public class PlayFrame extends GenericFrame {
 	private static final long serialVersionUID = 1L;
@@ -74,11 +72,7 @@ public class PlayFrame extends GenericFrame {
 							Pair pairII = (Pair)comboCharII.getSelectedItem();			
 							if (pairI == null || pairII == null){
 								GuiHandler.showChooseCharactersDialog();
-							}else if (panelLeftDetails.isAllAttributesUnSpecified() || panelRightDetails.isAllAttributesUnSpecified()){
-								updateSuccessRateWorker worker = new updateSuccessRateWorker(false);
-								worker.execute();
-								GuiHandler.showAlgrithmResultDialog(false, ConnectionResult.Did_Not_Find_Connection.toString(), "Could not find a connection between " +  pairI.getName() + " and " + pairII.getName());
-							} else{
+							} else {
 								Character charI = panelLeftDetails.getSelectedCharacter();
 								Character charII = panelRightDetails.getSelectedCharacter();
 								AlgorithmWorker worker = new AlgorithmWorker(charI, charII, playFrame);
@@ -219,7 +213,7 @@ public class PlayFrame extends GenericFrame {
 			if (selected != null && selected instanceof Pair){
 				Pair record = (Pair) selected;
 				if (record != null){
-					charDetails.setCharId(record.getId());
+					charDetails.setCharDetails(record.getId(), record.getName());
 					GetCharacterAttributesWorker worker = new GetCharacterAttributesWorker(playFrame, record.getId(), charNum);
 					GuiHandler.startStatusFlash();
 					worker.execute();

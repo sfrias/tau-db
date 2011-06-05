@@ -47,6 +47,7 @@ public class CharacterDisplayPanel extends JPanel{
 	public static String SIMPLE_MODEL = "SIMPLE_MODEL";
 	
 	private int charId;
+	String charName;
 	private DatabaseManager databaseManager = DatabaseManager.getInstance();
 	
 	public CharacterDisplayPanel(){
@@ -185,7 +186,7 @@ public class CharacterDisplayPanel extends JPanel{
 	}
 	
 	public Character getSelectedCharacter(){
-		Character character = new Character(charId);
+		Character character = new Character(charId, charName);
 	
 		character.setDiseases(getListFromDisplayList(disease));
 		character.setOccupations(getListFromDisplayList(occupation));
@@ -214,7 +215,8 @@ public class CharacterDisplayPanel extends JPanel{
 		return result;
 	}
 	
-	public void setCharId(int id){
+	public void setCharDetails(int id, String name){
 		this.charId = id;
+		this.charName = name;
 	}
 }

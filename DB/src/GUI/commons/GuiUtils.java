@@ -15,12 +15,11 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import dataTypes.Pair;
-
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.frames.WelcomeScreenFrame;
 import GUI.list.DisplayList;
+import dataTypes.Pair;
 
 public class GuiUtils {
     
@@ -75,7 +74,7 @@ public class GuiUtils {
 	}
 	
 	public static ImageIcon readImageIcon(String fileName) {
-        URL url = WelcomeScreenFrame.class.getResource("../images/" + fileName);
+        URL url = WelcomeScreenFrame.class.getResource("/GUI/images/" + fileName);
         if (url == null)
             return null;
 
