@@ -63,8 +63,11 @@ public class Algorithm{
 				init = true;				
 			}
 			else{
-				init = false;				
+				init = false;			
 			}
+		}
+		else{
+			setR(ConnectionResult.Ok);
 		}
 	}
 	
@@ -77,7 +80,7 @@ public class Algorithm{
 	}
 	
 	public  void setR(ConnectionResult re){
-		if (status != ConnectionResult.Ok){ //we want to hold the first error that occurred
+		if (status != ConnectionResult.Ok && re != ConnectionResult.Ok){ //we want to hold the first error that occurred
 			return;
 		}
 		status = re;
@@ -767,7 +770,7 @@ public class Algorithm{
 
 	public ReturnElement lookForConnection(Character start_character, Character end_character){
 
-		ReturnElement result = new ReturnElement(ConnectionResult.Exception,null);;
+		ReturnElement result = new ReturnElement(ConnectionResult.Exception,null);
 		int start_id = start_character.getCharId();
 		int end_id = end_character.getCharId();
 		this.start_character= start_character;
@@ -785,10 +788,17 @@ public class Algorithm{
 		boolean alreadyExists = false;
 		this.end_id = end_id;
 		
-		start_name=start_character.getCharName();
-		end_name=end_character.getCharName();
 		
-		if (getR() != ConnectionResult.Ok){ //an error occurred while trying to extract the names of the characters
+		this.start_name=start_character.getCharName();
+		this.end_name=end_character.getCharName();
+		
+		ConnectionResult checkForCharactersExistance = dbManager.checkForExistance(start_id, end_id);
+		result.setResult(checkForCharactersExistance);
+		
+		switch (checkForCharactersExistance){
+		case Ok:
+				break;
+		default: 
 			return result;
 		}
 
