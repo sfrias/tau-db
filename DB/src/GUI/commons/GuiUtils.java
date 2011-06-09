@@ -10,6 +10,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -102,6 +104,15 @@ public class GuiUtils {
 				button.setIcon(GuiUtils.readImageIcon("doorClosed.png"));
 			}
 		};
+	}
+	
+	public static boolean isAscii(String str){
+		CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
+		if (asciiEncoder.canEncode(str)){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 }
