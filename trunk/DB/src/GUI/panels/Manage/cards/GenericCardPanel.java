@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 
 import GUI.buttons.AutoCompleteComboBox;
 import GUI.buttons.IconButton;
+import GUI.panels.Manage.cards.delete.DeleteCard;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -80,11 +81,12 @@ public abstract class GenericCardPanel extends JPanel implements GenericCardIner
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setDefaultDialogBorder();
 		CellConstraints cc = new CellConstraints();
-		JLabel label = new JLabel(table.toString() + " name:");
-		label.setFont(new Font("Footlight MT Light", Font.PLAIN, 15));
-		builder.add(label, cc.xy(1,1));
-		builder.add(textName, cc.xy(3,1));
-
+		if (!(this instanceof DeleteCard)){
+			JLabel label = new JLabel(table.toString() + " name:");
+			label.setFont(new Font("Footlight MT Light", Font.PLAIN, 15));
+			builder.add(label, cc.xy(1,1));
+			builder.add(textName, cc.xy(3,1));
+		}
 		for (int i=0; i<numOfRows; i++){
 			JLabel fieldName = new JLabel(fieldsNames.remove(0) + ":");
 			fieldName.setFont(new Font("Footlight MT Light", Font.PLAIN, 15));
