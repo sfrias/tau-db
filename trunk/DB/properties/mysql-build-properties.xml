@@ -3,7 +3,11 @@
 <project name="MySQL Properties" default="all" basedir=".">
 
   <property name="MYSQLDRIVER" value="lib/mysql-connector-java-5.1.15-bin.jar"/>
-
+	<path id="CLASSPATH">		
+		<pathelement location="classes"/>		
+		<pathelement location="${MYSQLDRIVER}"/>		
+	</path>
+	
   <property name="DB.VENDOR" value="mysql"/>
   <property name="DB.DRIVER" value="com.mysql.jdbc.Driver"/>
   <property name="DB.HOST" value="localhost"/>
