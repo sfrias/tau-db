@@ -28,7 +28,7 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 
 	enum Action{ADD, EDIT, DELETE, QUERY, ALGROTITHM, STATISTICS};
 
-	protected DatabaseManager databaseManager = DatabaseManager.getInstance();
+	protected DatabaseManager databaseManager = GuiHandler.getDatabaseManager();
 	private Action action;
 
 	private GenericCardPanel card;

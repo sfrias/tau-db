@@ -114,20 +114,12 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 	}
 
 	private ExecutionResult clearHistoryTables(){
-		
-		DatabaseManager dbManager;
-		try {
-			dbManager = DatabaseManager.getInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ExecutionResult.Exception;
-		}
-
-		ExecutionResult er = dbManager.executeDeleteTableContent("history");
+		DatabaseManager databaseManager = GuiHandler.getDatabaseManager();
+		ExecutionResult er = databaseManager.executeDeleteTableContent("history");
 		if (er == ExecutionResult.Exception){
 			return er;
 		}
-		er = dbManager.executeDeleteTableContent("failed_searches");
+		er = databaseManager.executeDeleteTableContent("failed_searches");
 		return er;
 	}
 

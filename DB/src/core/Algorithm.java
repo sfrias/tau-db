@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
+import GUI.GuiHandler;
 import connection.JDCConnection;
 import dataTypes.Character;
 import dataTypes.ReturnElement;
@@ -36,7 +37,7 @@ public class Algorithm{
 	private List<charElement> currentPhase = new ArrayList<charElement>();
 	private List<charElement> previousPhase = new ArrayList<charElement>();
 	
-	private DatabaseManager dbManager = null;
+	private DatabaseManager dbManager = GuiHandler.getDatabaseManager();
 	private int end_id;
 	private Character start_character = null;
 	private Character end_character = null;
@@ -46,12 +47,11 @@ public class Algorithm{
 	private String end_name = null;
 	private int globalNumOfConnections;	
 	
-	private Algorithm() throws Exception{
+	private Algorithm() {
 		tbs = Tables.values();
-		dbManager = DatabaseManager.getInstance();
 	}
 	
-	public static Algorithm getInstance() throws Exception{
+	public static Algorithm getInstance() {
 		if (instance == null){
 			instance = new Algorithm();	
 		}

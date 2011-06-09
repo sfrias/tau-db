@@ -17,9 +17,10 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
+import GUI.GuiHandler;
 import database.AntUtils;
-import database.DatabaseManager;
 import database.AntUtils.Targets;
+import database.DatabaseManager;
 import enums.ExecutionResult;
 import enums.Tables;
 
@@ -32,6 +33,7 @@ public class TableUtilities {
 
 	static TreeMap<String, Short> tablesMap = new TreeMap<String, Short>();
 	static TreeMap<Short, String> reverseTablesMap = new TreeMap<Short, String>();
+	private static DatabaseManager dbManager = GuiHandler.getDatabaseManager();
 
 	private static void downloadAndExtractDumps() throws IOException {
 		File pathDir = new File(".");
@@ -106,7 +108,6 @@ public class TableUtilities {
 		BufferedWriter bufferedWriter = null;
 		FileInputStream fileReader = null;
 		BufferedReader bufferedReader = null;
-		DatabaseManager dbManager;
 
 		try{
 
@@ -120,7 +121,6 @@ public class TableUtilities {
 			bufferedReader.readLine();
 			String lineRead;
 			String[] strarr;
-			dbManager = DatabaseManager.getInstance();
 			
 			TreeMap<String, Integer> tableMap = null;
 
@@ -283,9 +283,7 @@ public class TableUtilities {
 
 			bufferedReader.readLine();
 			String lineRead;
-
-			DatabaseManager dbManager = DatabaseManager.getInstance();
-		
+	
 
 			TreeMap<String, Integer> interstingMainValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + mainTable, 1, 2);	
 			TreeMap<String, Integer> interestingValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + subtable, 1, 3);
@@ -420,7 +418,7 @@ public class TableUtilities {
 			bufferedReader.readLine();
 			String lineRead;
 
-			DatabaseManager dbManager = DatabaseManager.getInstance();
+			DatabaseManager dbManager = GuiHandler.getDatabaseManager();
 			TreeMap<String, Integer> charactersMap = dbManager.generateHashMapFromQuery("SELECT * FROM characters", 1, 3);
 
 			//int triples = 0;
