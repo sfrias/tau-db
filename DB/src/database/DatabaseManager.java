@@ -36,27 +36,16 @@ public class DatabaseManager {
 	private static DatabaseManager instance = null;
 	private static JDCConnectionDriver connectionDriver;
 	private static Properties connProperties;
-	private static TreeMap<Tables, Integer> unspecifiedIdOfTables = new TreeMap<Tables,Integer>();
-	private static boolean init = false;
+	private TreeMap<Tables, Integer> unspecifiedIdOfTables = new TreeMap<Tables,Integer>();
+	private boolean init = false;
 
 
-	private DatabaseManager(){
-		try {
-			connectionDriver = new JDCConnectionDriver("com.mysql.jdbc.Driver", URL, USERNAME, PASSWORD);
-		} catch (ClassNotFoundException e) {
-			System.err.println("Error initializing JDCConnectionDriver - class " + e.getMessage() + " not found!");
-		} catch (InstantiationException e) {
-			System.err.println("Error initializing JDCConnectionDriver - class " + e.getMessage() + " cannot be instanced!");
-		} catch (IllegalAccessException e) {
-			System.err.println("Error initializing JDCConnectionDriver - IllegalAccessException");
-		} catch (SQLException e) {
-			System.err.println("Error initializing JDCConnectionDriver - an SQLException was thrown");
-		}
-
+	private DatabaseManager() throws Exception{
+		connectionDriver = new JDCConnectionDriver("com.mysql.jdbc.Driver", URL, USERNAME, PASSWORD);
 		connProperties = new Properties(); 
 	}
 
-	public static DatabaseManager getInstance(){
+	public static DatabaseManager getInstance() throws Exception{
 
 		if (instance == null){
 			instance = new DatabaseManager();
@@ -72,7 +61,7 @@ public class DatabaseManager {
 		}
 	}
 
-	public static void buildUnspecifiedMapPerTable() throws Exception{
+	public void buildUnspecifiedMapPerTable() throws Exception{
 		Tables[] tablesArray = Tables.values();
 		Tables currentTable;
 		int unspecified;
@@ -848,29 +837,26 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
-		Algorithm alg = null;
 		JDCConnection conn = null;
 
 		try {
 			conn = getConnection();
-			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT character_name FROM characters WHERE character_id=" +id +"");
 			if (rs.first()){
 				Name = rs.getString("character_name");
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			alg.setR(ConnectionResult.Exception);
 			return null;
-		} 
-		finally {
+			
+		}finally {
 			if (stmt != null){
 				try {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return null;
 				}
 			}
 			if (rs!= null){
@@ -878,7 +864,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return null;
 				}
 			}
 			if (conn!= null){
@@ -886,7 +872,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return null;
 				}
 			}
 
@@ -906,7 +892,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
-		Algorithm alg = null;
+		
 		if (table.equals(Tables.romantic_involvement.name()) ||
 				table.equals(Tables.parent.name()) ||
 				table.equals("child")) {
@@ -916,16 +902,15 @@ public class DatabaseManager {
 
 		JDCConnection conn = null;
 		try {
+
 			conn = getConnection();
-			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT " +table+"_name FROM " + table+ " WHERE " + table+"_id=" + id);
 			if (rs.first()){
 				Name = rs.getString(1);
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			alg.setR(ConnectionResult.Exception);
 			return null;
 		}
 		finally {
@@ -934,7 +919,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return null;
 				}
 			}
 			if (rs!= null){
@@ -942,7 +927,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return null;
 				}
 			}
 			if (conn!= null){
@@ -950,7 +935,7 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return null;
 				}
 			}
 		}
@@ -1100,19 +1085,17 @@ public class DatabaseManager {
 	/*
 	 * inserts connection found
 	 */
-	public void insertIntoHistory (String connections) {
+	public ExecutionResult insertIntoHistory (String connections) {
 
 		Statement stmt = null;
 		String[] connectionsSplit = connections.split("\t");
 		int length = connectionsSplit.length;
 		boolean execute = false;
 		String toQuery = null;
-		Algorithm alg = null;
 		JDCConnection conn = null;
 
 		try {			
 			conn = getConnection();
-			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			String date = AlgorithmUtilities.getCurrentDate();
 			String information = "";
@@ -1151,7 +1134,7 @@ public class DatabaseManager {
 						execute = true;
 					}
 					else {
-						if (!lookForConnectionInHistory(first, second, new connectionElement[alg.getMaxNumOfConnection()])){
+						if (lookForConnectionInHistory(first, second, new connectionElement[AlgorithmUtilities.getMaxNumber()])== ExecutionResult.Did_Not_Find_Connection_In_History){
 							toQuery = "INSERT INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
 							execute = true;
 						}
@@ -1165,10 +1148,9 @@ public class DatabaseManager {
 
 			}
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			alg.setR(ConnectionResult.Exception);
-			return;
+			return ExecutionResult.Exception;
 		}
 		finally {
 			if (stmt != null){
@@ -1176,7 +1158,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return ExecutionResult.Close_Exception;
 				}
 			}
 			if (conn!= null){
@@ -1184,23 +1166,22 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return ExecutionResult.Close_Exception;
 				}
 			}
 		}
+		return ExecutionResult.Success_Insert_To_History;
 	}
 
 
-	public void insertIntoFailedSearchesTable (int start_id, int end_id) {
+	public ExecutionResult insertIntoFailedSearchesTable (int start_id, int end_id) {
 		Statement stmt = null;
 		String toQuery;
 		String date;
-		Algorithm alg = null;
 		JDCConnection conn = null;
 
 		try {
 			conn = getConnection();
-			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			date = AlgorithmUtilities.getCurrentDate();
 
@@ -1209,16 +1190,15 @@ public class DatabaseManager {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			alg.setR(ConnectionResult.Exception);
-			return;
-		}
-		finally {
+			return ExecutionResult.Exception;
+
+		}finally {
 			if (stmt != null){
 				try {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return ExecutionResult.Close_Exception;
 				}
 			}
 			if (conn!= null){
@@ -1226,10 +1206,11 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return ExecutionResult.Close_Exception;
 				}
 			}
 		}
+		return ExecutionResult.Success_Insert_To_History;
 	}
 
 
@@ -1237,43 +1218,40 @@ public class DatabaseManager {
 	/*
 	 * Searching for the couple in the failed_searches table. 
 	 */
-	public  boolean lookForConnectionInFailedSearchesTable (int start_id, int end_id){
+	public ExecutionResult lookForConnectionInFailedSearchesTable (int start_id, int end_id){
 		Statement stmt = null;
 		ResultSet rs = null;
-		boolean result = false;
-		Algorithm alg = null;
+
 		JDCConnection conn = null;
 
 		// checks if the couple is in failed_searches table
 		try {
 			conn = getConnection();
-			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 
 			rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
 			if (rs.next()) {
-				result = true;	
+				return ExecutionResult.Found_Connection_In_Failed_Searches;
 			}
 			else {
 				rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
 				if (rs.next()){
-					result = true;
+					return ExecutionResult.Found_Connection_In_Failed_Searches;
 				}
 			}
 
 
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			alg.setR(ConnectionResult.Exception);
-			return false;
-		}
-		finally {
+			return ExecutionResult.Exception;
+			
+		}	finally {
 			if (stmt != null){
 				try {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return ExecutionResult.Close_Exception;
 				}
 			}
 			if (rs!= null){
@@ -1281,7 +1259,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return ExecutionResult.Close_Exception;
 				}
 			}
 
@@ -1290,12 +1268,12 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return ExecutionResult.Close_Exception;
 				}
 			}
 		}
 
-		return result;
+		return ExecutionResult.Did_Not_Find_Connection_In_Failed_Searches;
 	}
 
 
@@ -1303,28 +1281,28 @@ public class DatabaseManager {
 	 * Searching for the connection in the history table. 
 	 * If exists - prints the connection to console.
 	 */
-	public boolean lookForConnectionInHistory(int start_id, int end_id, connectionElement[] conenctionArray){
+	public ExecutionResult lookForConnectionInHistory(int start_id, int end_id, connectionElement[] conenctionArray){
 
 		JDCConnection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		boolean result = false;
 		int count;
-		Algorithm alg = null;
+
 		// checks if the connection between these 2 characters already in history table
 		try {
 			conn = getConnection();
-			alg = Algorithm.getInstance();
+
 			stmt = conn.createStatement();
 
 			rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
 			if (rs.next()) {
-				result = true;	
+				return ExecutionResult.Found_Connection_In_History;	
 			}
 			else {
 				rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
 				if (rs.next()){
-					result = true;
+					return ExecutionResult.Found_Connection_In_History;
 				}
 			}
 
@@ -1340,8 +1318,7 @@ public class DatabaseManager {
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			alg.setR(ConnectionResult.Exception);
-			return false;
+			return ExecutionResult.Exception;
 		}
 		finally {
 			if (stmt != null){
@@ -1349,7 +1326,7 @@ public class DatabaseManager {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return ExecutionResult.Close_Exception;
 				}
 			}
 			if (rs!= null){
@@ -1357,7 +1334,7 @@ public class DatabaseManager {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return ExecutionResult.Close_Exception;
 				}
 			}
 			if (conn!= null){
@@ -1365,12 +1342,12 @@ public class DatabaseManager {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					alg.setR(ConnectionResult.Close_Exception);
+					return ExecutionResult.Close_Exception;
 				}
 			}
 		}
-
-		return result;
+		
+		return ExecutionResult.Did_Not_Find_Connection_In_History;
 
 	}
 
@@ -1416,7 +1393,7 @@ public class DatabaseManager {
 
 	}
 
-	public void executeDeleteTableContent (String tableName){  
+	public ExecutionResult executeDeleteTableContent (String tableName){  
 		JDCConnection conn =null;
 		Statement stmt = null; 
 		try { 
@@ -1424,7 +1401,7 @@ public class DatabaseManager {
 			stmt = conn.createStatement(); 
 			stmt.executeUpdate("TRUNCATE TABLE " + tableName); 
 		} catch (SQLException e) {
-			e.printStackTrace(); 
+			return ExecutionResult.Exception;
 		} 
 		finally { 
 
@@ -1445,11 +1422,12 @@ public class DatabaseManager {
 				}
 
 			}  
-		}  
+		}
+		return ExecutionResult.Succees_Delete_Table_Content;
 	} 
 	
 	
-	private static int getUnspecifiedId(String table) {
+	private int getUnspecifiedId(String table) {
 		
 		Statement stmt = null;
 		ResultSet rs = null;

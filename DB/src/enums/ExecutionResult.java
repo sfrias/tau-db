@@ -19,9 +19,17 @@ public enum ExecutionResult {
 	Success_Update_Success_Rate,
 	Success_Algorithm,
 	Success_Statistics,
-	Success_Using_Algorithm_Instance,
+	Succees_Delete_Table_Content,
+	Success_Update_Database,
 	IntegrityConstraintViolationException,
-	Exception;
+	Success_Insert_To_History,
+	Found_Connection_In_History,
+	Did_Not_Find_Connection_In_History,
+	Found_Connection_In_Failed_Searches,
+	Did_Not_Find_Connection_In_Failed_Searches,
+	General_Success,
+	Exception,
+	Close_Exception;
 
 
 }

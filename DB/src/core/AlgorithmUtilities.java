@@ -19,13 +19,23 @@ public class AlgorithmUtilities {
 	public static void setMaxNumber(int number){
 		maxNumberOfConnection = number;
 	}
+	public static int getMaxNumber(){
+		return maxNumberOfConnection;
+	}
 
 	/*
 	 *Prepares a connection array for GUI in case found in history 	
 	 */
 	public static ExecutionResult prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		Algorithm alg = Algorithm.getInstance();
+		DatabaseManager dbManager;
+	
+		try {
+			dbManager = DatabaseManager.getInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ExecutionResult.Exception;
+
+		}
 		String startName=null, endName=null;
 		String[] valueArr = new String[4];
 		String connections[] = connArr.split("\t");
@@ -35,15 +45,16 @@ public class AlgorithmUtilities {
 				valueArr = connections[i].split(",");
 				startName =dbManager.getNameFromId(Integer.parseInt(valueArr[0]));
 				endName = dbManager.getNameFromId(Integer.parseInt(valueArr[1]));
-				if (alg.getR()!= ConnectionResult.Ok){
-					break;
+				
+				if (startName == null || endName == null){
+					return ExecutionResult.Exception;
 				}
 				atrName = valueArr[3];
 				connectionArray[i] = new connectionElement(startName, endName, valueArr[2], atrName);
 				atrName = null;
 			}
 		}
-		return ExecutionResult.Success_Using_Algorithm_Instance;
+		return ExecutionResult.General_Success;
 	}
 
 
@@ -166,7 +177,13 @@ public class AlgorithmUtilities {
 
 	public static ExecutionResult prepareTablesAndHashMaps(){
 		
-		Algorithm alg = Algorithm.getInstance();
+		Algorithm alg;
+		try {
+			alg = Algorithm.getInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ExecutionResult.Exception;
+		}
 		
 		TreeMap<String, Tables> joinedAttributesMap = new TreeMap<String,Tables>();
 		int numOfTables = alg.getTables().length;
@@ -201,13 +218,12 @@ public class AlgorithmUtilities {
 				attributes[i]=Tables.characters;
 			}
 		}
-		System.out.println(indexOfResult);
+		
 		alg.setIndexOfJumps(indexOfResult);
 
 		//adding all other tables;
 		for (int i=0; i<indexOfAttr;i++){
 			if(attributes[i] != Tables.characters){
-				System.out.println(indexOfResult);
 				result[indexOfResult]=attributes[i];
 				indexOfResult++;
 			}
@@ -225,7 +241,7 @@ public class AlgorithmUtilities {
 		alg.putInTabelsMap("child",(short) result.length);
 		alg.putInReversedTabelsMap((short) result.length, "child");
 
-		return 	ExecutionResult.Success_Using_Algorithm_Instance;
+		return ExecutionResult.General_Success;
 	}
 	
 	
@@ -281,8 +297,15 @@ public class AlgorithmUtilities {
 	
 	public static String prepareConnectionsForGUI(charElement[] connection, connectionElement[] connectionArray){
 		
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		Algorithm alg = Algorithm.getInstance();
+		DatabaseManager dbManager = null;
+		Algorithm alg=null;
+		try {
+			dbManager = DatabaseManager.getInstance();
+			alg = Algorithm.getInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		String startName="", endName="";
 		String toHisory="";
 		String atrName = null;
@@ -301,9 +324,10 @@ public class AlgorithmUtilities {
 			endName = dbManager.getNameFromId(conPrev.getCharacterId());
 			atrName = dbManager.getAttributeNameFromID(attributeString, attributeVal);
 
-			if (alg.getR()!= ConnectionResult.Ok){
+			if (startName == null || endName == null || atrName == null || attributeString == null){ //an error has occurred
 				return null;
 			}
+			
 			toHisory+= conLast.getCharacterId() +","+conPrev.getCharacterId() +"," + alg.getFromPrintRepresentation(attributeString) + "," + atrName;
 			if (conPrev.getPrevElement() != null){
 				toHisory+= "\t";

@@ -41,16 +41,17 @@ public class Algorithm{
 	private Character start_character = null;
 	private Character end_character = null;
 	private ConnectionResult status = ConnectionResult.Ok;
+
 	private String start_name = null;
 	private String end_name = null;
 	private int globalNumOfConnections;	
 	
-	private Algorithm(){
+	private Algorithm() throws Exception{
 		tbs = Tables.values();
 		dbManager = DatabaseManager.getInstance();
 	}
 	
-	public static Algorithm getInstance(){
+	public static Algorithm getInstance() throws Exception{
 		if (instance == null){
 			instance = new Algorithm();	
 		}
@@ -59,7 +60,7 @@ public class Algorithm{
 	
 	public void initialization(){
 		if (!init){
-			if (AlgorithmUtilities.prepareTablesAndHashMaps()==ExecutionResult.Success_Using_Algorithm_Instance){
+			if (AlgorithmUtilities.prepareTablesAndHashMaps()==ExecutionResult.General_Success){
 				init = true;				
 			}
 			else{
@@ -94,7 +95,7 @@ public class Algorithm{
 		maxConnection = maxNum;
 	}
 	
-	public int getMaxNumOfConnection(){
+	public  int getMaxNumOfConnection(){
 		return maxConnection;
 	}
 	
@@ -395,7 +396,11 @@ public class Algorithm{
 				atrStmt = conn.createStatement();			
 				atrValRS = atrStmt.executeQuery(AlgorithmUtilities.specificAttributeValuesQuery(joinedAtr.name(), currentAtr.name(), start_id));
 				int unspecifiedId = dbManager.getUnspecifiedId(currentAtr);
+				if (unspecifiedId == -1){
+					setR(ConnectionResult.Exception);
+				}
 				
+				//HERE I FINISHED
 				
 	
 				while (atrValRS.next()){ //all attributes
@@ -785,7 +790,7 @@ public class Algorithm{
 		AlgorithmUtilities.setMaxNumber(maxConnection);
 		connectionElement[] connectionArray = new connectionElement[maxConnection];
 
-		boolean alreadyExists = false;
+		ExecutionResult exists =null;
 		this.end_id = end_id;
 		
 		
@@ -803,23 +808,27 @@ public class Algorithm{
 		}
 
 		// checks if the connection between these 2 characters already in history table
-		alreadyExists = dbManager.lookForConnectionInHistory(start_id, end_id, connectionArray);
-		if (getR() != ConnectionResult.Ok){ //an error occurred while trying to extract the names of the characters
+		exists = dbManager.lookForConnectionInHistory(start_id, end_id, connectionArray);
+		
+	
+		if (exists== ExecutionResult.Exception || exists == ExecutionResult.Close_Exception){ //an error occurred while trying to extract the names of the characters
 			return result;
 		}
 
 		//found a connection
-		if (alreadyExists){
+		if (exists == ExecutionResult.Found_Connection_In_History){
 			result = new ReturnElement(ConnectionResult.Found_Connection,connectionArray);
 			dbManager.executeUpdateInSuccesRate(true);
 			return result;
 		}
 
-		alreadyExists = dbManager.lookForConnectionInFailedSearchesTable(start_id, end_id);
-		if (getR() != ConnectionResult.Ok){ //an error occurred while trying to extract the names of the characters		
+		exists = dbManager.lookForConnectionInFailedSearchesTable(start_id, end_id);
+		
+
+		if (exists== ExecutionResult.Exception || exists == ExecutionResult.Close_Exception){ //an error occurred while trying to extract the names of the characters		
 			return result;
 		}
-		if (alreadyExists){
+		if (exists == ExecutionResult.Found_Connection_In_Failed_Searches){
 			result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
 			dbManager.executeUpdateInSuccesRate(false);
 			return result;
@@ -854,8 +863,8 @@ public class Algorithm{
 		clearAll();
 
 		if (getR() == ConnectionResult.Ok && !matchFound){ 
-			dbManager.insertIntoFailedSearchesTable(start_id, end_id);
-			dbManager.executeUpdateInSuccesRate(false);
+			dbManager.insertIntoFailedSearchesTable(start_id, end_id); //no catching errors needed here
+			dbManager.executeUpdateInSuccesRate(false);  //no catching errors needed here
 			result = new ReturnElement(ConnectionResult.Did_Not_Find_Connection,null);
 			
 		}
