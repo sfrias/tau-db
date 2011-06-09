@@ -239,6 +239,7 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 						GuiHandler.showAlgrithmResultDialog(true,connResult.toString(), model.getResultString());
 						break;
 					case Did_Not_Find_Connection:
+					case Character_not_found:
 					case Found_Connection_Of_Length_0:
 						GuiHandler.showAlgrithmResultDialog(false, connResult.toString(), model.getResultString());
 						break;
