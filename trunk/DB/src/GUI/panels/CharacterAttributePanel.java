@@ -39,21 +39,25 @@ public class CharacterAttributePanel extends JPanel{
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					if (addField.isVisible()){
-						button.setIcon(GuiUtils.readImageIcon("addIcon.png", 15, 15));
 						String value = addField.getText();
-						if (value.compareTo("")!=0){
-							AddCharacterAttributeWorker worker;
-							if (card instanceof EditCharacters){
-								worker = new AddCharacterAttributeWorker(table, value, (EditCharacters) card);
+						if (!GuiUtils.isAscii(value)){
+							GuiHandler.showOnlyAsciiDialog();
+						} else {
+							if (value.compareTo("")!=0){
+								AddCharacterAttributeWorker worker;
+								if (card instanceof EditCharacters){
+									worker = new AddCharacterAttributeWorker(table, value, (EditCharacters) card);
+								}
+								else{
+									worker = new AddCharacterAttributeWorker(table, value, (AddCharacters) card);
+								}
+								GuiHandler.startStatusFlash();								
+								worker.execute();
 							}
-							else{
-								worker = new AddCharacterAttributeWorker(table, value, (AddCharacters) card);
-							}
-							GuiHandler.startStatusFlash();								
-							worker.execute();
+							button.setIcon(GuiUtils.readImageIcon("addIcon.png", 15, 15));
+							addField.setVisible(false);
+							revalidate();
 						}
-						addField.setVisible(false);
-						revalidate();
 					}
 					else{
 						addField.setVisible(true);

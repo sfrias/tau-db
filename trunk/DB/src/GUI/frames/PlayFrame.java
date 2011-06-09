@@ -25,7 +25,7 @@ public class PlayFrame extends GenericFrame {
 
 	private void buildFrame(){
 		setTitle("Play");
-		setSize(800,650);
+		setSize(800,675);
 		setResizable(false);
 		add(BorderLayout.CENTER, tabPanelBuilder());
 
