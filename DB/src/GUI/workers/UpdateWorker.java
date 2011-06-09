@@ -21,6 +21,7 @@ import core.TableUtilities;
 import database.AntUtils;
 import database.AntUtils.Targets;
 import database.DatabaseManager;
+import enums.ExecutionResult;
 import enums.UpdateResult;
 
 public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
@@ -93,7 +94,10 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 
 				publish(UpdateResult.finish_update_table);
 			}
-			clearHistoryTables();
+			ExecutionResult er = clearHistoryTables();
+			if (er == ExecutionResult.Exception){
+				return UpdateResult.exception;
+			}
 			removeTemporaryFiles();
 			if (!isCancelled()){
 				setProgress(100);
@@ -109,11 +113,22 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 
 	}
 
-	private void clearHistoryTables(){
-		DatabaseManager dbManager = DatabaseManager.getInstance();
+	private ExecutionResult clearHistoryTables(){
+		
+		DatabaseManager dbManager;
+		try {
+			dbManager = DatabaseManager.getInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ExecutionResult.Exception;
+		}
 
-		dbManager.executeDeleteTableContent("history"); 
-		dbManager.executeDeleteTableContent("failed_searches"); 
+		ExecutionResult er = dbManager.executeDeleteTableContent("history");
+		if (er == ExecutionResult.Exception){
+			return er;
+		}
+		er = dbManager.executeDeleteTableContent("failed_searches");
+		return er;
 	}
 
 	@Override
