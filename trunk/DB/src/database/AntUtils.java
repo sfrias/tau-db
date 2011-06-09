@@ -13,27 +13,32 @@ public class AntUtils{
 		BUILD,
 		POPULATE;		
 	}
-	
+
 	public static void executeTarget(Targets target){
 		File buildFile = new File("build.xml");
 		Project p = new Project();
-		
+
 		DefaultLogger consoleLogger = new DefaultLogger();
 		consoleLogger.setErrorPrintStream(System.err);
 		consoleLogger.setOutputPrintStream(System.out);
 		consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
 		p.addBuildListener(consoleLogger);
-		
-		p.setUserProperty("ant.file", buildFile.getAbsolutePath());
+
+		p.setUserProperty("ant.file", buildFile.getAbsolutePath());		
 		p.init();
+		p.setProperty("DB.HOST", System.getProperty("host"));
+		p.setProperty("DB.PORT", System.getProperty("port"));
+		p.setProperty("DB.SID", System.getProperty("sid"));
+		p.setProperty("DB.USER", System.getProperty("username"));
+		p.setProperty("DB.PASSWORD", System.getProperty("password"));
 		
 		ProjectHelper helper = ProjectHelper.getProjectHelper();
 		p.addReference("ant.projectHelper", helper);
-		helper.parse(p, buildFile);
-		
+		helper.parse(p, buildFile);;
+
 		String antTarget = target.toString().toLowerCase();
 		p.executeTarget(antTarget);
 	}
-	
+
 
 }

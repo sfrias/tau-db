@@ -16,7 +16,6 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 import connection.JDCConnection;
 import connection.JDCConnectionDriver;
-import core.Algorithm;
 import core.AlgorithmUtilities;
 import dataTypes.Pair;
 import dataTypes.SearchResultObject;
@@ -40,7 +39,7 @@ public class DatabaseManager {
 	private boolean init = false;
 
 
-	private DatabaseManager() throws Exception{
+	public DatabaseManager() throws Exception{
 		connectionDriver = new JDCConnectionDriver("com.mysql.jdbc.Driver", URL, USERNAME, PASSWORD);
 		connProperties = new Properties(); 
 	}

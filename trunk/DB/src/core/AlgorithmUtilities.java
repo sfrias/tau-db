@@ -28,12 +28,6 @@ public class AlgorithmUtilities {
 	 */
 	public static ExecutionResult prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
 		DatabaseManager dbManager = GuiHandler.getDatabaseManager();
-		try {
-			Algorithm alg = Algorithm.getInstance();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		String startName=null, endName=null;
 		String[] valueArr = new String[4];
