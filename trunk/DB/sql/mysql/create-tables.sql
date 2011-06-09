@@ -139,6 +139,8 @@ CREATE TABLE failed_searches
 	FOREIGN KEY (character_id2) REFERENCES characters(character_id) ON UPDATE RESTRICT ON DELETE CASCADE) ENGINE=InnoDB;
 
 CREATE TABLE success_rate
-	(success_rate_searches int(11) DEFAULT NULL,
+	(success_rate_id int(1) NOT NULL AUTO_INCREMENT,
+	success_rate_searches int(11) DEFAULT NULL,
 	success_rate_successful_searches int(11) DEFAULT NULL,
-	success_rate_unsuccessful_searches int(11) DEFAULT NULL);
+	success_rate_unsuccessful_searches int(11) DEFAULT NULL
+	PRIMARY KEY (success_rate_id));

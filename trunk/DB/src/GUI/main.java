@@ -254,7 +254,7 @@ public class main extends JFrame {
 			jLabelWelcome.setBounds(new Rectangle(68, 39, 367, 81));
 			jLabelWelcome.setFont(new Font("Footlight MT Light", Font.BOLD, 72));
 			jLabelWelcome.setVerticalAlignment(SwingConstants.CENTER);
-			jLabelWelcome.setText("DB Project");
+			jLabelWelcome.setText("DB Project"); //	TODO - if we don't need it, delete.
 			jContentPane = new JPanel();
 			jContentPane.setLayout(null);
 			jContentPane.add(jLabelWelcome, null);

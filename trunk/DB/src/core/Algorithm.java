@@ -801,8 +801,10 @@ public class Algorithm{
 
 		boolean alreadyExists = false;
 		this.end_id = end_id;
-		start_name=dbManager.getNameFromId(start_id);
-		end_name=dbManager.getNameFromId(end_id);
+		
+		start_name=start_character.getCharName();
+		end_name=end_character.getCharName();
+		
 		if (getR() != ConnectionResult.Ok){ //an error occurred while trying to extract the names of the characters
 			return result;
 		}
