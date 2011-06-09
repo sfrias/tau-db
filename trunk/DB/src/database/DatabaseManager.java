@@ -29,8 +29,9 @@ import enums.Tables;
 public class DatabaseManager {
 
 	private final static String USERNAME = "root";
-	private final static String PASSWORD = "mapo00";
+	private final static String PASSWORD = "armiN203";
 	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
+
 
 	private static DatabaseManager instance = null;
 	private static JDCConnectionDriver connectionDriver;
@@ -1041,6 +1042,61 @@ public class DatabaseManager {
 		}
 	}
 
+	public ConnectionResult checkForExistance(int id1, int id2){
+
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		JDCConnection conn = null;
+		try {
+			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_id = ?");
+			stmt.setInt(1,id1);
+			rs = stmt.executeQuery();
+			if (rs.first()){
+				stmt.setInt(1,id2);
+				rs = stmt.executeQuery();
+				if (rs.first()){
+					return ConnectionResult.Ok;
+				}
+			}
+			
+			return ConnectionResult.Character_not_found;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return ConnectionResult.Exception;
+		}
+		finally {
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return ConnectionResult.Close_Exception;
+				}
+			}
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return ConnectionResult.Close_Exception;
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return ConnectionResult.Close_Exception;
+				}
+			}
+		}
+	
+	}
+
+
+
 	/*
 	 * inserts connection found
 	 */
@@ -1391,9 +1447,10 @@ public class DatabaseManager {
 			}  
 		}  
 	} 
-
+	
+	
 	private static int getUnspecifiedId(String table) {
-
+		
 		Statement stmt = null;
 		ResultSet rs = null;
 		int unspecifiedID = 0;
@@ -1445,4 +1502,5 @@ public class DatabaseManager {
 
 		return unspecifiedID;
 	}
+
 }
