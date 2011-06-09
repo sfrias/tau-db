@@ -1296,12 +1296,12 @@ public class DatabaseManager {
 
 			rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
 			if (rs.next()) {
-				return ExecutionResult.Found_Connection_In_History;	
+				result = true;
 			}
 			else {
 				rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
 				if (rs.next()){
-					return ExecutionResult.Found_Connection_In_History;
+					result = true;
 				}
 			}
 
@@ -1314,6 +1314,7 @@ public class DatabaseManager {
 				String getConnectionOfCharacters = rs.getString(4);
 				stmt.executeUpdate("UPDATE history SET count = " + count + ", date = '" + date + "' WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
 				AlgorithmUtilities.prepareConnectionsFromHistory(getConnectionOfCharacters, conenctionArray);
+				return ExecutionResult.Found_Connection_In_History;
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();

@@ -170,14 +170,7 @@ public class AlgorithmUtilities {
 
 	public static ExecutionResult prepareTablesAndHashMaps(){
 		
-		Algorithm alg;
-		try {
-			alg = Algorithm.getInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ExecutionResult.Exception;
-		}
-		
+		Algorithm alg = Algorithm.getInstance();
 		TreeMap<String, Tables> joinedAttributesMap = new TreeMap<String,Tables>();
 		int numOfTables = alg.getTables().length;
 		String atrTable; 
