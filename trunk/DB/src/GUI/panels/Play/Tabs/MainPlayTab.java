@@ -128,12 +128,13 @@ public class MainPlayTab extends JPanel{
 		charSearchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				Document doc = ((JTextComponent)charComboBox.getEditor().getEditorComponent()).getDocument();
-				String queryString;
 				try {
+					String queryString = doc.getText(0, doc.getLength());
 					if (doc.getLength() == 0){
 						GuiHandler.showNoEmptyStringSearchDialog();
+					} else if (!GuiUtils.isAscii(queryString)){
+						GuiHandler.showOnlyAsciiDialog();
 					} else {
-						queryString = doc.getText(0, doc.getLength());
 						GetRecordsByNameWorker worker = new GetRecordsByNameWorker(me, charNum, queryString);
 						GuiHandler.startStatusFlash();
 						worker.execute();
