@@ -28,9 +28,9 @@ import enums.Tables;
 
 public class DatabaseManager {
 
-	private final static String USERNAME = "DbMysql09";
-	private final static String PASSWORD = "DbMysql09";
-	private final static String URL = "jdbc:mysql://localhost:3305/DbMysql09"; 
+	private final static String USERNAME = "root";
+	private final static String PASSWORD = "mapo00";
+	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
 
 	private static DatabaseManager instance = null;
 	private static JDCConnectionDriver connectionDriver;
@@ -1151,7 +1151,7 @@ public class DatabaseManager {
 						execute = true;
 					}
 					else {
-						if (!lookForConnectionInHistory(first, second, new connectionElement[Algorithm.getMaxNumOfConnection()])){
+						if (!lookForConnectionInHistory(first, second, new connectionElement[alg.getMaxNumOfConnection()])){
 							toQuery = "INSERT INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
 							execute = true;
 						}
@@ -1378,7 +1378,6 @@ public class DatabaseManager {
 
 		Statement stmt = null;
 		ResultSet rs = null;
-		Algorithm alg = null;
 		int total = 0;
 		int success = 0;
 		SuccessRateObject successRate;
@@ -1386,7 +1385,6 @@ public class DatabaseManager {
 		JDCConnection conn = null;
 		try {
 			conn = getConnection();
-			alg = Algorithm.getInstance();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT * FROM success_rate");
 			rs.first();

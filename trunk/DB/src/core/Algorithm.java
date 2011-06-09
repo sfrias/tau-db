@@ -19,29 +19,24 @@ import enums.ConnectionResult;
 import enums.ExecutionResult;
 import enums.Tables;
 
-
-
 public class Algorithm{
 
-	//mutual fields for all instances
-	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
-
 	private static Algorithm instance = null;
-	private static Tables[] tbs;
-	private static Tables[] tablesArr;
-	private static int indexOfJumps;
-	private static int maxConnection;
-	private static boolean init=false;
+	private boolean init = false;
 
-	private static TreeMap<String, Short> tablesMap = new TreeMap<String, Short>();
-	private static TreeMap<Short, String> reverseTablesMap = new TreeMap<Short, String>();
-	private static TreeMap<String, String> printRepresentation = new TreeMap<String,String>();
+	private Tables[] tbs;
+	private Tables[] tablesArr;
+	private int indexOfJumps;
+	private int maxConnection;
+
+	private TreeMap<String, Short> tablesMap = new TreeMap<String, Short>();
+	private TreeMap<Short, String> reverseTablesMap = new TreeMap<Short, String>();
+	private TreeMap<String, String> printRepresentation = new TreeMap<String,String>();
 	private HashSet<Integer> foundCharactersIDs = new HashSet<Integer>();
 	private List<charElement> currentPhase = new ArrayList<charElement>();
 	private List<charElement> previousPhase = new ArrayList<charElement>();
 	
-	//dynamic fields
-	private DatabaseManager dbManager =null;
+	private DatabaseManager dbManager = null;
 	private int end_id;
 	private Character start_character = null;
 	private Character end_character = null;
@@ -50,10 +45,16 @@ public class Algorithm{
 	private String end_name = null;
 	private int globalNumOfConnections;	
 	
-	
-	private Algorithm() throws SQLException{
+	private Algorithm(){
 		tbs = Tables.values();
 		dbManager = DatabaseManager.getInstance();
+	}
+	
+	public static Algorithm getInstance(){
+		if (instance == null){
+			instance = new Algorithm();	
+		}
+		return instance;
 	}
 	
 	public void initialization(){
@@ -67,30 +68,13 @@ public class Algorithm{
 		}
 	}
 	
-	
-	public static Algorithm getInstance() throws SQLException{
-		if (instance==null){
-			instance = new Algorithm();	
-		}
-		return instance;
-	}
-	
-	
-	public static Tables[] getTables(){
+	public Tables[] getTables(){
 		return tbs;
-	}
-
-	public String getStartName(){
-		return start_name;
-	}
-	public String getEndName(){
-		return end_name;
 	}
 	
 	public ConnectionResult getR (){
 		return status;
 	}
-
 	
 	public  void setR(ConnectionResult re){
 		if (status != ConnectionResult.Ok){ //we want to hold the first error that occurred
@@ -98,42 +82,41 @@ public class Algorithm{
 		}
 		status = re;
 	}
-
 	
-	public static void setIndexOfJumps(int idx){
+	public void setIndexOfJumps(int idx){
 		indexOfJumps = idx;
 	}
 	
-	public static void setMaxNumOfConnection(int maxNum){
+	public void setMaxNumOfConnection(int maxNum){
 		maxConnection = maxNum;
 	}
 	
-	public static int getMaxNumOfConnection(){
+	public int getMaxNumOfConnection(){
 		return maxConnection;
 	}
 	
-	public static void putInTabelsMap(String key, Short value){
+	public void putInTabelsMap(String key, Short value){
 		tablesMap.put(key, value);
 	}
 	
-	public static void putInReversedTabelsMap( Short key, String value){
+	public void putInReversedTabelsMap( Short key, String value){
 		reverseTablesMap.put(key, value);
 	}
 	
 	
-	public static void putInPrintRepresentation( String key, String value){
+	public void putInPrintRepresentation( String key, String value){
 		printRepresentation.put(key, value);
 	}
 	
-	public static String getFromPrintRepresentation( String key){
+	public String getFromPrintRepresentation( String key){
 		return printRepresentation.get(key);
 	}
 	
-	public static void setTablesArr(Tables[] arr){
+	public void setTablesArr(Tables[] arr){
 		tablesArr = arr;
 	}
 	
-	public static String getValueFromReversedTableMap(short key){
+	public String getValueFromReversedTableMap(short key){
 		return reverseTablesMap.get(key);
 	}
 	
@@ -879,13 +862,3 @@ public class Algorithm{
 	}
 
 }
-		
-		
-
-
-
-
-
-
-
-

@@ -536,6 +536,7 @@ public class TableUtilities {
 		return ExecutionResult.Success_Simple_Add_Edit_Delete;
 	}
 
+	@SuppressWarnings("unused")
 	private static void updateDatabase() throws IOException{ 
 
 		long startTime = System.currentTimeMillis(); 
@@ -565,6 +566,7 @@ public class TableUtilities {
 		}
 
 	
+	@SuppressWarnings("unused")
 	private static void createDatabase() throws IOException{
 
 		long startTime = System.currentTimeMillis();
@@ -676,8 +678,7 @@ public class TableUtilities {
 
 	public static void main(String args[]) throws IOException{
 
-		createDatabase();
-	//	updateDatabase();
-
+		DatabaseManager dbManager = DatabaseManager.getInstance();
+		dbManager.executeInsertAndReturnGeneratedKey("power", "power_name", "powernametest1");
 	}
 }
