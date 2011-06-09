@@ -42,9 +42,6 @@ public class Algorithm{
 	private Character start_character = null;
 	private Character end_character = null;
 	private ConnectionResult status = ConnectionResult.Ok;
-
-	private String start_name = null;
-	private String end_name = null;
 	private int globalNumOfConnections;	
 	
 	private Algorithm() {
@@ -792,10 +789,6 @@ public class Algorithm{
 
 		ExecutionResult exists =null;
 		this.end_id = end_id;
-		
-		
-		this.start_name=start_character.getCharName();
-		this.end_name=end_character.getCharName();
 		
 		ConnectionResult checkForCharactersExistance = dbManager.checkForExistance(start_id, end_id);
 		result.setResult(checkForCharactersExistance);

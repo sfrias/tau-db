@@ -38,16 +38,4 @@ public class PlayFrame extends GenericFrame {
 		
 		return tabbedPanel;
 	}
-
-	
-
-	
-
-
-
-
-	
-	
-
-
 }
