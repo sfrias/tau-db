@@ -258,7 +258,10 @@ public class GuiHandler {
 		timer.schedule(task, 40000);
 	}
 	
-	public static DatabaseManager getDatabaseManager(){
+	public static DatabaseManager getDatabaseManager() throws Exception{
+		if (dbManager == null){
+			dbManager = new DatabaseManager();
+		}
 		return dbManager;
 	}
 
