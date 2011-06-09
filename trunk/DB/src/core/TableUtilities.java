@@ -106,6 +106,7 @@ public class TableUtilities {
 		BufferedWriter bufferedWriter = null;
 		FileInputStream fileReader = null;
 		BufferedReader bufferedReader = null;
+		DatabaseManager dbManager;
 
 		try{
 
@@ -119,7 +120,8 @@ public class TableUtilities {
 			bufferedReader.readLine();
 			String lineRead;
 			String[] strarr;
-			DatabaseManager dbManager = DatabaseManager.getInstance();
+			dbManager = DatabaseManager.getInstance();
+			
 			TreeMap<String, Integer> tableMap = null;
 
 			if (table.equals(Tables.place_of_birth.name())){	
@@ -224,7 +226,7 @@ public class TableUtilities {
 
 			return ExecutionResult.Success_Populating_Simple_Table;
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			e.printStackTrace();
 			return ExecutionResult.Exception;
 		}
@@ -283,6 +285,7 @@ public class TableUtilities {
 			String lineRead;
 
 			DatabaseManager dbManager = DatabaseManager.getInstance();
+		
 
 			TreeMap<String, Integer> interstingMainValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + mainTable, 1, 2);	
 			TreeMap<String, Integer> interestingValuesMap = dbManager.generateHashMapFromQuery("SELECT * FROM " + subtable, 1, 3);
@@ -358,7 +361,7 @@ public class TableUtilities {
 
 			return ExecutionResult.Success_Populating_Joined_Table;
 		} 
-		catch (IOException e) {
+		catch (Exception e) {
 			e.printStackTrace();
 			return ExecutionResult.Exception;
 		}
@@ -465,7 +468,7 @@ public class TableUtilities {
 			}
 			return ExecutionResult.Success_Populating_Joined_Table;
 		} 
-		catch (IOException e) {
+		catch (Exception e) {
 			e.printStackTrace();
 			return ExecutionResult.Exception;
 		}
@@ -535,35 +538,6 @@ public class TableUtilities {
 		}
 		return ExecutionResult.Success_Simple_Add_Edit_Delete;
 	}
-
-	@SuppressWarnings("unused")
-	private static void updateDatabase() throws IOException{ 
-
-		long startTime = System.currentTimeMillis(); 
-
-		//downloadAndExtractDumps(); 
-		File sqlFile = new File(POPULATE_TABLES_SQL_FILE_PATH); 
-		deleteSqlFile(sqlFile); 
-
-		createOrUpdateSimpleTables(true); 
-		AntUtils.executeTarget(Targets.POPULATE); 
-
-		deleteSqlFile(sqlFile); 
-
-		createOrUpdateComplexTables(true); 
-		AntUtils.executeTarget(Targets.POPULATE); 
-
-		DatabaseManager dbManager = DatabaseManager.getInstance(); 
-		dbManager.executeDeleteTableContent("history"); 
-		dbManager.executeDeleteTableContent("failed_searches"); 
-
-		long finishTime = System.currentTimeMillis(); 
-
-
-		long totalTime = finishTime - startTime; 
-		System.out.println("operation took " + totalTime + " Millis"); 
-		
-		}
 
 	
 	@SuppressWarnings("unused")
@@ -676,9 +650,4 @@ public class TableUtilities {
 		}
 	}
 
-	public static void main(String args[]) throws IOException{
-
-		DatabaseManager dbManager = DatabaseManager.getInstance();
-		dbManager.executeInsertAndReturnGeneratedKey("power", "power_name", "powernametest1");
-	}
 }
