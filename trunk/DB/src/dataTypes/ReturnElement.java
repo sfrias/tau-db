@@ -16,6 +16,9 @@ public class ReturnElement {
 	public ConnectionResult getResult (){
 		return result;
 	}
+	public void setResult (ConnectionResult cr){
+		result = cr;
+	}
 	
 	public connectionElement[] getConnectionArray(){
 		return connectionArray;
