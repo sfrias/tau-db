@@ -32,9 +32,12 @@ public class AlgorithmWorker extends GenericWorker{
 		if (returnElem.getResult() == ConnectionResult.Exception || returnElem.getResult() == ConnectionResult.Close_Exception){
 			return new ResultHolder(ExecutionResult.Exception);
 		}
+		else if (returnElem.getResult() == ConnectionResult.Character_not_found){
+			AlgorithmModel model = new AlgorithmModel(ConnectionResult.Character_not_found, "One of the characters must have been deleted from the database." +
+					"\n Please refresh your search.");
+			return new ResultHolder(model, ExecutionResult.Success_Algorithm);
+		}
 		else if (returnElem.getResult() == ConnectionResult.Did_Not_Find_Connection){
-
-
 			AlgorithmModel model = new AlgorithmModel(ConnectionResult.Did_Not_Find_Connection, "Could not find a connection between " + firstCharName + " and " + secondCharName);
 			return new ResultHolder(model, ExecutionResult.Success_Algorithm);
 		}
