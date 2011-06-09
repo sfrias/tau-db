@@ -1,8 +1,8 @@
 package GUI.workers;
 
-import GUI.frames.PlayFrame;
 import GUI.model.CharacterModel;
 import GUI.panels.Manage.cards.edit.EditCharacters;
+import GUI.panels.Play.Tabs.MainPlayTab;
 import dataTypes.Pair;
 import dataTypes.ResultHolder;
 import enums.ExecutionResult;
@@ -13,8 +13,8 @@ public class GetCharacterAttributesWorker extends GenericWorker {
 	private int recordId;
 	private int charNum;
 	
-	public GetCharacterAttributesWorker(PlayFrame playFrame, int recordId, int charNum) {
-		super(Action.QUERY, playFrame);
+	public GetCharacterAttributesWorker(MainPlayTab playTab, int recordId, int charNum) {
+		super(Action.QUERY, playTab);
 		this.recordId = recordId;
 		this.charNum = charNum;
 	}

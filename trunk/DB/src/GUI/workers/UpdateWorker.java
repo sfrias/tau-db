@@ -19,8 +19,8 @@ import GUI.GuiHandler;
 import GUI.panels.Manage.Tabs.UpdateTab;
 import core.TableUtilities;
 import database.AntUtils;
-import database.DatabaseManager;
 import database.AntUtils.Targets;
+import database.DatabaseManager;
 import enums.UpdateResult;
 
 public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{

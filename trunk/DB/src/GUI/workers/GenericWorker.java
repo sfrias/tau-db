@@ -5,12 +5,10 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
 import GUI.GuiHandler;
-import GUI.frames.PlayFrame;
 import GUI.model.AlgorithmModel;
 import GUI.model.CharacterModel;
 import GUI.model.SimpleModel;
 import GUI.model.StatisticsModel;
-import GUI.panels.Manage.Tabs.StatisticsTab;
 import GUI.panels.Manage.cards.GenericCardPanel;
 import GUI.panels.Manage.cards.add.AddCharacters;
 import GUI.panels.Manage.cards.add.AddSimpleCard;
@@ -18,6 +16,8 @@ import GUI.panels.Manage.cards.delete.DeleteCard;
 import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
 import GUI.panels.Manage.cards.edit.EditSimpleCard;
+import GUI.panels.Play.Tabs.MainPlayTab;
+import GUI.panels.Play.Tabs.StatisticsTab;
 import dataTypes.Character;
 import dataTypes.ResultHolder;
 import database.DatabaseManager;
@@ -32,7 +32,7 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 	private Action action;
 
 	private GenericCardPanel card;
-	private PlayFrame playFrame;
+	private MainPlayTab playTab;
 	private StatisticsTab statisticsTab;
 
 	protected Character firstChar;
@@ -48,16 +48,16 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 		this.action = Action.STATISTICS;
 	}
 
-	public GenericWorker(Action action, Character firstChar, Character secondChar, PlayFrame playFrame){
+	public GenericWorker(Action action, Character firstChar, Character secondChar, MainPlayTab playTab){
 		super();
 		this.action = action;
-		this.playFrame = playFrame;
+		this.playTab = playTab;
 		this.firstChar = firstChar;
 		this.secondChar = secondChar;
 	}
 	
-	public GenericWorker(Action action, PlayFrame playFrame){
-		this(action, null, null, playFrame);
+	public GenericWorker(Action action, MainPlayTab playTab){
+		this(action, null, null, playTab);
 	}
 
 	public GenericWorker(EditSimpleCard card) {
@@ -192,14 +192,14 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				}
 				case Success_Get_Characters_For_First_Character:{
 					SimpleModel simpleModel = (SimpleModel)result.getModel();
-					playFrame.setSimpleModel(simpleModel);
-					playFrame.refreshCharIFromModel();
+					playTab.setSimpleModel(simpleModel);
+					playTab.refreshCharIFromModel();
 					break;
 				}
 				case Success_Get_Characters_For_Second_Character:{
 					SimpleModel simpleModel = (SimpleModel)result.getModel();
-					playFrame.setSimpleModel(simpleModel);
-					playFrame.refreshCharIIFromModel();
+					playTab.setSimpleModel(simpleModel);
+					playTab.refreshCharIIFromModel();
 					break;
 				}
 				case Success_Get_Character_Attributes:{
@@ -211,12 +211,12 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 				}
 				case Success_Get_Character_Attributes_For_First_Character:{
 					CharacterModel model = (CharacterModel)result.getModel();
-					playFrame.refreshPanelLeftDetailsFromModel(model);
+					playTab.refreshPanelLeftDetailsFromModel(model);
 					break;
 				}
 				case Success_Get_Character_Attributes_For_Second_Character:{
 					CharacterModel model = (CharacterModel)result.getModel();
-					playFrame.refresPanelRightDetailsFromModel(model);
+					playTab.refresPanelRightDetailsFromModel(model);
 					break;
 				}
 				case Success_Edit_Character:{

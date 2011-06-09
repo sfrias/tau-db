@@ -37,7 +37,7 @@ public class WelcomeScreenFrame extends JFrame {
 
 
 	private void buildFrame(){
-		setTitle("DB Project");
+		setTitle("Findy");
 		setContentPane(mainPanelBuilder());
 	}
 

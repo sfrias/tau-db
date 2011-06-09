@@ -1,9 +1,9 @@
 package GUI.workers;
 
-import GUI.frames.PlayFrame;
 import GUI.model.SimpleModel;
 import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
+import GUI.panels.Play.Tabs.MainPlayTab;
 import dataTypes.Pair;
 import dataTypes.ResultHolder;
 import enums.ExecutionResult;
@@ -15,8 +15,8 @@ public class GetRecordsByNameWorker extends GenericWorker {
 
 
 
-	public GetRecordsByNameWorker(PlayFrame playFrame, int charNum, String queryString){
-		super(Action.QUERY, playFrame);
+	public GetRecordsByNameWorker(MainPlayTab playTab, int charNum, String queryString){
+		super(Action.QUERY, playTab);
 		this.queryString = queryString;
 		this.charNum = charNum;
 	}

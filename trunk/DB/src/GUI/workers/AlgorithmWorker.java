@@ -1,8 +1,8 @@
 package GUI.workers;
 
 import GUI.GuiHandler;
-import GUI.frames.PlayFrame;
 import GUI.model.AlgorithmModel;
+import GUI.panels.Play.Tabs.MainPlayTab;
 import core.Algorithm;
 import core.AlgorithmUtilities;
 import dataTypes.Character;
@@ -14,8 +14,8 @@ import enums.ExecutionResult;
 public class AlgorithmWorker extends GenericWorker{
 
 
-	public AlgorithmWorker(Character firstChar, Character secondChar, PlayFrame playFrame) {
-		super(Action.ALGROTITHM, firstChar, secondChar, playFrame);
+	public AlgorithmWorker(Character firstChar, Character secondChar, MainPlayTab playTab) {
+		super(Action.ALGROTITHM, firstChar, secondChar, playTab);
 	}
 
 	@Override
