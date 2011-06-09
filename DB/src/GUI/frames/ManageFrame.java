@@ -10,7 +10,6 @@ import GUI.panels.CustomGlassPane;
 import GUI.panels.Manage.Tabs.AddTab;
 import GUI.panels.Manage.Tabs.DeleteTab;
 import GUI.panels.Manage.Tabs.EditTab;
-import GUI.panels.Manage.Tabs.StatisticsTab;
 import GUI.panels.Manage.Tabs.UpdateTab;
 
 public class ManageFrame extends GenericFrame {
@@ -40,7 +39,6 @@ public class ManageFrame extends GenericFrame {
 		tabbedPanel.addTab("EDIT", GuiUtils.readImageIcon("edit.png"), new EditTab());
 		tabbedPanel.addTab("DELETE", GuiUtils.readImageIcon("remove.png"), new DeleteTab());
 		tabbedPanel.addTab("UPDATE", GuiUtils.readImageIcon("update.png"), new UpdateTab());
-		tabbedPanel.addTab("STATISTICS", GuiUtils.readImageIcon("statistic.png"), new StatisticsTab());
 
 		return tabbedPanel;
 	}

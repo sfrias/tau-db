@@ -1,4 +1,4 @@
-package GUI.panels.Manage.Tabs;
+package GUI.panels.Play.Tabs;
 
 import java.awt.Dimension;
 import java.awt.Font;

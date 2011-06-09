@@ -1,7 +1,7 @@
 package GUI.workers;
 
 import GUI.model.StatisticsModel;
-import GUI.panels.Manage.Tabs.StatisticsTab;
+import GUI.panels.Play.Tabs.StatisticsTab;
 import dataTypes.ResultHolder;
 import dataTypes.SearchResultObject;
 import dataTypes.SuccessRateObject;
