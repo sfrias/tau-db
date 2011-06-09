@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 
+import GUI.GuiHandler;
 import GUI.commons.GuiUtils;
 import GUI.list.DisplayList;
 import GUI.model.CharacterModel;
@@ -48,7 +49,7 @@ public class CharacterDisplayPanel extends JPanel{
 	
 	private int charId;
 	String charName;
-	private DatabaseManager databaseManager = DatabaseManager.getInstance();
+	private DatabaseManager databaseManager = GuiHandler.getDatabaseManager();
 	
 	public CharacterDisplayPanel(){
 		super();

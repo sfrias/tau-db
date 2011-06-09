@@ -4,10 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TreeMap;
 
+import GUI.GuiHandler;
 import dataTypes.charElement;
 import dataTypes.connectionElement;
 import database.DatabaseManager;
-import enums.ConnectionResult;
 import enums.ExecutionResult;
 import enums.Tables;
 
@@ -27,15 +27,14 @@ public class AlgorithmUtilities {
 	 *Prepares a connection array for GUI in case found in history 	
 	 */
 	public static ExecutionResult prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
-		DatabaseManager dbManager;
-	
+		DatabaseManager dbManager = GuiHandler.getDatabaseManager();
 		try {
-			dbManager = DatabaseManager.getInstance();
+			Algorithm alg = Algorithm.getInstance();
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return ExecutionResult.Exception;
-
 		}
+		
 		String startName=null, endName=null;
 		String[] valueArr = new String[4];
 		String connections[] = connArr.split("\t");
@@ -297,15 +296,9 @@ public class AlgorithmUtilities {
 	
 	public static String prepareConnectionsForGUI(charElement[] connection, connectionElement[] connectionArray){
 		
-		DatabaseManager dbManager = null;
-		Algorithm alg=null;
-		try {
-			dbManager = DatabaseManager.getInstance();
-			alg = Algorithm.getInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		DatabaseManager dbManager = GuiHandler.getDatabaseManager();
+		Algorithm alg = Algorithm.getInstance();
+		
 		String startName="", endName="";
 		String toHisory="";
 		String atrName = null;

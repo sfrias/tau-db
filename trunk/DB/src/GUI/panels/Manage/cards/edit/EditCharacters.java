@@ -20,7 +20,6 @@ import GUI.workers.EditCharacterWorker;
 import GUI.workers.GetAllAttributesWorker;
 import GUI.workers.GetCharacterAttributesWorker;
 import dataTypes.Pair;
-import database.DatabaseManager;
 import enums.Tables;
 
 public class EditCharacters extends EditCard{
@@ -166,7 +165,7 @@ public class EditCharacters extends EditCard{
 					DefaultListModel listModel = (DefaultListModel) placeOfBirthCharacterValues.getModel();
 					int placeOfBirthId;
 					if (listModel.size() == 0){
-						placeOfBirthId = DatabaseManager.getInstance().getUnspecifiedId(Tables.place_of_birth);
+						placeOfBirthId = GuiHandler.getDatabaseManager().getUnspecifiedId(Tables.place_of_birth);
 					} else {
 						Pair placeOfBirthPair = (Pair) listModel.get(0);
 						placeOfBirthId= placeOfBirthPair.getId();
@@ -274,7 +273,7 @@ public class EditCharacters extends EditCard{
 		int modelSize = model.getSize();
 		if (modelSize == 0){
 			Pair pair = (Pair)originalModel.elementAt(0);
-			int id = DatabaseManager.getInstance().getUnspecifiedId(table);
+			int id = GuiHandler.getDatabaseManager().getUnspecifiedId(table);
 			if (pair.getId() != id){
 				values.add(new Pair("Unspecified",id));
 			}
@@ -298,7 +297,7 @@ public class EditCharacters extends EditCard{
 		for (int i=0; i < originalModel.getSize(); i++) {
 			Object currentPair = originalModel.getElementAt(i);
 			Pair pair = (Pair) currentPair;
-			if (!model.contains(currentPair) && !(pair.getId() == DatabaseManager.getInstance().getUnspecifiedId(table))){
+			if (!model.contains(currentPair) && !(pair.getId() == GuiHandler.getDatabaseManager().getUnspecifiedId(table))){
 				values.add((Pair) currentPair);
 			}
 		}

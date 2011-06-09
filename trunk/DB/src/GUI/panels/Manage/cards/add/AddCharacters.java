@@ -19,7 +19,6 @@ import GUI.panels.CharacterAttributePanel;
 import GUI.workers.AddCharacterWorker;
 import GUI.workers.GetAllAttributesWorker;
 import dataTypes.Pair;
-import database.DatabaseManager;
 import enums.Tables;
 
 public class AddCharacters extends AddCard {
@@ -170,10 +169,10 @@ public class AddCharacters extends AddCard {
 	}
 
 	private Pair[][] getValues() {
-
 		Pair[][] values = new Pair[Tables.getMaxIndex()+2][];
 
 		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
+		
 		values[Tables.disease.getIndex() + 1] = getPairs(disease, Tables.disease);
 		values[Tables.occupation.getIndex() + 1] = getPairs(occupation, Tables.occupation);
 		values[Tables.organization.getIndex() + 1] = getPairs(organization, Tables.organization);
@@ -191,7 +190,7 @@ public class AddCharacters extends AddCard {
 		Pair[] values;
 		
 		if (modelSize == 0){
-			values = new Pair[]{new Pair("Unspecified", DatabaseManager.getInstance().getUnspecifiedId(table))};
+			values = new Pair[]{new Pair("Unspecified", GuiHandler.getDatabaseManager().getUnspecifiedId(table))};
 		} else{
 			values = new Pair[model.getSize()];
 			for (int i=0; i < model.getSize(); i++) {
