@@ -26,7 +26,7 @@ public class GuiHandler {
 	private static CustomGlassPane glass ;
 	private static JFrame loadedFrame = null;
 	private static boolean isAdmin;
-	private static DatabaseManager dbManager = DatabaseManager.getInstance();
+	private static DatabaseManager dbManager ;
 
 	private static void installLookAndFeel() {
 		try {
@@ -65,6 +65,7 @@ public class GuiHandler {
 	public static void main(String[] args) {
 		installLookAndFeel();
 		try {
+			dbManager = new DatabaseManager();
 			dbManager.initialize();
 		} catch (Exception e) {
 			showInitializeErrorDialog();
@@ -198,6 +199,10 @@ public class GuiHandler {
 		JOptionPane.showMessageDialog(loadedFrame, "Searching with empty string is not allowed", "info", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
+	public static void showOnlyAsciiDialog(){
+		JOptionPane.showMessageDialog(loadedFrame, "please use only ascii chars", "info", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
 	public static void showAlgrithmResultDialog(boolean success, String title, String msg){
 		ImageIcon icon;
 		if (success){
@@ -251,6 +256,10 @@ public class GuiHandler {
 		
 		Timer timer = new Timer();
 		timer.schedule(task, 40000);
+	}
+	
+	public static DatabaseManager getDatabaseManager(){
+		return dbManager;
 	}
 
 }
