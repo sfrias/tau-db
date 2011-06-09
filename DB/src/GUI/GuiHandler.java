@@ -237,6 +237,7 @@ public class GuiHandler {
 		frame.setUserMessage(adminStatus);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void startCountDown(final SwingWorker worker){
 		
 		TimerTask task = new TimerTask() {

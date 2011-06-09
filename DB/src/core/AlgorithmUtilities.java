@@ -1,6 +1,5 @@
 package core;
 
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TreeMap;
@@ -17,7 +16,6 @@ public class AlgorithmUtilities {
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
 	static int maxNumberOfConnection=0;
 
-
 	public static void setMaxNumber(int number){
 		maxNumberOfConnection = number;
 	}
@@ -27,13 +25,7 @@ public class AlgorithmUtilities {
 	 */
 	public static ExecutionResult prepareConnectionsFromHistory(String connArr, connectionElement[] connectionArray){
 		DatabaseManager dbManager = DatabaseManager.getInstance();
-		Algorithm alg=null;
-		try {
-			alg = Algorithm.getInstance();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return ExecutionResult.Exception;
-		}
+		Algorithm alg = Algorithm.getInstance();
 		String startName=null, endName=null;
 		String[] valueArr = new String[4];
 		String connections[] = connArr.split("\t");
@@ -173,16 +165,11 @@ public class AlgorithmUtilities {
 
 
 	public static ExecutionResult prepareTablesAndHashMaps(){
-		Algorithm alg=null;		
-		try {
-			alg = Algorithm.getInstance();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return ExecutionResult.Exception;
-		}
+		
+		Algorithm alg = Algorithm.getInstance();
 		
 		TreeMap<String, Tables> joinedAttributesMap = new TreeMap<String,Tables>();
-		int numOfTables = Algorithm.getTables().length;
+		int numOfTables = alg.getTables().length;
 		String atrTable; 
 		Tables currentTable,putCouples;
 		Tables[] attributes = new Tables[numOfTables-1]; 
@@ -190,14 +177,14 @@ public class AlgorithmUtilities {
 
 		int indexOfAttr=0, indexOfResult=0;
 		for (int i=0; i< numOfTables; i++){
-			currentTable = Algorithm.getTables()[i];
+			currentTable = alg.getTables()[i];
 			if (currentTable.equals(Tables.characters.name())){
 				continue;
 			}
 			else if (!currentTable.name().contains("and")){
 				attributes[indexOfAttr]=currentTable;
 				indexOfAttr++;
-				Algorithm.putInPrintRepresentation(currentTable.name(),  Algorithm.getTables()[i].toString());
+				alg.putInPrintRepresentation(currentTable.name(),  alg.getTables()[i].toString());
 			}
 			else {
 				atrTable = currentTable.name().substring(15);
@@ -215,7 +202,7 @@ public class AlgorithmUtilities {
 			}
 		}
 		System.out.println(indexOfResult);
-		Algorithm.setIndexOfJumps(indexOfResult);
+		alg.setIndexOfJumps(indexOfResult);
 
 		//adding all other tables;
 		for (int i=0; i<indexOfAttr;i++){
@@ -227,16 +214,16 @@ public class AlgorithmUtilities {
 		}
 
 		joinedAttributesMap.clear();
-		Algorithm.setTablesArr(result);
+		alg.setTablesArr(result);
 
 		//adding all tables and their internal identifier to hash maps
 		for (short i=0; i<result.length;i++){
-			Algorithm.putInTabelsMap(result[i].name(),i);
-			Algorithm.putInReversedTabelsMap((short)i, result[i].name());
+			alg.putInTabelsMap(result[i].name(),i);
+			alg.putInReversedTabelsMap((short)i, result[i].name());
 		}
 
-		Algorithm.putInTabelsMap("child",(short) result.length);
-		Algorithm.putInReversedTabelsMap((short) result.length, "child");
+		alg.putInTabelsMap("child",(short) result.length);
+		alg.putInReversedTabelsMap((short) result.length, "child");
 
 		return 	ExecutionResult.Success_Using_Algorithm_Instance;
 	}
@@ -293,14 +280,9 @@ public class AlgorithmUtilities {
 		
 	
 	public static String prepareConnectionsForGUI(charElement[] connection, connectionElement[] connectionArray){
+		
 		DatabaseManager dbManager = DatabaseManager.getInstance();
-		Algorithm alg;
-		try {
-			alg = Algorithm.getInstance();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+		Algorithm alg = Algorithm.getInstance();
 		String startName="", endName="";
 		String toHisory="";
 		String atrName = null;
@@ -313,7 +295,7 @@ public class AlgorithmUtilities {
 			conPrev = conLast.getPrevElement();
 			attribute = conLast.getConnectedAttribute();
 			attributeVal = conLast.getAttributeValue();
-			attributeString = Algorithm.getValueFromReversedTableMap(attribute);
+			attributeString = alg.getValueFromReversedTableMap(attribute);
 
 			startName =dbManager.getNameFromId(conLast.getCharacterId());
 			endName = dbManager.getNameFromId(conPrev.getCharacterId());
@@ -322,11 +304,11 @@ public class AlgorithmUtilities {
 			if (alg.getR()!= ConnectionResult.Ok){
 				return null;
 			}
-			toHisory+= conLast.getCharacterId() +","+conPrev.getCharacterId() +"," +Algorithm.getFromPrintRepresentation(attributeString) + "," + atrName;
+			toHisory+= conLast.getCharacterId() +","+conPrev.getCharacterId() +"," + alg.getFromPrintRepresentation(attributeString) + "," + atrName;
 			if (conPrev.getPrevElement() != null){
 				toHisory+= "\t";
 			}
-			connectionArray[i] = new connectionElement(startName, endName, Algorithm.getFromPrintRepresentation(attributeString), atrName);
+			connectionArray[i] = new connectionElement(startName, endName, alg.getFromPrintRepresentation(attributeString), atrName);
 			i++;
 			conLast = conPrev;
 		}
