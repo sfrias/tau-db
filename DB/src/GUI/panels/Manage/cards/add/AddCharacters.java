@@ -72,11 +72,14 @@ public class AddCharacters extends AddCard {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 
-						String[] tables = getTablesNames();
+						
 						Pair[][] values = getValues();
-						AddCharacterWorker worker = new AddCharacterWorker(tables, values, me);
-						GuiHandler.startStatusFlash();
-						worker.execute();
+						if (values != null){
+							String[] tables = getTablesNames();
+							AddCharacterWorker worker = new AddCharacterWorker(tables, values, me);
+							GuiHandler.startStatusFlash();
+							worker.execute();
+						}
 					}
 				});
 			}
@@ -170,17 +173,25 @@ public class AddCharacters extends AddCard {
 
 	private Pair[][] getValues() {
 		Pair[][] values = new Pair[Tables.getMaxIndex()+2][];
+		String charName = textName.getText();
+		if (!GuiUtils.isAscii(charName)){
+			GuiHandler.showOnlyAsciiDialog();
+			return null;
+		} else if (charName.equals("")){
+			GuiHandler.showNoEmptyStringDialog();
+			return null;
+		} else{			
+			values[0] = new Pair [] {new Pair(charName, -1)};		
 
-		values[0] = new Pair [] {new Pair(textName.getText(), -1)};
-		
-		values[Tables.disease.getIndex() + 1] = getPairs(disease, Tables.disease);
-		values[Tables.occupation.getIndex() + 1] = getPairs(occupation, Tables.occupation);
-		values[Tables.organization.getIndex() + 1] = getPairs(organization, Tables.organization);
-		values[Tables.place_of_birth.getIndex() + 1] = getPairs(placeOfBirth, Tables.place_of_birth);
-		values[Tables.power.getIndex() + 1] = getPairs(power, Tables.power);
-		values[Tables.school.getIndex() + 1] = getPairs(school, Tables.school);
-		values[Tables.universe.getIndex() + 1] = getPairs(universe, Tables.universe);
-		return values;
+			values[Tables.disease.getIndex() + 1] = getPairs(disease, Tables.disease);
+			values[Tables.occupation.getIndex() + 1] = getPairs(occupation, Tables.occupation);
+			values[Tables.organization.getIndex() + 1] = getPairs(organization, Tables.organization);
+			values[Tables.place_of_birth.getIndex() + 1] = getPairs(placeOfBirth, Tables.place_of_birth);
+			values[Tables.power.getIndex() + 1] = getPairs(power, Tables.power);
+			values[Tables.school.getIndex() + 1] = getPairs(school, Tables.school);
+			values[Tables.universe.getIndex() + 1] = getPairs(universe, Tables.universe);
+			return values;
+		}
 	}
 
 	private Pair[] getPairs(DisplayList list, Tables table){

@@ -46,15 +46,6 @@ public class DatabaseManager {
 		connProperties = new Properties(); 
 	}
 
-	public static DatabaseManager getInstance() throws Exception{
-
-		if (instance == null){
-			instance = new DatabaseManager();
-		}
-
-		return instance;
-	}
-
 	public void initialize() throws Exception{
 		if (!init){
 			buildUnspecifiedMapPerTable();

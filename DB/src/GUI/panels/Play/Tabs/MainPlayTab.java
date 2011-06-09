@@ -131,7 +131,7 @@ public class MainPlayTab extends JPanel{
 				try {
 					String queryString = doc.getText(0, doc.getLength());
 					if (doc.getLength() == 0){
-						GuiHandler.showNoEmptyStringSearchDialog();
+						GuiHandler.showNoEmptyStringDialog();
 					} else if (!GuiUtils.isAscii(queryString)){
 						GuiHandler.showOnlyAsciiDialog();
 					} else {

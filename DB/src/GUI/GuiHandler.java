@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import GUI.commons.GuiUtils;
 import GUI.frames.ManageFrame;
@@ -28,24 +27,6 @@ public class GuiHandler {
 	private static boolean isAdmin;
 	private static DatabaseManager dbManager ;
 
-	private static void installLookAndFeel() {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	public static CustomGlassPane getGlassPane(){
 		return glass;
 	}
@@ -63,8 +44,8 @@ public class GuiHandler {
 	}
 
 	public static void main(String[] args) {
-		installLookAndFeel();
 		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			dbManager = new DatabaseManager();
 			dbManager.initialize();
 		} catch (Exception e) {
@@ -195,12 +176,12 @@ public class GuiHandler {
 		JOptionPane.showMessageDialog(loadedFrame, "You must choose from the given combobox. Free text is not allowed ", "info", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	public static void showNoEmptyStringSearchDialog(){
-		JOptionPane.showMessageDialog(loadedFrame, "Searching with empty string is not allowed", "info", JOptionPane.INFORMATION_MESSAGE);
+	public static void showNoEmptyStringDialog(){
+		JOptionPane.showMessageDialog(loadedFrame, "Empty character name is not allowed", "info", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	public static void showOnlyAsciiDialog(){
-		JOptionPane.showMessageDialog(loadedFrame, "please use only ascii chars", "info", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(loadedFrame, "Please use only latin letters", "info", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	public static void showAlgrithmResultDialog(boolean success, String title, String msg){

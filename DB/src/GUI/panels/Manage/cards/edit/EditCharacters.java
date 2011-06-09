@@ -12,6 +12,7 @@ import javax.swing.ListSelectionModel;
 
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
+import GUI.commons.GuiUtils;
 import GUI.list.DisplayList;
 import GUI.model.CharacterModel;
 import GUI.model.SimpleModel;
@@ -162,18 +163,26 @@ public class EditCharacters extends EditCard{
 				
 				try{
 					Pair characerPair = (Pair) comboRecord.getSelectedItem();
-					DefaultListModel listModel = (DefaultListModel) placeOfBirthCharacterValues.getModel();
-					int placeOfBirthId;
-					if (listModel.size() == 0){
-						placeOfBirthId = GuiHandler.getDatabaseManager().getUnspecifiedId(Tables.place_of_birth);
+					String charName = textName.getText();
+					if (charName.equals("")){
+						GuiHandler.showNoEmptyStringDialog();
+					} else if (!GuiUtils.isAscii(charName)){
+						GuiHandler.showOnlyAsciiDialog();
 					} else {
-						Pair placeOfBirthPair = (Pair) listModel.get(0);
-						placeOfBirthId= placeOfBirthPair.getId();
+						characerPair.setName(charName);
+						DefaultListModel listModel = (DefaultListModel) placeOfBirthCharacterValues.getModel();
+						int placeOfBirthId;
+						if (listModel.size() == 0){
+							placeOfBirthId = GuiHandler.getDatabaseManager().getUnspecifiedId(Tables.place_of_birth);
+						} else {
+							Pair placeOfBirthPair = (Pair) listModel.get(0);
+							placeOfBirthId= placeOfBirthPair.getId();
+						}
+						EditCharacterWorker worker = new EditCharacterWorker(tables, addedValues, removedValues, characerPair, placeOfBirthId, me);
+						GuiHandler.startStatusFlash();
+						worker.execute();
+						comboRecord.removeAllItems();
 					}
-					EditCharacterWorker worker = new EditCharacterWorker(tables, addedValues, removedValues, characerPair, placeOfBirthId, me);
-					GuiHandler.startStatusFlash();
-					worker.execute();
-					comboRecord.removeAllItems();
 				}catch (ClassCastException e){
 					GuiHandler.showChooseFromComboDialog();
 				}

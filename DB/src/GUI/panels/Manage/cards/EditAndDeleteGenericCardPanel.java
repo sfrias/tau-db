@@ -17,6 +17,7 @@ import javax.swing.text.JTextComponent;
 
 import GUI.GuiHandler;
 import GUI.buttons.AutoCompleteComboBox;
+import GUI.commons.GuiUtils;
 import GUI.panels.Manage.cards.delete.DeleteCard;
 import GUI.panels.Manage.cards.delete.DeleteCharacters;
 import GUI.panels.Manage.cards.edit.EditCharacters;
@@ -55,12 +56,13 @@ public abstract class EditAndDeleteGenericCardPanel extends GenericCardPanel imp
 			searchButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
 					Document doc = ((JTextComponent)comboRecord.getEditor().getEditorComponent()).getDocument();
-					String queryString;
 					try {
+						String queryString = doc.getText(0, doc.getLength());
 						if (doc.getLength() == 0){
-							GuiHandler.showNoEmptyStringSearchDialog();
+							GuiHandler.showNoEmptyStringDialog();
+						} else if (!GuiUtils.isAscii(queryString)){
+							GuiHandler.showOnlyAsciiDialog();
 						} else {
-							queryString = doc.getText(0, doc.getLength());
 							GetRecordsByNameWorker worker;
 							if (card instanceof EditCharacters){
 								worker = new GetRecordsByNameWorker((EditCharacters) card, -1, queryString);
