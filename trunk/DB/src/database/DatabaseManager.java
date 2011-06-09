@@ -27,10 +27,12 @@ import enums.Tables;
 
 public class DatabaseManager {
 
-	private final static String USERNAME = "root";
-	private final static String PASSWORD = "armiN203";
-	private final static String URL = "jdbc:mysql://localhost:3306/testdb"; 
-
+	private final static String USERNAME = System.getProperty("username");
+	private final static String PASSWORD = System.getProperty("password");
+	private final static String HOST = System.getProperty("host");
+	private final static String PORT = System.getProperty("port");
+	private final static String SID = System.getProperty("sid");
+	private final static String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + SID; 
 
 	private static DatabaseManager instance = null;
 	private static JDCConnectionDriver connectionDriver;
@@ -1365,8 +1367,8 @@ public class DatabaseManager {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT * FROM success_rate");
 			rs.first();
-			total = rs.getInt(1);
-			success = rs.getInt(2);
+			total = rs.getInt(2);
+			success = rs.getInt(3);
 			successRate = new SuccessRateObject(total, success);
 		} catch (SQLException e) {
 			e.printStackTrace();
