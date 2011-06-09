@@ -63,14 +63,14 @@ public class DatabaseManager {
 
 		return instance;
 	}
-	
+
 	public void initialize() throws Exception{
 		if (!init){
 			buildUnspecifiedMapPerTable();
 			init = true;
 		}
 	}
-	
+
 	public static void buildUnspecifiedMapPerTable() throws Exception{
 		Tables[] tablesArray = Tables.values();
 		Tables currentTable;
@@ -78,25 +78,25 @@ public class DatabaseManager {
 		for (int i=0; i< tablesArray.length; i++){
 			currentTable = tablesArray[i];
 			if ((currentTable == Tables.characters ||
-				!currentTable.name().contains("and")) && 
-				currentTable != Tables.parent &&
-				currentTable != Tables.romantic_involvement) {
-				
+					!currentTable.name().contains("and")) && 
+					currentTable != Tables.parent &&
+					currentTable != Tables.romantic_involvement) {
+
 				unspecified = getUnspecifiedId(currentTable.name());
-				
+
 				if (unspecified==-1){
 					throw new Exception();
 				}
-				
+
 				else {
-				unspecifiedIdOfTables.put(currentTable, unspecified);
+					unspecifiedIdOfTables.put(currentTable, unspecified);
 				}
 			}
 		}
 
 	}
 
-	
+
 	public JDCConnection getConnection() {
 		try {
 			return (JDCConnection) connectionDriver.connect(URL, connProperties);
@@ -105,8 +105,8 @@ public class DatabaseManager {
 			return null;
 		}
 	}
-	
-	
+
+
 	public void executeUpdate(String stmtToExecute) {
 		JDCConnection conn = null;
 		Statement stmt = null;
@@ -134,7 +134,7 @@ public class DatabaseManager {
 			}
 		}
 	}
-	
+
 	public int executeInsertAndReturnGeneratedKey(String table, String fieldName, String value){
 		JDCConnection conn =null;
 		Statement addNullIdStatement = null;
@@ -149,7 +149,7 @@ public class DatabaseManager {
 			int currentId = generatedKeys.getInt(1);
 			addNullIdStatement.executeUpdate("UPDATE " + table + " SET " + table + "_fb_id = '" + currentId + "' WHERE " + table + "_id = " + currentId);
 			conn.commit();
-			
+
 			return currentId;
 		}
 		catch (SQLException e){
@@ -215,9 +215,9 @@ public class DatabaseManager {
 			while (resultSet.next()) {
 				valuesList.add(new Pair(resultSet.getString(2), resultSet.getInt(1)));
 			}
-			
+
 			int unspecified = getUnspecifiedId(table);
-			
+
 			Pair currentPair = null;
 			Iterator<Pair> iter = valuesList.iterator();
 			while (iter.hasNext()){
@@ -227,7 +227,7 @@ public class DatabaseManager {
 					break;
 				}
 			}
-			
+
 
 			resultSet.close();
 			stmt.close();
@@ -737,14 +737,14 @@ public class DatabaseManager {
 					preparedStmt.setInt(1, removedValues[i][j].getId());
 					preparedStmt.execute();
 				}
-				
+
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE "+ tableName + "_character_id = " + characterId);
 				if (!rs.first()){
 					stmt = conn.createStatement();
 					stmt.executeUpdate("INSERT INTO " + tableName +" values(" + characterId + ", "+ unspecified + ")");
 				}
-				
+
 			}
 
 			conn.commit();
@@ -912,7 +912,7 @@ public class DatabaseManager {
 
 			return "none";
 		}
-		
+
 		JDCConnection conn = null;
 		try {
 			conn = getConnection();
@@ -993,7 +993,7 @@ public class DatabaseManager {
 				}
 				index++;
 			}
-			
+
 			return searchResult;
 
 		} catch (SQLException e) {
@@ -1024,7 +1024,7 @@ public class DatabaseManager {
 			}
 		}
 
-		
+
 	}
 
 
@@ -1040,68 +1040,12 @@ public class DatabaseManager {
 			return -1;
 		}
 	}
-	private static int getUnspecifiedId(String table) {
-		
-		Statement stmt = null;
-		ResultSet rs = null;
-		int unspecifiedID = 0;
-		String field = "";
-		if (table.equals(Tables.characters.name())){
-			field = "character";
-		}
-		else {
-			field = table;
-		}
-
-		JDCConnection conn = null;
-		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
-			rs.first();
-			unspecifiedID= rs.getInt(1);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return -1;
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return -1;
-				}
-			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return -1;
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return -1;
-				}
-			}
-		}
-
-		return unspecifiedID;
-	}
-
-
 
 	/*
 	 * inserts connection found
 	 */
-
 	public void insertIntoHistory (String connections) {
-		
+
 		Statement stmt = null;
 		String[] connectionsSplit = connections.split("\t");
 		int length = connectionsSplit.length;
@@ -1138,13 +1082,13 @@ public class DatabaseManager {
 						else
 							break;
 					}
-					
+
 					toQuery = null;
 
 					if (connectionsSplit[j]!= null){
 						information += connectionsSplit[j];
 					}
-					
+
 					information = information.replace("\'", "\\'");
 					if (i==0 && j==length-1){
 						toQuery = "INSERT INTO history (character_id1, character_id2, date, information,count) values (" + first + "," + second + ",'" + date + "', '" + information + "',1);";
@@ -1304,7 +1248,7 @@ public class DatabaseManager {
 	 * If exists - prints the connection to console.
 	 */
 	public boolean lookForConnectionInHistory(int start_id, int end_id, connectionElement[] conenctionArray){
-		
+
 		JDCConnection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -1381,7 +1325,7 @@ public class DatabaseManager {
 		int total = 0;
 		int success = 0;
 		SuccessRateObject successRate;
-		
+
 		JDCConnection conn = null;
 		try {
 			conn = getConnection();
@@ -1415,7 +1359,7 @@ public class DatabaseManager {
 		return successRate;
 
 	}
-	
+
 	public void executeDeleteTableContent (String tableName){  
 		JDCConnection conn =null;
 		Statement stmt = null; 
@@ -1424,18 +1368,18 @@ public class DatabaseManager {
 			stmt = conn.createStatement(); 
 			stmt.executeUpdate("TRUNCATE TABLE " + tableName); 
 		} catch (SQLException e) {
-				e.printStackTrace(); 
+			e.printStackTrace(); 
 		} 
 		finally { 
-			
+
 			if (stmt != null){ 
 				try { stmt.close();
 				} 
 				catch (SQLException e) { 
 					e.printStackTrace();
-					} 
+				} 
 			} 
-			
+
 			if (conn != null){
 				try { 
 					conn.setAutoCommit(true); 
@@ -1443,14 +1387,62 @@ public class DatabaseManager {
 				} catch (SQLException e) { 
 					e.printStackTrace(); 
 				}
-			 
+
 			}  
 		}  
 	} 
 
+	private static int getUnspecifiedId(String table) {
 
+		Statement stmt = null;
+		ResultSet rs = null;
+		int unspecifiedID = 0;
+		String field = "";
+		if (table.equals(Tables.characters.name())){
+			field = "character";
+		}
+		else {
+			field = table;
+		}
 
+		JDCConnection conn = null;
+		try {
+			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
+			rs.first();
+			unspecifiedID= rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+		finally {
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return -1;
+				}
+			}
+			if (rs!= null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return -1;
+				}
+			}
+			if (conn!= null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return -1;
+				}
+			}
+		}
 
-
-
+		return unspecifiedID;
+	}
 }
