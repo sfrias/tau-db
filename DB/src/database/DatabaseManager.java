@@ -34,7 +34,6 @@ public class DatabaseManager {
 	private final static String SID = System.getProperty("sid");
 	private final static String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + SID; 
 
-	private static DatabaseManager instance = null;
 	private static JDCConnectionDriver connectionDriver;
 	private static Properties connProperties;
 	private TreeMap<Tables, Integer> unspecifiedIdOfTables = new TreeMap<Tables,Integer>();
