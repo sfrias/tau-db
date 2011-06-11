@@ -19,8 +19,8 @@ import GUI.GuiHandler;
 import GUI.panels.Manage.Tabs.UpdateTab;
 import core.TableUtilities;
 import database.AntUtils;
-import database.AntUtils.Targets;
 import database.DatabaseManager;
+import database.AntUtils.Targets;
 import enums.ExecutionResult;
 import enums.UpdateResult;
 
@@ -51,6 +51,9 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 
 	@Override
 	protected UpdateResult doInBackground() {
+
+		long startTime = System.currentTimeMillis(); 
+
 		pathDir = new File(".");
 		if (!pathDir.exists()) {
 			pathDir.mkdir();
@@ -78,26 +81,35 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 					e.printStackTrace();
 				}
 			}
-
+			ExecutionResult er;
 			publish(UpdateResult.start_update_table);
-
 			if (!isCancelled()){
-				TableUtilities.createOrUpdateSimpleTables(true); 
+				er = TableUtilities.createOrUpdateSimpleTables(true);
 				setProgress(60);
+				if (er == ExecutionResult.Exception){
+					return UpdateResult.exception;
+				}				
+				
 				AntUtils.executeTarget(Targets.POPULATE); 
 				deleteFile(sqlFile);
 				setProgress(70);
-				TableUtilities.createOrUpdateComplexTables(true);
+				er = TableUtilities.createOrUpdateComplexTables(true);
 				setProgress(80);
+				if (er == ExecutionResult.Exception){
+					return UpdateResult.exception;
+				}
+				
 				AntUtils.executeTarget(Targets.POPULATE); 
 				setProgress(90);
 
 				publish(UpdateResult.finish_update_table);
 			}
-			ExecutionResult er = clearHistoryTables();
+			
+			er = clearHistoryTables();
 			if (er == ExecutionResult.Exception){
 				return UpdateResult.exception;
 			}
+			
 			removeTemporaryFiles();
 			if (!isCancelled()){
 				setProgress(100);
@@ -109,8 +121,12 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 			return UpdateResult.exception;*/
 		}
 
-		return UpdateResult.done;
+		long finishTime = System.currentTimeMillis(); 
 
+		long totalTime = finishTime - startTime; 
+		System.out.println("operation took " + totalTime + " Millis"); 
+
+		return UpdateResult.done;
 	}
 
 	private ExecutionResult clearHistoryTables(){
