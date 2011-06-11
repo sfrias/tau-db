@@ -136,6 +136,13 @@ public class GuiHandler {
 		showResultDialog(msg, title, icon);
 	}
 	
+	public static void showAnotherUpdateIsInProgressDialog(){
+		String msg = "Another update is already in progress";
+		String title = "error";
+		ImageIcon icon = GuiUtils.readImageIcon("thumbDown.png");
+		showResultDialog(msg, title, icon);
+	}
+	
 	public static void showCantHaveMoreThanOnePlaceOfBirthDialog(){
 		String msg = "Can't have more than one place of birth";
 		String title = "error";
