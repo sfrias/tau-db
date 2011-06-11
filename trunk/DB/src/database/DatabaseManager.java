@@ -52,32 +52,6 @@ public class DatabaseManager {
 		}
 	}
 
-	public void buildUnspecifiedMapPerTable() throws Exception{
-		Tables[] tablesArray = Tables.values();
-		Tables currentTable;
-		int unspecified;
-		for (int i=0; i< tablesArray.length; i++){
-			currentTable = tablesArray[i];
-			if ((currentTable == Tables.characters ||
-					!currentTable.name().contains("and")) && 
-					currentTable != Tables.parent &&
-					currentTable != Tables.romantic_involvement) {
-
-				unspecified = getUnspecifiedId(currentTable.name());
-
-				if (unspecified==-1){
-					throw new Exception();
-				}
-
-				else {
-					unspecifiedIdOfTables.put(currentTable, unspecified);
-				}
-			}
-		}
-
-	}
-
-
 	public JDCConnection getConnection() {
 		try {
 			return (JDCConnection) connectionDriver.connect(URL, connProperties);
@@ -87,6 +61,13 @@ public class DatabaseManager {
 		}
 	}
 
+	public boolean getLock(){
+		return executeLockCommands("SELECT GET_LOCK('lock1',10)");
+	}
+
+	public boolean releaseLock(){
+		return executeLockCommands("SELECT RELEASE_LOCK('lock1');");
+	}
 
 	public void executeUpdate(String stmtToExecute) {
 		JDCConnection conn = null;
@@ -840,7 +821,7 @@ public class DatabaseManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-			
+
 		}finally {
 			if (stmt != null){
 				try {
@@ -883,7 +864,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		String Name = null;
-		
+
 		if (table.equals(Tables.romantic_involvement.name()) ||
 				table.equals(Tables.parent.name()) ||
 				table.equals("child")) {
@@ -1035,9 +1016,9 @@ public class DatabaseManager {
 					return ConnectionResult.Ok;
 				}
 			}
-			
+
 			return ConnectionResult.Character_not_found;
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return ConnectionResult.Exception;
@@ -1068,7 +1049,7 @@ public class DatabaseManager {
 				}
 			}
 		}
-	
+
 	}
 
 
@@ -1235,7 +1216,7 @@ public class DatabaseManager {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return ExecutionResult.Exception;
-			
+
 		}	finally {
 			if (stmt != null){
 				try {
@@ -1338,7 +1319,7 @@ public class DatabaseManager {
 				}
 			}
 		}
-		
+
 		return ExecutionResult.Did_Not_Find_Connection_In_History;
 
 	}
@@ -1417,10 +1398,86 @@ public class DatabaseManager {
 		}
 		return ExecutionResult.Succees_Delete_Table_Content;
 	} 
-	
-	
+
+	private void buildUnspecifiedMapPerTable() throws Exception{
+		Tables[] tablesArray = Tables.values();
+		Tables currentTable;
+		int unspecified;
+		for (int i=0; i< tablesArray.length; i++){
+			currentTable = tablesArray[i];
+			if ((currentTable == Tables.characters ||
+					!currentTable.name().contains("and")) && 
+					currentTable != Tables.parent &&
+					currentTable != Tables.romantic_involvement) {
+
+				unspecified = getUnspecifiedId(currentTable.name());
+
+				if (unspecified==-1){
+					throw new Exception();
+				}
+
+				else {
+					unspecifiedIdOfTables.put(currentTable, unspecified);
+				}
+			}
+		}
+
+	}
+
+	private boolean executeLockCommands(String command){
+
+		JDCConnection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(command);
+
+			if (rs == null){
+				return false;
+			}
+
+			rs.first();
+			int success = rs.getInt(1);
+
+			if (success == 1){
+				return true;
+			}
+			else{
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		finally{
+			if (rs != null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (stmt != null){
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	private int getUnspecifiedId(String table) {
-		
+
 		Statement stmt = null;
 		ResultSet rs = null;
 		int unspecifiedID = 0;

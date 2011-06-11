@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
-
 import GUI.GuiHandler;
 import GUI.buttons.IconButton;
 import GUI.commons.GuiUtils;
@@ -166,6 +165,10 @@ public class UpdateTab extends JPanel implements PropertyChangeListener{
 			break;
 		case exception:
 			GuiHandler.showResultExceptionDialog("update");
+			clearProgress();
+			break;
+		case another_update_is_in_progress:
+			GuiHandler.showAnotherUpdateIsInProgressDialog();
 			clearProgress();
 			break;
 		}

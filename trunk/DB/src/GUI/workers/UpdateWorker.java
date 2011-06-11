@@ -52,8 +52,8 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 	@Override
 	protected UpdateResult doInBackground() {
 
-		long startTime = System.currentTimeMillis(); 
-
+		long startTime = System.currentTimeMillis();
+		
 		pathDir = new File(".");
 		if (!pathDir.exists()) {
 			pathDir.mkdir();
@@ -64,6 +64,14 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 		deleteFile(sqlFile);
 
 		GuiHandler.startStatusFlash();
+		
+		DatabaseManager dbManager = GuiHandler.getDatabaseManager();
+		
+		boolean aquiredLock = dbManager.getLock();
+		if (!aquiredLock){
+			return UpdateResult.another_update_is_in_progress;
+		}
+		
 		try {
 			downloadDumps();
 			if (!isCancelled()){
@@ -117,8 +125,9 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 			}
 		} catch (IOException e) {
 			return UpdateResult.exception;
-			/*} catch (SQLException e){
-			return UpdateResult.exception;*/
+		}
+		finally{
+			dbManager.releaseLock();
 		}
 
 		long finishTime = System.currentTimeMillis(); 
@@ -277,6 +286,7 @@ public class UpdateWorker extends SwingWorker<UpdateResult, UpdateResult>{
 					parent.refreshTab(result);
 					break;
 				case exception:
+				case another_update_is_in_progress:
 					removeTemporaryFiles();
 					parent.refreshTab(result);
 					break;
