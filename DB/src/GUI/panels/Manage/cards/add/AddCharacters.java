@@ -72,7 +72,6 @@ public class AddCharacters extends AddCard {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 
-						
 						Pair[][] values = getValues();
 						if (values != null){
 							String[] tables = getTablesNames();
@@ -111,9 +110,7 @@ public class AddCharacters extends AddCard {
 		resetModel(school);
 		resetModel(universe);
 		
-		if (GuiHandler.isStatusFlashing()){
-			GuiHandler.stopStatusFlash();
-		}
+		populateLists();
 	}
 	
 	private void populateLists(){
