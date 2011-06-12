@@ -126,8 +126,7 @@ public class EditCharacters extends EditCard{
 		resetModel(universeCharacterValues);
 		
 		comboRecord.setSelectedItem(null);
-		
-		clearValues();
+		populateLists();
 	}
 	
 	public ActionListener createRecordComboListener() {
