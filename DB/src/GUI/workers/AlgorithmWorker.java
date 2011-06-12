@@ -20,7 +20,7 @@ public class AlgorithmWorker extends GenericWorker{
 
 	@Override
 	protected ResultHolder doInBackground() {
-		GuiHandler.startCountDown(this);
+	//	GuiHandler.startCountDown(this);
 		
 		Algorithm alg = Algorithm.getInstance();
 		

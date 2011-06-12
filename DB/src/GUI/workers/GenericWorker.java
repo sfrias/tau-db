@@ -100,7 +100,7 @@ public abstract class GenericWorker extends SwingWorker<ResultHolder, Void>{
 	public void done(){
 		if (isCancelled()){
 			GuiHandler.stopStatusFlash();
-			updateSuccessRateWorker worker = new updateSuccessRateWorker(false);
+			updateOnFailedSearchWorker worker = new updateOnFailedSearchWorker(firstChar.getCharId(), secondChar.getCharId());
 			worker.execute();
 			GuiHandler.showAlgrithmResultDialog(false, ConnectionResult.Did_Not_Find_Connection.toString(), 
 					"Could not find a connection between " + firstChar.getCharName() + " and " + secondChar.getCharName());

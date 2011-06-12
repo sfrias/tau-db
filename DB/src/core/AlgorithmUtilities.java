@@ -223,7 +223,7 @@ public class AlgorithmUtilities {
 
 		alg.putInTabelsMap("child",(short) result.length);
 		alg.putInReversedTabelsMap((short) result.length, "child");
-
+		alg.putInPrintRepresentation("child",  "child");
 		return ExecutionResult.General_Success;
 	}
 	
