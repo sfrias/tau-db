@@ -12,7 +12,5 @@
   <property name="DB.DRIVER" value="com.mysql.jdbc.Driver"/>
   <property name="DB.URL.NEWDATABASE" value="jdbc:mysql://${DB.HOST}:${DB.PORT}/?allowMultiQueries=true"/>
   <property name="DB.URL" value="jdbc:mysql://${DB.HOST}:${DB.PORT}/${DB.SID}?allowMultiQueries=true"/>
-
-
   <property name="DB.DELIMITER" value=";"/>
 </project>
