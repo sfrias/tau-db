@@ -114,7 +114,7 @@ public class StatisticsTab extends JPanel{
 	
 	
 	private void createTopFiveLastSuccessfulSearchesPanel(){
-		createListPanel(topFiveSuccessfulFirstCharLabels, topFiveSuccessfulSecondCharLabels, topFiveSuccessfulDateLabels, "Date", "Top Last 5 Searches");
+		createListPanel(topFiveSuccessfulFirstCharLabels, topFiveSuccessfulSecondCharLabels, topFiveSuccessfulDateLabels, "Date", "Last 5 Searches");
 	}
 	
 	private void createTopFivePopularSearchesPanel(){
