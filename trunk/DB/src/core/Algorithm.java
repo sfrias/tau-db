@@ -282,7 +282,7 @@ public class Algorithm{
 					continue;	
 				}
 
-				foundMatch = addNewConnection(currentidField2, start_element, atr, -2, result);
+				foundMatch = addNewConnection(currentid, start_element, atr, -2, result);
 				if (foundMatch){
 					return true;
 				}
@@ -466,7 +466,7 @@ public class Algorithm{
 	private String directConnetionPlaceOfBirth(int start_id, int unspecifiedIdOfCharacter,int[] atrVal, boolean directToEnd){
 		Tables currentAtr = Tables.place_of_birth;
 		int placeOfBirth = 0; 
-		String selectAtrValues = 	AlgorithmUtilities.simpleQuery("character_" + currentAtr+ "_id" ,"characters","character_id =" + start_id);
+		String selectAtrValues = 	AlgorithmUtilities.simpleQuery("character_" + currentAtr.name()+ "_id" ,"characters","character_id =" + start_id);
 		String charactersWithAtr;
 		ResultSet atrValRS =null;
 		Statement atrStmt = null;
@@ -517,7 +517,7 @@ public class Algorithm{
 			return null;
 		}
 		else {
-			charactersWithAtr = AlgorithmUtilities.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + currentAtr.name()+ "_id =" + placeOfBirth ,  "character_id != " + unspecifiedIdOfCharacter,"character_" + currentAtr+ "_id !=" +dbManager.getUnspecifiedId(currentAtr), false);
+			charactersWithAtr = AlgorithmUtilities.allCharactersWithTheSameAttributeQuery("character_id", "characters", "character_" + currentAtr.name()+ "_id =" + placeOfBirth ,  "character_id != " + unspecifiedIdOfCharacter,"character_" + currentAtr.name()+ "_id !=" +dbManager.getUnspecifiedId(currentAtr), false);
 		}
 		return charactersWithAtr;
 
@@ -573,8 +573,8 @@ public class Algorithm{
 					atr = atr+1;
 				} 
 
-				else if (	tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
-						tablesArr[atr].equals(Tables.parent.name())){
+				else if (	currentAtr == Tables.romantic_involvement ||
+						currentAtr == Tables.parent){
 
 					charactersWithAtr = AlgorithmUtilities.directConnectionRealtions(currentAtr.name(), start_id, unspecifiedIdOfCharacter,end_id, false);
 					charToAny = charWithAtrStmt.executeQuery(charactersWithAtr);
@@ -584,7 +584,7 @@ public class Algorithm{
 					}
 				}
 
-				else if (tablesArr[atr].equals(Tables.place_of_birth.name())){
+				else if (currentAtr == Tables.place_of_birth){
 					charactersWithAtr = directConnetionPlaceOfBirth(start_id, unspecifiedIdOfCharacter,valPlaceOfBirth, false);
 					if (getR() != ConnectionResult.Ok){
 						return false;
@@ -682,8 +682,8 @@ public class Algorithm{
 					currentAttribute = currentAtr.name();
 				} //end of while loop
 
-				else if (	tablesArr[atr].equals(Tables.romantic_involvement.name()) ||
-						tablesArr[atr].equals(Tables.parent.name())){
+				else if (	currentAtr == Tables.romantic_involvement ||
+						currentAtr == Tables.parent){
 					currentAttribute = currentAtr.name();
 					charactersWithAtr = AlgorithmUtilities.directConnectionRealtions(currentAtr.name(), start_id, -1,end_id, true);
 					charsWithAtrRS= charAtrStmt.executeQuery(charactersWithAtr);

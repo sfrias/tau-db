@@ -917,617 +917,698 @@ public class DatabaseManager {
 
 	//for top 5 searches use field 'count'
 	//for top 5 recent matches use field 'date'
+
 	public SearchResultObject[] topSearches (String field) {
 
-		Statement stmt = null;
-		ResultSet rs = null;
-		String startName=null, endName=null;
-		Timestamp date = null;
-		int count = -1;
+		Statement stmt = null, stmtFailed = null;
+		ResultSet rsHistory = null, rsFailedSearches = null;
+		String startNameHistory=null,startNameFailed=null, endNameHistory = null, endNameFailed=null;
+		String startNameCurrent = null, endNameCurrent = null;
+		Timestamp dateHistory = null, dateFailed = null, currentDate = null;
+		int countHistory = -1, countFailed = -1,  currentCount = -1, index=0;
 		SearchResultObject[] searchResult = new SearchResultObject[5];
-		int index=0;
+		boolean historyHasNext = true, failedHasNext = true;
 
 		JDCConnection conn = null;
 		try {			
 			conn = getConnection();
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM history ORDER BY "+ field +" DESC LIMIT 5");
-			while (rs.next()) {
-				startName = getNameFromId(rs.getInt(1));
-				endName = getNameFromId(rs.getInt(2));
+			rsHistory = stmt.executeQuery("SELECT * FROM history WHERE count!=0 ORDER BY " + field + " DESC LIMIT 5");
+			stmtFailed = conn.createStatement();			
+			rsFailedSearches = stmtFailed.executeQuery("SELECT * FROM failed_searches ORDER BY "+ field +" DESC LIMIT 5");
+			historyHasNext = rsHistory.next();
+			failedHasNext = rsFailedSearches.next();
+			
+			
+			while ((historyHasNext || failedHasNext) && index < 5) {
+				if (historyHasNext){
+					startNameHistory = getNameFromId(rsHistory.getInt(1));
+					endNameHistory = getNameFromId(rsHistory.getInt(2));
+					dateHistory = rsHistory.getTimestamp(3);
+					countHistory = rsHistory.getInt(5);
+				}
+
+				if (failedHasNext){
+					startNameFailed = getNameFromId(rsFailedSearches.getInt(1));
+					endNameFailed = getNameFromId(rsFailedSearches.getInt(2));
+					dateFailed = rsFailedSearches.getTimestamp(3);
+					countFailed = rsFailedSearches.getInt(4);
+				}
+				
+				if (!historyHasNext){
+					countHistory= countFailed-1;
+					dateHistory = new Timestamp(dateFailed.getTime()-1);
+				}
+				
+				if (!failedHasNext){
+					countFailed= countHistory-1;
+					dateFailed= new Timestamp(dateHistory.getTime()-1);
+				}
+
+
 				if (field.equals("count")){
-					count = rs.getInt(5);
-					if (count!=0){
-						searchResult[index] = new SearchResultObject(startName, endName, count);
+					if (countFailed> countHistory){
+						startNameCurrent = startNameFailed;
+						endNameCurrent = endNameFailed;
+						currentCount = countFailed;
+						failedHasNext = rsFailedSearches.next();
+
 					}
 					else{
-						break;
+						startNameCurrent = startNameHistory;
+						endNameCurrent = endNameHistory;
+						currentCount = countHistory;
+						historyHasNext = rsHistory.next();
 					}
-				} else if (field.equals("date")){
-					date = rs.getTimestamp(3);
-					searchResult[index] = new SearchResultObject(startName, endName, date);
-				} else {
-					return null; // not a valid input
+					searchResult[index] = new SearchResultObject(startNameCurrent, endNameCurrent, currentCount);
 				}
-				index++;
-			}
+				else if (field.equals("date")){
+					if (dateFailed.after(dateHistory)){
+						startNameCurrent = startNameFailed;
+						endNameCurrent = endNameFailed;
+						currentDate = dateFailed;
+						failedHasNext = rsFailedSearches.next();
 
-			return searchResult;
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
+					}
+					else{
+						startNameCurrent = startNameHistory;
+						endNameCurrent = endNameHistory;
+						currentDate = dateHistory;
+						historyHasNext = rsHistory.next();
+					}
+					searchResult[index] = new SearchResultObject(startNameCurrent, endNameCurrent, currentDate);
 				}
-			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
+				else {
+					return null; //not a valid input
 				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			
+			index++;
 		}
 
+		return searchResult;
 
+	} catch (SQLException e) {
+		e.printStackTrace();
+		return null;
+	}
+	finally {
+		if (stmt != null){
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if (stmtFailed != null){
+			try {
+				stmtFailed.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		if (rsHistory!= null){
+			try {
+				rsHistory.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		if (rsFailedSearches!= null){
+			try {
+				rsHistory.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		if (conn!= null){
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 
-	/*
-	 * gets unspecifiedId of a specific attribute
-	 */
+}
 
-	public int getUnspecifiedId(Tables table){
-		if (unspecifiedIdOfTables.get(table) != null){
-			return unspecifiedIdOfTables.get(table);
-		}
-		else{
-			return -1;
-		}
+
+
+
+/*
+ * gets unspecifiedId of a specific attribute
+ */
+
+public int getUnspecifiedId(Tables table){
+	if (unspecifiedIdOfTables.get(table) != null){
+		return unspecifiedIdOfTables.get(table);
 	}
+	else{
+		return -1;
+	}
+}
 
-	public ConnectionResult checkForExistance(int id1, int id2){
+public ConnectionResult checkForExistance(int id1, int id2){
 
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		JDCConnection conn = null;
-		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
-			stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_id = ?");
-			stmt.setInt(1,id1);
+	PreparedStatement stmt = null;
+	ResultSet rs = null;
+	JDCConnection conn = null;
+	try {
+		conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+		stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_id = ?");
+		stmt.setInt(1,id1);
+		rs = stmt.executeQuery();
+		if (rs.first()){
+			stmt.setInt(1,id2);
 			rs = stmt.executeQuery();
 			if (rs.first()){
-				stmt.setInt(1,id2);
-				rs = stmt.executeQuery();
-				if (rs.first()){
-					return ConnectionResult.Ok;
-				}
-			}
-
-			return ConnectionResult.Character_not_found;
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return ConnectionResult.Exception;
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ConnectionResult.Close_Exception;
-				}
-			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ConnectionResult.Close_Exception;
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ConnectionResult.Close_Exception;
-				}
+				return ConnectionResult.Ok;
 			}
 		}
 
+		return ConnectionResult.Character_not_found;
+
+	} catch (SQLException e) {
+		e.printStackTrace();
+		return ConnectionResult.Exception;
+	}
+	finally {
+		if (stmt != null){
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ConnectionResult.Close_Exception;
+			}
+		}
+		if (rs!= null){
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ConnectionResult.Close_Exception;
+			}
+		}
+		if (conn!= null){
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ConnectionResult.Close_Exception;
+			}
+		}
 	}
 
+}
 
 
-	/*
-	 * inserts connection found
-	 */
-	public ExecutionResult insertIntoHistory (String connections) {
 
-		Statement stmt = null;
-		String[] connectionsSplit = connections.split("\t");
-		int length = connectionsSplit.length;
-		boolean execute = false;
-		String toQuery = null;
-		JDCConnection conn = null;
+/*
+ * inserts connection found
+ */
+public ExecutionResult insertIntoHistory (String connections) {
 
-		try {			
-			conn = getConnection();
-			stmt = conn.createStatement();
-			String date = AlgorithmUtilities.getCurrentDate();
-			String information = "";
+	Statement stmt = null;
+	String[] connectionsSplit = connections.split("\t");
+	int length = connectionsSplit.length;
+	boolean execute = false;
+	String toQuery = null;
+	JDCConnection conn = null;
 
-			for (int i=0; i<length; i++) {
-				String[] arr = connectionsSplit[i].split(","); 
-				int first = Integer.parseInt(arr[0]);
+	try {			
+		conn = getConnection();
+		stmt = conn.createStatement();
+		String date = AlgorithmUtilities.getCurrentDate();
+		String information = "";
 
-				for (int j=i; j<length; j++) {
-					String[] values = connectionsSplit[j].split(","); 
-					int second = Integer.parseInt(values[1]);
-					information = "";
-					for (int k=i; k<j; k++) { 
-						if (connectionsSplit[k]!=null){
-							if (connectionsSplit[k+1]!=null){
-								information += connectionsSplit[k]+ "\t";
-							}
-							else {
-								information += connectionsSplit[k];
-								break;
-							}
+		for (int i=0; i<length; i++) {
+			String[] arr = connectionsSplit[i].split(","); 
+			int first = Integer.parseInt(arr[0]);
+
+			for (int j=i; j<length; j++) {
+				String[] values = connectionsSplit[j].split(","); 
+				int second = Integer.parseInt(values[1]);
+				information = "";
+				for (int k=i; k<j; k++) { 
+					if (connectionsSplit[k]!=null){
+						if (connectionsSplit[k+1]!=null){
+							information += connectionsSplit[k]+ "\t";
 						}
-						else
+						else {
+							information += connectionsSplit[k];
 							break;
+						}
 					}
+					else
+						break;
+				}
 
-					toQuery = null;
+				toQuery = null;
 
-					if (connectionsSplit[j]!= null){
-						information += connectionsSplit[j];
-					}
+				if (connectionsSplit[j]!= null){
+					information += connectionsSplit[j];
+				}
 
-					information = information.replace("\'", "\\'");
-					if (i==0 && j==length-1){
-						toQuery = "INSERT INTO history (character_id1, character_id2, date, information,count) values (" + first + "," + second + ",'" + date + "', '" + information + "',1);";
+				information = information.replace("\'", "\\'");
+				if (i==0 && j==length-1){
+					toQuery = "INSERT INTO history (character_id1, character_id2, date, information,count) values (" + first + "," + second + ",'" + date + "', '" + information + "',1);";
+					execute = true;
+				}
+				else {
+					if (lookForConnectionInHistory(first, second, new connectionElement[AlgorithmUtilities.getMaxNumber()])== ExecutionResult.Did_Not_Find_Connection_In_History){
+						toQuery = "INSERT INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
 						execute = true;
 					}
-					else {
-						if (lookForConnectionInHistory(first, second, new connectionElement[AlgorithmUtilities.getMaxNumber()])== ExecutionResult.Did_Not_Find_Connection_In_History){
-							toQuery = "INSERT INTO history (character_id1, character_id2, date, information) values (" + first + "," + second + ",'" + date + "', '" + information + "');";
-							execute = true;
-						}
-					}
-
-					if (execute){
-						stmt.executeUpdate(toQuery);
-					}
-					execute = false;
 				}
 
+				if (execute){
+					stmt.executeUpdate(toQuery);
+				}
+				execute = false;
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ExecutionResult.Exception;
 		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ExecutionResult.Close_Exception;
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ExecutionResult.Close_Exception;
-				}
-			}
-		}
-		return ExecutionResult.Success_Insert_To_History;
+
+	} catch (Exception e) {
+		e.printStackTrace();
+		return ExecutionResult.Exception;
 	}
-
-
-	public ExecutionResult insertIntoFailedSearchesTable (int start_id, int end_id) {
-		Statement stmt = null;
-		String toQuery;
-		String date;
-		JDCConnection conn = null;
-
-		try {
-			conn = getConnection();
-			stmt = conn.createStatement();
-			date = AlgorithmUtilities.getCurrentDate();
-
-			toQuery = "INSERT IGNORE INTO failed_searches (character_id1, character_id2, date) values (" + start_id + "," + end_id + ",'" + date + "');";
-			stmt.executeUpdate(toQuery);
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return ExecutionResult.Exception;
-
-		}finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ExecutionResult.Close_Exception;
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ExecutionResult.Close_Exception;
-				}
+	finally {
+		if (stmt != null){
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ExecutionResult.Close_Exception;
 			}
 		}
-		return ExecutionResult.Success_Insert_To_History;
-	}
-
-
-
-	/*
-	 * Searching for the couple in the failed_searches table. 
-	 */
-	public ExecutionResult lookForConnectionInFailedSearchesTable (int start_id, int end_id){
-		Statement stmt = null;
-		ResultSet rs = null;
-
-		JDCConnection conn = null;
-
-		// checks if the couple is in failed_searches table
-		try {
-			conn = getConnection();
-			stmt = conn.createStatement();
-
-			rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
-			if (rs.next()) {
-				return ExecutionResult.Found_Connection_In_Failed_Searches;
-			}
-			else {
-				rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
-				if (rs.next()){
-					return ExecutionResult.Found_Connection_In_Failed_Searches;
-				}
-			}
-
-
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-			return ExecutionResult.Exception;
-
-		}	finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ExecutionResult.Close_Exception;
-				}
-			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ExecutionResult.Close_Exception;
-				}
-			}
-
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ExecutionResult.Close_Exception;
-				}
+		if (conn!= null){
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ExecutionResult.Close_Exception;
 			}
 		}
-
-		return ExecutionResult.Did_Not_Find_Connection_In_Failed_Searches;
 	}
+	return ExecutionResult.Success_Insert_To_History;
+}
 
 
-	/*
-	 * Searching for the connection in the history table. 
-	 * If exists - prints the connection to console.
-	 */
-	public ExecutionResult lookForConnectionInHistory(int start_id, int end_id, connectionElement[] conenctionArray){
+public ExecutionResult insertIntoFailedSearchesTable (int start_id, int end_id) {
+	Statement stmt = null;
+	String toQuery;
+	String date;
+	JDCConnection conn = null;
 
-		JDCConnection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		boolean result = false;
-		int count;
+	try {
+		conn = getConnection();
+		stmt = conn.createStatement();
+		date = AlgorithmUtilities.getCurrentDate();
 
-		// checks if the connection between these 2 characters already in history table
-		try {
-			conn = getConnection();
+		toQuery = "INSERT IGNORE INTO failed_searches (character_id1, character_id2, date) values (" + start_id + "," + end_id + ",'" + date + "');";
+		stmt.executeUpdate(toQuery);
 
-			stmt = conn.createStatement();
+	} catch (SQLException e) {
+		e.printStackTrace();
+		return ExecutionResult.Exception;
 
-			rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
-			if (rs.next()) {
+	}finally {
+		if (stmt != null){
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ExecutionResult.Close_Exception;
+			}
+		}
+		if (conn!= null){
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ExecutionResult.Close_Exception;
+			}
+		}
+	}
+	return ExecutionResult.Success_Insert_To_History;
+}
+
+
+
+/*
+ * Searching for the couple in the failed_searches table. 
+ */
+public ExecutionResult lookForConnectionInFailedSearchesTable (int start_id, int end_id){
+	Statement stmt = null;
+	ResultSet rs = null;
+	int count=0;
+	JDCConnection conn = null;
+	boolean result=false;
+
+	// checks if the couple is in failed_searches table
+	try {
+		conn = getConnection();
+		stmt = conn.createStatement();
+
+		rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
+		if (rs.next()) {
+			result = true;
+		}
+		else {
+			rs = stmt.executeQuery("SELECT * FROM failed_searches WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
+			if (rs.next()){
 				result = true;
 			}
-			else {
-				rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
-				if (rs.next()){
-					result = true;
-				}
-			}
-
-			if (result) { //found the connection in the history table
-				count = rs.getInt("count");
-				count++;
-				int id1 = rs.getInt(1);
-				int id2 = rs.getInt(2);
-				String date = AlgorithmUtilities.getCurrentDate();
-				String getConnectionOfCharacters = rs.getString(4);
-				stmt.executeUpdate("UPDATE history SET count = " + count + ", date = '" + date + "' WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
-				AlgorithmUtilities.prepareConnectionsFromHistory(getConnectionOfCharacters, conenctionArray);
-				return ExecutionResult.Found_Connection_In_History;
-			}
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-			return ExecutionResult.Exception;
 		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ExecutionResult.Close_Exception;
-				}
+
+		if (result){
+			count = rs.getInt("count");
+			count++;
+			int id1 = rs.getInt(1);
+			int id2 = rs.getInt(2);
+			String date = AlgorithmUtilities.getCurrentDate();
+			stmt.executeUpdate("UPDATE failed_searches SET count = " + count + ", date = '" + date + "' WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
+			return ExecutionResult.Found_Connection_In_Failed_Searches;
+		}
+
+
+	} catch (SQLException e1) {
+		e1.printStackTrace();
+		return ExecutionResult.Exception;
+
+	}	finally {
+		if (stmt != null){
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ExecutionResult.Close_Exception;
 			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ExecutionResult.Close_Exception;
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return ExecutionResult.Close_Exception;
-				}
+		}
+		if (rs!= null){
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ExecutionResult.Close_Exception;
 			}
 		}
 
-		return ExecutionResult.Did_Not_Find_Connection_In_History;
-
+		if (conn!= null){
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ExecutionResult.Close_Exception;
+			}
+		}
 	}
 
-	public SuccessRateObject getSuccessRate(){
+	return ExecutionResult.Did_Not_Find_Connection_In_Failed_Searches;
+}
 
-		Statement stmt = null;
-		ResultSet rs = null;
-		int total = 0;
-		int success = 0;
-		SuccessRateObject successRate;
 
-		JDCConnection conn = null;
-		try {
-			conn = getConnection();
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM success_rate");
-			rs.first();
-			total = rs.getInt(2);
-			success = rs.getInt(3);
-			successRate = new SuccessRateObject(total, success);
-		} catch (SQLException e) {
+/*
+ * Searching for the connection in the history table. 
+ * If exists - prints the connection to console.
+ */
+public ExecutionResult lookForConnectionInHistory(int start_id, int end_id, connectionElement[] conenctionArray){
+
+	JDCConnection conn = null;
+	Statement stmt = null;
+	ResultSet rs = null;
+	boolean result = false;
+	int count;
+
+	// checks if the connection between these 2 characters already in history table
+	try {
+		conn = getConnection();
+
+		stmt = conn.createStatement();
+
+		rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + start_id + " AND character_id2 = " + end_id);
+		if (rs.next()) {
+			result = true;
+		}
+		else {
+			rs = stmt.executeQuery("SELECT * FROM history WHERE character_id1 = " + end_id + " AND character_id2 = " + start_id);
+			if (rs.next()){
+				result = true;
+			}
+		}
+
+		if (result) { //found the connection in the history table
+			count = rs.getInt("count");
+			count++;
+			int id1 = rs.getInt(1);
+			int id2 = rs.getInt(2);
+			String date = AlgorithmUtilities.getCurrentDate();
+			String getConnectionOfCharacters = rs.getString(4);
+			stmt.executeUpdate("UPDATE history SET count = " + count + ", date = '" + date + "' WHERE character_id1 = " + id1 + " AND character_id2 = " + id2);
+			AlgorithmUtilities.prepareConnectionsFromHistory(getConnectionOfCharacters, conenctionArray);
+			return ExecutionResult.Found_Connection_In_History;
+		}
+	} catch (SQLException e1) {
+		e1.printStackTrace();
+		return ExecutionResult.Exception;
+	}
+	finally {
+		if (stmt != null){
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ExecutionResult.Close_Exception;
+			}
+		}
+		if (rs!= null){
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ExecutionResult.Close_Exception;
+			}
+		}
+		if (conn!= null){
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return ExecutionResult.Close_Exception;
+			}
+		}
+	}
+
+	return ExecutionResult.Did_Not_Find_Connection_In_History;
+
+}
+
+public SuccessRateObject getSuccessRate(){
+
+	Statement stmt = null;
+	ResultSet rs = null;
+	int total = 0;
+	int success = 0;
+	SuccessRateObject successRate;
+
+	JDCConnection conn = null;
+	try {
+		conn = getConnection();
+		stmt = conn.createStatement();
+		rs = stmt.executeQuery("SELECT * FROM success_rate");
+		rs.first();
+		total = rs.getInt(2);
+		success = rs.getInt(3);
+		successRate = new SuccessRateObject(total, success);
+	} catch (SQLException e) {
+		e.printStackTrace();
+		return null;
+	}
+	finally{
+		try{
+			if (stmt != null){
+				stmt.close();
+			} 
+			if (rs!= null){
+				rs.close();
+			} 
+			if (conn!= null){
+				conn.close();
+			}
+		}catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
-		finally{
-			try{
-				if (stmt != null){
-					stmt.close();
-				} 
-				if (rs!= null){
-					rs.close();
-				} 
-				if (conn!= null){
-					conn.close();
-				}
-			}catch (SQLException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-
-		return successRate;
-
 	}
 
-	public ExecutionResult executeDeleteTableContent (String tableName){  
-		JDCConnection conn =null;
-		Statement stmt = null; 
-		try { 
-			conn = getConnection();
-			stmt = conn.createStatement(); 
-			stmt.executeUpdate("TRUNCATE TABLE " + tableName); 
-		} catch (SQLException e) {
-			return ExecutionResult.Exception;
-		} 
-		finally { 
+	return successRate;
 
-			if (stmt != null){ 
-				try { stmt.close();
-				} 
-				catch (SQLException e) { 
-					e.printStackTrace();
-				} 
-			} 
+}
 
-			if (conn != null){
-				try { 
-					conn.setAutoCommit(true); 
-					conn.close(); 
-				} catch (SQLException e) { 
-					e.printStackTrace(); 
-				}
-
-			}  
-		}
-		return ExecutionResult.Succees_Delete_Table_Content;
+public ExecutionResult executeDeleteTableContent (String tableName){  
+	JDCConnection conn =null;
+	Statement stmt = null; 
+	try { 
+		conn = getConnection();
+		stmt = conn.createStatement(); 
+		stmt.executeUpdate("TRUNCATE TABLE " + tableName); 
+	} catch (SQLException e) {
+		return ExecutionResult.Exception;
 	} 
+	finally { 
 
-	private void buildUnspecifiedMapPerTable() throws Exception{
-		Tables[] tablesArray = Tables.values();
-		Tables currentTable;
-		int unspecified;
-		for (int i=0; i< tablesArray.length; i++){
-			currentTable = tablesArray[i];
-			if ((currentTable == Tables.characters ||
-					!currentTable.name().contains("and")) && 
-					currentTable != Tables.parent &&
-					currentTable != Tables.romantic_involvement) {
+		if (stmt != null){ 
+			try { stmt.close();
+			} 
+			catch (SQLException e) { 
+				e.printStackTrace();
+			} 
+		} 
 
-				unspecified = getUnspecifiedId(currentTable.name());
+		if (conn != null){
+			try { 
+				conn.setAutoCommit(true); 
+				conn.close(); 
+			} catch (SQLException e) { 
+				e.printStackTrace(); 
+			}
 
-				if (unspecified==-1){
-					throw new Exception();
-				}
+		}  
+	}
+	return ExecutionResult.Succees_Delete_Table_Content;
+} 
 
-				else {
-					unspecifiedIdOfTables.put(currentTable, unspecified);
-				}
+private void buildUnspecifiedMapPerTable() throws Exception{
+	Tables[] tablesArray = Tables.values();
+	Tables currentTable;
+	int unspecified;
+	for (int i=0; i< tablesArray.length; i++){
+		currentTable = tablesArray[i];
+		if ((currentTable == Tables.characters ||
+				!currentTable.name().contains("and")) && 
+				currentTable != Tables.parent &&
+				currentTable != Tables.romantic_involvement) {
+
+			unspecified = getUnspecifiedId(currentTable.name());
+
+			if (unspecified==-1){
+				throw new Exception();
+			}
+
+			else {
+				unspecifiedIdOfTables.put(currentTable, unspecified);
 			}
 		}
-
 	}
 
-	private boolean executeLockCommands(String command){
+}
 
-		JDCConnection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = getConnection();
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(command);
+private boolean executeLockCommands(String command){
 
-			if (rs == null){
-				return false;
-			}
+	JDCConnection conn = null;
+	Statement stmt = null;
+	ResultSet rs = null;
+	try {
+		conn = getConnection();
+		stmt = conn.createStatement();
+		rs = stmt.executeQuery(command);
 
-			rs.first();
-			int success = rs.getInt(1);
-
-			if (success == 1){
-				return true;
-			}
-			else{
-				return false;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if (rs == null){
 			return false;
 		}
-		finally{
-			if (rs != null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+
+		rs.first();
+		int success = rs.getInt(1);
+
+		if (success == 1){
+			return true;
+		}
+		else{
+			return false;
+		}
+	} catch (SQLException e) {
+		e.printStackTrace();
+		return false;
+	}
+	finally{
+		if (rs != null){
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+		}
+		if (stmt != null){
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-			if (conn != null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+		}
+		if (conn != null){
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+private int getUnspecifiedId(String table) {
+
+	Statement stmt = null;
+	ResultSet rs = null;
+	int unspecifiedID = 0;
+	String field = "";
+	if (table.equals(Tables.characters.name())){
+		field = "character";
+	}
+	else {
+		field = table;
+	}
+
+	JDCConnection conn = null;
+	try {
+		conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
+		stmt = conn.createStatement();
+		rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
+		rs.first();
+		unspecifiedID= rs.getInt(1);
+	} catch (SQLException e) {
+		e.printStackTrace();
+		return -1;
+	}
+	finally {
+		if (stmt != null){
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return -1;
+			}
+		}
+		if (rs!= null){
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return -1;
+			}
+		}
+		if (conn!= null){
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return -1;
 			}
 		}
 	}
 
-	private int getUnspecifiedId(String table) {
-
-		Statement stmt = null;
-		ResultSet rs = null;
-		int unspecifiedID = 0;
-		String field = "";
-		if (table.equals(Tables.characters.name())){
-			field = "character";
-		}
-		else {
-			field = table;
-		}
-
-		JDCConnection conn = null;
-		try {
-			conn = (JDCConnection) connectionDriver.connect(URL, connProperties);
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT " + field + "_id" + " FROM " + table + " WHERE " +  field + "_name = 'Unspecified'");
-			rs.first();
-			unspecifiedID= rs.getInt(1);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return -1;
-		}
-		finally {
-			if (stmt != null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return -1;
-				}
-			}
-			if (rs!= null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return -1;
-				}
-			}
-			if (conn!= null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return -1;
-				}
-			}
-		}
-
-		return unspecifiedID;
-	}
+	return unspecifiedID;
+}
 
 }
