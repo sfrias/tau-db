@@ -1,11 +1,11 @@
 package database;
 
 import java.io.UnsupportedEncodingException;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -922,7 +922,7 @@ public class DatabaseManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		String startName=null, endName=null;
-		Date date = null;
+		Timestamp date = null;
 		int count = -1;
 		SearchResultObject[] searchResult = new SearchResultObject[5];
 		int index=0;
@@ -944,7 +944,7 @@ public class DatabaseManager {
 						break;
 					}
 				} else if (field.equals("date")){
-					date = rs.getDate(3);
+					date = rs.getTimestamp(3);
 					searchResult[index] = new SearchResultObject(startName, endName, date);
 				} else {
 					return null; // not a valid input

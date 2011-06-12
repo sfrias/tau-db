@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -191,7 +193,7 @@ public class StatisticsTab extends JPanel{
 		JPanel resultPanel= builder.getPanel();
 		TitledBorder titleBorder = BorderFactory.createTitledBorder(null, title, TitledBorder.CENTER,  TitledBorder.TOP, new Font("Footlight MT Light", Font.BOLD, 20));
 		resultPanel.setBorder(titleBorder);
-		resultPanel.setMaximumSize(new Dimension(500,200));
+		resultPanel.setMaximumSize(new Dimension(700,200));
 		
 		add(resultPanel);
 	}
@@ -217,12 +219,13 @@ public class StatisticsTab extends JPanel{
 		SearchResultObject[] topPopularSearches = model.getTopPopularSearches();
 		SearchResultObject[] topLastSearches = model.getLastSuccessSearches();
 		SuccessRateObject successRate = model.getSucessRate();
+		DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		
 		for (int i=0; i<topLastSearches.length; i++){
 			if (topLastSearches[i] != null){
 				topFiveSuccessfulFirstCharLabels[i].setText(topLastSearches[i].getFirstCharacter());
 				topFiveSuccessfulSecondCharLabels[i].setText(topLastSearches[i].getSecondCharacter());
-				topFiveSuccessfulDateLabels[i].setText(topLastSearches[i].getDate().toString());
+				topFiveSuccessfulDateLabels[i].setText(format.format(topLastSearches[i].getDate()));
 			}
 		}
 		

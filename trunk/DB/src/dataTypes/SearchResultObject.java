@@ -1,14 +1,14 @@
 package dataTypes;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class SearchResultObject {
 	private String firstChar;
 	private String secondChar;
-	private Date date;
+	private Timestamp date;
 	private long count;
 	
-	public SearchResultObject(String firstChar, String secondChar, Date date){
+	public SearchResultObject(String firstChar, String secondChar, Timestamp date){
 		this(firstChar, secondChar, date, -1);
 	}
 	
@@ -16,7 +16,7 @@ public class SearchResultObject {
 		this(firstChar, secondChar, null, count);
 	}
 	
-	private SearchResultObject(String firstChar, String secondChar, Date date, long count){
+	private SearchResultObject(String firstChar, String secondChar, Timestamp date, long count){
 		this.firstChar = firstChar;
 		this.secondChar = secondChar;
 		this.date = (date != null ? date : null);
@@ -31,8 +31,12 @@ public class SearchResultObject {
 		return secondChar;
 	}
 	
-	public Date getDate(){
+	public Timestamp getDate(){
 		return date;
+	}
+	
+	public String getFormatedDate(){
+		return null;
 	}
 	
 	public long getCount(){

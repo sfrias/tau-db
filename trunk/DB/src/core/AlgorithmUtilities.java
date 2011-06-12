@@ -13,7 +13,6 @@ import enums.Tables;
 
 
 public class AlgorithmUtilities {
-	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
 	static int maxNumberOfConnection=0;
 
 	public static void setMaxNumber(int number){
@@ -55,11 +54,9 @@ public class AlgorithmUtilities {
 	public static String getCurrentDate() {
 
 		Calendar currentDate = Calendar.getInstance();
-		SimpleDateFormat formatter= new SimpleDateFormat("yyyy/MM/dd");
+		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateNow = formatter.format(currentDate.getTime());
-		String [] d = dateNow.split("/");
-		String s = d[0]+"."+d[1]+"."+d[2];
-		return s;
+		return dateNow;
 	}
 
 	
