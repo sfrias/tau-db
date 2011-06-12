@@ -1,6 +1,5 @@
 package GUI.workers;
 
-import GUI.GuiHandler;
 import GUI.model.AlgorithmModel;
 import GUI.panels.Play.Tabs.MainPlayTab;
 import core.Algorithm;
