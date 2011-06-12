@@ -127,9 +127,7 @@ public class EditCharacters extends EditCard{
 		
 		comboRecord.setSelectedItem(null);
 		
-		if (GuiHandler.isStatusFlashing()){
-			GuiHandler.stopStatusFlash();
-		}
+		clearValues();
 	}
 	
 	public ActionListener createRecordComboListener() {
